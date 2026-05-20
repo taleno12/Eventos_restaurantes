@@ -6,6 +6,8 @@ use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmpleoController;
+use App\Http\Controllers\ReviewController; //rutinha de las reviews
+
 
 use App\Models\Restaurante;
 use App\Models\Evento;
@@ -13,6 +15,16 @@ use App\Models\Departamento;
 use App\Models\Empleo;
 use App\Models\User;
 
+// para las criticas
+Route::middleware('auth')->group(function () {
+    Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])
+         ->name('reviews.store');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])
+         ->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
+         ->name('reviews.destroy');
+});
+ 
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
 // Corregido: Llama a 'welcome' que es el método que procesa el carrusel y filtros
 Route::get('/', [EventoController::class, 'welcome'])->name('home');

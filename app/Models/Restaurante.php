@@ -3,21 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Review;
 
 class Restaurante extends Model
 {
-    // Esto permite que podamos guardar datos masivamente (Se agregan municipio_id y especialidad)
     protected $fillable = [
         'nombre', 
         'email', 
-        'especialidad', // <-- Campo añadido para habilitar filtros por tipo de comida
+        'especialidad',
         'descripcion', 
         'departamento_id', 
         'municipio_id',
-        'instagram',    // <-- Nuevo: Enlace de Instagram
-        'tiktok',       // <-- Nuevo: Enlace de TikTok
-        'facebook',     // <-- Nuevo: Enlace de Facebook
-        'whatsapp'      // <-- Nuevo: Número o enlace de WhatsApp
+        'instagram',
+        'tiktok',
+        'facebook',
+        'whatsapp'
     ];
 
     // Un restaurante PERTENECE a un departamento
@@ -26,15 +27,35 @@ class Restaurante extends Model
         return $this->belongsTo(Departamento::class);
     }
 
-    // Un restaurante PERTENECE a un municipio (Nueva relación geográfica)
+    // Un restaurante PERTENECE a un municipio
     public function municipio()
     {
         return $this->belongsTo(Municipio::class);
     }
 
-    // Un restaurante puede tener MUCHOS eventos (anuncios)
+    // Un restaurante puede tener MUCHOS eventos
     public function eventos()
     {
         return $this->hasMany(Evento::class);
+    }
+
+    // Un restaurante puede tener MUCHAS reseñas
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'restaurante_id');
+    }
+
+    // Promedio de calificaciones
+    public function getAverageRatingAttribute(): ?float
+    {
+        return $this->reviews()->avg('rating')
+            ? round($this->reviews()->avg('rating'), 1)
+            : null;
+    }
+
+    // Total de reseñas
+    public function getReviewsCountAttribute(): int
+    {
+        return $this->reviews()->count();
     }
 }

@@ -81,7 +81,7 @@
                     </p>
                 </div>
 
-                {{-- NUEVA SECCIÓN: Canales Digitales y Redes --}}
+                {{-- Canales Digitales y Redes --}}
                 <div class="md:col-span-2 mt-2">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
                         <i class="fas fa-share-alt text-orange-400"></i> Presencia Digital y Contacto Directo
@@ -163,8 +163,11 @@
             </div>
         </div>
 
+        {{-- Sección de Reseñas --}}
+        @include('restaurantes.reviews', ['restaurant' => $restaurante])
+
         {{-- Barra Inferior de Herramientas --}}
-        <div class="flex items-center justify-between px-2">
+        <div class="flex items-center justify-between px-2 mt-6">
             <a href="{{ route('restaurantes.index') }}"
                class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors no-underline">
                 <i class="fas fa-chevron-left mr-1 text-xs"></i> Volver al panel

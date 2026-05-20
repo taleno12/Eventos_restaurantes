@@ -168,6 +168,17 @@
                                 class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
                         </button>
+        
+ <a href="{{ route('restaurantes.index') }}"
+   class="hidden sm:flex items-center gap-2 border border-orange-200 text-orange-600 bg-orange-50 px-4 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline">
+    <i class="fas fa-store text-xs group-hover:animate-bounce"></i>
+    <span class="hidden lg:inline">Restaurantes</span>
+    @if(isset($totalRestaurantes) && $totalRestaurantes > 0)
+        <span class="bg-orange-600 group-hover:bg-white group-hover:text-orange-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center transition-colors">
+            {{ $totalRestaurantes }}
+        </span>
+    @endif
+</a>
 
                         <a href="{{ route('empleos.index') }}"
                            class="hidden sm:flex items-center gap-2 border border-orange-200 text-orange-600 bg-orange-50 px-4 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline">

@@ -115,10 +115,10 @@
                         <span>Departamentos</span>
                     </a>
 
-                    <a href="{{ route('restaurantes.index') }}"
-                       class="nav-item {{ request()->routeIs('restaurantes.*') ? 'active' : '' }}">
-                        <i class="fas fa-store"></i>
-                        <span>Restaurantes</span>
+                    <a href="{{ route('admin.restaurantes.index') }}"
+                     class="nav-item {{ request()->routeIs('admin.restaurantes.*') ? 'active' : '' }}">
+                     <i class="fas fa-store"></i>
+                     <span>Restaurantes</span>
                     </a>
 
                     <a href="{{ route('eventos.index') }}"

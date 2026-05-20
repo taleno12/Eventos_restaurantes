@@ -6,8 +6,7 @@ use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmpleoController;
-use App\Http\Controllers\ReviewController; //rutinha de las reviews
-
+use App\Http\Controllers\ReviewController;
 
 use App\Models\Restaurante;
 use App\Models\Evento;
@@ -15,7 +14,7 @@ use App\Models\Departamento;
 use App\Models\Empleo;
 use App\Models\User;
 
-// para las criticas
+// ── REVIEWS (requieren auth) ──────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])
          ->name('reviews.store');
@@ -24,34 +23,32 @@ Route::middleware('auth')->group(function () {
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
          ->name('reviews.destroy');
 });
- 
+
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
-// Corregido: Llama a 'welcome' que es el método que procesa el carrusel y filtros
 Route::get('/', [EventoController::class, 'welcome'])->name('home');
 
-// ── NUEVO: API PÚBLICA PARA EL NAVBAR EN CASCADA DE LA PORTADA ────────────────
-// Necesaria para que los usuarios no autenticados puedan usar los selectores cruzados
+// ── API PÚBLICA ───────────────────────────────────────────────────────────────
 Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
     return App\Models\Restaurante::where('departamento_id', $id)->get(['id', 'nombre']);
 })->name('api.public.departamentos.restaurantes');
 
-// ── SECCIÓN DE CONTACTO INDEPENDIENTE (PÚBLICA) ───────────────────────────────
-// Esta ruta carga la vista independiente que contiene tu formulario premium
+// ── RESTAURANTES PÚBLICOS (listado) ──────────────────────────────────────────
+Route::get('/restaurantes', [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
+
+// ── CONTACTO ─────────────────────────────────────────────────────────────────
 Route::get('/contacto', function () {
-    $departamentos = Departamento::all(); // Por si los necesitas en el footer/nav
+    $departamentos = Departamento::all();
     return view('contacto', compact('departamentos'));
 })->name('contacto');
 
-// Ruta opcional por si vas a procesar el envío del formulario mediante un controlador
 Route::post('/contacto', function (\Illuminate\Http\Request $request) {
-    // Aquí procesas el formulario (Enviar mail, guardar en BD, etc.)
     return back()->with('success', '¡Mensaje enviado con éxito!');
 })->name('contacto.store');
 
-// ── OFERTAS DE EMPLEO (Públicas) ──────────────────────────────────────────────
-// Asegurado el método 'publicIndex' para inyectar correctamente las variables estadísticas a la vista
+// ── EMPLEOS (PÚBLICAS) ───────────────────────────────────────────────────────
 Route::get('/empleos', [EmpleoController::class, 'publicIndex'])->name('empleos.index');
 Route::get('/empleos/{empleo}', [EmpleoController::class, 'show'])->name('empleos.show');
+Route::post('/empleos/{empleo}/aplicar', [EmpleoController::class, 'aplicar'])->name('empleos.aplicar');
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 Route::get('/dashboard', function () {
@@ -64,11 +61,6 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
-//empleo ruta
-Route::post('/empleos/{empleo}/aplicar', [EmpleoController::class, 'aplicar'])
-    ->name('empleos.aplicar');
-
 // ── ÁREA PROTEGIDA (SOLO ADMIN/AUTH) ──────────────────────────────────────────
 Route::middleware('auth')->group(function () {
 
@@ -77,73 +69,63 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // RESTAURANTES
-    Route::resource('restaurantes', RestauranteController::class);
+    // RESTAURANTES ADMIN
+    Route::get('/admin/restaurantes', [RestauranteController::class, 'index'])->name('admin.restaurantes.index');
+    Route::resource('restaurantes', RestauranteController::class)->except(['index', 'show']);
 
-    // EVENTOS (NOMBRES DE MÉTODOS SINCRONIZADOS)
-    // El index de administración ahora apunta a 'index' que es tu tabla de control
+    // EVENTOS
     Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
-    // El resto del CRUD protegido (create, store, edit, update, destroy)
-    // MODIFICADO: Se añade 'show' a los exceptuados para que no choque con la ruta libre de abajo
     Route::resource('eventos', EventoController::class)->except(['index', 'show']);
 
     // DEPARTAMENTOS
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
-    // Corregido: Se eliminó el /nuevo duplicado de abajo usando resource correctamente
     Route::resource('departamentos', DepartamentoController::class);
 
     // EMPLEOS (Panel Admin)
     Route::prefix('admin/empleos')->name('admin.empleos.')->group(function () {
-        Route::get('/',                     [EmpleoController::class, 'index'])->name('index');
-        Route::get('/crear',               [EmpleoController::class, 'create'])->name('create');
-        Route::post('/',                   [EmpleoController::class, 'store'])->name('store');
-        Route::get('/{empleo}',            [EmpleoController::class, 'adminShow'])->name('show');
-        Route::get('/{empleo}/editar',     [EmpleoController::class, 'edit'])->name('edit');
-        Route::put('/{empleo}',            [EmpleoController::class, 'update'])->name('update');
-        Route::delete('/{empleo}',         [EmpleoController::class, 'destroy'])->name('destroy');
+        Route::get('/',                 [EmpleoController::class, 'index'])->name('index');
+        Route::get('/crear',            [EmpleoController::class, 'create'])->name('create');
+        Route::post('/',                [EmpleoController::class, 'store'])->name('store');
+        Route::get('/{empleo}',         [EmpleoController::class, 'adminShow'])->name('show');
+        Route::get('/{empleo}/editar',  [EmpleoController::class, 'edit'])->name('edit');
+        Route::put('/{empleo}',         [EmpleoController::class, 'update'])->name('update');
+        Route::delete('/{empleo}',      [EmpleoController::class, 'destroy'])->name('destroy');
     });
 
-    // TRABAJADORES (Corregido para coincidir exactamente con el nombre de ruta del menú)
+    // TRABAJADORES
     Route::get('/trabajadores', function () {
-        return view('admin.trabajadores.form'); // Retorna el formulario de trabajadores
+        return view('admin.trabajadores.form');
     })->name('trabajadores.index');
 
-    // CONTRATOS (Nueva sección agregada)
+    // CONTRATOS
     Route::get('/contratos', function () {
-        return view('admin.contratos.form'); // Retorna el formulario de contratos
+        return view('admin.contratos.form');
     })->name('contratos.index');
 
-    // SOPORTE (Nueva sección agregada)
+    // SOPORTE
     Route::get('/soporte', function () {
-        return view('admin.soporte.form'); // Retorna el formulario de soporte
+        return view('admin.soporte.form');
     })->name('soporte.index');
 
-    // CONFIGURACIÓN (Habilitado para coincidir exactamente con el nombre de ruta del menú)
+    // CONFIGURACIÓN
     Route::get('/configuracion', function () {
-        return view('admin.configuracion.form'); // Retorna el formulario de configuración
+        return view('admin.configuracion.form');
     })->name('configuracion.index');
 
-    // API INTERNA ACTUALIZADA (CON ENCADENAMIENTO TRIPLE GEOGRÁFICO PARA EL PANEL DE ADMINISTRACIÓN)
-    
-    // 1. Obtiene los municipios del departamento seleccionado
+    // API INTERNA
     Route::get('/api/departamentos/{id}/municipios', function ($id) {
         return App\Models\Municipio::where('departamento_id', $id)->get(['id', 'nombre']);
     })->name('api.departamentos.municipios');
 
-    // 2. Obtiene los restaurantes del municipio seleccionado (CORREGIDO: Sincronizada la variable interna con $id)
     Route::get('/api/municipios/{id}/restaurantes', function ($id) {
         return App\Models\Restaurante::where('municipio_id', $id)->get(['id', 'nombre', 'especialidad']);
     })->name('api.municipios.restaurantes');
-
-    /* Nota opcional: Si prefieres usar el método que creamos en tu Controlador en el paso anterior,
-    puedes comentar la ruta de arriba y descomentar esta línea de abajo:
-    
-    Route::get('/api/municipios/{id}/restaurantes', [RestauranteController::class, 'getPorMunicipio'])->name('api.municipios.restaurantes');
-    */
 });
 
-// ── REUBICADO AL FINAL: RUTA DE DETALLE DE EVENTO ACCESIBLE PARA TODO EL MUNDO ──
-// Al estar abajo del grupo auth, Laravel evaluará primero '/eventos/create' correctamente
+// ── DETALLE DE EVENTO (PÚBLICA) ───────────────────────────────────────────────
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])->name('eventos.show');
+
+// ── RESTAURANTE DETALLE PÚBLICO (al final para no capturar /create ni /edit) ──
+Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'publicShow'])->name('restaurantes.show');
 
 require __DIR__ . '/auth.php';

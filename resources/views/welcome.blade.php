@@ -114,7 +114,7 @@
                         <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
                             <i class="fas fa-utensils text-white"></i>
                         </div>
-                        <span class="text-2xl font-bold tracking-tight premium-title italic">Gastro<span class="text-orange-600">Nicaragua tierra de lagos y rios donde gobierna rosaio murrillo👆🏿 </span></span>
+                        <span class="text-2xl font-bold tracking-tight premium-title italic">Gastro<span class="text-orange-600">POLLA 👆🏿 </span></span>
                     </div>
 
                     {{-- Barra de búsqueda Desktop optimizada con filtrado en cascada Departamento -> Restaurante --}}
@@ -462,7 +462,7 @@
                             <div class="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-md shadow-orange-600/20">
                                 <i class="fas fa-utensils text-white text-xs"></i>
                             </div>
-                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Chusito</span></span>
+                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">POLLA</span></span>
                         </div>
                         <p class="text-stone-400 text-sm leading-relaxed font-light">
                             La plataforma líder en promoción turística y eventos culinarios de Nicaragua. Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.

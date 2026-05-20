@@ -52,6 +52,11 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+//empleo ruta
+Route::post('/empleos/{empleo}/aplicar', [EmpleoController::class, 'aplicar'])
+    ->name('empleos.aplicar');
+
 // ── ÁREA PROTEGIDA (SOLO ADMIN/AUTH) ──────────────────────────────────────────
 Route::middleware('auth')->group(function () {
 

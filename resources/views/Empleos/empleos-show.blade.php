@@ -66,6 +66,25 @@
             </div>
         </header>
 
+        {{-- Alertas de éxito / error --}}
+        @if(session('success'))
+            <div class="max-w-4xl mx-auto px-4 pt-6">
+                <div class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-800 text-sm font-medium px-4 py-3 rounded-xl">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="max-w-4xl mx-auto px-4 pt-6">
+                <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 text-sm font-medium px-4 py-3 rounded-xl">
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
+
         <main class="max-w-4xl mx-auto px-4 py-12">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
@@ -139,67 +158,49 @@
                             </div>
                         </div>
 
-                        {{-- SECCIÓN INTERACTIVA: Redes del Establecimiento para el postulante --}}
+                        {{-- Redes del Establecimiento --}}
                         <div>
                             <span class="text-xs font-bold uppercase tracking-widest text-stone-400 block mb-3">Conoce el Establecimiento</span>
                             
                             <div class="flex flex-wrap items-center gap-2.5">
-                                {{-- WhatsApp --}}
                                 @if(!empty($empleo->restaurante->whatsapp))
-                                    @php
-                                        $phoneClean = preg_replace('/[^0-9]/', '', $empleo->restaurante->whatsapp);
-                                    @endphp
-                                    <a href="https://wa.me/{{ $phoneClean }}" 
-                                       target="_blank" 
-                                       title="Consultas rápidas por WhatsApp"
+                                    @php $phoneClean = preg_replace('/[^0-9]/', '', $empleo->restaurante->whatsapp); @endphp
+                                    <a href="https://wa.me/{{ $phoneClean }}" target="_blank" title="Consultas rápidas por WhatsApp"
                                        class="w-9 h-9 rounded-full bg-green-50 hover:bg-green-500 text-green-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
                                         <i class="fab fa-whatsapp text-lg"></i>
                                     </a>
                                 @endif
 
-                                {{-- Instagram --}}
                                 @if(!empty($empleo->restaurante->instagram))
-                                    <a href="{{ $empleo->restaurante->instagram }}" 
-                                       target="_blank" 
-                                       title="Ver Instagram del restaurante"
+                                    <a href="{{ $empleo->restaurante->instagram }}" target="_blank" title="Ver Instagram del restaurante"
                                        class="w-9 h-9 rounded-full bg-pink-50 hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-600 text-pink-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
                                         <i class="fab fa-instagram text-lg"></i>
                                     </a>
                                 @endif
 
-                                {{-- TikTok --}}
                                 @if(!empty($empleo->restaurante->tiktok))
-                                    <a href="{{ $empleo->restaurante->tiktok }}" 
-                                       target="_blank" 
-                                       title="Ver TikTok del restaurante"
+                                    <a href="{{ $empleo->restaurante->tiktok }}" target="_blank" title="Ver TikTok del restaurante"
                                        class="w-9 h-9 rounded-full bg-stone-50 hover:bg-black text-stone-800 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
                                         <i class="fab fa-tiktok text-sm"></i>
                                     </a>
                                 @endif
 
-                                {{-- Facebook --}}
                                 @if(!empty($empleo->restaurante->facebook))
-                                    <a href="{{ $empleo->restaurante->facebook }}" 
-                                       target="_blank" 
-                                       title="Ver Facebook del restaurante"
+                                    <a href="{{ $empleo->restaurante->facebook }}" target="_blank" title="Ver Facebook del restaurante"
                                        class="w-9 h-9 rounded-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
                                         <i class="fab fa-facebook-f text-base"></i>
                                     </a>
                                 @endif
 
-                                {{-- Mensaje en caso de no poseer redes en la Base de Datos --}}
                                 @if(empty($empleo->restaurante->whatsapp) && empty($empleo->restaurante->instagram) && empty($empleo->restaurante->tiktok) && empty($empleo->restaurante->facebook))
                                     <span class="text-xs text-stone-400 italic">Sin redes configuradas.</span>
                                 @endif
                             </div>
                         </div>
 
-                        {{-- Botón de Postulación Premium --}}
+                        {{-- Botón de Postulación → abre el modal --}}
                         <div class="pt-1">
-                            <a href="mailto:{{ $empleo->restaurante->email ?? 'contacto@gastronicaragua.com' }}?subject=Postulación: {{ $empleo->titulo }}"
-                               class="w-full bg-orange-600 hover:bg-orange-700 text-white text-center font-bold py-3 px-4 rounded-xl transition-all shadow-sm shadow-orange-200 block no-underline text-sm">
-                                <i class="fas fa-paper-plane mr-2 text-xs"></i> Aplicar a esta vacante
-                            </a>
+                            @include('components.apply-modal', ['empleo' => $empleo])
                         </div>
                     </div>
                 </div>

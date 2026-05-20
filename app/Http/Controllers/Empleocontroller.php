@@ -6,6 +6,9 @@ use App\Models\Empleo;
 use App\Models\Departamento;
 use App\Models\Restaurante;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\AplicacionEmpleo;
 
 class EmpleoController extends Controller
 {
@@ -13,13 +16,8 @@ class EmpleoController extends Controller
     // VISTAS PÚBLICAS
     // ─────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Vista pública: lista de ofertas de empleo con filtros locales.
-     * Ruta: GET /empleos  →  name('empleos.index')
-     */
     public function publicIndex(Request $request)
     {
-        // Optimizamos la carga llamando directo a la relación geográfica directa del empleo
         $query = Empleo::with(['restaurante', 'departamento', 'municipio'])
             ->where('activo', true)
             ->orderByDesc('created_at');
@@ -32,7 +30,6 @@ class EmpleoController extends Controller
             });
         }
 
-        // Filtramos directamente por la nueva columna geográfica de la vacante
         if ($departamentoId = $request->input('departamento')) {
             $query->where('departamento_id', $departamentoId);
         }
@@ -52,29 +49,141 @@ class EmpleoController extends Controller
         ));
     }
 
-    /**
-     * Vista pública: detalle de una oferta específica.
-     * Ruta: GET /empleos/{empleo}  →  name('empleos.show')
-     */
     public function show(Empleo $empleo)
     {
         abort_unless($empleo->activo, 404);
         $empleo->load(['restaurante', 'departamento', 'municipio']);
-        
+
         return view('empleos-show', compact('empleo'));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // APLICACIÓN A VACANTE (PÚBLICA)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function aplicar(Request $request, Empleo $empleo)
+    {
+        abort_unless($empleo->activo, 404);
+
+        $validated = $request->validate([
+            'nombre'           => 'required|string|max:100',
+            'apellido'         => 'required|string|max:100',
+            'email'            => 'required|email|max:150',
+            'telefono'         => 'required|string|max:20',
+            'edad'             => 'required|integer|min:18|max:70',
+            'municipio'        => 'required|string|max:100',
+            'experiencia'      => 'nullable|string|max:1000',
+            'disponibilidad'   => 'nullable|array',
+            'disponibilidad.*' => 'string',
+            'curriculum'       => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            'mensaje'          => 'nullable|string|max:500',
+        ], [
+            'nombre.required'    => 'El nombre es obligatorio.',
+            'apellido.required'  => 'El apellido es obligatorio.',
+            'email.required'     => 'El correo electrónico es obligatorio.',
+            'email.email'        => 'Ingresa un correo válido.',
+            'telefono.required'  => 'El teléfono es obligatorio.',
+            'edad.required'      => 'La edad es obligatoria.',
+            'edad.min'           => 'Debes tener al menos 18 años.',
+            'municipio.required' => 'El municipio es obligatorio.',
+            'curriculum.mimes'   => 'El currículum debe ser PDF, DOC o DOCX.',
+            'curriculum.max'     => 'El archivo no puede superar los 5MB.',
+        ]);
+
+        // 2. Cargar restaurante
+        $empleo->loadMissing('restaurante');
+
+        // 3. Armar datos
+        $aplicacion = [
+            'nombre'         => $validated['nombre'],
+            'apellido'       => $validated['apellido'],
+            'email'          => $validated['email'],
+            'telefono'       => $validated['telefono'],
+            'edad'           => $validated['edad'],
+            'municipio'      => $validated['municipio'],
+            'experiencia'    => $validated['experiencia'] ?? 'No especificada',
+            'disponibilidad' => $validated['disponibilidad'] ?? [],
+            'mensaje'        => $validated['mensaje'] ?? '',
+            'empleo_titulo'  => $empleo->titulo,
+            'restaurante'    => $empleo->restaurante->nombre ?? 'Restaurante',
+        ];
+
+        // 4. Leer CV en memoria (evita problemas de rutas en Windows)
+        $curriculumData   = null;
+        $curriculumNombre = null;
+        $curriculumMime   = null;
+
+        if ($request->hasFile('curriculum') && $request->file('curriculum')->isValid()) {
+            $archivo   = $request->file('curriculum');
+            $extension = strtolower($archivo->getClientOriginalExtension());
+
+            $mimeTypes = [
+                'pdf'  => 'application/pdf',
+                'doc'  => 'application/msword',
+                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ];
+
+            $curriculumData   = file_get_contents($archivo->getRealPath());
+            $curriculumNombre = 'curriculum_' . str_replace(' ', '_', $validated['nombre']) . '.' . $extension;
+            $curriculumMime   = $mimeTypes[$extension] ?? 'application/octet-stream';
+
+            // Guardar copia en disco también
+            $archivo->store('curriculos', 'local');
+
+            Log::info('CV leído en memoria:', [
+                'nombre'    => $curriculumNombre,
+                'mime'      => $curriculumMime,
+                'bytes'     => strlen($curriculumData),
+            ]);
+        }
+
+        // 5. Enviar correos
+        $emailRestaurante = $empleo->restaurante->email ?? config('mail.from.address');
+
+        try {
+            // Correo al restaurante con CV adjunto en memoria
+            Mail::to($emailRestaurante)
+                ->send(new AplicacionEmpleo(
+                    $aplicacion,
+                    $curriculumData,
+                    $curriculumNombre,
+                    $curriculumMime,
+                    'restaurante'
+                ));
+
+            // Confirmación al candidato (sin CV adjunto)
+            Mail::to($validated['email'])
+                ->send(new AplicacionEmpleo(
+                    $aplicacion,
+                    null,
+                    null,
+                    null,
+                    'candidato'
+                ));
+
+        } catch (\Exception $e) {
+            Log::error('Error enviando correo de aplicación: ' . $e->getMessage(), [
+                'empleo_id'         => $empleo->id,
+                'email_restaurante' => $emailRestaurante,
+                'email_candidato'   => $validated['email'],
+                'trace'             => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Hubo un problema al enviar tu aplicación. Por favor intenta de nuevo.');
+        }
+
+        // 6. Éxito
+        return back()->with('success', '¡Tu aplicación fue enviada con éxito! Revisa tu correo para la confirmación.');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // PANEL DE ADMINISTRACIÓN
     // ─────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Lista de todas las ofertas para el admin general.
-     * Ruta: GET /admin/empleos  →  name('admin.empleos.index')
-     */
     public function index()
     {
-        // Cargamos las relaciones geográficas para la visualización en la tabla de control
         $empleos                = Empleo::with(['restaurante', 'departamento', 'municipio'])->latest()->paginate(15);
         $activas                = Empleo::where('activo', true)->count();
         $restaurantesConOfertas = Empleo::distinct('restaurante_id')->count('restaurante_id');
@@ -82,28 +191,20 @@ class EmpleoController extends Controller
         return view('empleos.index', compact('empleos', 'activas', 'restaurantesConOfertas'));
     }
 
-    /**
-     * Formulario para crear una nueva oferta laboral.
-     * Ruta: GET /admin/empleos/crear  →  name('admin.empleos.create')
-     */
     public function create()
     {
-        $restaurantes = Restaurante::orderBy('nombre')->get();
-        $departamentos = Departamento::orderBy('nombre')->get(); // Enviamos los departamentos al selector administrativo
-        
+        $restaurantes  = Restaurante::orderBy('nombre')->get();
+        $departamentos = Departamento::orderBy('nombre')->get();
+
         return view('empleos.create', compact('restaurantes', 'departamentos'));
     }
 
-    /**
-     * Guardar nueva oferta en la base de datos con validaciones geográficas.
-     * Ruta: POST /admin/empleos  →  name('admin.empleos.store')
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'restaurante_id'  => 'required|exists:restaurantes,id',
-            'departamento_id' => 'required|exists:departamentos,id', // Validación integrada
-            'municipio_id'    => 'required|exists:municipios,id',    // Validación integrada
+            'departamento_id' => 'required|exists:departamentos,id',
+            'municipio_id'    => 'required|exists:municipios,id',
             'titulo'          => 'required|string|max:200',
             'descripcion'     => 'required|string',
             'requisitos'      => 'nullable|string',
@@ -121,40 +222,27 @@ class EmpleoController extends Controller
             ->with('success', '✅ Oferta publicada exitosamente.');
     }
 
-    /**
-     * Vista de administración: detalle privado de una vacante.
-     * Ruta: GET /admin/empleos/{empleo}  →  name('admin.empleos.show')
-     */
     public function adminShow(Empleo $empleo)
     {
-        // Cargamos todas las relaciones geográficas específicas de la vacante para el panel
         $empleo->load(['restaurante', 'departamento', 'municipio']);
-        
+
         return view('empleos.show', compact('empleo'));
     }
 
-    /**
-     * Formulario para editar una oferta existente.
-     * Ruta: GET /admin/empleos/{empleo}/editar  →  name('admin.empleos.edit')
-     */
     public function edit(Empleo $empleo)
     {
-        $restaurantes = Restaurante::orderBy('nombre')->get();
-        $departamentos = Departamento::orderBy('nombre')->get(); // Enviamos los departamentos para la recarga de datos
-        
+        $restaurantes  = Restaurante::orderBy('nombre')->get();
+        $departamentos = Departamento::orderBy('nombre')->get();
+
         return view('empleos.edit', compact('empleo', 'restaurantes', 'departamentos'));
     }
 
-    /**
-     * Actualizar una oferta existente con su ubicación en cascada.
-     * Ruta: PUT /admin/empleos/{empleo}  →  name('admin.empleos.update')
-     */
     public function update(Request $request, Empleo $empleo)
     {
         $validated = $request->validate([
             'restaurante_id'  => 'required|exists:restaurantes,id',
-            'departamento_id' => 'required|exists:departamentos,id', // Validación integrada
-            'municipio_id'    => 'required|exists:municipios,id',    // Validación integrada
+            'departamento_id' => 'required|exists:departamentos,id',
+            'municipio_id'    => 'required|exists:municipios,id',
             'titulo'          => 'required|string|max:200',
             'descripcion'     => 'required|string',
             'requisitos'      => 'nullable|string',
@@ -172,10 +260,6 @@ class EmpleoController extends Controller
             ->with('success', '✅ Oferta actualizada correctamente.');
     }
 
-    /**
-     * Eliminar oferta de manera física.
-     * Ruta: DELETE /admin/empleos/{empleo}  →  name('admin.empleos.destroy')
-     */
     public function destroy(Empleo $empleo)
     {
         $empleo->delete();

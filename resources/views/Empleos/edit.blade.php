@@ -18,10 +18,22 @@
     </x-slot>
 
     <div class="max-w-3xl mx-auto">
+
+        {{-- ✅ Form eliminar FUERA del form principal para evitar forms anidados --}}
+        <form id="form-eliminar"
+              action="{{ route('admin.empleos.destroy', $empleo) }}"
+              method="POST"
+              onsubmit="return confirm('¿Eliminar esta oferta permanentemente?')"
+              style="display: none;">
+            @csrf @method('DELETE')
+        </form>
+
         <form action="{{ route('admin.empleos.update', $empleo) }}" method="POST" class="space-y-6">
             @csrf @method('PUT')
 
-            {{-- Errores globales --}}
+            <input type="hidden" name="departamento_id" value="{{ $empleo->departamento_id }}">
+            <input type="hidden" name="municipio_id" value="{{ $empleo->municipio_id }}">
+
             @if($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl text-sm">
                     <p class="font-semibold mb-1"><i class="fas fa-exclamation-circle mr-1"></i> Corrige los siguientes errores:</p>
@@ -33,14 +45,12 @@
                 </div>
             @endif
 
-            {{-- Card principal --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
 
                 <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 pb-3">
                     Información de la Vacante
                 </h3>
 
-                {{-- Restaurante --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Restaurante <span class="text-red-500">*</span>
@@ -60,7 +70,6 @@
                     @enderror
                 </div>
 
-                {{-- Título --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Título del puesto <span class="text-red-500">*</span>
@@ -74,7 +83,6 @@
                     @enderror
                 </div>
 
-                {{-- Descripción --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Descripción del puesto <span class="text-red-500">*</span>
@@ -87,7 +95,6 @@
                     @enderror
                 </div>
 
-                {{-- Requisitos --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Requisitos <span class="text-gray-400 font-normal">(opcional)</span>
@@ -97,7 +104,6 @@
                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none">{{ old('requisitos', $empleo->requisitos) }}</textarea>
                 </div>
 
-                {{-- Tipo contrato + Salario --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tipo de contrato</label>
@@ -127,7 +133,6 @@
                     </div>
                 </div>
 
-                {{-- Fecha límite + Estado --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -140,39 +145,48 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="flex items-end pb-1">
-                        <label class="flex items-center gap-3 cursor-pointer select-none">
-                            <div class="relative">
-                                <input type="hidden" name="activo" value="0">
-                                <input type="checkbox" name="activo" value="1" id="activo"
-                                       {{ old('activo', $empleo->activo) ? 'checked' : '' }}
-                                       class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-checked:bg-blue-500 rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-blue-300"></div>
-                                <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+
+                    <!-- TOGGLE MEJORADO -->
+                    <div style="display: flex; align-items: flex-end; padding-bottom: 4px;">
+                        <input type="hidden" name="activo" value="0">
+                        <input type="checkbox" name="activo" value="1" id="activo"
+                               @if(old('activo', $empleo->activo)) checked @endif
+                               style="display: none;"
+                               onchange="actualizarEstadoToggle(this)">
+
+                        <label for="activo" id="toggle-label"
+                               style="display: inline-flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; margin: 0; padding: 10px 16px; border-radius: 12px; border: 2px solid; transition: all 0.2s ease;">
+                            <div id="toggle-track"
+                                 style="position: relative; width: 48px; height: 26px; border-radius: 999px; transition: background 0.2s ease; flex-shrink: 0;">
+                                <div id="toggle-thumb"
+                                     style="position: absolute; top: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left 0.2s ease;"></div>
                             </div>
-                            <span class="text-sm font-semibold text-gray-700">Oferta activa (visible al público)</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i id="toggle-icon" class="fas" style="font-size: 15px;"></i>
+                                <div>
+                                    <div id="toggle-texto" style="font-size: 0.875rem; font-weight: 700; line-height: 1.2;"></div>
+                                    <div id="toggle-subtexto" style="font-size: 0.72rem; font-weight: 400; opacity: 0.75; line-height: 1.2;"></div>
+                                </div>
+                            </div>
                         </label>
                     </div>
                 </div>
+
             </div>
 
-            {{-- Info de creación --}}
             <div class="bg-gray-50 rounded-xl px-5 py-3 text-xs text-gray-400 flex items-center gap-2">
                 <i class="fas fa-info-circle"></i>
                 Creada el {{ $empleo->created_at->format('d M Y \a \l\a\s H:i') }}
                 · Última actualización: {{ $empleo->updated_at->diffForHumans() }}
             </div>
 
-            {{-- Botones --}}
+            {{-- ✅ Botones — sin form anidado --}}
             <div class="flex items-center justify-between">
-                <form action="{{ route('admin.empleos.destroy', $empleo) }}" method="POST"
-                      onsubmit="return confirm('¿Eliminar esta oferta permanentemente?')">
-                    @csrf @method('DELETE')
-                    <button type="submit"
-                            class="inline-flex items-center gap-2 text-red-500 hover:text-red-700 text-sm font-semibold transition-colors">
-                        <i class="fas fa-trash"></i> Eliminar oferta
-                    </button>
-                </form>
+                <button type="button"
+                        onclick="document.getElementById('form-eliminar').submit()"
+                        class="inline-flex items-center gap-2 text-red-500 hover:text-red-700 text-sm font-semibold transition-colors">
+                    <i class="fas fa-trash"></i> Eliminar oferta
+                </button>
 
                 <div class="flex items-center gap-3">
                     <a href="{{ route('admin.empleos.index') }}"
@@ -187,4 +201,43 @@
             </div>
         </form>
     </div>
+
+    <script>
+        function actualizarEstadoToggle(checkbox) {
+            const label    = document.getElementById('toggle-label');
+            const track    = document.getElementById('toggle-track');
+            const thumb    = document.getElementById('toggle-thumb');
+            const icon     = document.getElementById('toggle-icon');
+            const texto    = document.getElementById('toggle-texto');
+            const subtexto = document.getElementById('toggle-subtexto');
+
+            if (checkbox.checked) {
+                label.style.borderColor     = '#2563eb';
+                label.style.backgroundColor = '#eff6ff';
+                track.style.backgroundColor = '#2563eb';
+                thumb.style.left            = '25px';
+                icon.className              = 'fas fa-circle-check';
+                icon.style.color            = '#2563eb';
+                texto.textContent           = 'Oferta Activa';
+                texto.style.color           = '#1d4ed8';
+                subtexto.textContent        = 'Visible para los postulantes';
+                subtexto.style.color        = '#3b82f6';
+            } else {
+                label.style.borderColor     = '#d1d5db';
+                label.style.backgroundColor = '#f9fafb';
+                track.style.backgroundColor = '#9ca3af';
+                thumb.style.left            = '3px';
+                icon.className              = 'fas fa-circle-xmark';
+                icon.style.color            = '#6b7280';
+                texto.textContent           = 'Oferta Inactiva';
+                texto.style.color           = '#374151';
+                subtexto.textContent        = 'No visible para postulantes';
+                subtexto.style.color        = '#9ca3af';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            actualizarEstadoToggle(document.getElementById('activo'));
+        });
+    </script>
 </x-app-layout>

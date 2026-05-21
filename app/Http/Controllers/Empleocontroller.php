@@ -214,7 +214,8 @@ class EmpleoController extends Controller
             'activo'          => 'nullable|boolean',
         ]);
 
-        $validated['activo'] = $request->boolean('activo', true);
+        // ✅ CORREGIDO: lee explícitamente el valor 1 o 0 del hidden + checkbox
+        $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
 
         Empleo::create($validated);
 
@@ -252,7 +253,8 @@ class EmpleoController extends Controller
             'activo'          => 'nullable|boolean',
         ]);
 
-        $validated['activo'] = $request->boolean('activo', true);
+        // ✅ CORREGIDO: lee explícitamente el valor 1 o 0 del hidden + checkbox
+        $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
 
         $empleo->update($validated);
 

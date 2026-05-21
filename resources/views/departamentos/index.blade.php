@@ -1,108 +1,151 @@
+{{-- resources/views/departamentos/index.blade.php --}}
 @extends('layouts.app')
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 @section('content')
-{{-- El contenedor principal debe tener padding para no tocar los bordes del sidebar --}}
-<div class="p-6 lg:p-8 space-y-8">
+<div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
     
-    {{-- Header unificado con el estilo de tu Dashboard --}}
-    <div class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    {{-- ── Encabezado Principal ── --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800">Gestión de Departamentos</h2>
-            <p class="text-gray-500 text-sm">Panel de control geográfico y densidad de establecimientos.</p>
+            <h1 class="h3 mb-1 text-dark fw-bold" style="color: #2d3748 !important;">
+                <i class="bi bi-geo text-primary me-2"></i> Gestión de Departamentos
+            </h1>
+            <p class="text-muted mb-0 small">
+                <i class="bi bi-circle-fill text-secondary me-1" style="font-size: 6px; vertical-align: middle;"></i> Panel de control geográfico y densidad de establecimientos.
+            </p>
         </div>
-        <div class="mt-4 md:mt-0">
-            {{-- MODIFICADO: Corregida la ruta de 'departamentos.nuevo' a 'departamentos.create' para evitar el error de ruta no definida --}}
-            <a href="{{ route('departamentos.create') }}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md active:scale-95">
-                <i class="fas fa-plus-circle"></i> Agregar Departamento
-            </a>
+        <a href="{{ route('departamentos.create') }}" class="btn btn-primary px-4 rounded-pill shadow-sm fw-semibold">
+            <i class="bi bi-plus-lg me-1"></i> Agregar Departamento
+        </a>
+    </div>
+
+    {{-- ── Mensaje de Éxito ── --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                <div>{{ session('success') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    {{-- ── Barra de Búsqueda y Herramientas ── --}}
+    <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white p-3">
+        <div class="row g-3 align-items-center justify-content-between">
+            <div class="col-12 col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="busquedaDepartamento" class="form-control bg-light border-start-0 ps-0" placeholder="Buscar por nombre o país..." style="box-shadow: none;">
+                </div>
+            </div>
+            <div class="col-12 col-md-auto text-md-end">
+                <button class="btn btn-white border bg-white text-secondary fw-bold shadow-sm d-inline-flex align-items-center gap-2 px-3 py-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-filetype-pdf text-danger fs-6"></i> EXPORTAR PDF
+                </button>
+            </div>
         </div>
     </div>
 
-    {{-- Buscador estilizado como los inputs del sistema --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="relative group">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
-            <input type="text" id="busquedaDepartamento" 
-                placeholder="Buscar por nombre o país..." 
-                class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none">
-        </div>
-        <div class="flex justify-end items-center">
-            <button class="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all">
-                <i class="fas fa-file-pdf text-red-500"></i> EXPORTAR PDF
-            </button>
-        </div>
-    </div>
-
-    {{-- Tabla envuelta en una tarjeta igual a las de "Resumen General" --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse" id="tablaDepartamentos">
-                <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="py-4 px-6 text-[11px] font-bold uppercase text-gray-400 tracking-wider">ID</th>
-                        <th class="py-4 px-6 text-[11px] font-bold uppercase text-gray-400 tracking-wider">Información Regional</th>
-                        <th class="py-4 px-6 text-[11px] font-bold uppercase text-gray-400 tracking-wider text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50">
-                    @forelse($departamentos as $depto)
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="py-4 px-6">
-                            <span class="text-xs font-semibold text-gray-400">#{{ $depto->id }}</span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-bold text-gray-700 uppercase tracking-tight">
-                                    {{ $depto->nombre }}
-                                </span>
-                                <div class="flex items-center gap-3 mt-1">
-                                    <span class="flex items-center gap-1 text-[10px] font-bold text-gray-400">
-                                        <i class="fas fa-flag text-[9px]"></i> NICARAGUA
-                                    </span>
-                                    
-                                    {{-- Enlace de redirección directo con filtro por parámetro de URL --}}
-                                    <a href="{{ route('restaurantes.index', ['departamento_id' => $depto->id]) }}" 
-                                       class="text-[10px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-md flex items-center gap-1 transition-all no-underline border-0">
-                                        <i class="fas fa-utensils text-[9px]"></i> 
-                                        <span>{{ $depto->restaurantes_count }} Restaurantes inscritos</span>
-                                    </a>
+    {{-- ── Tabla Principal de Departamentos ── --}}
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle" id="tablaDepartamentos">
+                    <thead class="bg-light text-uppercase text-muted border-bottom" style="background-color: #f8f9fa !important;">
+                        <tr>
+                            <th class="ps-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; width: 100px;">ID</th>
+                            <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Información Regional</th>
+                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; width: 140px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        @forelse($departamentos as $depto)
+                        <tr class="border-bottom" style="border-color: #edf2f7 !important;">
+                            
+                            {{-- ID --}}
+                            <td class="ps-4 py-3">
+                                <span class="text-muted fw-semibold" style="font-size: 0.85rem;">#{{ $depto->id }}</span>
+                            </td>
+                            
+                            {{-- Información Regional --}}
+                            <td class="py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary rounded-pill me-3" style="width: 4px; height: 32px;"></div>
+                                    <div>
+                                        <span class="fw-bold text-dark d-block text-uppercase tracking-wide" style="color: #2d3748 !important; font-size: 0.95rem;">
+                                            {{ $depto->nombre }}
+                                        </span>
+                                        <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                                            <span class="text-muted fw-bold d-inline-flex align-items-center gap-1" style="font-size: 0.7rem; letter-spacing: 0.3px;">
+                                                <i class="bi bi-flag-fill text-secondary"></i> NICARAGUA
+                                            </span>
+                                            
+                                            <a href="{{ route('admin.restaurantes.index', ['departamento_id' => $depto->id]) }}" 
+                                               class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 text-decoration-none d-inline-flex align-items-center gap-1 fw-bold transition-all btn-badge" style="font-size: 0.7rem;">
+                                                <i class="bi bi-egg-fried"></i> 
+                                                <span>{{ $depto->restaurantes_count }} Restaurantes inscritos</span>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex justify-center gap-2">
-                                <a href="{{ route('departamentos.edit', $depto->id) }}" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </a>
-                                <form action="{{ route('departamentos.destroy', $depto->id) }}" method="POST" class="inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" onclick="return confirm('¿Eliminar?')">
-                                        <i class="fas fa-trash-alt text-sm"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="3" class="py-10 text-center text-gray-400 text-sm italic">No hay datos disponibles.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            </td>
+                            
+                            {{-- Panel de Acciones --}}
+                            <td class="text-end pe-4 py-3">
+                                <div class="d-flex justify-content-end align-items-center gap-3">
+                                    <a href="{{ route('departamentos.edit', $depto->id) }}" class="text-secondary p-1 action-icon-edit" title="Editar Departamento" style="transition: color 0.2s;">
+                                        <i class="bi bi-pencil fs-5"></i>
+                                    </a>
+                                    
+                                    <form action="{{ route('departamentos.destroy', $depto->id) }}" method="POST" class="d-inline m-0" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este departamento?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-link text-secondary p-1 m-0 border-0 align-baseline action-icon-delete" title="Eliminar Departamento" style="box-shadow: none; text-decoration: none;">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-5">
+                                <i class="bi bi-geo-alt-fill d-block display-6 text-muted mb-3"></i>
+                                <span class="fs-6 d-block italic">No hay datos disponibles en este momento.</span>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-{{-- Scripts de Control --}}
+<style>
+    .action-icon-edit:hover { color: #ffc107 !important; }
+    .action-icon-delete:hover { color: #dc3545 !important; }
+    .table-hover tbody tr:hover { background-color: #f8fafc !important; }
+    .btn-badge:hover { background-color: rgba(13, 110, 253, 0.2) !important; }
+</style>
+
+{{-- Scripts de Filtro Funcional --}}
 <script>
-    // Buscador original perfectamente funcional
     document.getElementById('busquedaDepartamento').addEventListener('input', function() {
         const val = this.value.toLowerCase();
         document.querySelectorAll('#tablaDepartamentos tbody tr').forEach(row => {
+            // Asegurarse de que no evalúe la fila vacía
+            if(row.querySelector('td[colspan]')) return;
+            
             const text = row.innerText.toLowerCase();
             row.style.display = text.includes(val) ? '' : 'none';
         });
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

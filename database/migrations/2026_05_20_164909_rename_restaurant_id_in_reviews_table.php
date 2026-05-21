@@ -21,9 +21,13 @@ return new class extends Migration
             // Relación con restaurantes
             $table->foreignId('restaurante_id')->constrained('restaurantes')->onDelete('cascade');
             
-            // Columnas típicas de una reseña (puedes añadir o quitar las que necesites)
+            // Columnas requeridas por tu sistema según el error SQL
+            $table->integer('rating'); // El puntaje numérico (ej. 3)
+            $table->string('title')->nullable(); // El título de la reseña
+            $table->text('body')->nullable(); // El contenido principal del texto
+            
+            // Mantenemos la columna comentario por si acaso se usa en otra vista
             $table->text('comentario')->nullable();
-            $table->integer('estrellas')->default(5); 
             
             $table->timestamps();
 

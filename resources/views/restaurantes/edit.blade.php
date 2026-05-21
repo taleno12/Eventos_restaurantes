@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
-            <a href="{{ route('restaurantes.index') }}"
+            <a href="{{ route('admin.restaurantes.index') }}"
                class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors no-underline">
                 <i class="fas fa-arrow-left text-sm"></i>
             </a>
@@ -13,7 +13,7 @@
     </x-slot>
 
     <div class="max-w-3xl">
-        <form action="{{ route('restaurantes.update', $restaurante->id) }}" method="POST">
+        <form action="{{ route('admin.restaurantes.update', $restaurante->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -192,7 +192,7 @@
 
             {{-- Botones de Control Inferior --}}
             <div class="flex items-center justify-between px-2">
-                <a href="{{ route('restaurantes.index') }}"
+                <a href="{{ route('admin.restaurantes.index') }}"
                    class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors no-underline">
                     <i class="fas fa-chevron-left mr-1 text-xs"></i> Cancelar cambios
                 </a>

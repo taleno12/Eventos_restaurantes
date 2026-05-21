@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
 use App\Models\Departamento;
+use App\Models\RestauranteFoto; // Modelo de las fotos secundarias de la galería
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RestauranteController extends Controller
 {
@@ -39,8 +41,10 @@ class RestauranteController extends Controller
 
     public function publicShow(Restaurante $restaurante)
     {
-        $restaurante->load(['departamento', 'municipio']);
-        return view('restaurantes.show', compact('restaurante'));
+        // Se cargan las imágenes utilizando la relación del modelo
+        $restaurante->load(['departamento', 'municipio', 'imagenes']);
+        
+        return view('restaurantes.public_show', compact('restaurante'));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -91,23 +95,53 @@ class RestauranteController extends Controller
             'tiktok'          => 'nullable|url|max:255',
             'facebook'        => 'nullable|url|max:255',
             'whatsapp'        => 'nullable|string|max:50',
+            'descripcion'     => 'nullable|string',
+            // Validación de imágenes (Máximo 3MB por archivo)
+            'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'galeria'          => 'nullable|array|max:4',
+            'galeria.*'        => 'image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
 
-        Restaurante::create($request->all());
+        // 1. Instanciar el restaurante omitiendo los archivos temporales
+        $restaurante = new Restaurante($request->except(['galeria', 'imagen_principal']));
 
-        return redirect()->route('admin.restaurantes.index')
+        // 2. Guardar imagen principal si se sube una
+        if ($request->hasFile('imagen_principal')) {
+            $pathPrincipal = $request->file('imagen_principal')->store('restaurantes/principales', 'public');
+            $restaurante->foto_portada = $pathPrincipal; 
+        }
+
+        $restaurante->save();
+
+        // 3. Guardar las fotos opcionales de la galería (Hasta 4 fotos)
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $foto) {
+                $pathFoto = $foto->store('restaurantes/galerias', 'public');
+                
+                // CORRECCIÓN: Usamos 'ruta_foto' para coincidir con tu BD
+                RestauranteFoto::create([
+                    'restaurante_id' => $restaurante->id,
+                    'ruta_foto'      => $pathFoto
+                ]);
+            }
+        }
+
+        // REDIRECCIÓN ACTUALIZADA: coincide con name('restaurantes.index')
+        return redirect()->route('restaurantes.index')
             ->with('success', 'Restaurante agregado correctamente.');
     }
 
-    public function show(Restaurante $restaurante)
+    public function adminShow(Restaurante $restaurante)
     {
-        $restaurante->load(['departamento', 'municipio']);
+        $restaurante->load(['departamento', 'municipio', 'imagenes']);
+        
         return view('restaurantes.show', compact('restaurante'));
     }
 
     public function edit(Restaurante $restaurante)
     {
         $departamentos = Departamento::all();
+        $restaurante->load('imagenes'); 
         return view('restaurantes.edit', compact('restaurante', 'departamentos'));
     }
 
@@ -123,25 +157,57 @@ class RestauranteController extends Controller
             'tiktok'          => 'nullable|url|max:255',
             'facebook'        => 'nullable|url|max:255',
             'whatsapp'        => 'nullable|string|max:50',
+            'descripcion'     => 'nullable|string',
+            'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'galeria'          => 'nullable|array|max:4',
+            'galeria.*'        => 'image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
 
-        $restaurante->update($request->all());
+        // 1. Asignar los campos básicos
+        $restaurante->fill($request->except(['galeria', 'imagen_principal']));
 
-        return redirect()->route('admin.restaurantes.index')
+        // 2. Si sube una nueva imagen principal, reemplazar la anterior
+        if ($request->hasFile('imagen_principal')) {
+            if ($restaurante->foto_portada) {
+                Storage::disk('public')->delete($restaurante->foto_portada);
+            }
+            $pathPrincipal = $request->file('imagen_principal')->store('restaurantes/principales', 'public');
+            $restaurante->foto_portada = $pathPrincipal;
+        }
+
+        $restaurante->save();
+
+        // 3. Agregar nuevas fotos a la galería
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $foto) {
+                $pathFoto = $foto->store('restaurantes/galerias', 'public');
+                
+                // CORRECCIÓN: Usamos 'ruta_foto' para coincidir con tu BD
+                RestauranteFoto::create([
+                    'restaurante_id' => $restaurante->id,
+                    'ruta_foto'      => $pathFoto
+                ]);
+            }
+        }
+
+        // REDIRECCIÓN ACTUALIZADA: coincide con name('restaurantes.index')
+        return redirect()->route('restaurantes.index')
             ->with('success', 'Datos actualizados correctamente.');
     }
 
     public function destroy(Restaurante $restaurante)
     {
+        if ($restaurante->foto_portada) {
+            Storage::disk('public')->delete($restaurante->foto_portada);
+        }
+
         $restaurante->delete();
 
-        return redirect()->route('admin.restaurantes.index')
+        // REDIRECCIÓN ACTUALIZADA: coincide con name('restaurantes.index')
+        return redirect()->route('restaurantes.index')
             ->with('success', 'Restaurante eliminado correctamente.');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // API ENDPOINT: Restaurantes por municipio
-    // ─────────────────────────────────────────────────────────────────────────
     public function getPorMunicipio($municipio_id)
     {
         $restaurantes = Restaurante::where('municipio_id', $municipio_id)

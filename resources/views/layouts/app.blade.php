@@ -184,9 +184,18 @@
                 @else
                     <div class="flex justify-between items-center mb-8">
                         <h2 class="text-2xl font-bold text-gray-800">Panel de Control</h2>
-                        <span class="text-xs bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full font-bold border border-blue-100">
-                            <i class="fas fa-user-circle mr-1"></i> Admin: {{ Auth::user()->email }}
-                        </span>
+                        
+                        @auth
+                            {{-- Solo muestra el badge si el usuario está autenticado en la plataforma --}}
+                            <span class="text-xs bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full font-bold border border-blue-100">
+                                <i class="fas fa-user-circle mr-1"></i> Admin: {{ Auth::user()->email }}
+                            </span>
+                        @else
+                            {{-- Si entra un visitante externo a un perfil público --}}
+                            <span class="text-xs bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full font-bold border border-gray-200">
+                                <i class="fas fa-eye mr-1"></i> Modo Visitante
+                            </span>
+                        @endauth
                     </div>
                 @endisset
 

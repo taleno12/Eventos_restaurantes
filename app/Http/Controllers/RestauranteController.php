@@ -84,7 +84,7 @@ class RestauranteController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {        
         $request->validate([
             'nombre'          => 'required|string|max:255',
             'email'           => 'required|email|unique:restaurantes,email',
@@ -127,7 +127,7 @@ class RestauranteController extends Controller
         }
 
         // REDIRECCIÓN ACTUALIZADA: coincide con name('restaurantes.index')
-        return redirect()->route('restaurantes.index')
+        return redirect()->route('admin.restaurantes.index')
             ->with('success', 'Restaurante agregado correctamente.');
     }
 
@@ -191,7 +191,7 @@ class RestauranteController extends Controller
         }
 
         // REDIRECCIÓN ACTUALIZADA: coincide con name('restaurantes.index')
-        return redirect()->route('restaurantes.index')
+        return redirect()->route('admin.restaurantes.index')
             ->with('success', 'Datos actualizados correctamente.');
     }
 
@@ -204,7 +204,7 @@ class RestauranteController extends Controller
         $restaurante->delete();
 
         // REDIRECCIÓN ACTUALIZADA: coincide con name('restaurantes.index')
-        return redirect()->route('restaurantes.index')
+        return redirect()->route('admin.restaurantes.index')
             ->with('success', 'Restaurante eliminado correctamente.');
     }
 

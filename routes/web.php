@@ -50,14 +50,14 @@ Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
     return App\Models\Restaurante::where('departamento_id', $id)->get(['id', 'nombre']);
 })->name('api.public.departamentos.restaurantes');
 
-// ── REVIEWS Y SISTEMA DE COMENTARIOS (REQUIERE AUTH) ───────────────────────────
+// ── REVIEWS Y SISTEMA DE COMENTARIOS (REQUIERE AUTH) ─────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
-// ── PANEL DE CONTROL / DASHBOARD (VERIFICADO) ─────────────────────────────────
+// ── PANEL DE CONTROL / DASHBOARD (SOLO ADMIN) ────────────────────────────────
 Route::get('/dashboard', function () {
     return view('dashboard', [
         'totalRestaurantes'  => Restaurante::count(),
@@ -66,10 +66,10 @@ Route::get('/dashboard', function () {
         'totalPersonal'      => User::count(),
         'totalEmpleos'       => Empleo::where('activo', true)->count(),
     ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'admin'])->name('dashboard');
 
-// ── ÁREA ADMINISTRATIVA PROTEGIDA ─────────────────────────────────────────────
-Route::middleware('auth')->group(function () {
+// ── ÁREA ADMINISTRATIVA PROTEGIDA (SOLO ADMIN) ───────────────────────────────
+Route::middleware(['auth', 'admin'])->group(function () {
 
     // PERFIL DE USUARIO
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -78,17 +78,14 @@ Route::middleware('auth')->group(function () {
 
     // ADMINISTRACIÓN DE RESTAURANTES
     Route::prefix('admin/restaurantes')->name('admin.restaurantes.')->group(function () {
-        Route::get('/', [RestauranteController::class, 'index'])->name('index');
-        Route::get('/create', [RestauranteController::class, 'create'])->name('create');
-        Route::post('/', [RestauranteController::class, 'store'])->name('store');
-        Route::get('/{restaurante}', [RestauranteController::class, 'adminShow'])->name('show');
+        Route::get('/',                   [RestauranteController::class, 'index'])->name('index');
+        Route::get('/create',             [RestauranteController::class, 'create'])->name('create');
+        Route::post('/',                  [RestauranteController::class, 'store'])->name('store');
         Route::get('/{restaurante}/edit', [RestauranteController::class, 'edit'])->name('edit');
-        Route::put('/{restaurante}', [RestauranteController::class, 'update'])->name('update');
-        Route::delete('/{restaurante}', [RestauranteController::class, 'destroy'])->name('destroy');
+        Route::put('/{restaurante}',      [RestauranteController::class, 'update'])->name('update');
+        Route::delete('/{restaurante}',   [RestauranteController::class, 'destroy'])->name('destroy');
+        Route::get('/{restaurante}',      [RestauranteController::class, 'adminShow'])->name('show');
     });
-
-    // Alias directo para evitar el error de ruta no encontrada
-    Route::get('admin/restaurantes/create', [RestauranteController::class, 'create'])->name('restaurantes.create');
 
     // ADMINISTRACIÓN DE EVENTOS
     Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
@@ -110,9 +107,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // MÓDULOS DE GESTIÓN INTERNA
-    Route::get('/trabajadores', function () { return view('admin.trabajadores.form'); })->name('trabajadores.index');
-    Route::get('/contratos',    function () { return view('admin.contratos.form'); })->name('contratos.index');
-    Route::get('/soporte',      function () { return view('admin.soporte.form'); })->name('soporte.index');
+    Route::get('/trabajadores',  function () { return view('admin.trabajadores.form'); })->name('trabajadores.index');
+    Route::get('/contratos',     function () { return view('admin.contratos.form'); })->name('contratos.index');
+    Route::get('/soporte',       function () { return view('admin.soporte.form'); })->name('soporte.index');
     Route::get('/configuracion', function () { return view('admin.configuracion.form'); })->name('configuracion.index');
 
     // APIs INTERNAS

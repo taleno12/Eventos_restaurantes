@@ -152,6 +152,15 @@
                     </button>
                 </div>
             </form>
+
+            {{-- Separador + Botón Registro --}}
+<div class="pt-4 text-center animate-premium-up del-5">
+    <p class="text-[10px] text-gray-300 uppercase tracking-widest mb-4">¿No tienes cuenta?</p>
+    <a href="{{ route('register') }}"
+       class="block w-full border border-black/10 text-black font-bold py-5 rounded-2xl uppercase tracking-[0.2em] text-[10px] hover:bg-black hover:text-white transition-all duration-300 no-underline text-center">
+        Crear Cuenta
+    </a>
+</div>
         </div>
 
         <!-- Volver a la Galería con Animación Up Final -->

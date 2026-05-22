@@ -122,7 +122,7 @@
             </div>
 
             <div class="relative z-10 flex flex-row gap-3 w-full md:w-auto justify-center">
-                <a href="{{ route('restaurantes.create') }}" class="flex-1 md:flex-none inline-flex items-center justify-center px-6 py-3.5 bg-white text-slate-900 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-md active:scale-95 whitespace-nowrap">
+                <a href="{{ route('admin.restaurantes.create') }}" class="flex-1 md:flex-none inline-flex items-center justify-center px-6 py-3.5 bg-white text-slate-900 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-md active:scale-95 whitespace-nowrap">
                     <i class="fas fa-plus me-2"></i> Nuevo Local
                 </a>
                 <a href="{{ route('eventos.create') }}" class="flex-1 md:flex-none inline-flex items-center justify-center px-6 py-3.5 bg-slate-800 text-white border border-slate-700 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-700 transition-all active:scale-95 whitespace-nowrap">

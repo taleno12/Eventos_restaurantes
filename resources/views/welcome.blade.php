@@ -114,11 +114,7 @@
                         <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
                             <i class="fas fa-utensils text-white"></i>
                         </div>
-<<<<<<< HEAD
-                        <span class="text-2xl font-bold tracking-tight premium-title italic">Gastro<span class="text-orange-600">Nic </span></span>
-=======
                         <span class="text-2xl font-bold tracking-tight premium-title italic">Gastro<span class="text-orange-600">POLLA 👆🏿 </span></span>
->>>>>>> 2b95d130d82212780ac0a2fd0ee0cfcb060db9b3
                     </div>
 
                     {{-- Barra de búsqueda Desktop optimizada con filtrado en cascada Departamento -> Restaurante --}}
@@ -205,12 +201,20 @@
                         </a>
 
                         @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}" class="text-sm font-semibold hover:text-orange-600 transition-colors no-underline">Panel Control</a>
-                            @else
-                                <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-orange-600 transition-colors sm:inline no-underline">Ingresar</a>
-                            @endauth
-                        @endif
+    @auth
+        @if(auth()->user()->email === 'admin@turismo.ni')
+            <a href="{{ url('/dashboard') }}" class="text-sm font-semibold hover:text-orange-600 transition-colors no-underline">Panel Control</a>
+        @endif
+        <form method="POST" action="{{ route('logout') }}" class="inline">
+            @csrf
+            <button type="submit" class="text-sm font-semibold text-stone-600 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-2">
+                Salir
+            </button>
+        </form>
+    @else
+        <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-orange-600 transition-colors sm:inline no-underline">Ingresar</a>
+    @endauth
+@endif
                     </div>
                 </div>
             </div>

@@ -75,8 +75,10 @@
                         <div class="relative group w-full max-w-md">
                             <div class="absolute inset-0 bg-orange-600/20 rounded-[2rem] blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
                             <div class="relative rounded-[2rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 aspect-[4/3] sm:aspect-video lg:aspect-square bg-stone-900">
-                                @if($restaurante->imagen)
-                                    <img src="{{ asset('storage/' . $restaurante->imagen) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ $restaurante->nombre }}">
+                                @if($restaurante->foto_portada)
+                                    <img src="{{ asset('storage/' . $restaurante->foto_portada) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ $restaurante->nombre }}">
+                                @elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
+                                    <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ $restaurante->nombre }}">
                                 @else
                                     <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Gastronomía">
                                 @endif
@@ -145,6 +147,23 @@
                             Bienvenidos a <span class="font-bold text-stone-900">{{ $restaurante->nombre }}</span>. Somos especialistas en ofrecer la mejor experiencia culinaria en la hermosa localidad de {{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}. ¡Visítanos y disfruta de una sazón inigualable!
                         </p>
                     </section>
+                    {{-- ══ GALERÍA DE FOTOS ══ --}}
+@if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
+    <section class="bg-white rounded-3xl p-8 sm:p-10 border border-stone-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
+        <h2 class="text-xs font-black uppercase tracking-widest text-stone-400 flex items-center gap-2.5 border-b border-stone-100 pb-4 mb-6">
+            <i class="fas fa-images text-orange-600 text-sm"></i> Galería de Fotos
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            @foreach($restaurante->imagenes as $foto)
+                <div class="aspect-square rounded-2xl overflow-hidden border border-stone-100">
+                    <img src="{{ asset('storage/' . $foto->ruta_foto) }}"
+                         alt="Foto de {{ $restaurante->nombre }}"
+                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                </div>
+            @endforeach
+        </div>
+    </section>
+@endif
 
                     {{-- ══ RESEÑAS ══ --}}
                     <section class="bg-white rounded-3xl p-8 sm:p-10 border border-stone-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">

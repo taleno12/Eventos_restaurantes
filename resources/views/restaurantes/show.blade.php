@@ -37,7 +37,7 @@
                      alt="Portada {{ $restaurante->nombre }}" 
                      class="w-full h-full object-cover opacity-50 scale-105 transition-transform duration-700 hover:scale-100">
             @elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta) }}" 
+                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}" 
                      alt="Portada {{ $restaurante->nombre }}" 
                      class="w-full h-full object-cover opacity-50 scale-105">
             @endif
@@ -123,7 +123,7 @@
                                 <img src="{{ asset('storage/' . $restaurante->foto_portada) }}" 
                                      alt="Imagen principal" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             @elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta) }}" 
+                                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}" 
                                      alt="Imagen principal" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
@@ -139,7 +139,7 @@
                             @if($restaurante->imagenes && $restaurante->imagenes->count() > 1)
                                 @foreach($restaurante->imagenes->skip($restaurante->foto_portada ? 0 : 1)->take(3) as $imagen)
                                     <div class="aspect-video sm:aspect-[4/3] rounded-xl overflow-hidden bg-gray-50 border border-gray-100 group relative shadow-sm">
-                                        <img src="{{ asset('storage/' . $imagen->ruta) }}" 
+                                        <img src="{{ asset('storage/' . $imagen->ruta_foto) }}" 
                                              alt="Galería" class="w-full h-full object-cover hover:scale-110 transition-all duration-300">
                                     </div>
                                 @endforeach

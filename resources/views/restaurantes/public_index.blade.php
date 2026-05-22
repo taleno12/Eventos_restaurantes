@@ -229,8 +229,8 @@
 
                         {{-- Imagen --}}
                         <div class="card-img-wrap">
-                            @if($restaurante->imagen)
-                                <img src="{{ asset('storage/' . $restaurante->imagen) }}" alt="{{ $restaurante->nombre }}">
+                            @if($restaurante->foto_portada)
+                                <img src="{{ asset('storage/' . $restaurante->foto_portada) }}" alt="{{ $restaurante->nombre }}">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-50 to-stone-100/80 text-5xl">
                                     🍴

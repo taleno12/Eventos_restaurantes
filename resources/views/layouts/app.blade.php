@@ -172,6 +172,14 @@
                                 <span>Cerrar Sesión</span>
                             </button>
                         </form>
+
+                        <div class="mt-10 border-t border-gray-800/50 pt-4">
+    {{-- Botón Ver Sitio Web --}}
+    <a href="{{ route('home') }}"
+       class="nav-item text-blue-400 hover:text-blue-300">
+        <i class="fas fa-globe"></i>
+        <span>Ver Sitio Web</span>
+    </a>
                     </div>
                 </nav>
             </aside>

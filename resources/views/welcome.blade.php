@@ -21,17 +21,13 @@
                 from { transform: scale(1); }
                 to { transform: scale(1.1); }
             }
-            .animate-slow-zoom {
-                animation: slowZoom 10s infinite alternate;
-            }
+            .animate-slow-zoom { animation: slowZoom 10s infinite alternate; }
 
             @keyframes slideInLeftCustom {
                 from { transform: translateX(-100px); opacity: 0; }
                 to { transform: translateX(0); opacity: 1; }
             }
-            .animate-slide-left {
-                animation: slideInLeftCustom 1s ease-out forwards;
-            }
+            .animate-slide-left { animation: slideInLeftCustom 1s ease-out forwards; }
 
             .glass-card {
                 background: #ffffff;
@@ -48,44 +44,85 @@
             .carousel-item { transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; }
             .carousel-control-prev, .carousel-control-next { z-index: 20; width: 5%; }
 
-            /* Navbar search styles */
-            .nav-search-input {
-                background: rgba(245, 245, 244, 0.8);
-                border: 1px solid rgba(231, 229, 228, 0.8);
-                border-radius: 9999px;
-                padding: 0.45rem 1rem 0.45rem 2.5rem;
-                font-size: 0.85rem;
-                color: #1c1917;
-                transition: all 0.2s ease;
-                outline: none;
-                width: 140px;
+            /* ── NAVBAR SEARCH ───────────────────────────────────────────── */
+            .search-box {
+                display: flex;
+                align-items: stretch;
+                background: #f8f7f6;
+                border: 1.5px solid #e7e5e4;
+                border-radius: 18px;
+                overflow: hidden;
+                transition: border-color 0.2s, box-shadow 0.2s;
             }
-            .nav-search-input:focus {
+            .search-box:focus-within {
                 border-color: #ea580c;
-                box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+                box-shadow: 0 0 0 3px rgba(234,88,12,0.10);
                 background: #fff;
-                width: 170px;
             }
-            .nav-search-input::placeholder { color: #a8a29e; }
-
-            .nav-select {
-                background: rgba(245, 245, 244, 0.8);
-                border: 1px solid rgba(231, 229, 228, 0.8);
-                border-radius: 9999px;
-                padding: 0.45rem 2rem 0.45rem 2.5rem;
-                font-size: 0.85rem;
-                color: #1c1917;
-                appearance: none;
+            .search-segment {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 8px 16px;
+                min-width: 0;
+                flex: 1;
+                position: relative;
+            }
+            .search-segment + .search-segment::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 20%;
+                height: 60%;
+                width: 1px;
+                background: #e7e5e4;
+            }
+            .search-segment label {
+                font-size: 9px;
+                font-weight: 900;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: #a8a29e;
+                margin-bottom: 2px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
                 cursor: pointer;
-                transition: all 0.2s ease;
+            }
+            .search-segment select,
+            .search-segment input {
+                background: transparent;
+                border: none;
                 outline: none;
+                font-size: 13px;
+                font-weight: 600;
+                color: #1c1917;
+                font-family: 'Instrument Sans', sans-serif;
                 width: 100%;
+                padding: 0;
+                cursor: pointer;
             }
-            .nav-select:focus {
-                border-color: #ea580c;
-                box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
-                background: #fff;
+            .search-segment select option { font-weight: 500; }
+            .search-segment input::placeholder { color: #c4bfbb; font-weight: 500; }
+            .search-segment select:disabled { opacity: 0.45; cursor: not-allowed; }
+
+            .search-btn {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                background: #ea580c;
+                color: white;
+                border: none;
+                padding: 0 20px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background 0.2s;
+                white-space: nowrap;
+                border-radius: 0 16px 16px 0;
+                flex-shrink: 0;
             }
+            .search-btn:hover { background: #c2410c; }
 
             /* Mobile search panel */
             #mobileSearchPanel {
@@ -102,28 +139,78 @@
                 box-shadow: 0 8px 24px rgba(0,0,0,0.08);
             }
             #mobileSearchPanel.open { display: block; }
+
+            .nav-select-mobile {
+                background: #f8f7f6;
+                border: 1.5px solid #e7e5e4;
+                border-radius: 12px;
+                padding: 10px 16px;
+                font-size: 13px;
+                color: #1c1917;
+                appearance: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                outline: none;
+                width: 100%;
+                font-family: 'Instrument Sans', sans-serif;
+                font-weight: 600;
+            }
+            .nav-select-mobile:focus {
+                border-color: #ea580c;
+                box-shadow: 0 0 0 3px rgba(234,88,12,0.12);
+                background: #fff;
+            }
+            .nav-input-mobile {
+                background: #f8f7f6;
+                border: 1.5px solid #e7e5e4;
+                border-radius: 12px;
+                padding: 10px 16px;
+                font-size: 13px;
+                color: #1c1917;
+                transition: all 0.2s ease;
+                outline: none;
+                width: 100%;
+                font-family: 'Instrument Sans', sans-serif;
+                font-weight: 600;
+            }
+            .nav-input-mobile:focus {
+                border-color: #ea580c;
+                box-shadow: 0 0 0 3px rgba(234,88,12,0.12);
+                background: #fff;
+            }
+            .nav-input-mobile::placeholder { color: #c4bfbb; }
         </style>
     </head>
     <body class="bg-stone-50 text-stone-900">
 
-        <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-stone-200">
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- NAVBAR MEJORADO                                               --}}
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-20 items-center gap-4">
 
-                    <div class="flex items-center gap-2 shrink-0">
+                    {{-- LOGO --}}
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 no-underline">
                         <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
-                            <i class="fas fa-utensils text-white"></i>
+                            <i class="fas fa-utensils text-white text-sm"></i>
                         </div>
-                        <span class="text-2xl font-bold tracking-tight premium-title italic">Gastro<span class="text-orange-600">POLLA 👆🏿 </span></span>
-                    </div>
+                        <span class="text-xl font-bold tracking-tight premium-title italic text-stone-900">
+                            Gastro<span class="text-orange-600">Nicaragua</span>
+                        </span>
+                    </a>
 
-                    {{-- Barra de búsqueda Desktop optimizada con filtrado en cascada Departamento -> Restaurante --}}
-                    <form action="{{ route('home') }}" method="GET" class="hidden md:flex items-center gap-2 flex-1 max-w-3xl">
+                    {{-- BARRA DE BÚSQUEDA DESKTOP --}}
+                    <form action="{{ route('home') }}" method="GET"
+                          class="hidden md:flex flex-1 max-w-2xl search-box">
 
-                        {{-- 1. Selección de Destino (Departamento) --}}
-                        <div class="relative flex-1">
-                            <i class="fas fa-map absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                            <select id="search-departamento" name="departamento" class="nav-select">
+                        {{-- Destino --}}
+                        <div class="search-segment" style="min-width:130px;">
+                            <label for="search-departamento">
+                                <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i>
+                                Destino
+                            </label>
+                            <select id="search-departamento" name="departamento">
                                 <option value="">Todos los destinos</option>
                                 @foreach($departamentos as $depto)
                                     <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
@@ -133,11 +220,15 @@
                             </select>
                         </div>
 
-                        {{-- 2. Selección de Local (Restaurante filtrado de forma reactiva) --}}
-                        <div class="relative flex-1">
-                            <i class="fas fa-store absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                            <select id="search-restaurante" name="restaurante_id" class="nav-select" {{ request('departamento') ? '' : 'disabled' }}>
-                                <option value="">Todos los locales</option>
+                        {{-- Local --}}
+                        <div class="search-segment" style="min-width:130px;">
+                            <label for="search-restaurante">
+                                <i class="fas fa-store" style="color:#ea580c;"></i>
+                                Local
+                            </label>
+                            <select id="search-restaurante" name="restaurante_id"
+                                    {{ request('departamento') ? '' : 'disabled' }}>
+                                <option value="">{{ request('departamento') ? 'Todos los locales' : 'Elige destino...' }}</option>
                                 @if(request('departamento'))
                                     @foreach($restaurantes->where('departamento_id', request('departamento')) as $rest)
                                         <option value="{{ $rest->id }}" {{ request('restaurante_id') == $rest->id ? 'selected' : '' }}>
@@ -148,83 +239,93 @@
                             </select>
                         </div>
 
-                        {{-- Filtro por Especialidad --}}
-                        <div class="relative flex-1">
-                            <i class="fas fa-utensils absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                            <input type="text" name="especialidad" value="{{ request('especialidad') }}"
-                                   class="nav-search-input w-full"
-                                   placeholder="Especialidad (Asados, Mariscos...)">
+                        {{-- Especialidad --}}
+                        <div class="search-segment" style="min-width:120px;">
+                            <label for="search-especialidad">
+                                <i class="fas fa-utensils" style="color:#ea580c;"></i>
+                                Especialidad
+                            </label>
+                            <input type="text" id="search-especialidad" name="especialidad"
+                                   value="{{ request('especialidad') }}"
+                                   placeholder="Asados, mariscos...">
                         </div>
 
-                        <button type="submit"
-                                class="bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-orange-700 transition-all shadow-md shadow-orange-200 flex items-center gap-2 shrink-0 border-0 cursor-pointer">
-                            <span>Buscador</span>
-                            <i class="fas fa-arrow-right text-xs"></i>
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search" style="font-size:12px;"></i>
+                            <span>Buscar</span>
                         </button>
                     </form>
 
-                    <div class="flex items-center gap-3 shrink-0">
+                    {{-- LINKS DERECHA --}}
+                    <div class="flex items-center gap-1 shrink-0">
+
                         <button id="mobileSearchToggle"
                                 class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
                         </button>
-        
- <a href="{{ route('restaurantes.index') }}"
-   class="hidden sm:flex items-center gap-2 border border-orange-200 text-orange-600 bg-orange-50 px-4 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline">
-    <i class="fas fa-store text-xs group-hover:animate-bounce"></i>
-    <span class="hidden lg:inline">Restaurantes</span>
-    @if(isset($totalRestaurantes) && $totalRestaurantes > 0)
-        <span class="bg-orange-600 group-hover:bg-white group-hover:text-orange-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center transition-colors">
-            {{ $totalRestaurantes }}
-        </span>
-    @endif
-</a>
+
+                        <a href="{{ route('restaurantes.index') }}"
+                           class="hidden sm:flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 px-3 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline">
+                            <i class="fas fa-store text-xs"></i>
+                            <span class="hidden lg:inline">Restaurantes</span>
+                            @if(isset($totalRestaurantes) && $totalRestaurantes > 0)
+                                <span class="bg-orange-600 group-hover:bg-white group-hover:text-orange-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center transition-colors">
+                                    {{ $totalRestaurantes }}
+                                </span>
+                            @endif
+                        </a>
 
                         <a href="{{ route('empleos.index') }}"
-                           class="hidden sm:flex items-center gap-2 border border-orange-200 text-orange-600 bg-orange-50 px-4 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline">
-                            <i class="fas fa-briefcase text-xs group-hover:animate-bounce"></i>
+                           class="hidden sm:flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 px-3 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline">
+                            <i class="fas fa-briefcase text-xs"></i>
                             <span class="hidden lg:inline">Empleos</span>
                             @if(isset($totalEmpleos) && $totalEmpleos > 0)
                                 <span class="bg-orange-600 group-hover:bg-white group-hover:text-orange-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center transition-colors">
                                     {{ $totalEmpleos }}
                                 </span>
                             @endif
-
                         </a>
-                        
 
-
-                        
-
-                        <a href="{{ route('contacto') }}" class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors px-2 no-underline">
+                        <a href="{{ route('contacto') }}"
+                           class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors px-2 no-underline hidden lg:inline">
                             Contacto
                         </a>
 
                         @if (Route::has('login'))
-    @auth
-        @if(auth()->user()->email === 'admin@turismo.ni')
-            <a href="{{ url('/dashboard') }}" class="text-sm font-semibold hover:text-orange-600 transition-colors no-underline">Panel Control</a>
-        @endif
-        <form method="POST" action="{{ route('logout') }}" class="inline">
-            @csrf
-            <button type="submit" class="text-sm font-semibold text-stone-600 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-2">
-                Salir
-            </button>
-        </form>
-    @else
-        <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-orange-600 transition-colors sm:inline no-underline">Ingresar</a>
-    @endauth
-@endif
+                            @auth
+                                @if(auth()->user()->email === 'admin@turismo.ni')
+                                    <a href="{{ url('/dashboard') }}"
+                                       class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-2 hidden lg:inline">
+                                        Panel
+                                    </a>
+                                @endif
+                                <form method="POST" action="{{ route('logout') }}" class="inline">
+                                    @csrf
+                                    <button type="submit"
+                                            class="text-sm font-semibold text-stone-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-2">
+                                        Salir
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}"
+                                   class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-2">
+                                    Ingresar
+                                </a>
+                            @endauth
+                        @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Panel móvil optimizado en cascada --}}
+            {{-- PANEL MÓVIL --}}
             <div id="mobileSearchPanel">
                 <form action="{{ route('home') }}" method="GET" class="flex flex-col gap-3">
-                    <div class="relative">
-                        <i class="fas fa-map absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                        <select id="search-departamento-mobile" name="departamento" class="nav-select w-full">
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                            <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
+                        </label>
+                        <select id="search-departamento-mobile" name="departamento" class="nav-select-mobile">
                             <option value="">Todos los destinos</option>
                             @foreach($departamentos as $depto)
                                 <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
@@ -233,10 +334,14 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="relative">
-                        <i class="fas fa-store absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                        <select id="search-restaurante-mobile" name="restaurante_id" class="nav-select w-full" {{ request('departamento') ? '' : 'disabled' }}>
-                            <option value="">Todos los locales</option>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                            <i class="fas fa-store text-orange-500"></i> Local
+                        </label>
+                        <select id="search-restaurante-mobile" name="restaurante_id"
+                                class="nav-select-mobile" {{ request('departamento') ? '' : 'disabled' }}>
+                            <option value="">{{ request('departamento') ? 'Todos los locales' : 'Primero elige destino...' }}</option>
                             @if(request('departamento'))
                                 @foreach($restaurantes->where('departamento_id', request('departamento')) as $rest)
                                     <option value="{{ $rest->id }}" {{ request('restaurante_id') == $rest->id ? 'selected' : '' }}>
@@ -246,21 +351,27 @@
                             @endif
                         </select>
                     </div>
-                    <div class="relative">
-                        <i class="fas fa-utensils absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                            <i class="fas fa-utensils text-orange-500"></i> Especialidad
+                        </label>
                         <input type="text" name="especialidad" value="{{ request('especialidad') }}"
-                               class="nav-search-input w-full"
-                               placeholder="Especialidad (Asados, Mariscos...)">
+                               class="nav-input-mobile" placeholder="Asados, mariscos...">
                     </div>
+
                     <button type="submit"
-                            class="bg-orange-600 text-white py-2.5 rounded-full text-sm font-semibold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
+                            class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
+                        <i class="fas fa-search text-xs"></i>
                         <span>Filtrar Experiencias</span>
-                        <i class="fas fa-arrow-right text-xs"></i>
                     </button>
                 </form>
             </div>
         </nav>
 
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- HERO / CARRUSEL                                               --}}
+        {{-- ══════════════════════════════════════════════════════════════ --}}
         <section class="relative">
             @if(isset($eventosDestacados) && $eventosDestacados->count() > 0)
                 <div id="bannerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
@@ -339,9 +450,11 @@
             @endif
         </section>
 
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- MAIN                                                          --}}
+        {{-- ══════════════════════════════════════════════════════════════ --}}
         <main class="max-w-7xl mx-auto px-4 py-24">
-            
-            {{-- Badge informativo cuando se filtra activamente por Especialidad, Nombre o Destino --}}
+
             @if(request('search') || request('departamento') || request('especialidad') || request('restaurante_id'))
                 <div class="mb-10 flex items-center gap-2 flex-wrap bg-stone-100 p-3 rounded-xl inline-flex text-sm">
                     <span class="text-stone-500 font-medium">Búsqueda activa:</span>
@@ -379,12 +492,10 @@
                 </div>
             </div>
 
-            {{-- MODIFICADO: Estructura de tarjetas horizontales premium segmentadas en Grid tipo Listado Ejecutivo --}}
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 @forelse($eventos as $item)
                     <article class="glass-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-sm border border-stone-200/60" data-aos="fade-up">
-                        
-                        {{-- Contenedor de Textos (Lado Izquierdo - 7 Columnas) --}}
+
                         <div class="p-8 md:col-span-7 flex flex-col justify-between space-y-4">
                             <div>
                                 <div class="flex items-center justify-between mb-3">
@@ -424,7 +535,6 @@
                             </div>
                         </div>
 
-                        {{-- Contenedor de Imagen de la Tarjeta (Lado Derecho - 5 Columnas) --}}
                         <div class="relative h-60 md:h-full min-h-[240px] md:col-span-5 overflow-hidden order-first md:order-last bg-stone-100">
                             <a href="{{ route('eventos.show', $item->id) }}" class="block w-full h-full">
                                 <img src="{{ asset('storage/' . $item->imagen) }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="{{ $item->titulo }}">
@@ -445,12 +555,12 @@
                                 <i class="fas fa-times"></i>
                             </div>
                         </div>
-                        <h3 class="premium-title text-3xl font-extrabold text-stone-900 mb-3 tracking-tight">Sin experiences culinarias</h3>
+                        <h3 class="premium-title text-3xl font-extrabold text-stone-900 mb-3 tracking-tight">Sin experiencias culinarias</h3>
                         <p class="text-stone-500 text-base leading-relaxed mb-8 font-light">
-                            No logramos encontrar eventos activos que coincidan con los filtros seleccionados en este momento. ¡Prueba ajustando tu búsqueda gastronómica!
+                            No encontramos eventos activos con los filtros seleccionados. ¡Prueba ajustando tu búsqueda gastronómica!
                         </p>
                         @if(request('especialidad') || request('departamento') || request('restaurante_id') || request('search'))
-                            <a href="{{ route('home') }}" 
+                            <a href="{{ route('home') }}"
                                class="bg-stone-900 text-stone-50 text-xs font-bold tracking-wider uppercase px-6 py-3.5 rounded-xl no-underline hover:bg-orange-600 transition-all shadow-md shadow-stone-900/10 active:scale-95 border-0 cursor-pointer flex items-center gap-2">
                                 <i class="fas fa-undo text-[10px]"></i> Limpiar Filtros Aplicados
                             </a>
@@ -460,17 +570,19 @@
             </div>
         </main>
 
+        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- FOOTER                                                        --}}
+        {{-- ══════════════════════════════════════════════════════════════ --}}
         <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
             <div class="max-w-7xl mx-auto px-4 pt-16 pb-8 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-12">
-                    
-                    {{-- Columna 1: Info Corporativa --}}
+
                     <div class="lg:col-span-4 space-y-5">
                         <div class="flex items-center gap-2.5">
                             <div class="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-md shadow-orange-600/20">
                                 <i class="fas fa-utensils text-white text-xs"></i>
                             </div>
-                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">POLLA</span></span>
+                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
                         </div>
                         <p class="text-stone-400 text-sm leading-relaxed font-light">
                             La plataforma líder en promoción turística y eventos culinarios de Nicaragua. Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
@@ -482,18 +594,17 @@
                         </div>
                     </div>
 
-                    {{-- Columna 2: Enlaces Rápidos --}}
                     <div class="lg:col-span-2 space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
                         <ul class="space-y-2.5 text-sm p-0 list-none m-0">
                             <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Inicio</a></li>
+                            <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Restaurantes</a></li>
                             <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
                             <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Contacto</a></li>
                             <li><a href="{{ route('login') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Acceso Administrativo</a></li>
                         </ul>
                     </div>
 
-                    {{-- Columna 3: Destinos Frecuentes --}}
                     <div class="lg:col-span-3 space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
                         <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
@@ -506,15 +617,7 @@
                         </div>
                     </div>
 
-                    {{-- Columna 4: Boletín --}}
-                    <div class="lg:col-span-3 space-y-4">
-                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Newsletter</h4>
-                        <p class="text-stone-400 text-xs leading-relaxed font-light">Recibe directamente en tu bandeja las mejores agendas culinarias de la semana.</p>
-                        <form class="flex flex-col gap-2">
-                            <input type="email" placeholder="Tu correo electrónico" class="bg-stone-800 text-white border border-stone-700 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-orange-500">
-                            <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold py-2 rounded-xl border-0 cursor-pointer transition-colors">Suscribirse</button>
-                        </form>
-                    </div>
+                  
 
                 </div>
 
@@ -531,67 +634,58 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
-            // Inicializar animaciones AOS
             AOS.init({ duration: 800, once: true });
 
-            // Pasar la colección de restaurantes limpia desde Blade a JavaScript para el filtrado reactivo
             const todosLosRestaurantes = @json($restaurantes->values());
 
-            // Lógica común de filtrado en cascada
             function configurarFiltroCascada(selectDeptoId, selectRestId) {
                 const deptoSelect = document.getElementById(selectDeptoId);
-                const restSelect = document.getElementById(selectRestId);
-
+                const restSelect  = document.getElementById(selectRestId);
                 if (!deptoSelect || !restSelect) return;
 
-                deptoSelect.addEventListener('change', function() {
+                deptoSelect.addEventListener('change', function () {
                     const deptoId = this.value;
-                    
-                    // Limpiar opciones anteriores del selector de restaurantes
                     restSelect.innerHTML = '<option value="">Todos los locales</option>';
 
                     if (!deptoId) {
                         restSelect.disabled = true;
+                        restSelect.options[0].text = 'Elige destino primero...';
                         return;
                     }
 
-                    // Filtrar los restaurantes pertenecientes al departamento seleccionado
                     const filtrados = todosLosRestaurantes.filter(r => r.departamento_id == deptoId);
-
                     filtrados.forEach(restaurante => {
                         const opt = document.createElement('option');
-                        opt.value = restaurante.id;
+                        opt.value       = restaurante.id;
                         opt.textContent = restaurante.nombre;
                         restSelect.appendChild(opt);
                     });
 
                     restSelect.disabled = false;
+                    restSelect.options[0].text = 'Todos los locales';
                 });
             }
 
-            // Inicializar cascada en Escritorio y Móviles
-            configurarFiltroCascada('search-departamento', 'search-restaurante');
+            configurarFiltroCascada('search-departamento',        'search-restaurante');
             configurarFiltroCascada('search-departamento-mobile', 'search-restaurante-mobile');
 
-            // Control de apertura/cierre del panel de búsqueda móvil
+            // Toggle panel móvil
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
-            const mobileSearchPanel = document.getElementById('mobileSearchPanel');
+            const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
 
             if (mobileSearchToggle && mobileSearchPanel) {
-                mobileSearchToggle.addEventListener('click', function(e) {
+                mobileSearchToggle.addEventListener('click', function (e) {
                     e.stopPropagation();
                     mobileSearchPanel.classList.toggle('open');
                 });
-
-                // Cerrar panel al hacer clic afuera
-                document.addEventListener('click', function(e) {
+                document.addEventListener('click', function (e) {
                     if (!mobileSearchPanel.contains(e.target) && e.target !== mobileSearchToggle) {
                         mobileSearchPanel.classList.remove('open');
                     }
                 });
             }
 
-            // Temporizador en reversa (Countdown) para las tarjetas de eventos
+            // Countdown
             document.querySelectorAll('.countdown').forEach(el => {
                 const targetDateStr = el.getAttribute('data-expire');
                 if (!targetDateStr) return;
@@ -599,18 +693,18 @@
                 const targetDate = new Date(targetDateStr.replace(/-/g, "/")).getTime();
 
                 const interval = setInterval(() => {
-                    const now = new Date().getTime();
+                    const now  = new Date().getTime();
                     const diff = targetDate - now;
 
                     if (diff <= 0) {
                         el.textContent = "Finalizado / En Curso";
-                        el.className = "text-[10px] font-bold text-stone-400 uppercase tracking-wider";
+                        el.className   = "text-[10px] font-bold text-stone-400 uppercase tracking-wider";
                         clearInterval(interval);
                         return;
                     }
 
-                    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const dias    = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const horas   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
                     if (dias > 0) {

@@ -75,7 +75,7 @@
                                         </select>
                                     </div>
                                     
-                                    {{-- Selector 3: Restaurante / Local filtrado por Municipio --}}
+                                    {{-- Selector 3: Restaurante --}}
                                     <div>
                                         <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Restaurante / Local</label>
                                         <select id="restaurante_id" name="restaurante_id" required disabled
@@ -84,7 +84,7 @@
                                         </select>
                                     </div>
 
-                                    {{-- NUEVO: Campo de información de especialidad dinámico --}}
+                                    {{-- Especialidad dinámica --}}
                                     <div id="wrapper-especialidad" class="hidden transition-all duration-300">
                                         <label class="block text-xs font-black uppercase tracking-widest text-orange-500 mb-2">
                                             <i class="fas fa-utensils mr-1"></i> Especialidad Gastronómica
@@ -107,6 +107,7 @@
 
                             {{-- Columna Derecha: Multimedia --}}
                             <div class="space-y-6">
+                                {{-- Imagen Principal --}}
                                 <div>
                                     <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Imagen Principal</label>
                                     <div class="relative group">
@@ -122,6 +123,7 @@
                                     </div>
                                 </div>
 
+                                {{-- Descripción --}}
                                 <div>
                                     <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Descripción del Evento</label>
                                     <textarea name="descripcion" rows="4" required maxlength="500"
@@ -129,6 +131,52 @@
                                               placeholder="Cuéntanos más sobre el evento...">{{ old('descripcion') }}</textarea>
                                 </div>
                             </div>
+                        </div>
+
+                        {{-- ═══════════════════════════════════════════════════════ --}}
+                        {{-- SECCIÓN: GALERÍA DE IMÁGENES ADICIONALES               --}}
+                        {{-- ═══════════════════════════════════════════════════════ --}}
+                        <div class="border-t border-gray-100 pt-8">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div class="bg-purple-500/10 p-2.5 rounded-xl border border-purple-500/20">
+                                    <i class="fas fa-images text-purple-500 text-base"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-700 text-sm">Galería de Imágenes Destacadas</h4>
+                                    <p class="text-xs text-gray-400">Agrega fotos adicionales del evento (opcional, máx. 6 imágenes).</p>
+                                </div>
+                            </div>
+
+                            {{-- Grid de slots de imágenes --}}
+                            <div id="galeria-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                @for($i = 0; $i < 6; $i++)
+                                <div class="relative group galeria-slot">
+                                    <label class="block cursor-pointer">
+                                        <div class="border-2 border-dashed border-gray-200 rounded-2xl aspect-square flex flex-col items-center justify-center bg-gray-50 hover:border-purple-400 hover:bg-purple-50/30 transition-all overflow-hidden relative">
+                                            {{-- Input oculto --}}
+                                            <input type="file" name="galeria[]" accept="image/*"
+                                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 galeria-input">
+                                            {{-- Placeholder --}}
+                                            <div class="galeria-placeholder flex flex-col items-center gap-1 pointer-events-none">
+                                                <i class="fas fa-plus text-gray-300 text-xl group-hover:text-purple-400 transition-colors"></i>
+                                                <span class="text-xs text-gray-400">Foto {{ $i + 1 }}</span>
+                                            </div>
+                                            {{-- Preview --}}
+                                            <img class="galeria-preview hidden absolute inset-0 w-full h-full object-cover rounded-2xl">
+                                        </div>
+                                    </label>
+                                    {{-- Botón eliminar preview --}}
+                                    <button type="button"
+                                            class="galeria-clear hidden absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center shadow-md hover:bg-red-600 transition-colors z-20">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                @endfor
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3">
+                                <i class="fas fa-info-circle mr-1 text-blue-400"></i>
+                                Las imágenes de galería se guardarán al publicar el evento.
+                            </p>
                         </div>
 
                         {{-- Barra de Acciones Inferior --}}
@@ -149,110 +197,120 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Preview de Imagen
-            const input = document.getElementById('imagen');
-            const preview = document.getElementById('image-preview');
+
+            // ── Preview imagen principal ──────────────────────────────────────
+            const input     = document.getElementById('imagen');
+            const preview   = document.getElementById('image-preview');
             const placeholder = document.getElementById('preview-container');
 
             input.addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = e => {
                         preview.src = e.target.result;
                         preview.classList.remove('hidden');
                         placeholder.classList.add('hidden');
-                    }
+                    };
                     reader.readAsDataURL(file);
                 }
             });
 
-            // Elementos del encadenamiento geográfico triple e informativo
+            // ── Galería: preview por slot ─────────────────────────────────────
+            document.querySelectorAll('.galeria-slot').forEach(slot => {
+                const fileInput  = slot.querySelector('.galeria-input');
+                const imgPreview = slot.querySelector('.galeria-preview');
+                const imgPlaceholder = slot.querySelector('.galeria-placeholder');
+                const clearBtn   = slot.querySelector('.galeria-clear');
+
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            imgPreview.src = e.target.result;
+                            imgPreview.classList.remove('hidden');
+                            imgPlaceholder.classList.add('hidden');
+                            clearBtn.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                clearBtn.addEventListener('click', function() {
+                    fileInput.value = '';
+                    imgPreview.src  = '';
+                    imgPreview.classList.add('hidden');
+                    imgPlaceholder.classList.remove('hidden');
+                    clearBtn.classList.add('hidden');
+                });
+            });
+
+            // ── Encadenamiento geográfico ─────────────────────────────────────
             const depSelect  = document.getElementById('departamento_id');
             const muniSelect = document.getElementById('municipio_id');
             const restSelect = document.getElementById('restaurante_id');
             const wrapEspec  = document.getElementById('wrapper-especialidad');
             const inputEspec = document.getElementById('info-especialidad');
 
-            // Paso 1: Al cambiar Departamento, cargar Municipios
             depSelect.addEventListener('change', function() {
                 const depId = this.value;
-                
                 muniSelect.disabled = true;
                 muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
-                
                 restSelect.disabled = true;
                 restSelect.innerHTML = '<option value="">Primero elige municipio...</option>';
                 wrapEspec.classList.add('hidden');
 
                 if (depId) {
                     fetch(`/api/departamentos/${depId}/municipios`)
-                        .then(response => response.json())
+                        .then(r => r.json())
                         .then(data => {
                             muniSelect.innerHTML = '<option value="" disabled selected>Seleccionar municipio...</option>';
                             if (data.length > 0) {
                                 data.forEach(muni => {
-                                    const option = document.createElement('option');
-                                    option.value = muni.id;
-                                    option.textContent = muni.nombre;
-                                    muniSelect.appendChild(option);
+                                    const opt = document.createElement('option');
+                                    opt.value = muni.id;
+                                    opt.textContent = muni.nombre;
+                                    muniSelect.appendChild(opt);
                                 });
                                 muniSelect.disabled = false;
                             } else {
                                 muniSelect.innerHTML = '<option value="">Sin municipios registrados</option>';
                             }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            muniSelect.innerHTML = '<option value="">Error de carga</option>';
                         });
-                } else {
-                    muniSelect.innerHTML = '<option value="">Primero elige departamento...</option>';
                 }
             });
 
-            // Paso 2: Al cambiar Municipio, cargar Restaurantes de ese municipio específico
             muniSelect.addEventListener('change', function() {
                 const muniId = this.value;
-                
                 restSelect.disabled = true;
                 restSelect.innerHTML = '<option value="">Cargando locales...</option>';
                 wrapEspec.classList.add('hidden');
 
                 if (muniId) {
                     fetch(`/api/municipios/${muniId}/restaurantes`)
-                        .then(response => response.json())
+                        .then(r => r.json())
                         .then(data => {
                             restSelect.innerHTML = '<option value="" disabled selected>Seleccionar local...</option>';
-                            
                             if (data.length > 0) {
                                 data.forEach(rest => {
-                                    const option = document.createElement('option');
-                                    option.value = rest.id;
-                                    option.textContent = rest.nombre;
-                                    // MODIFICADO: Guardamos de forma temporal la especialidad dentro de un atributo data customizado
-                                    option.setAttribute('data-especialidad', rest.especialidad || 'Variada / Comida General');
-                                    restSelect.appendChild(option);
+                                    const opt = document.createElement('option');
+                                    opt.value = rest.id;
+                                    opt.textContent = rest.nombre;
+                                    opt.setAttribute('data-especialidad', rest.especialidad || 'Variada / Comida General');
+                                    restSelect.appendChild(opt);
                                 });
                                 restSelect.disabled = false;
                             } else {
                                 restSelect.innerHTML = '<option value="">Sin restaurantes en este municipio</option>';
                             }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            restSelect.innerHTML = '<option value="">Error de carga</option>';
                         });
-                } else {
-                    restSelect.innerHTML = '<option value="">Primero elige municipio...</option>';
                 }
             });
 
-            // NUEVO PASO 3: Al seleccionar un restaurante, mostrar su especialidad de forma instantánea
             restSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
-                const especialidad = selectedOption.getAttribute('data-especialidad');
-
+                const especialidad   = selectedOption.getAttribute('data-especialidad');
                 if (this.value && especialidad) {
                     inputEspec.value = especialidad;
                     wrapEspec.classList.remove('hidden');
@@ -264,12 +322,10 @@
     </script>
 
     <style>
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out;
-        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </x-app-layout>

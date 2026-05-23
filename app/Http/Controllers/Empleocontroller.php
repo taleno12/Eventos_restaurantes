@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empleo;
 use App\Models\Departamento;
+use App\Models\Municipio;
 use App\Models\Restaurante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -90,10 +91,8 @@ class EmpleoController extends Controller
             'curriculum.max'     => 'El archivo no puede superar los 5MB.',
         ]);
 
-        // 2. Cargar restaurante
         $empleo->loadMissing('restaurante');
 
-        // 3. Armar datos
         $aplicacion = [
             'nombre'         => $validated['nombre'],
             'apellido'       => $validated['apellido'],
@@ -108,7 +107,6 @@ class EmpleoController extends Controller
             'restaurante'    => $empleo->restaurante->nombre ?? 'Restaurante',
         ];
 
-        // 4. Leer CV en memoria (evita problemas de rutas en Windows)
         $curriculumData   = null;
         $curriculumNombre = null;
         $curriculumMime   = null;
@@ -127,21 +125,18 @@ class EmpleoController extends Controller
             $curriculumNombre = 'curriculum_' . str_replace(' ', '_', $validated['nombre']) . '.' . $extension;
             $curriculumMime   = $mimeTypes[$extension] ?? 'application/octet-stream';
 
-            // Guardar copia en disco también
             $archivo->store('curriculos', 'local');
 
             Log::info('CV leído en memoria:', [
-                'nombre'    => $curriculumNombre,
-                'mime'      => $curriculumMime,
-                'bytes'     => strlen($curriculumData),
+                'nombre' => $curriculumNombre,
+                'mime'   => $curriculumMime,
+                'bytes'  => strlen($curriculumData),
             ]);
         }
 
-        // 5. Enviar correos
         $emailRestaurante = $empleo->restaurante->email ?? config('mail.from.address');
 
         try {
-            // Correo al restaurante con CV adjunto en memoria
             Mail::to($emailRestaurante)
                 ->send(new AplicacionEmpleo(
                     $aplicacion,
@@ -151,7 +146,6 @@ class EmpleoController extends Controller
                     'restaurante'
                 ));
 
-            // Confirmación al candidato (sin CV adjunto)
             Mail::to($validated['email'])
                 ->send(new AplicacionEmpleo(
                     $aplicacion,
@@ -174,7 +168,6 @@ class EmpleoController extends Controller
                 ->with('error', 'Hubo un problema al enviar tu aplicación. Por favor intenta de nuevo.');
         }
 
-        // 6. Éxito
         return back()->with('success', '¡Tu aplicación fue enviada con éxito! Revisa tu correo para la confirmación.');
     }
 
@@ -214,7 +207,6 @@ class EmpleoController extends Controller
             'activo'          => 'nullable|boolean',
         ]);
 
-        // ✅ CORREGIDO: lee explícitamente el valor 1 o 0 del hidden + checkbox
         $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
 
         Empleo::create($validated);
@@ -234,8 +226,11 @@ class EmpleoController extends Controller
     {
         $restaurantes  = Restaurante::orderBy('nombre')->get();
         $departamentos = Departamento::orderBy('nombre')->get();
+        $municipios    = Municipio::where('departamento_id', $empleo->departamento_id) // ← AÑADIDO
+                            ->orderBy('nombre')
+                            ->get();
 
-        return view('empleos.edit', compact('empleo', 'restaurantes', 'departamentos'));
+        return view('empleos.edit', compact('empleo', 'restaurantes', 'departamentos', 'municipios'));
     }
 
     public function update(Request $request, Empleo $empleo)
@@ -253,7 +248,6 @@ class EmpleoController extends Controller
             'activo'          => 'nullable|boolean',
         ]);
 
-        // ✅ CORREGIDO: lee explícitamente el valor 1 o 0 del hidden + checkbox
         $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
 
         $empleo->update($validated);

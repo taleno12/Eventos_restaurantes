@@ -7,166 +7,653 @@
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
-            body { font-family: 'Instrument Sans', sans-serif; overflow-x: hidden; }
+            :root {
+                --orange: #ea580c;
+                --dark: #0c0a09;
+                --cream: #faf9f6;
+            }
+
+            * { box-sizing: border-box; }
+
+            body {
+                font-family: 'Instrument Sans', sans-serif;
+                overflow-x: hidden;
+                background: var(--cream);
+                color: #1c1917;
+            }
+
             .premium-title { font-family: 'Playfair Display', serif; }
 
-            .job-card {
-                background: #fff;
-                border: 1px solid #f1f0ee;
-                border-radius: 1.75rem;
-                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            }
-            .job-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 30px 60px rgba(28, 25, 23, 0.07);
-                border-color: #ffedd5;
+            /* ── NAV ── */
+            .nav-bar {
+                position: fixed;
+                top: 0; left: 0; right: 0;
+                z-index: 50;
+                background: rgba(255,255,255,0.85);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid rgba(231,229,228,0.6);
+                box-shadow: 0 1px 16px rgba(0,0,0,0.04);
             }
 
-            .badge-tipo {
-                font-size: 0.65rem;
+            .nav-inner {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                height: 76px;
+                gap: 20px;
+            }
+
+            .nav-logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                text-decoration: none;
+                flex-shrink: 0;
+            }
+
+            .nav-logo-icon {
+                width: 40px; height: 40px;
+                background: #ea580c;
+                border-radius: 12px;
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 4px 14px rgba(234,88,12,0.3);
+            }
+
+            .search-field {
+                flex: 1;
+                position: relative;
+                max-width: 520px;
+            }
+
+            .search-field input,
+            .search-field select {
+                width: 100%;
+                background: #f5f5f4;
+                border: 1.5px solid transparent;
+                border-radius: 999px;
+                padding: 10px 16px 10px 40px;
+                font-size: 13px;
+                color: #1c1917;
+                font-family: 'Instrument Sans', sans-serif;
+                outline: none;
+                transition: all 0.2s ease;
+            }
+
+            .search-field input:focus,
+            .search-field select:focus {
+                border-color: #ea580c;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(234,88,12,0.08);
+            }
+
+            .search-field i {
+                position: absolute;
+                left: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #a8a29e;
+                font-size: 12px;
+                pointer-events: none;
+            }
+
+            .btn-filter {
+                background: #0c0a09;
+                color: white;
+                border: none;
+                border-radius: 999px;
+                padding: 10px 22px;
+                font-size: 13px;
                 font-weight: 700;
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                padding: 0.4rem 0.85rem;
-                border-radius: 9999px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.25s ease;
+                flex-shrink: 0;
+                font-family: 'Instrument Sans', sans-serif;
+            }
+
+            .btn-filter:hover { background: #ea580c; box-shadow: 0 6px 20px rgba(234,88,12,0.3); }
+
+            /* ── HERO ── */
+            .hero-section {
+                background: linear-gradient(160deg, #1a0800 0%, #0c0a09 60%, #1c1410 100%);
+                padding: 140px 2rem 80px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero-section::before {
+                content: '';
+                position: absolute;
+                top: -80px; right: -80px;
+                width: 500px; height: 500px;
+                background: radial-gradient(circle, rgba(234,88,12,0.18) 0%, transparent 70%);
+                pointer-events: none;
+            }
+
+            .hero-section::after {
+                content: '';
+                position: absolute;
+                bottom: -60px; left: 20%;
+                width: 400px; height: 400px;
+                background: radial-gradient(circle, rgba(251,146,60,0.07) 0%, transparent 70%);
+                pointer-events: none;
+            }
+
+            .hero-dots {
+                position: absolute;
+                inset: 0;
+                background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+                background-size: 22px 22px;
+                pointer-events: none;
+            }
+
+            .hero-inner {
+                max-width: 1280px;
+                margin: 0 auto;
+                position: relative;
+                z-index: 10;
+                text-align: center;
+            }
+
+            .hero-badge {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.35rem;
+                gap: 8px;
+                background: rgba(234,88,12,0.15);
+                border: 1px solid rgba(234,88,12,0.3);
+                color: #fb923c;
+                font-size: 10px;
+                font-weight: 800;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                padding: 8px 20px;
+                border-radius: 999px;
+                margin-bottom: 28px;
             }
 
-            .nav-search-input {
-                background: #f5f5f4;
-                border: 1px solid transparent;
-                border-radius: 9999px;
-                padding: 0.55rem 1rem 0.55rem 2.5rem;
-                font-size: 0.85rem;
+            .hero-title {
+                font-size: clamp(2.4rem, 5.5vw, 5rem);
+                font-weight: 900;
+                color: white;
+                line-height: 1.08;
+                margin-bottom: 20px;
+            }
+
+            .hero-title span {
+                color: transparent;
+                background: linear-gradient(90deg, #fb923c, #f59e0b);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
+
+            .hero-sub {
+                color: #a8a29e;
+                font-size: 15px;
+                max-width: 540px;
+                margin: 0 auto 48px;
+                line-height: 1.75;
+                font-weight: 400;
+            }
+
+            .stats-row {
+                display: inline-flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0;
+                background: rgba(255,255,255,0.04);
+                border: 1px solid rgba(255,255,255,0.07);
+                border-radius: 20px;
+                padding: 24px 40px;
+                backdrop-filter: blur(8px);
+            }
+
+            .stat-item {
+                padding: 0 40px;
+                text-align: center;
+                position: relative;
+            }
+
+            .stat-item + .stat-item::before {
+                content: '';
+                position: absolute;
+                left: 0; top: 10%; bottom: 10%;
+                width: 1px;
+                background: rgba(255,255,255,0.08);
+            }
+
+            .stat-num {
+                font-size: 2.5rem;
+                font-weight: 900;
+                color: #fb923c;
+                line-height: 1;
+                display: block;
+            }
+
+            .stat-label {
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: #78716c;
+                margin-top: 8px;
+                display: block;
+            }
+
+            /* ── MAIN ── */
+            .main-wrap {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 64px 2rem 80px;
+            }
+
+            /* ── SEARCH ACTIVE FILTERS ── */
+            .filter-bar {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-bottom: 36px;
+                padding: 14px 20px;
+                background: white;
+                border: 1px solid #e7e5e4;
+                border-radius: 16px;
+            }
+
+            .filter-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: #fafaf9;
+                border: 1px solid #e7e5e4;
+                color: #292524;
+                font-size: 12px;
+                font-weight: 600;
+                padding: 6px 14px;
+                border-radius: 999px;
+                text-decoration: none;
+            }
+
+            .filter-chip a { color: #a8a29e; text-decoration: none; font-size: 14px; }
+            .filter-chip a:hover { color: #e11d48; }
+
+            /* ── SECTION HEADER ── */
+            .section-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 32px;
+            }
+
+            .section-eyebrow {
+                font-size: 10px;
+                font-weight: 800;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: #ea580c;
+                margin-bottom: 4px;
+            }
+
+            .section-title {
+                font-size: 24px;
+                font-weight: 800;
                 color: #1c1917;
-                transition: all 0.25s ease;
-                outline: none;
-            }
-            .nav-search-input:focus {
-                border-color: #ea580c;
-                box-shadow: 0 0 0 4px rgba(234,88,12,0.08);
-                background: #fff;
             }
 
-            .nav-select {
+            .count-badge {
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                color: #c2410c;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 6px 14px;
+                border-radius: 999px;
+            }
+
+            /* ── JOB CARDS ── */
+            .jobs-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+                gap: 20px;
+            }
+
+            .job-card {
+                background: white;
+                border: 1px solid #f1f0ee;
+                border-radius: 24px;
+                padding: 28px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .job-card::before {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #ea580c, #f59e0b);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.35s ease;
+            }
+
+            .job-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 48px rgba(28,25,23,0.09);
+                border-color: #fed7aa;
+            }
+
+            .job-card:hover::before { transform: scaleX(1); }
+
+            .card-top {
+                display: flex;
+                align-items: flex-start;
+                gap: 14px;
+            }
+
+            .card-icon {
+                width: 48px; height: 48px;
                 background: #f5f5f4;
-                border: 1px solid transparent;
-                border-radius: 9999px;
-                padding: 0.55rem 2.5rem 0.55rem 2.5rem;
-                font-size: 0.85rem;
-                color: #1c1917;
-                appearance: none;
-                cursor: pointer;
-                transition: all 0.25s ease;
-                outline: none;
-            }
-            .nav-select:focus {
-                border-color: #ea580c;
-                box-shadow: 0 0 0 4px rgba(234,88,12,0.08);
-                background: #fff;
+                border: 1px solid #e7e5e4;
+                border-radius: 14px;
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0;
+                transition: all 0.3s ease;
             }
 
+            .job-card:hover .card-icon {
+                background: #fff7ed;
+                border-color: #fed7aa;
+            }
+
+            .job-card:hover .card-icon i { color: #ea580c; }
+
+            .card-restaurant {
+                font-size: 10px;
+                font-weight: 800;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: #ea580c;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 800;
+                color: #1c1917;
+                line-height: 1.25;
+                transition: color 0.2s;
+            }
+
+            .job-card:hover .card-title { color: #ea580c; }
+
+            .card-desc {
+                color: #78716c;
+                font-size: 13px;
+                line-height: 1.7;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                margin: 0;
+            }
+
+            /* ── BADGES ── */
+            .badges-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 5px 12px;
+                border-radius: 999px;
+            }
+
+            .badge-contract { background: #f5f5f4; color: #57534e; }
+            .badge-salary   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+            .badge-negociar { background: #f5f5f4; color: #78716c; }
+            .badge-location { background: #eff6ff; color: #1d4ed8; }
+
+            /* ── CARD FOOTER ── */
+            .card-footer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-top: 18px;
+                border-top: 1px solid #f5f5f4;
+                margin-top: auto;
+            }
+
+            .card-date {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                color: #a8a29e;
+                font-size: 11px;
+                font-weight: 500;
+            }
+
+            .btn-ver {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: #0c0a09;
+                color: white;
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 700;
+                padding: 9px 18px;
+                border-radius: 999px;
+                transition: all 0.25s ease;
+            }
+
+            .btn-ver:hover {
+                background: #ea580c;
+                color: white;
+                transform: translateX(2px);
+                box-shadow: 0 6px 20px rgba(234,88,12,0.3);
+            }
+
+            /* ── EMPTY STATE ── */
+            .empty-state {
+                text-align: center;
+                background: white;
+                border: 1px solid #e7e5e4;
+                border-radius: 28px;
+                padding: 64px 40px;
+                max-width: 480px;
+                margin: 0 auto;
+            }
+
+            .empty-icon {
+                width: 72px; height: 72px;
+                background: #fafaf9;
+                border: 1px solid #e7e5e4;
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                margin: 0 auto 20px;
+            }
+
+            /* ── PAGINATION ── */
+            .pagination-wrap { margin-top: 56px; display: flex; justify-content: center; }
+
+            /* ── MOBILE SEARCH PANEL ── */
             #mobileSearchPanel {
                 display: none;
                 position: absolute;
-                top: 100%;
-                left: 0; right: 0;
+                top: 100%; left: 0; right: 0;
                 background: rgba(255,255,255,0.98);
-                backdrop-filter: blur(12px);
+                backdrop-filter: blur(16px);
                 border-top: 1px solid #e7e5e4;
-                padding: 1.25rem 1.5rem;
+                padding: 20px 24px;
                 z-index: 40;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                box-shadow: 0 12px 32px rgba(0,0,0,0.08);
             }
             #mobileSearchPanel.open { display: block; }
 
-            .hero-empleo {
-                background: radial-gradient(circle at top right, #3c1105 0%, #1c1917 100%);
+            /* ── FOOTER ── */
+            .site-footer {
+                background: #0c0a09;
+                border-top: 1px solid rgba(255,255,255,0.05);
+                padding: 64px 2rem 32px;
+            }
+
+            .footer-grid {
+                max-width: 1280px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1.5fr;
+                gap: 48px;
+                padding-bottom: 48px;
+                border-bottom: 1px solid rgba(255,255,255,0.07);
+            }
+
+            .footer-bottom {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding-top: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .footer-social-link {
+                width: 34px; height: 34px;
+                background: rgba(255,255,255,0.06);
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                color: #78716c;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+
+            .footer-social-link:hover {
+                background: rgba(234,88,12,0.2);
+                color: #fb923c;
+            }
+
+            .footer-link {
+                color: #78716c;
+                font-size: 13px;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            .footer-link:hover { color: #fb923c; }
+
+            .footer-newsletter-input {
+                background: rgba(255,255,255,0.06);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 8px;
+                padding: 10px 14px;
+                color: white;
+                font-size: 13px;
+                font-family: 'Instrument Sans', sans-serif;
+                outline: none;
+                width: 100%;
+                transition: all 0.2s;
+            }
+
+            .footer-newsletter-input:focus {
+                border-color: rgba(234,88,12,0.5);
+                background: rgba(255,255,255,0.09);
+            }
+
+            .footer-newsletter-input::placeholder { color: #57534e; }
+
+            .footer-newsletter-btn {
+                background: #ea580c;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                width: 100%;
+                font-family: 'Instrument Sans', sans-serif;
+                transition: all 0.2s;
+            }
+
+            .footer-newsletter-btn:hover {
+                background: #c2410c;
+                box-shadow: 0 4px 14px rgba(234,88,12,0.35);
+            }
+
+            /* ── ANIMATIONS ── */
+            @keyframes fadeUp {
+                from { opacity: 0; transform: translateY(24px); }
+                to   { opacity: 1; transform: translateY(0); }
+            }
+
+            .job-card { animation: fadeUp 0.5s ease both; }
+            .job-card:nth-child(1)  { animation-delay: 0.00s; }
+            .job-card:nth-child(2)  { animation-delay: 0.07s; }
+            .job-card:nth-child(3)  { animation-delay: 0.14s; }
+            .job-card:nth-child(4)  { animation-delay: 0.21s; }
+            .job-card:nth-child(5)  { animation-delay: 0.28s; }
+            .job-card:nth-child(6)  { animation-delay: 0.35s; }
+            .job-card:nth-child(7)  { animation-delay: 0.42s; }
+            .job-card:nth-child(8)  { animation-delay: 0.49s; }
+            .job-card:nth-child(9)  { animation-delay: 0.56s; }
+
+            @media (max-width: 768px) {
+                .jobs-grid { grid-template-columns: 1fr; }
+                .stats-row { padding: 20px 24px; }
+                .stat-item { padding: 0 20px; }
+                .stat-num { font-size: 2rem; }
+                .hero-section { padding: 120px 1.25rem 64px; }
+                .main-wrap { padding: 40px 1.25rem 64px; }
+                .nav-search-desktop { display: none !important; }
+                .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+                .footer-bottom { flex-direction: column; align-items: flex-start; }
             }
         </style>
     </head>
-    <body class="bg-[#faf9f6] text-stone-900 antialiased">
+    <body>
 
-        <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-stone-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20 items-center gap-4">
-
-                    <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
-                        <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-md shadow-orange-500/20">
-                            <i class="fas fa-utensils text-white text-sm"></i>
-                        </div>
-                        <span class="text-2xl font-bold tracking-tight premium-title italic text-stone-900">Gastro<span class="text-orange-600">Nicaragua</span></span>
-                    </a>
-
-                    <form action="{{ route('empleos.index') }}" method="GET"
-                          class="hidden md:flex items-center gap-2 flex-1 max-w-2xl">
-                        <div class="relative flex-1">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                   class="nav-search-input w-full"
-                                   placeholder="Puesto o restaurante...">
-                        </div>
-                        <div class="relative">
-                            <i class="fas fa-map-marker-alt absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                            <select name="departamento" class="nav-select">
-                                <option value="">Todos los destinos</option>
-                                @foreach($departamentos as $depto)
-                                    <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
-                                        {{ $depto->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 text-[10px] pointer-events-none"></i>
-                        </div>
-                        <button type="submit"
-                                class="bg-stone-950 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-orange-600 transition-all shadow-sm flex items-center gap-2 shrink-0 border-0 cursor-pointer">
-                            <span>Filtrar</span>
-                            <i class="fas fa-sliders-h text-xs opacity-80"></i>
-                        </button>
-                    </form>
-
-                    <div class="flex items-center gap-3 shrink-0">
-                        <button id="mobileSearchToggle"
-                                class="md:hidden w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-50 hover:text-orange-600 transition-colors border-0 cursor-pointer">
-                            <i class="fas fa-search text-sm"></i>
-                        </button>
-
-                        <a href="{{ route('home') }}"
-                           class="hidden sm:flex items-center gap-2 border border-stone-200 text-stone-600 px-4 py-2 rounded-full text-sm font-semibold hover:bg-stone-100 transition-all no-underline">
-                            <i class="far fa-calendar-alt text-xs"></i>
-                            <span class="hidden lg:inline">Eventos</span>
-                        </a>
-
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}" class="text-sm font-semibold text-stone-700 hover:text-orange-600 transition-colors no-underline">Panel Control</a>
-                            @else
-                                <a href="{{ route('login') }}" class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors hidden sm:inline no-underline">Ingresar</a>
-                               
-                            @endauth
-                        @endif
+        {{-- ── NAV ── --}}
+        <nav class="nav-bar" style="position:fixed;">
+            <div class="nav-inner">
+                <a href="{{ route('home') }}" class="nav-logo">
+                    <div class="nav-logo-icon">
+                        <i class="fas fa-utensils" style="color:white;font-size:13px;"></i>
                     </div>
-                </div>
-            </div>
+                    <span class="premium-title" style="font-size:22px;font-weight:700;color:#1c1917;font-style:italic;">Gastro<span style="color:#ea580c;">Nicaragua</span></span>
+                </a>
 
-            <div id="mobileSearchPanel">
-                <form action="{{ route('empleos.index') }}" method="GET" class="flex flex-col gap-3">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                               class="nav-search-input w-full" placeholder="Puesto o restaurante...">
+                {{-- Desktop search --}}
+                <form action="{{ route('empleos.index') }}" method="GET"
+                      class="nav-search-desktop"
+                      style="display:flex;align-items:center;gap:10px;flex:1;max-width:560px;">
+                    <div class="search-field" style="flex:1;">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Puesto o restaurante…">
                     </div>
-                    <div class="relative">
-                        <i class="fas fa-map-marker-alt absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                        <select name="departamento" class="nav-select w-full">
+                    <div class="search-field" style="width:200px;">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <select name="departamento" style="appearance:none;padding-right:32px;">
                             <option value="">Todos los destinos</option>
                             @foreach($departamentos as $depto)
                                 <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
@@ -174,176 +661,306 @@
                                 </option>
                             @endforeach
                         </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 text-[10px] pointer-events-none"></i>
+                        <i class="fas fa-chevron-down" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:10px;pointer-events:none;color:#a8a29e;"></i>
                     </div>
-                    <button type="submit"
-                            class="bg-orange-600 text-white py-2.5 rounded-full text-sm font-semibold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
-                        <span>Buscar Empleos</span>
-                        <i class="fas fa-arrow-right text-xs"></i>
+                    <button type="submit" class="btn-filter">
+                        Filtrar <i class="fas fa-sliders-h" style="font-size:11px;opacity:0.8;"></i>
+                    </button>
+                </form>
+
+                <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+                    <button id="mobileSearchToggle"
+                            style="display:none;width:40px;height:40px;border-radius:50%;background:#f5f5f4;border:none;cursor:pointer;align-items:center;justify-content:center;color:#57534e;"
+                            class="mobile-search-btn">
+                        <i class="fas fa-search" style="font-size:13px;"></i>
+                    </button>
+                    <a href="{{ route('home') }}"
+                       style="display:flex;align-items:center;gap:6px;border:1px solid #e7e5e4;color:#57534e;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.2s;">
+                        <i class="far fa-calendar-alt" style="font-size:11px;"></i> Eventos
+                    </a>
+                    {{-- BOTÓN PANEL ELIMINADO --}}
+                </div>
+            </div>
+
+            {{-- Mobile search panel --}}
+            <div id="mobileSearchPanel">
+                <form action="{{ route('empleos.index') }}" method="GET" style="display:flex;flex-direction:column;gap:12px;">
+                    <div class="search-field">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Puesto o restaurante…" style="width:100%;">
+                    </div>
+                    <div class="search-field" style="position:relative;">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <select name="departamento" style="width:100%;appearance:none;padding-right:32px;">
+                            <option value="">Todos los destinos</option>
+                            @foreach($departamentos as $depto)
+                                <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
+                            @endforeach
+                        </select>
+                        <i class="fas fa-chevron-down" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:10px;pointer-events:none;color:#a8a29e;"></i>
+                    </div>
+                    <button type="submit" class="btn-filter" style="width:100%;justify-content:center;background:#ea580c;">
+                        Buscar empleos <i class="fas fa-arrow-right" style="font-size:11px;"></i>
                     </button>
                 </form>
             </div>
         </nav>
 
-        <section class="hero-empleo pt-40 pb-24 text-white relative overflow-hidden">
-            <div class="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-                <span class="bg-gradient-to-r from-orange-600 to-amber-500 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-6 inline-block shadow-sm">
+        {{-- ── HERO ── --}}
+        <section class="hero-section">
+            <div class="hero-dots"></div>
+            <div class="hero-inner">
+                <div class="hero-badge">
+                    <i class="fas fa-briefcase" style="font-size:9px;"></i>
                     Oportunidades Laborales
-                </span>
-                <h1 class="premium-title text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight">
+                </div>
+                <h1 class="premium-title hero-title">
                     Trabaja en los mejores<br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">restaurantes</span> de Nicaragua
+                    <span>restaurantes</span> de Nicaragua
                 </h1>
-                <p class="text-stone-300 text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
-                    Encuentra tu lugar en la gastronomía local. Desde el corazón de la cocina hasta la excelencia en el servicio, hay un puesto de nivel premium esperándote.
+                <p class="hero-sub">
+                    Encuentra tu lugar en la gastronomía local. Desde el corazón de la cocina hasta la excelencia en el servicio, hay un puesto premium esperándote.
                 </p>
-
-                <div class="inline-flex flex-wrap justify-center items-center gap-4 md:gap-12 mt-12 bg-white/[0.03] backdrop-blur-md p-6 rounded-2xl border border-white/5 shadow-inner">
-                    <div class="text-center px-4">
-                        <p class="text-3xl md:text-4xl font-bold text-orange-400 tracking-tight">{{ $empleos->total() }}</p>
-                        <p class="text-stone-400 text-[10px] mt-1 uppercase tracking-widest font-bold">Vacantes activas</p>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-num">{{ $empleos->total() }}</span>
+                        <span class="stat-label">Vacantes activas</span>
                     </div>
-                    <div class="w-px h-8 bg-white/10 hidden sm:block"></div>
-                    <div class="text-center px-4">
-                        <p class="text-3xl md:text-4xl font-bold text-orange-400 tracking-tight">{{ $totalRestaurantes }}</p>
-                        <p class="text-stone-400 text-[10px] mt-1 uppercase tracking-widest font-bold">Restaurantes</p>
+                    <div class="stat-item">
+                        <span class="stat-num">{{ $totalRestaurantes }}</span>
+                        <span class="stat-label">Restaurantes</span>
                     </div>
-                    <div class="w-px h-8 bg-white/10 hidden sm:block"></div>
-                    <div class="text-center px-4">
-                        <p class="text-3xl md:text-4xl font-bold text-orange-400 tracking-tight">{{ $totalDepartamentos }}</p>
-                        <p class="text-stone-400 text-[10px] mt-1 uppercase tracking-widest font-bold">Destinos</p>
+                    <div class="stat-item">
+                        <span class="stat-num">{{ $totalDepartamentos }}</span>
+                        <span class="stat-label">Destinos</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <main class="max-w-7xl mx-auto px-4 py-16">
+        {{-- ── MAIN ── --}}
+        <main class="main-wrap">
 
+            {{-- Filtros activos --}}
             @if(request('search') || request('departamento'))
-                <div class="mb-10 flex items-center gap-2 flex-wrap bg-stone-100 p-3 rounded-xl inline-flex text-sm">
-                    <span class="text-stone-500 font-medium">Búsqueda:</span>
+                <div class="filter-bar">
+                    <span style="font-size:12px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;">Filtros:</span>
                     @if(request('search'))
-                        <span class="bg-white text-stone-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
+                        <span class="filter-chip">
+                            <i class="fas fa-search" style="font-size:10px;color:#a8a29e;"></i>
                             "{{ request('search') }}"
-                            <a href="{{ request()->fullUrlWithoutQuery(['search']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
+                            <a href="{{ request()->fullUrlWithoutQuery(['search']) }}">×</a>
                         </span>
                     @endif
                     @if(request('departamento'))
-                        <span class="bg-white text-stone-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
-                            Región: {{ $departamentos->find(request('departamento'))?->nombre }}
-                            <a href="{{ request()->fullUrlWithoutQuery(['departamento']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
+                        <span class="filter-chip">
+                            <i class="fas fa-map-marker-alt" style="font-size:10px;color:#a8a29e;"></i>
+                            {{ $departamentos->find(request('departamento'))?->nombre }}
+                            <a href="{{ request()->fullUrlWithoutQuery(['departamento']) }}">×</a>
                         </span>
                     @endif
+                    <a href="{{ route('empleos.index') }}" style="margin-left:auto;font-size:12px;font-weight:600;color:#ea580c;text-decoration:none;">Limpiar todo</a>
                 </div>
             @endif
 
-            @if($empleos->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                    @foreach($empleos as $empleo)
-                        <article class="job-card p-8 flex flex-col gap-6 group" data-aos="fade-up">
+            {{-- Header de sección --}}
+            <div class="section-header">
+                <div>
+                    <p class="section-eyebrow">
+                        <i class="fas fa-fire-alt" style="margin-right:4px;"></i> Vacantes disponibles
+                    </p>
+                    <h2 class="premium-title section-title">Ofertas de empleo</h2>
+                </div>
+                @if($empleos->count() > 0)
+                    <span class="count-badge">{{ $empleos->total() }} {{ $empleos->total() === 1 ? 'oferta' : 'ofertas' }}</span>
+                @endif
+            </div>
 
-                            <div class="flex items-start justify-between gap-4">
-                                <div class="w-12 h-12 bg-stone-50 border border-stone-100 rounded-xl flex items-center justify-center shrink-0 shadow-sm group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
-                                    <i class="fas fa-store text-stone-400 text-lg group-hover:text-orange-600 transition-colors"></i>
+            @if($empleos->count() > 0)
+                <div class="jobs-grid">
+                    @foreach($empleos as $empleo)
+                        <article class="job-card">
+
+                            <div class="card-top">
+                                <div class="card-icon">
+                                    <i class="fas fa-store" style="color:#a8a29e;font-size:18px;"></i>
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[10px] uppercase font-black tracking-widest text-orange-600">
-                                        {{ $empleo->restaurante->nombre }}
-                                    </p>
-                                    <h3 class="premium-title text-xl font-bold mt-1 leading-snug text-stone-900 group-hover:text-orange-600 transition-colors">
-                                        {{ $empleo->titulo }}
-                                    </h3>
+                                <div style="flex:1;min-width:0;">
+                                    <span class="card-restaurant">{{ $empleo->restaurante->nombre }}</span>
+                                    <h3 class="premium-title card-title">{{ $empleo->titulo }}</h3>
                                 </div>
                             </div>
 
-                            <p class="text-stone-500 text-sm leading-relaxed line-clamp-3 font-normal">
-                                {{ $empleo->descripcion }}
-                            </p>
+                            <p class="card-desc">{{ $empleo->descripcion }}</p>
 
-                            <div class="flex flex-wrap gap-1.5 pt-2">
+                            <div class="badges-row">
                                 @if($empleo->tipo_contrato)
-                                    <span class="badge-tipo bg-stone-100 text-stone-600">
-                                        <i class="far fa-clock"></i> {{ $empleo->tipo_contrato }}
+                                    <span class="badge badge-contract">
+                                        <i class="far fa-clock" style="font-size:10px;"></i> {{ $empleo->tipo_contrato }}
                                     </span>
                                 @endif
                                 @if($empleo->salario)
-                                    <span class="badge-tipo bg-green-50 text-green-700">
-                                        <i class="fas fa-wallet"></i> C$ {{ number_format($empleo->salario, 0) }}
+                                    <span class="badge badge-salary">
+                                        <i class="fas fa-wallet" style="font-size:10px;"></i> C$ {{ number_format($empleo->salario, 0) }}
                                     </span>
                                 @else
-                                    <span class="badge-tipo bg-stone-100 text-stone-500">
-                                        <i class="fas fa-handshake"></i> A convenir
+                                    <span class="badge badge-negociar">
+                                        <i class="fas fa-handshake" style="font-size:10px;"></i> A convenir
                                     </span>
                                 @endif
                                 @if($empleo->departamento)
-                                    <span class="badge-tipo bg-blue-50 text-blue-600">
-                                        <i class="fas fa-map-marker-alt"></i> {{ $empleo->departamento->nombre }}@if($empleo->municipio), {{ $empleo->municipio->nombre }}@endif
+                                    <span class="badge badge-location">
+                                        <i class="fas fa-map-marker-alt" style="font-size:10px;"></i>
+                                        {{ $empleo->departamento->nombre }}@if($empleo->municipio), {{ $empleo->municipio->nombre }}@endif
                                     </span>
                                 @endif
                             </div>
 
-                            <div class="pt-5 border-t border-stone-100 flex items-center justify-between mt-auto">
-                                <div class="flex items-center gap-2 text-stone-400 text-xs font-medium">
+                            <div class="card-footer">
+                                <div class="card-date">
                                     <i class="far fa-calendar-alt"></i>
-                                    <span>{{ \Carbon\Carbon::parse($empleo->created_at)->diffForHumans() }}</span>
+                                    {{ \Carbon\Carbon::parse($empleo->created_at)->diffForHumans() }}
                                 </div>
-                                <a href="{{ route('empleos.show', $empleo->id) }}"
-                                   class="bg-stone-950 text-white px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-600 transition-all shadow-sm flex items-center gap-2 no-underline cursor-pointer border-0">
-                                    <span>Ver oferta</span>
-                                    <i class="fas fa-arrow-right text-[10px]"></i>
+                                <a href="{{ route('empleos.show', $empleo->id) }}" class="btn-ver">
+                                    Ver oferta <i class="fas fa-arrow-right" style="font-size:10px;"></i>
                                 </a>
                             </div>
                         </article>
                     @endforeach
                 </div>
 
-                <div class="mt-16 flex justify-center">
+                <div class="pagination-wrap">
                     {{ $empleos->withQueryString()->links() }}
                 </div>
 
             @else
-                <div class="py-24 text-center bg-white border border-stone-200/60 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
-                    <div class="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-stone-100">
-                        <i class="fas fa-briefcase text-2xl text-stone-300"></i>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-briefcase" style="font-size:26px;color:#d6d3d1;"></i>
                     </div>
-                    <h3 class="premium-title text-2xl font-bold text-stone-800 mb-2">No hay ofertas disponibles</h3>
-                    <p class="text-stone-500 text-sm max-w-sm mx-auto leading-relaxed">
+                    <h3 class="premium-title" style="font-size:22px;font-weight:800;color:#1c1917;margin-bottom:8px;">No hay ofertas disponibles</h3>
+                    <p style="color:#78716c;font-size:14px;line-height:1.7;margin:0 0 24px;">
                         @if(request('search') || request('departamento'))
-                            No encontramos vacantes que coincidan con tus filtros actuales. Intenta limpiando los parámetros.
+                            No encontramos vacantes que coincidan con tus filtros. Intenta con otros términos.
                         @else
-                            Los establecimientos gastronómicos asociados aún no han publicado vacantes activas. ¡Vuelve pronto!
+                            Los establecimientos aún no han publicado vacantes activas. ¡Vuelve pronto!
                         @endif
                     </p>
                     @if(request('search') || request('departamento'))
                         <a href="{{ route('empleos.index') }}"
-                           class="mt-6 inline-flex items-center gap-2 bg-orange-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-orange-700 transition-all no-underline border-0 cursor-pointer">
-                            <i class="fas fa-times text-xs"></i> Limpiar todos los filtros
+                           style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:white;padding:11px 24px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.2s;">
+                            <i class="fas fa-times" style="font-size:11px;"></i> Limpiar filtros
                         </a>
                     @endif
                 </div>
             @endif
         </main>
 
-        <footer class="bg-stone-950 text-white py-16 border-t border-white/5">
-            <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-                <a href="{{ route('home') }}" class="flex items-center gap-2 no-underline">
-                    <span class="text-xl font-bold tracking-tight premium-title italic text-white">Gastro<span class="text-orange-500">Nicaragua</span></span>
-                </a>
-                <p class="text-stone-500 text-xs tracking-widest uppercase font-bold m-0">© 2026 Gastro Nicaragua — Experiencias Culinarias</p>
+        {{-- ── FOOTER ── --}}
+        <footer class="site-footer">
+
+            {{-- Grid principal --}}
+            <div class="footer-grid">
+
+                {{-- Columna marca --}}
+                <div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                        <div style="width:36px;height:36px;background:#ea580c;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+                        </div>
+                        <span class="premium-title" style="color:white;font-size:20px;font-style:italic;">
+                            Gastro<span style="color:#fb923c;">Nicaragua</span>
+                        </span>
+                    </div>
+                    <p style="color:#78716c;font-size:13px;line-height:1.75;max-width:280px;margin:0 0 24px;">
+                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua. Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                    </p>
+                    <div style="display:flex;gap:12px;">
+                        <a href="#" class="footer-social-link">
+                            <i class="fab fa-facebook-f" style="font-size:12px;"></i>
+                        </a>
+                        <a href="#" class="footer-social-link">
+                            <i class="fab fa-instagram" style="font-size:12px;"></i>
+                        </a>
+                        <a href="#" class="footer-social-link">
+                            <i class="fab fa-tiktok" style="font-size:12px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Columna Portal --}}
+                <div>
+                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Portal</h4>
+                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;">
+                        <li><a href="{{ route('home') }}" class="footer-link">Inicio</a></li>
+                        <li><a href="{{ route('restaurantes.index') }}" class="footer-link">Restaurantes</a></li>
+                        <li><a href="{{ route('empleos.index') }}" style="color:#ea580c;font-size:13px;font-weight:600;text-decoration:none;">Bolsa de Empleos</a></li>
+                        <li><a href="{{ route('contacto') }}" class="footer-link">Contacto</a></li>
+                    </ul>
+                </div>
+
+                {{-- Columna Destinos --}}
+                <div>
+                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Destinos Destacados</h4>
+                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
+                        <li><a href="#" class="footer-link">› Masaya</a></li>
+                        <li><a href="#" class="footer-link">› Granada</a></li>
+                        <li><a href="#" class="footer-link">› León</a></li>
+                        <li><a href="#" class="footer-link">› San Juan del Sur</a></li>
+                        <li><a href="#" class="footer-link">› Estelí</a></li>
+                        <li><a href="#" class="footer-link">› Matagalpa</a></li>
+                    </ul>
+                </div>
+
+                {{-- Columna Newsletter --}}
+                <div>
+                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 8px;">Newsletter</h4>
+                    <p style="color:#78716c;font-size:12px;line-height:1.6;margin:0 0 16px;">
+                        Recibe directamente en tu bandeja las mejores agendas culinarias de la semana.
+                    </p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <input type="email"
+                               placeholder="Tu correo electrónico"
+                               class="footer-newsletter-input">
+                        <button type="button" class="footer-newsletter-btn">
+                            Suscribirse
+                        </button>
+                    </div>
+                </div>
+
             </div>
+
+            {{-- Footer bottom --}}
+            <div class="footer-bottom">
+                <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">
+                    © 2026 Gastro Nicaragua. Todos los derechos reservados.
+                </p>
+                <div style="display:flex;gap:24px;">
+                    <a href="#" class="footer-link" style="font-size:11px;">Política de Privacidad</a>
+                    <a href="#" class="footer-link" style="font-size:11px;">Términos de Servicio</a>
+                </div>
+            </div>
+
         </footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
-            AOS.init({ duration: 1000, once: true, easing: 'ease-in-out-cubic' });
-
             const mobileToggle = document.getElementById('mobileSearchToggle');
             const mobilePanel  = document.getElementById('mobileSearchPanel');
             if (mobileToggle && mobilePanel) {
                 mobileToggle.addEventListener('click', () => mobilePanel.classList.toggle('open'));
             }
+
+            const cards = document.querySelectorAll('.job-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = (i * 0.06) + 's';
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            cards.forEach(card => observer.observe(card));
         </script>
     </body>
 </html>

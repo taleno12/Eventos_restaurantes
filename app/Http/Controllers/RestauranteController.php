@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurante;
 use App\Models\Departamento;
-use App\Models\RestauranteFoto; // Modelo de las fotos secundarias de la galería
+use App\Models\Municipio;                          // ← AÑADIDO
+use App\Models\RestauranteFoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,14 +30,23 @@ class RestauranteController extends Controller
             $query->where('departamento_id', $request->departamento);
         }
 
+        if ($request->filled('municipio')) {        // ← AÑADIDO
+            $query->where('municipio_id', $request->municipio);
+        }
+
         if ($request->filled('especialidad')) {
             $query->where('especialidad', 'like', '%' . $request->especialidad . '%');
         }
 
         $restaurantes  = $query->orderBy('nombre')->paginate(12);
         $departamentos = Departamento::orderBy('nombre')->get();
+        $municipios    = Municipio::orderBy('nombre')->get(); // ← AÑADIDO
 
-        return view('restaurantes.public_index', compact('restaurantes', 'departamentos'));
+        return view('restaurantes.public_index', compact(
+            'restaurantes',
+            'departamentos',
+            'municipios'                            // ← AÑADIDO
+        ));
     }
 
     public function publicShow(Restaurante $restaurante)

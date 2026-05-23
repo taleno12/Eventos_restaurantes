@@ -19,7 +19,6 @@
 
     <div class="max-w-3xl mx-auto">
 
-        {{-- ✅ Form eliminar FUERA del form principal para evitar forms anidados --}}
         <form id="form-eliminar"
               action="{{ route('admin.empleos.destroy', $empleo) }}"
               method="POST"
@@ -30,9 +29,6 @@
 
         <form action="{{ route('admin.empleos.update', $empleo) }}" method="POST" class="space-y-6">
             @csrf @method('PUT')
-
-            <input type="hidden" name="departamento_id" value="{{ $empleo->departamento_id }}">
-            <input type="hidden" name="municipio_id" value="{{ $empleo->municipio_id }}">
 
             @if($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl text-sm">
@@ -51,16 +47,54 @@
                     Información de la Vacante
                 </h3>
 
+                {{-- ← AÑADIDO: Departamento --}}
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                        Departamento <span class="text-red-500">*</span>
+                    </label>
+                    <select id="select-departamento" name="departamento_id"
+                            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('departamento_id') border-red-400 @enderror" required>
+                        <option value="">— Seleccionar departamento —</option>
+                        @foreach($departamentos as $dep)
+                            <option value="{{ $dep->id }}" {{ old('departamento_id', $empleo->departamento_id) == $dep->id ? 'selected' : '' }}>
+                                {{ $dep->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('departamento_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- ← AÑADIDO: Municipio --}}
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                        Municipio <span class="text-red-500">*</span>
+                    </label>
+                    <select id="select-municipio" name="municipio_id"
+                            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('municipio_id') border-red-400 @enderror" required>
+                        <option value="">— Seleccionar municipio —</option>
+                        @foreach($municipios as $mun)
+                            <option value="{{ $mun->id }}" {{ old('municipio_id', $empleo->municipio_id) == $mun->id ? 'selected' : '' }}>
+                                {{ $mun->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('municipio_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Restaurante --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Restaurante <span class="text-red-500">*</span>
                     </label>
-                    <select name="restaurante_id"
-                            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('restaurante_id') border-red-400 @enderror">
+                    <select id="select-restaurante" name="restaurante_id"
+                            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('restaurante_id') border-red-400 @enderror" required>
                         <option value="">— Selecciona un restaurante —</option>
                         @foreach($restaurantes as $r)
-                            <option value="{{ $r->id }}"
-                                {{ old('restaurante_id', $empleo->restaurante_id) == $r->id ? 'selected' : '' }}>
+                            <option value="{{ $r->id }}" {{ old('restaurante_id', $empleo->restaurante_id) == $r->id ? 'selected' : '' }}>
                                 {{ $r->nombre }}
                             </option>
                         @endforeach
@@ -70,6 +104,7 @@
                     @enderror
                 </div>
 
+                {{-- Título --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Título del puesto <span class="text-red-500">*</span>
@@ -77,42 +112,44 @@
                     <input type="text" name="titulo"
                            value="{{ old('titulo', $empleo->titulo) }}"
                            placeholder="Ej: Mesero, Chef de cocina, Cajero..."
-                           class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('titulo') border-red-400 @enderror">
+                           class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('titulo') border-red-400 @enderror" required>
                     @error('titulo')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- Descripción --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Descripción del puesto <span class="text-red-500">*</span>
                     </label>
                     <textarea name="descripcion" rows="4"
                               placeholder="Describe las responsabilidades..."
-                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none @error('descripcion') border-red-400 @enderror">{{ old('descripcion', $empleo->descripcion) }}</textarea>
+                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none @error('descripcion') border-red-400 @enderror" required>{{ old('descripcion', $empleo->descripcion) }}</textarea>
                     @error('descripcion')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- Requisitos --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Requisitos <span class="text-gray-400 font-normal">(opcional)</span>
                     </label>
                     <textarea name="requisitos" rows="3"
                               placeholder="Experiencia requerida, estudios, habilidades..."
-                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none">{{ old('requisitos', $empleo->requisitos) }}</textarea>
+                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none">{{ old('requisitos', $empleo->requisitos) }}</textarea>
                 </div>
 
+                {{-- Tipo contrato + Salario --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tipo de contrato</label>
                         <select name="tipo_contrato"
-                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                             <option value="">— Seleccionar —</option>
                             @foreach(['Tiempo completo', 'Medio tiempo', 'Por horas', 'Temporal', 'Fines de semana'] as $tipo)
-                                <option value="{{ $tipo }}"
-                                    {{ old('tipo_contrato', $empleo->tipo_contrato) == $tipo ? 'selected' : '' }}>
+                                <option value="{{ $tipo }}" {{ old('tipo_contrato', $empleo->tipo_contrato) == $tipo ? 'selected' : '' }}>
                                     {{ $tipo }}
                                 </option>
                             @endforeach
@@ -126,13 +163,14 @@
                                value="{{ old('salario', $empleo->salario) }}"
                                placeholder="Dejar vacío = A convenir"
                                min="0" step="0.01"
-                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('salario') border-red-400 @enderror">
+                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('salario') border-red-400 @enderror">
                         @error('salario')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
+                {{-- Fecha límite + Toggle --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -140,13 +178,12 @@
                         </label>
                         <input type="date" name="fecha_limite"
                                value="{{ old('fecha_limite', $empleo->fecha_limite?->format('Y-m-d')) }}"
-                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('fecha_limite') border-red-400 @enderror">
+                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('fecha_limite') border-red-400 @enderror">
                         @error('fecha_limite')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- TOGGLE MEJORADO -->
                     <div style="display: flex; align-items: flex-end; padding-bottom: 4px;">
                         <input type="hidden" name="activo" value="0">
                         <input type="checkbox" name="activo" value="1" id="activo"
@@ -180,7 +217,6 @@
                 · Última actualización: {{ $empleo->updated_at->diffForHumans() }}
             </div>
 
-            {{-- ✅ Botones — sin form anidado --}}
             <div class="flex items-center justify-between">
                 <button type="button"
                         onclick="document.getElementById('form-eliminar').submit()"
@@ -194,7 +230,7 @@
                         Cancelar
                     </a>
                     <button type="submit"
-                            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-all shadow">
+                            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-all shadow border-0 cursor-pointer">
                         <i class="fas fa-save"></i> Guardar cambios
                     </button>
                 </div>
@@ -238,6 +274,50 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             actualizarEstadoToggle(document.getElementById('activo'));
+
+            // Encadenamiento Departamento → Municipio → Restaurante
+            const deptoSelect = document.getElementById('select-departamento');
+            const muniSelect  = document.getElementById('select-municipio');
+            const restSelect  = document.getElementById('select-restaurante');
+
+            deptoSelect.addEventListener('change', function () {
+                const deptoId = this.value;
+                muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+                restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
+
+                if (deptoId) {
+                    fetch(`/api/departamentos/${deptoId}/municipios`)
+                        .then(r => r.json())
+                        .then(data => {
+                            muniSelect.innerHTML = '<option value="">— Seleccionar municipio —</option>';
+                            data.forEach(mun => {
+                                const opt = document.createElement('option');
+                                opt.value = mun.id;
+                                opt.textContent = mun.nombre;
+                                muniSelect.appendChild(opt);
+                            });
+                        });
+                }
+            });
+
+            muniSelect.addEventListener('change', function () {
+                const muniId = this.value;
+                restSelect.innerHTML = '<option value="">Cargando restaurantes...</option>';
+
+                if (muniId) {
+                    fetch(`/api/municipios/${muniId}/restaurantes`)
+                        .then(r => r.json())
+                        .then(data => {
+                            restSelect.innerHTML = '<option value="">— Selecciona un restaurante —</option>';
+                            data.forEach(rest => {
+                                const opt = document.createElement('option');
+                                opt.value = rest.id;
+                                opt.textContent = rest.nombre;
+                                restSelect.appendChild(opt);
+                            });
+                        });
+                }
+            });
         });
     </script>
 </x-app-layout>

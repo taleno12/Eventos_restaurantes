@@ -17,6 +17,102 @@
             .hero-empleo {
                 background: linear-gradient(135deg, #1c1917 0%, #292524 60%, #431407 100%);
             }
+
+            /* ── FOOTER ── */
+            .site-footer {
+                background: #0c0a09;
+                border-top: 1px solid rgba(255,255,255,0.05);
+                padding: 64px 2rem 32px;
+            }
+
+            .footer-grid {
+                max-width: 1280px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1.5fr;
+                gap: 48px;
+                padding-bottom: 48px;
+                border-bottom: 1px solid rgba(255,255,255,0.07);
+            }
+
+            .footer-bottom {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding-top: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .footer-social-link {
+                width: 34px; height: 34px;
+                background: rgba(255,255,255,0.06);
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                color: #78716c;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+
+            .footer-social-link:hover {
+                background: rgba(234,88,12,0.2);
+                color: #fb923c;
+            }
+
+            .footer-link {
+                color: #78716c;
+                font-size: 13px;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            .footer-link:hover { color: #fb923c; }
+
+            .footer-newsletter-input {
+                background: rgba(255,255,255,0.06);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 8px;
+                padding: 10px 14px;
+                color: white;
+                font-size: 13px;
+                font-family: 'Instrument Sans', sans-serif;
+                outline: none;
+                width: 100%;
+                transition: all 0.2s;
+            }
+
+            .footer-newsletter-input:focus {
+                border-color: rgba(234,88,12,0.5);
+                background: rgba(255,255,255,0.09);
+            }
+
+            .footer-newsletter-input::placeholder { color: #57534e; }
+
+            .footer-newsletter-btn {
+                background: #ea580c;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                width: 100%;
+                font-family: 'Instrument Sans', sans-serif;
+                transition: all 0.2s;
+            }
+
+            .footer-newsletter-btn:hover {
+                background: #c2410c;
+                box-shadow: 0 4px 14px rgba(234,88,12,0.35);
+            }
+
+            @media (max-width: 768px) {
+                .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+                .footer-bottom { flex-direction: column; align-items: flex-start; }
+            }
         </style>
     </head>
     <body class="bg-stone-50 text-stone-900 antialiased">
@@ -192,7 +288,7 @@
                             </div>
                         </div>
 
-                        {{-- ✅ BOTÓN QUE ABRE EL MODAL (reemplaza el mailto) --}}
+                        {{-- Botón aplicar --}}
                         <div class="pt-1">
                             <button
                                 type="button"
@@ -211,16 +307,96 @@
             </div>
         </main>
 
-        <footer class="bg-stone-900 text-white py-12 mt-20">
-            <div class="max-w-4xl mx-auto px-4 text-center">
-                <p class="text-stone-500 text-xs tracking-widest uppercase font-bold m-0">© 2026 Gastro Nicaragua — Experiencias Culinarias</p>
+        {{-- ── FOOTER ── --}}
+        <footer class="site-footer" style="margin-top:80px;">
+
+            {{-- Grid principal --}}
+            <div class="footer-grid">
+
+                {{-- Columna marca --}}
+                <div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                        <div style="width:36px;height:36px;background:#ea580c;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+                        </div>
+                        <span class="premium-title" style="color:white;font-size:20px;font-style:italic;">
+                            Gastro<span style="color:#fb923c;">Nicaragua</span>
+                        </span>
+                    </div>
+                    <p style="color:#78716c;font-size:13px;line-height:1.75;max-width:280px;margin:0 0 24px;">
+                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua. Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                    </p>
+                    <div style="display:flex;gap:12px;">
+                        <a href="#" class="footer-social-link">
+                            <i class="fab fa-facebook-f" style="font-size:12px;"></i>
+                        </a>
+                        <a href="#" class="footer-social-link">
+                            <i class="fab fa-instagram" style="font-size:12px;"></i>
+                        </a>
+                        <a href="#" class="footer-social-link">
+                            <i class="fab fa-tiktok" style="font-size:12px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Columna Portal --}}
+                <div>
+                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Portal</h4>
+                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;">
+                        <li><a href="{{ route('home') }}" class="footer-link">Inicio</a></li>
+                        <li><a href="{{ route('restaurantes.index') }}" class="footer-link">Restaurantes</a></li>
+                        <li><a href="{{ route('empleos.index') }}" style="color:#ea580c;font-size:13px;font-weight:600;text-decoration:none;">Bolsa de Empleos</a></li>
+                        <li><a href="{{ route('contacto') }}" class="footer-link">Contacto</a></li>
+                    </ul>
+                </div>
+
+                {{-- Columna Destinos --}}
+                <div>
+                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Destinos Destacados</h4>
+                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
+                        <li><a href="#" class="footer-link">› Masaya</a></li>
+                        <li><a href="#" class="footer-link">› Granada</a></li>
+                        <li><a href="#" class="footer-link">› León</a></li>
+                        <li><a href="#" class="footer-link">› San Juan del Sur</a></li>
+                        <li><a href="#" class="footer-link">› Estelí</a></li>
+                        <li><a href="#" class="footer-link">› Matagalpa</a></li>
+                    </ul>
+                </div>
+
+                {{-- Columna Newsletter --}}
+                <div>
+                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 8px;">Newsletter</h4>
+                    <p style="color:#78716c;font-size:12px;line-height:1.6;margin:0 0 16px;">
+                        Recibe directamente en tu bandeja las mejores agendas culinarias de la semana.
+                    </p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <input type="email"
+                               placeholder="Tu correo electrónico"
+                               class="footer-newsletter-input">
+                        <button type="button" class="footer-newsletter-btn">
+                            Suscribirse
+                        </button>
+                    </div>
+                </div>
+
             </div>
+
+            {{-- Footer bottom --}}
+            <div class="footer-bottom">
+                <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">
+                    © 2026 Gastro Nicaragua. Todos los derechos reservados.
+                </p>
+                <div style="display:flex;gap:24px;">
+                    <a href="#" class="footer-link" style="font-size:11px;">Política de Privacidad</a>
+                    <a href="#" class="footer-link" style="font-size:11px;">Términos de Servicio</a>
+                </div>
+            </div>
+
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
         {{-- ===== MODAL DE APLICACIÓN ===== --}}
-        <!-- Overlay del modal -->
         <div id="applyModal"
              style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,0.80); backdrop-filter:blur(4px);">
 
@@ -422,7 +598,7 @@
             document.getElementById('applyForm').addEventListener('submit', function() {
                 var btn = document.getElementById('submitBtn');
                 document.getElementById('submitText').textContent = 'Enviando...';
-                btn.disabled     = true;
+                btn.disabled      = true;
                 btn.style.opacity = '0.7';
                 btn.style.cursor  = 'not-allowed';
             });

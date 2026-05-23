@@ -7,446 +7,719 @@
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
-            body { font-family: 'Instrument Sans', sans-serif; overflow-x: hidden; }
+            :root {
+                --orange: #ea580c;
+                --dark: #0c0a09;
+                --stone-soft: #fafaf9;
+            }
+            body {
+                font-family: 'Instrument Sans', sans-serif;
+                overflow-x: hidden;
+                background: var(--stone-soft);
+            }
             .premium-title { font-family: 'Playfair Display', serif; }
-            .hero-blur-bg { background: linear-gradient(135deg, #1c1917 0%, #0c0a09 100%); }
+
+            /* ── HERO ── */
+            .hero-section {
+                position: relative;
+                height: 92vh;
+                min-height: 580px;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                overflow: hidden;
+            }
+            .hero-bg {
+                position: absolute;
+                inset: 0;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                transform: scale(1.04);
+                transition: transform 8s ease;
+            }
+            .hero-section:hover .hero-bg { transform: scale(1); }
+            .hero-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to top,
+                    rgba(12,10,9,0.94) 0%,
+                    rgba(12,10,9,0.55) 45%,
+                    rgba(12,10,9,0.18) 100%
+                );
+            }
+            .hero-content {
+                position: relative;
+                z-index: 10;
+                padding: 0 2rem 4rem;
+                max-width: 72rem;
+                margin: 0 auto;
+                width: 100%;
+            }
+            .nav-glass {
+                position: absolute;
+                top: 0; left: 0; right: 0;
+                z-index: 50;
+                background: linear-gradient(to bottom, rgba(12,10,9,0.7) 0%, transparent 100%);
+            }
+            .badge-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 16px;
+                border-radius: 999px;
+                font-size: 10px;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+
+            /* ── CARDS ── */
+            .info-card {
+                background: white;
+                border-radius: 24px;
+                border: 1px solid rgba(231,229,228,0.6);
+                box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .info-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+            }
+            .stat-chip {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 20px 22px;
+            }
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+
+            /* ── SOCIAL ── */
+            .social-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 52px;
+                height: 52px;
+                border-radius: 16px;
+                transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+                text-decoration: none;
+                font-size: 20px;
+            }
+            .social-btn:hover { transform: translateY(-4px) scale(1.08); }
+            .social-btn.whatsapp  { background: #dcfce7; color: #16a34a; }
+            .social-btn.whatsapp:hover  { background: #22c55e; color: white; box-shadow: 0 8px 24px rgba(34,197,94,0.4); }
+            .social-btn.instagram { background: #fce7f3; color: #db2777; }
+            .social-btn.instagram:hover { background: linear-gradient(135deg,#f59e0b,#ec4899,#8b5cf6); color: white; box-shadow: 0 8px 24px rgba(236,72,153,0.4); }
+            .social-btn.tiktok    { background: #f1f5f9; color: #0f172a; }
+            .social-btn.tiktok:hover    { background: #0f172a; color: white; box-shadow: 0 8px 24px rgba(15,23,42,0.3); }
+            .social-btn.facebook  { background: #dbeafe; color: #2563eb; }
+            .social-btn.facebook:hover  { background: #2563eb; color: white; box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
+
+            /* ── CTA ── */
+            .cta-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                width: 100%;
+                background: var(--dark);
+                color: white;
+                font-weight: 700;
+                font-size: 14px;
+                padding: 16px 24px;
+                border-radius: 16px;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+                letter-spacing: 0.02em;
+            }
+            .cta-btn:hover {
+                background: var(--orange);
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 12px 32px rgba(234,88,12,0.35);
+            }
+
+            /* ── SECTION LABEL ── */
+            .section-label {
+                font-size: 10px;
+                font-weight: 800;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: #a8a29e;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .section-label::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: #e7e5e4;
+            }
+
+            .countdown-badge {
+                background: #fff1f2;
+                color: #be123c;
+                border: 1px solid #fecdd3;
+                font-size: 12px;
+                font-weight: 800;
+                padding: 7px 14px;
+                border-radius: 999px;
+                letter-spacing: 0.04em;
+            }
+
+            /* ── GALERÍA ── */
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+            .gallery-item {
+                aspect-ratio: 1;
+                border-radius: 16px;
+                overflow: hidden;
+                cursor: zoom-in;
+                position: relative;
+                background: #f5f5f4;
+                border: 2px solid #f0f0ef;
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+            }
+            .gallery-item:hover {
+                transform: scale(1.04);
+                box-shadow: 0 10px 36px rgba(0,0,0,0.13);
+                border-color: #fed7aa;
+            }
+            .gallery-item img {
+                width: 100%; height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.5s ease;
+            }
+            .gallery-item:hover img { transform: scale(1.07); }
+            .gallery-item .overlay {
+                position: absolute;
+                inset: 0;
+                background: rgba(12,10,9,0);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.25s ease;
+            }
+            .gallery-item:hover .overlay { background: rgba(12,10,9,0.35); }
+            .gallery-item .overlay i {
+                color: white;
+                font-size: 24px;
+                opacity: 0;
+                transform: scale(0.7);
+                transition: opacity 0.25s ease, transform 0.25s ease;
+            }
+            .gallery-item:hover .overlay i {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            /* ══════════════════════════════════════════ */
+            /*  LIGHTBOX                                  */
+            /* ══════════════════════════════════════════ */
+            #lightbox {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                background: rgba(12, 10, 9, 0.96);
+                backdrop-filter: blur(10px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            #lightbox.active {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            /* Imagen principal */
+            #lightbox-img {
+                max-width: min(88vw, 1000px);
+                max-height: 84vh;
+                border-radius: 20px;
+                object-fit: contain;
+                box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+                transform: scale(0.92);
+                transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                            opacity 0.18s ease;
+                user-select: none;
+                display: block;
+            }
+            #lightbox.active #lightbox-img { transform: scale(1); }
+
+            /* Botón cerrar */
+            #lb-close {
+                position: fixed;
+                top: 20px; right: 20px;
+                width: 46px; height: 46px;
+                background: rgba(255,255,255,0.1);
+                border: 1px solid rgba(255,255,255,0.2);
+                backdrop-filter: blur(8px);
+                border-radius: 14px;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                transition: background 0.2s ease, transform 0.2s ease;
+                z-index: 10000;
+            }
+            #lb-close:hover {
+                background: rgba(239,68,68,0.7);
+                transform: scale(1.08);
+            }
+
+            /* Botón "Ver imagen hero" */
+            .hero-zoom-btn {
+                position: absolute;
+                bottom: 120px; right: 2rem;
+                z-index: 20;
+                background: rgba(255,255,255,0.12);
+                border: 1px solid rgba(255,255,255,0.2);
+                backdrop-filter: blur(12px);
+                color: white;
+                font-size: 13px;
+                font-weight: 700;
+                padding: 10px 18px;
+                border-radius: 999px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: background 0.2s ease;
+            }
+            .hero-zoom-btn:hover { background: rgba(234,88,12,0.7); }
+
+            /* Flechas nav */
+            .lb-nav {
+                position: fixed;
+                top: 50%; transform: translateY(-50%);
+                width: 52px; height: 52px;
+                background: rgba(255,255,255,0.1);
+                border: 1px solid rgba(255,255,255,0.15);
+                backdrop-filter: blur(8px);
+                border-radius: 50%;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                transition: background 0.2s ease, transform 0.2s ease;
+                z-index: 10000;
+            }
+            .lb-nav:hover {
+                background: rgba(234,88,12,0.7);
+                transform: translateY(-50%) scale(1.08);
+            }
+            #lb-prev { left: 20px; }
+            #lb-next { right: 20px; }
+
+            /* Counter + dots */
+            #lb-footer {
+                position: fixed;
+                bottom: 24px;
+                left: 50%; transform: translateX(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                z-index: 10000;
+            }
+            #lb-counter {
+                color: rgba(255,255,255,0.5);
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+            }
+            #lb-dots {
+                display: flex;
+                gap: 7px;
+                align-items: center;
+            }
+            .lb-dot {
+                width: 7px; height: 7px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.25);
+                cursor: pointer;
+                transition: background 0.2s ease, transform 0.2s ease;
+            }
+            .lb-dot.active {
+                background: #ea580c;
+                transform: scale(1.4);
+            }
+
+            /* ── ANIMATIONS ── */
+            @keyframes fadeUp {
+                from { opacity: 0; transform: translateY(28px); }
+                to   { opacity: 1; transform: translateY(0); }
+            }
+            .fade-up  { animation: fadeUp 0.7s ease both; }
+            .delay-1  { animation-delay: 0.1s; }
+            .delay-2  { animation-delay: 0.2s; }
+
+            @media (min-width: 1024px) {
+                .main-grid    { grid-template-columns: 1fr 380px !important; align-items: start; }
+                .sticky-panel { position: sticky; top: 24px; }
+            }
         </style>
     </head>
-    <body class="bg-stone-50/60 text-stone-900 antialiased">
+    <body>
 
-        {{-- ── NAV ── --}}
-        <nav class="fixed w-full z-50 bg-white/70 backdrop-blur-xl border-b border-stone-200/40 shadow-sm">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20 items-center">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 no-underline">
-                        <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20">
-                            <i class="fas fa-utensils text-white text-sm"></i>
-                        </div>
-                        <span class="text-2xl font-bold tracking-tight premium-title italic text-stone-900">Gastro<span class="text-orange-600">Nicaragua</span></span>
-                    </a>
-                    <a href="{{ route('home') }}" class="text-sm font-bold text-stone-600 hover:text-orange-600 transition-all no-underline flex items-center gap-2 bg-stone-100 hover:bg-orange-50 px-4 py-2 rounded-full">
-                        <i class="fas fa-arrow-left text-xs"></i> Volver a inicio
-                    </a>
-                </div>
-            </div>
-        </nav>
+        @php $restaurante = $evento->restaurante; @endphp
 
         {{-- ── HERO ── --}}
-        <header class="hero-blur-bg pt-44 pb-28 text-white relative overflow-hidden">
-            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-12 right-1/3 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(#ffffff02_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+        <section class="hero-section">
+            <div class="hero-bg" style="background-image: url('{{ asset('storage/' . $evento->imagen) }}')"></div>
+            <div class="hero-overlay"></div>
 
-            <div class="max-w-6xl mx-auto px-4 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {{-- Botón zoom portada --}}
+            <button class="hero-zoom-btn"
+                    onclick="openHeroLightbox('{{ asset('storage/' . $evento->imagen) }}')">
+                <i class="fas fa-expand-alt" style="font-size:11px;"></i> Ver imagen completa
+            </button>
 
-                    <div class="lg:col-span-7 flex flex-col gap-4">
-                        <div class="flex flex-wrap gap-2.5 items-center">
-                            <span class="bg-orange-600 text-white text-[11px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-md shadow-orange-900/30 flex items-center gap-1.5">
-                                <i class="fas fa-store text-[10px]"></i> {{ $evento->restaurante->nombre }}
-                            </span>
-                            @if($evento->restaurante->especialidad)
-                                <span class="bg-white/10 border border-white/10 text-orange-400 text-[11px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-md">
-                                    <i class="fas fa-tags text-[10px] mr-1"></i> {{ $evento->restaurante->especialidad }}
-                                </span>
-                            @endif
-                        </div>
-
-                        <h1 class="premium-title text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.15] drop-shadow-md tracking-tight mt-2 text-stone-50">
-                            {{ $evento->titulo }}
-                        </h1>
-
-                        <div class="flex items-center gap-2 text-stone-300 text-sm sm:text-base bg-white/5 border border-white/10 px-4 py-2.5 rounded-2xl w-fit backdrop-blur-sm mt-3">
-                            <i class="fas fa-map-marker-alt text-orange-500 shadow-sm"></i>
-                            <span class="text-white font-bold">{{ $evento->departamento->nombre }}</span>
-                            @if($evento->municipio)
-                                <span class="text-stone-500 font-light">|</span>
-                                <span class="text-stone-300 font-medium">{{ $evento->municipio->nombre }}</span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-5 flex justify-center">
-                        <div class="relative group w-full max-w-md">
-                            <div class="absolute inset-0 bg-orange-600/20 rounded-[2rem] blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
-                            <div class="relative rounded-[2rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 aspect-[4/3] sm:aspect-video lg:aspect-square bg-stone-900">
-                                <img src="{{ asset('storage/' . $evento->imagen) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ $evento->titulo }}">
+            <nav class="nav-glass">
+                <div style="max-width:72rem;margin:0 auto;padding:0 2rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;height:80px;">
+                        <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+                            <div style="width:40px;height:40px;background:#ea580c;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(234,88,12,0.35);">
+                                <i class="fas fa-utensils" style="color:white;font-size:13px;"></i>
                             </div>
-                        </div>
+                            <span class="premium-title" style="font-size:22px;font-weight:700;color:white;font-style:italic;">Gastro<span style="color:#fb923c;">Nicaragua</span></span>
+                        </a>
+                        <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(12px);color:white;font-size:13px;font-weight:700;padding:10px 20px;border-radius:999px;">
+                            <i class="fas fa-arrow-left" style="font-size:11px;"></i> Volver a inicio
+                        </a>
                     </div>
+                </div>
+            </nav>
 
+            <div class="hero-content">
+                <div style="max-width:680px;">
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;" class="fade-up">
+                        <span class="badge-pill" style="background:#ea580c;color:white;">
+                            <i class="fas fa-store" style="font-size:9px;"></i> {{ $restaurante->nombre }}
+                        </span>
+                        @if($restaurante->especialidad)
+                            <span class="badge-pill" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);color:#fb923c;backdrop-filter:blur(8px);">
+                                <i class="fas fa-tags" style="font-size:9px;"></i> {{ $restaurante->especialidad }}
+                            </span>
+                        @endif
+                    </div>
+                    <h1 class="premium-title fade-up delay-1" style="font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:900;color:white;line-height:1.1;margin:0 0 20px;text-shadow:0 2px 24px rgba(0,0,0,0.5);">
+                        {{ $evento->titulo }}
+                    </h1>
+                    <div class="fade-up delay-2" style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(12px);padding:10px 20px;border-radius:999px;">
+                        <i class="fas fa-map-marker-alt" style="color:#fb923c;"></i>
+                        <span style="color:white;font-weight:700;font-size:14px;">{{ $evento->departamento->nombre }}</span>
+                        @if($evento->municipio)
+                            <span style="color:rgba(255,255,255,0.4);">|</span>
+                            <span style="color:rgba(255,255,255,0.75);font-size:14px;">{{ $evento->municipio->nombre }}</span>
+                        @endif
+                    </div>
                 </div>
             </div>
-        </header>
+        </section>
 
         {{-- ── MAIN ── --}}
-        {{-- Definimos $restaurante aquí arriba, antes de todo, para usarlo en toda la vista --}}
-        @php
-            $restaurante  = $evento->restaurante;
-            $totalReviews = $restaurante->reviews()->count();
-            $avgRating    = $totalReviews > 0 ? round($restaurante->reviews()->avg('rating'), 1) : null;
-        @endphp
+        <main style="max-width:72rem;margin:0 auto;padding:48px 2rem 80px;">
+            <div style="display:grid;grid-template-columns:1fr;gap:28px;" class="main-grid">
 
-        <main class="max-w-6xl mx-auto px-4 py-20">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {{-- COLUMNA IZQUIERDA --}}
+                <div style="display:flex;flex-direction:column;gap:24px;">
 
-                {{-- Columna Principal --}}
-                <div class="lg:col-span-8 space-y-8">
-
-                    {{-- Fichas de Características --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white p-5 rounded-3xl border border-stone-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
-                        <div class="p-3 flex items-center gap-3">
-                            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 shrink-0">
-                                <i class="fas fa-ticket-alt text-lg"></i>
+                    {{-- STATS --}}
+                    <div class="info-card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+                        <div class="stat-chip">
+                            <div class="stat-icon" style="background:#fff7ed;">
+                                <i class="fas fa-ticket-alt" style="color:#ea580c;font-size:18px;"></i>
                             </div>
                             <div>
-                                <span class="text-[10px] uppercase tracking-widest font-bold text-stone-400 block mb-0.5">Precio Entrada</span>
-                                <span class="text-base font-black text-stone-800">
+                                <span style="font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:4px;">Precio Entrada</span>
+                                <span style="font-size:15px;font-weight:800;color:#1c1917;">
                                     @if($evento->precio > 0)
                                         C$ {{ number_format($evento->precio, 0) }}
                                     @else
-                                        Entrada Libre
+                                        <span style="color:#16a34a;">Entrada Libre</span>
                                     @endif
                                 </span>
                             </div>
                         </div>
-                        <div class="p-3 flex items-center gap-3 sm:border-l border-stone-100">
-                            <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
-                                <i class="far fa-calendar-alt text-lg"></i>
+                        <div class="stat-chip" style="border-left:1px solid #f5f5f4;">
+                            <div class="stat-icon" style="background:#fffbeb;">
+                                <i class="far fa-calendar-alt" style="color:#d97706;font-size:18px;"></i>
                             </div>
                             <div>
-                                <span class="text-[10px] uppercase tracking-widest font-bold text-stone-400 block mb-0.5">Fecha Evento</span>
-                                <span class="text-sm font-bold text-stone-700">
+                                <span style="font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:4px;">Fecha Evento</span>
+                                <span style="font-size:14px;font-weight:700;color:#292524;">
                                     {{ \Carbon\Carbon::parse($evento->fecha_evento)->translatedFormat('d \d\e F, Y') }}
                                 </span>
                             </div>
                         </div>
-                        <div class="p-3 flex items-center gap-3 sm:border-l border-stone-100">
-                            <div class="w-12 h-12 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-600 shrink-0">
-                                <i class="fas fa-building text-lg"></i>
+                        <div class="stat-chip" style="border-left:1px solid #f5f5f4;">
+                            <div class="stat-icon" style="background:#f0fdf4;">
+                                <i class="fas fa-building" style="color:#15803d;font-size:17px;"></i>
                             </div>
                             <div>
-                                <span class="text-[10px] uppercase tracking-widest font-bold text-stone-400 block mb-0.5">Establecimiento</span>
-                                <span class="text-sm font-bold text-stone-700 truncate max-w-[160px] block">{{ $restaurante->nombre }}</span>
+                                <span style="font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:4px;">Establecimiento</span>
+                                <span style="font-size:14px;font-weight:700;color:#292524;display:block;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $restaurante->nombre }}</span>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Descripción --}}
-                    <section class="bg-white rounded-3xl p-8 sm:p-10 border border-stone-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-6">
-                        <h2 class="text-xs font-black uppercase tracking-widest text-stone-400 flex items-center gap-2.5 border-b border-stone-100 pb-4">
-                            <i class="fas fa-align-left text-orange-600 text-sm"></i> Detalles e Información del Evento
-                        </h2>
-                        <p class="text-stone-600 text-base leading-relaxed whitespace-pre-line font-normal">
+                    {{-- DESCRIPCIÓN --}}
+                    <div class="info-card" style="padding:36px 40px;">
+                        <div class="section-label" style="margin-bottom:20px;">
+                            <i class="fas fa-align-left" style="color:#ea580c;"></i>
+                            Detalles del evento
+                        </div>
+                        <p style="color:#57534e;font-size:16px;line-height:1.8;margin:0;white-space:pre-line;">
                             {{ $evento->descripcion ?? 'Sin descripción detallada disponible por el momento.' }}
                         </p>
-                    </section>
+                    </div>
 
-                    {{-- ══ RESEÑAS ══ --}}
-                    <section class="bg-white rounded-3xl p-8 sm:p-10 border border-stone-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
-
-                        <h2 class="text-xs font-black uppercase tracking-widest text-stone-400 flex items-center gap-2.5 border-b border-stone-100 pb-4 mb-6">
-                            <i class="fas fa-star text-orange-500 text-sm"></i> Reseñas de {{ $restaurante->nombre }}
-                        </h2>
-
-                        {{-- Resumen calificación --}}
-                        @if($totalReviews > 0)
-                            <div class="flex items-center gap-4 mb-6 p-4 bg-orange-50 rounded-2xl border border-orange-100">
-                                <span class="text-5xl font-black text-orange-600 leading-none">{{ $avgRating }}</span>
-                                <div>
-                                    <div class="flex gap-0.5 mb-1">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <span class="text-xl {{ $i <= round($avgRating) ? 'text-orange-500' : 'text-stone-200' }}">★</span>
-                                        @endfor
-                                    </div>
-                                    <span class="text-sm text-stone-500 font-medium">
-                                        {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
-                                    </span>
-                                </div>
+                    {{-- GALERÍA --}}
+                    @if($evento->imagenes && $evento->imagenes->count() > 0)
+                        <div class="info-card" style="padding:36px 40px;">
+                            <div class="section-label" style="margin-bottom:20px;">
+                                <i class="fas fa-images" style="color:#ea580c;"></i>
+                                Galería de fotos
+                                <span style="background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;font-size:10px;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:0.08em;">
+                                    {{ $evento->imagenes->count() }} {{ $evento->imagenes->count() == 1 ? 'foto' : 'fotos' }}
+                                </span>
+                                <span style="font-size:10px;color:#d6d3d1;font-weight:500;letter-spacing:0;text-transform:none;">— clic para ampliar</span>
                             </div>
-                        @else
-                            <p class="text-stone-400 text-sm italic mb-6">Sé el primero en reseñar este restaurante.</p>
-                        @endif
-
-                        {{-- Mensajes flash --}}
-                        @if(session('success'))
-                            <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-medium">
-                                <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                            </div>
-                        @endif
-                        @if(session('error'))
-                            <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium">
-                                <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                            </div>
-                        @endif
-
-                        {{-- Formulario nueva reseña --}}
-                        @auth
-                            @php $userReview = $restaurante->reviews()->where('user_id', auth()->id())->first(); @endphp
-
-                            @unless($userReview)
-                                <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 mb-6">
-                                    <h3 class="text-sm font-bold text-stone-700 mb-4">Deja tu reseña</h3>
-
-                                    {{-- ✅ CORRECCIÓN: se pasa $restaurante->id explícitamente --}}
-                                    <form action="{{ route('reviews.store', $restaurante->id) }}" method="POST">
-                                        @csrf
-
-                                        <div class="flex gap-1 mb-1 cursor-pointer" id="starPicker">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <span class="star-pick text-3xl text-stone-300 transition-colors select-none" data-value="{{ $i }}">★</span>
-                                            @endfor
-                                        </div>
-                                        <input type="hidden" name="rating" id="ratingInput" value="">
-                                        @error('rating')
-                                            <p class="text-red-500 text-xs mb-2">{{ $message }}</p>
-                                        @enderror
-
-                                        <input type="text"
-                                               name="title"
-                                               placeholder="Título (opcional)"
-                                               maxlength="100"
-                                               value="{{ old('title') }}"
-                                               class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700 mb-3 mt-2 focus:outline-none focus:border-orange-400 bg-white">
-
-                                        <textarea name="body"
-                                                  placeholder="Cuéntanos tu experiencia... (opcional)"
-                                                  maxlength="1000"
-                                                  rows="3"
-                                                  class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700 mb-4 focus:outline-none focus:border-orange-400 bg-white resize-none">{{ old('body') }}</textarea>
-
-                                        <button type="submit"
-                                                class="bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors border-0 cursor-pointer">
-                                            Publicar reseña
-                                        </button>
-                                    </form>
-                                </div>
-                            @endunless
-                        @else
-                            <div class="bg-stone-50 border border-stone-200 rounded-2xl p-5 mb-6 text-center">
-                                <p class="text-stone-500 text-sm m-0">
-                                    <a href="{{ route('login') }}" class="text-orange-600 font-bold hover:underline">Inicia sesión</a> para dejar una reseña.
-                                </p>
-                            </div>
-                        @endauth
-
-                        {{-- Lista de reseñas --}}
-                        <div class="space-y-4">
-                            @forelse($restaurante->reviews()->with('user')->latest()->get() as $review)
-                                <article class="border border-stone-100 rounded-2xl p-5">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div>
-                                            <span class="font-bold text-stone-800 text-sm">{{ $review->user->name }}</span>
-                                            <span class="text-stone-400 text-xs block mt-0.5">{{ $review->created_at->diffForHumans() }}</span>
-                                        </div>
-                                        <div class="flex gap-0.5">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <span class="text-base {{ $i <= $review->rating ? 'text-orange-500' : 'text-stone-200' }}">★</span>
-                                            @endfor
+                            <div class="gallery-grid">
+                                @foreach($evento->imagenes as $index => $foto)
+                                    <div class="gallery-item" onclick="openLightbox({{ $index }})">
+                                        <img src="{{ asset('storage/' . $foto->ruta) }}"
+                                             alt="Foto {{ $index + 1 }} del evento"
+                                             loading="lazy">
+                                        <div class="overlay">
+                                            <i class="fas fa-expand-alt"></i>
                                         </div>
                                     </div>
-
-                                    @if($review->title)
-                                        <h4 class="font-semibold text-stone-700 text-sm mb-1">{{ $review->title }}</h4>
-                                    @endif
-                                    @if($review->body)
-                                        <p class="text-stone-500 text-sm leading-relaxed m-0">{{ $review->body }}</p>
-                                    @endif
-
-                                    @auth
-                                        @if(auth()->id() === $review->user_id)
-                                            <div class="flex gap-2 mt-3 pt-3 border-t border-stone-100">
-                                                <button onclick="toggleEditForm('edit-{{ $review->id }}')"
-                                                        class="text-xs border border-orange-300 text-orange-600 px-3 py-1 rounded-lg hover:bg-orange-50 transition-colors bg-transparent cursor-pointer">
-                                                    Editar
-                                                </button>
-                                                <form action="{{ route('reviews.destroy', $review->id) }}" method="POST"
-                                                      onsubmit="return confirm('¿Eliminar esta reseña?')">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit"
-                                                            class="text-xs border border-stone-200 text-stone-500 px-3 py-1 rounded-lg hover:bg-stone-50 transition-colors bg-transparent cursor-pointer">
-                                                        Eliminar
-                                                    </button>
-                                                </form>
-                                            </div>
-
-                                            <div id="edit-{{ $review->id }}" class="hidden mt-4 pt-4 border-t border-stone-100">
-                                                <form action="{{ route('reviews.update', $review->id) }}" method="POST">
-                                                    @csrf @method('PUT')
-
-                                                    <div class="flex gap-1 mb-2 cursor-pointer" id="starPicker-{{ $review->id }}">
-                                                        @for($i = 1; $i <= 5; $i++)
-                                                            <span class="star-pick text-2xl transition-colors select-none {{ $i <= $review->rating ? 'text-orange-500' : 'text-stone-300' }}"
-                                                                  data-value="{{ $i }}">★</span>
-                                                        @endfor
-                                                    </div>
-                                                    <input type="hidden" name="rating" id="ratingInput-{{ $review->id }}" value="{{ $review->rating }}">
-
-                                                    <input type="text" name="title" value="{{ $review->title }}"
-                                                           placeholder="Título"
-                                                           class="w-full border border-stone-200 rounded-xl px-4 py-2 text-sm mb-2 focus:outline-none focus:border-orange-400 bg-white">
-
-                                                    <textarea name="body" rows="3"
-                                                              class="w-full border border-stone-200 rounded-xl px-4 py-2 text-sm mb-3 focus:outline-none focus:border-orange-400 bg-white resize-none">{{ $review->body }}</textarea>
-
-                                                    <div class="flex gap-2">
-                                                        <button type="submit"
-                                                                class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors border-0 cursor-pointer">
-                                                            Guardar
-                                                        </button>
-                                                        <button type="button"
-                                                                onclick="toggleEditForm('edit-{{ $review->id }}')"
-                                                                class="border border-stone-200 text-stone-500 text-xs px-4 py-2 rounded-lg hover:bg-stone-50 transition-colors bg-transparent cursor-pointer">
-                                                            Cancelar
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        @endif
-                                    @endauth
-                                </article>
-                            @empty
-                                <p class="text-stone-400 text-sm italic text-center py-6">Aún no hay reseñas para este restaurante.</p>
-                            @endforelse
+                                @endforeach
+                            </div>
                         </div>
-
-                    </section>
-                    {{-- ══ FIN RESEÑAS ══ --}}
+                    @endif
 
                 </div>
 
-                {{-- Columna Lateral --}}
-                <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
-                    <div class="bg-white rounded-3xl p-8 border border-stone-200/60 shadow-[0_15px_40px_rgba(0,0,0,0.02)] space-y-5">
+                {{-- SIDEBAR --}}
+                <div class="sticky-panel" style="display:flex;flex-direction:column;gap:20px;">
 
+                    <div class="info-card" style="padding:28px 32px;">
+                        <div class="section-label" style="margin-bottom:20px;">
+                            <i class="far fa-clock"></i> Disponibilidad
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #f5f5f4;">
+                            <span style="font-size:13px;font-weight:600;color:#78716c;">Vigencia</span>
+                            <span class="countdown countdown-badge" data-expire="{{ $evento->fecha_evento }}">Calculando...</span>
+                        </div>
                         <div>
-                            <h3 class="text-xs font-black uppercase tracking-widest text-stone-400 mb-2 flex items-center gap-2">
-                                <i class="far fa-clock text-stone-400"></i> Disponibilidad
-                            </h3>
-                            <div class="border-b border-stone-100 pb-3 flex justify-between items-center">
-                                <span class="text-stone-400 font-medium text-sm">Vigencia</span>
-                                <span class="countdown font-bold text-xs text-red-600 bg-red-50 border border-red-100 px-3 py-1 rounded-xl"
-                                      data-expire="{{ $evento->fecha_evento }}">
-                                    Calculando...
-                                </span>
+                            <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Contacto sede</span>
+                            <div style="background:#fafaf9;border:1px solid #e7e5e4;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:600;color:#292524;word-break:break-all;">
+                                <i class="fas fa-envelope" style="color:#ea580c;margin-right:8px;"></i>
+                                {{ $restaurante->email ?? 'No disponible' }}
                             </div>
                         </div>
+                    </div>
 
-                        <div class="pt-1">
-                            <span class="text-stone-400 font-medium text-sm block mb-2">Contacto Sede</span>
-                            <span class="text-xs text-stone-700 font-bold truncate block w-full bg-stone-50 px-3 py-2 rounded-xl border border-stone-100">
-                                {{ $restaurante->email ?? 'No disponible' }}
-                            </span>
-                        </div>
-
-                        <div class="border-t border-stone-100 pt-4">
-                            <span class="text-stone-400 font-medium text-sm block mb-3">Redes del Establecimiento</span>
-                            <div class="flex flex-wrap items-center gap-2.5">
+                    @if(!empty($restaurante->whatsapp) || !empty($restaurante->instagram) || !empty($restaurante->tiktok) || !empty($restaurante->facebook))
+                        <div class="info-card" style="padding:28px 32px;">
+                            <div class="section-label" style="margin-bottom:20px;">
+                                <i class="fas fa-share-alt"></i> Redes sociales
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;gap:12px;">
                                 @if(!empty($restaurante->whatsapp))
-                                    @php $phoneClean = preg_replace('/[^0-9]/', '', $restaurante->whatsapp); @endphp
-                                    <a href="https://wa.me/{{ $phoneClean }}" target="_blank" title="WhatsApp"
-                                       class="w-9 h-9 rounded-full bg-green-50 hover:bg-green-500 text-green-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
-                                        <i class="fab fa-whatsapp text-lg"></i>
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $restaurante->whatsapp) }}" target="_blank" class="social-btn whatsapp" title="WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
                                     </a>
                                 @endif
                                 @if(!empty($restaurante->instagram))
-                                    <a href="{{ $restaurante->instagram }}" target="_blank" title="Instagram"
-                                       class="w-9 h-9 rounded-full bg-pink-50 hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-600 text-pink-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
-                                        <i class="fab fa-instagram text-lg"></i>
+                                    <a href="{{ $restaurante->instagram }}" target="_blank" class="social-btn instagram" title="Instagram">
+                                        <i class="fab fa-instagram"></i>
                                     </a>
                                 @endif
                                 @if(!empty($restaurante->tiktok))
-                                    <a href="{{ $restaurante->tiktok }}" target="_blank" title="TikTok"
-                                       class="w-9 h-9 rounded-full bg-stone-50 hover:bg-black text-stone-800 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
-                                        <i class="fab fa-tiktok text-sm"></i>
+                                    <a href="{{ $restaurante->tiktok }}" target="_blank" class="social-btn tiktok" title="TikTok">
+                                        <i class="fab fa-tiktok"></i>
                                     </a>
                                 @endif
                                 @if(!empty($restaurante->facebook))
-                                    <a href="{{ $restaurante->facebook }}" target="_blank" title="Facebook"
-                                       class="w-9 h-9 rounded-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm no-underline">
-                                        <i class="fab fa-facebook-f text-base"></i>
+                                    <a href="{{ $restaurante->facebook }}" target="_blank" class="social-btn facebook" title="Facebook">
+                                        <i class="fab fa-facebook-f"></i>
                                     </a>
-                                @endif
-                                @if(empty($restaurante->whatsapp) && empty($restaurante->instagram) && empty($restaurante->tiktok) && empty($restaurante->facebook))
-                                    <span class="text-xs text-stone-400 italic">Sin redes sociales registradas.</span>
                                 @endif
                             </div>
                         </div>
+                    @endif
 
-                        <div class="pt-2">
-                            <a href="mailto:{{ $restaurante->email ?? 'contacto@gastronicaragua.com' }}?subject=Consulta sobre Evento: {{ $evento->titulo }}"
-                               class="w-full bg-stone-950 hover:bg-orange-600 text-white text-center font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-orange-600/10 block no-underline text-sm border-0 cursor-pointer">
-                                <i class="fas fa-paper-plane mr-2 text-xs"></i> Enviar Consulta al Local
-                            </a>
-                        </div>
-                    </div>
+                    <a href="mailto:{{ $restaurante->email ?? 'contacto@gastronicaragua.com' }}?subject=Consulta sobre Evento: {{ $evento->titulo }}" class="cta-btn">
+                        <i class="fas fa-paper-plane" style="font-size:13px;"></i>
+                        Enviar consulta al local
+                    </a>
+
                 </div>
-
             </div>
         </main>
 
-        <footer class="bg-stone-950 text-white py-16 border-t border-white/5">
-            <div class="max-w-6xl mx-auto px-4 text-center">
-                <p class="text-stone-600 text-xs tracking-widest uppercase font-bold m-0">© 2026 Gastro Nicaragua — Experiencias Culinarias</p>
+        <footer style="background:#0c0a09;color:white;padding:48px 2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+                <div style="width:32px;height:32px;background:#ea580c;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+                </div>
+                <span class="premium-title" style="color:white;font-size:18px;font-style:italic;">Gastro<span style="color:#fb923c;">Nicaragua</span></span>
             </div>
+            <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">© 2026 — Experiencias Culinarias de Nicaragua</p>
         </footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {{-- ══════════════════════════════════════════════════════ --}}
+        {{-- LIGHTBOX HTML                                          --}}
+        {{-- ══════════════════════════════════════════════════════ --}}
+        <div id="lightbox" onclick="handleBgClick(event)">
+            <button id="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+            <button id="lb-prev"  class="lb-nav" onclick="navigate(-1)"><i class="fas fa-chevron-left"></i></button>
+            <img    id="lightbox-img" src="" alt="Foto del evento">
+            <button id="lb-next"  class="lb-nav" onclick="navigate(1)"><i class="fas fa-chevron-right"></i></button>
+            <div id="lb-footer">
+                <div id="lb-counter"></div>
+                <div id="lb-dots"></div>
+            </div>
+        </div>
+
         <script>
-            // ── Countdown ──
+            // ── Countdown ────────────────────────────────────────────────
             function updateCountdowns() {
                 document.querySelectorAll('.countdown').forEach(el => {
-                    const expireDate = new Date(el.getAttribute('data-expire')).getTime();
-                    const distance   = expireDate - Date.now();
-                    if (distance < 0) { el.innerHTML = 'FINALIZADO'; return; }
-                    const days    = Math.floor(distance / 86400000);
-                    const hours   = Math.floor((distance % 86400000) / 3600000);
-                    const minutes = Math.floor((distance % 3600000) / 60000);
-                    el.innerHTML = `Faltan: ${days}d ${hours}h ${minutes}m`;
+                    const exp      = new Date(el.getAttribute('data-expire')).getTime();
+                    const distance = exp - Date.now();
+                    if (distance < 0) { el.textContent = 'FINALIZADO'; return; }
+                    const d = Math.floor(distance / 86400000);
+                    const h = Math.floor((distance % 86400000) / 3600000);
+                    const m = Math.floor((distance % 3600000) / 60000);
+                    el.textContent = `Faltan: ${d}d ${h}h ${m}m`;
                 });
             }
             setInterval(updateCountdowns, 60000);
             updateCountdowns();
 
-            // ── Star pickers ──
-            document.querySelectorAll('[id^="starPicker"]').forEach(picker => {
-                const inputId = picker.id.replace('starPicker', 'ratingInput');
-                const input   = document.getElementById(inputId);
-                const stars   = picker.querySelectorAll('.star-pick');
+            // ── Lightbox ─────────────────────────────────────────────────
+            const images = [
+                @foreach($evento->imagenes ?? [] as $foto)
+                    '{{ asset('storage/' . $foto->ruta) }}',
+                @endforeach
+            ];
 
-                stars.forEach(star => {
-                    star.addEventListener('mouseenter', () => {
-                        const val = parseInt(star.dataset.value);
-                        stars.forEach(s => {
-                            s.style.color = parseInt(s.dataset.value) <= val ? '#ea580c' : '#d1d5db';
-                        });
-                    });
-                    star.addEventListener('mouseleave', () => {
-                        const cur = input ? parseInt(input.value) || 0 : 0;
-                        stars.forEach(s => {
-                            s.style.color = parseInt(s.dataset.value) <= cur ? '#ea580c' : '#d1d5db';
-                        });
-                    });
-                    star.addEventListener('click', () => {
-                        const val = parseInt(star.dataset.value);
-                        if (input) input.value = val;
-                        stars.forEach(s => {
-                            s.style.color = parseInt(s.dataset.value) <= val ? '#ea580c' : '#d1d5db';
-                        });
-                    });
-                });
-            });
+            let currentIndex = 0;
+            let isHero       = false;   // true cuando mostramos la imagen del hero
 
-            // ── Toggle edición inline ──
-            function toggleEditForm(id) {
-                document.getElementById(id).classList.toggle('hidden');
+            const lb      = document.getElementById('lightbox');
+            const lbImg   = document.getElementById('lightbox-img');
+            const lbPrev  = document.getElementById('lb-prev');
+            const lbNext  = document.getElementById('lb-next');
+            const counter = document.getElementById('lb-counter');
+            const dots    = document.getElementById('lb-dots');
+
+            // Abrir desde la galería
+            function openLightbox(index) {
+                isHero       = false;
+                currentIndex = index;
+                lbImg.src    = images[index];
+                lb.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                updateUI();
             }
-        </script>
 
+            // Abrir imagen del hero (sin nav)
+            function openHeroLightbox(src) {
+                isHero    = true;
+                lbImg.src = src;
+                lb.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                updateUI();
+            }
+
+            function closeLightbox() {
+                lb.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => { lbImg.src = ''; }, 300);
+            }
+
+            function navigate(dir) {
+                if (isHero || images.length === 0) return;
+                currentIndex = (currentIndex + dir + images.length) % images.length;
+
+                lbImg.style.opacity   = '0';
+                lbImg.style.transform = 'scale(0.94)';
+                setTimeout(() => {
+                    lbImg.src             = images[currentIndex];
+                    lbImg.style.opacity   = '1';
+                    lbImg.style.transform = 'scale(1)';
+                    updateUI();
+                }, 160);
+            }
+
+            function jumpTo(index) {
+                currentIndex = index;
+                lbImg.src = images[index];
+                updateUI();
+            }
+
+            function updateUI() {
+                const showNav = !isHero && images.length > 1;
+                lbPrev.style.display = showNav ? 'flex' : 'none';
+                lbNext.style.display = showNav ? 'flex' : 'none';
+
+                if (!isHero && images.length > 0) {
+                    counter.textContent = `${currentIndex + 1} / ${images.length}`;
+                    dots.innerHTML = images.map((_, i) =>
+                        `<span class="lb-dot ${i === currentIndex ? 'active' : ''}"
+                               onclick="jumpTo(${i})"></span>`
+                    ).join('');
+                } else {
+                    counter.textContent = 'Imagen del evento';
+                    dots.innerHTML      = '';
+                }
+            }
+
+            function handleBgClick(e) {
+                if (e.target === lb) closeLightbox();
+            }
+
+            // Transición suave en img
+            lbImg.style.transition = 'opacity 0.16s ease, transform 0.16s ease';
+
+            // Teclado
+            document.addEventListener('keydown', e => {
+                if (!lb.classList.contains('active')) return;
+                if (e.key === 'Escape')     closeLightbox();
+                if (e.key === 'ArrowRight') navigate(1);
+                if (e.key === 'ArrowLeft')  navigate(-1);
+            });
+        </script>
     </body>
 </html>

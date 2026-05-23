@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventoController;
+use App\Http\Controllers\EventoImagenController;
 use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\ProfileController;
@@ -13,12 +14,6 @@ use App\Models\Evento;
 use App\Models\Departamento;
 use App\Models\Empleo;
 use App\Models\User;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
 Route::get('/', [EventoController::class, 'welcome'])->name('home');
@@ -43,7 +38,8 @@ Route::get('/empleos/{empleo}', [EmpleoController::class, 'show'])->name('empleo
 Route::post('/empleos/{empleo}/aplicar', [EmpleoController::class, 'aplicar'])->name('empleos.aplicar');
 
 // ── EVENTOS PÚBLICOS ─────────────────────────────────────────────────────────
-Route::get('/eventos/{evento}', [EventoController::class, 'show'])->name('eventos.show');
+// ⚠️ MOVIDA al final, después de las rutas admin, para no capturar /eventos/create
+// Se define abajo con whereNumber para que solo acepte IDs numéricos
 
 // ── API PÚBLICA ───────────────────────────────────────────────────────────────
 Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
@@ -53,8 +49,8 @@ Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
 // ── REVIEWS Y SISTEMA DE COMENTARIOS (REQUIERE AUTH) ─────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::put('/reviews/{review}',                    [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}',                 [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // ── PANEL DE CONTROL / DASHBOARD (SOLO ADMIN) ────────────────────────────────
@@ -72,8 +68,8 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'admin'])->group(function () {
 
     // PERFIL DE USUARIO
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ADMINISTRACIÓN DE RESTAURANTES
@@ -88,8 +84,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 
     // ADMINISTRACIÓN DE EVENTOS
-    Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
-    Route::resource('eventos', EventoController::class)->except(['index', 'show']);
+    Route::get('/eventos',               [EventoController::class, 'index'])->name('eventos.index');
+    Route::get('/eventos/create',        [EventoController::class, 'create'])->name('eventos.create');
+    Route::post('/eventos',              [EventoController::class, 'store'])->name('eventos.store');
+    Route::get('/eventos/{evento}/edit', [EventoController::class, 'edit'])->name('eventos.edit');
+    Route::put('/eventos/{evento}',      [EventoController::class, 'update'])->name('eventos.update');
+    Route::patch('/eventos/{evento}',    [EventoController::class, 'update']);
+    Route::delete('/eventos/{evento}',   [EventoController::class, 'destroy'])->name('eventos.destroy');
+
+    // GALERÍA DE FOTOS DE EVENTOS
+    Route::post('/eventos/{evento}/imagenes',  [EventoImagenController::class, 'store'])->name('evento.imagenes.store');
+    Route::delete('/evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])->name('evento.imagenes.destroy');
 
     // ADMINISTRACIÓN DE DEPARTAMENTOS
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
@@ -97,13 +102,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // PANEL DE EMPLEOS ADMIN
     Route::prefix('admin/empleos')->name('admin.empleos.')->group(function () {
-        Route::get('/', [EmpleoController::class, 'index'])->name('index');
-        Route::get('/crear', [EmpleoController::class, 'create'])->name('create');
-        Route::post('/', [EmpleoController::class, 'store'])->name('store');
-        Route::get('/{empleo}', [EmpleoController::class, 'adminShow'])->name('show');
+        Route::get('/',                [EmpleoController::class, 'index'])->name('index');
+        Route::get('/crear',           [EmpleoController::class, 'create'])->name('create');
+        Route::post('/',               [EmpleoController::class, 'store'])->name('store');
+        Route::get('/{empleo}',        [EmpleoController::class, 'adminShow'])->name('show');
         Route::get('/{empleo}/editar', [EmpleoController::class, 'edit'])->name('edit');
-        Route::put('/{empleo}', [EmpleoController::class, 'update'])->name('update');
-        Route::delete('/{empleo}', [EmpleoController::class, 'destroy'])->name('destroy');
+        Route::put('/{empleo}',        [EmpleoController::class, 'update'])->name('update');
+        Route::delete('/{empleo}',     [EmpleoController::class, 'destroy'])->name('destroy');
     });
 
     // MÓDULOS DE GESTIÓN INTERNA
@@ -120,6 +125,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/api/municipios/{id}/restaurantes', function ($id) {
         return App\Models\Restaurante::where('municipio_id', $id)->get(['id', 'nombre', 'especialidad']);
     })->name('api.municipios.restaurantes');
+
+    Route::get('/api/departamentos/{id}/restaurantes', function ($id) {
+        return App\Models\Restaurante::where('departamento_id', $id)->get(['id', 'nombre', 'especialidad']);
+    })->name('api.departamentos.restaurantes');
 });
+
+// ── EVENTOS PÚBLICOS (al final, con whereNumber para evitar capturar "create") ─
+Route::get('/eventos/{evento}', [EventoController::class, 'show'])
+    ->name('eventos.show')
+    ->whereNumber('evento');
 
 require __DIR__ . '/auth.php';

@@ -28,21 +28,24 @@
         </div>
     </x-slot>
 
+    {{-- Leaflet CSS --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         {{-- Banner de Portada Superior Dinámico --}}
         <div class="relative h-48 sm:h-64 rounded-3xl overflow-hidden mb-8 shadow-sm border border-gray-100 bg-gradient-to-r from-gray-900 to-slate-800">
             @if($restaurante->foto_portada)
-                <img src="{{ asset('storage/' . $restaurante->foto_portada) }}" 
-                     alt="Portada {{ $restaurante->nombre }}" 
+                <img src="{{ asset('storage/' . $restaurante->foto_portada) }}"
+                     alt="Portada {{ $restaurante->nombre }}"
                      class="w-full h-full object-cover opacity-50 scale-105 transition-transform duration-700 hover:scale-100">
             @elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}" 
-                     alt="Portada {{ $restaurante->nombre }}" 
+                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}"
+                     alt="Portada {{ $restaurante->nombre }}"
                      class="w-full h-full object-cover opacity-50 scale-105">
             @endif
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            
+
             <div class="absolute bottom-0 left-0 w-full p-6 sm:p-8 flex items-end gap-4 sm:gap-6">
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white font-black text-2xl sm:text-3xl shadow-lg border-2 border-white/20">
                     {{ strtoupper(substr($restaurante->nombre, 0, 1)) }}
@@ -59,10 +62,10 @@
 
         {{-- Grid Principal de Contenido --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {{-- COLUMNA IZQUIERDA --}}
             <div class="lg:col-span-2 space-y-6">
-                
+
                 {{-- Bloque de Datos Generales --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 transition-shadow hover:shadow-md">
                     <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 mb-5 flex items-center gap-2 border-b border-gray-100 pb-3">
@@ -111,19 +114,44 @@
                     </div>
                 </div>
 
+                {{-- Bloque de Ubicación en Mapa --}}
+                @if($restaurante->latitud && $restaurante->longitud)
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 transition-shadow hover:shadow-md">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 mb-5 flex items-center gap-2 border-b border-gray-100 pb-3">
+                        <i class="fas fa-map-marker-alt text-orange-500"></i> Ubicación del Establecimiento
+                    </h3>
+
+                    @if($restaurante->direccion)
+                        <p class="text-xs text-gray-500 mb-4 flex items-center gap-2">
+                            <i class="fas fa-map-pin text-orange-400"></i>
+                            <span class="font-medium text-gray-700">{{ $restaurante->direccion }}</span>
+                        </p>
+                    @endif
+
+                    <div id="show-mapa-restaurante"
+                         class="w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm"
+                         style="height: 320px;"></div>
+
+                    <p class="text-xs text-gray-400 mt-2 font-mono flex items-center gap-1.5">
+                        <i class="fas fa-crosshairs text-orange-400"></i>
+                        {{ number_format($restaurante->latitud, 6) }}, {{ number_format($restaurante->longitud, 6) }}
+                    </p>
+                </div>
+                @endif
+
                 {{-- Bloque de Galería Fotográfica --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
                     <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 mb-5 flex items-center gap-2">
                         <i class="fas fa-images text-orange-500"></i> Galería de Álbum Fotográfico
                     </h3>
-                    
+
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="sm:col-span-2 aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 group relative shadow-inner">
                             @if($restaurante->foto_portada)
-                                <img src="{{ asset('storage/' . $restaurante->foto_portada) }}" 
+                                <img src="{{ asset('storage/' . $restaurante->foto_portada) }}"
                                      alt="Imagen principal" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             @elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}" 
+                                <img src="{{ asset('storage/' . $restaurante->imagenes->first()->ruta_foto) }}"
                                      alt="Imagen principal" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
@@ -139,7 +167,7 @@
                             @if($restaurante->imagenes && $restaurante->imagenes->count() > 1)
                                 @foreach($restaurante->imagenes->skip($restaurante->foto_portada ? 0 : 1)->take(3) as $imagen)
                                     <div class="aspect-video sm:aspect-[4/3] rounded-xl overflow-hidden bg-gray-50 border border-gray-100 group relative shadow-sm">
-                                        <img src="{{ asset('storage/' . $imagen->ruta_foto) }}" 
+                                        <img src="{{ asset('storage/' . $imagen->ruta_foto) }}"
                                              alt="Galería" class="w-full h-full object-cover hover:scale-110 transition-all duration-300">
                                     </div>
                                 @endforeach
@@ -154,16 +182,17 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             {{-- COLUMNA DERECHA: Sidebar --}}
             <div class="space-y-6">
-                
+
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-xs font-black uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
                         <i class="fas fa-fingerprint text-orange-400"></i> Ecosistema Digital
                     </h3>
-                    
+
                     <div class="space-y-3">
                         <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 text-sm">
                             <span class="flex items-center gap-2.5 font-bold text-gray-600 text-xs">
@@ -251,4 +280,44 @@
             </a>
         </div>
     </div>
+
+    {{-- Leaflet JS --}}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    @if($restaurante->latitud && $restaurante->longitud)
+    <script>
+    (function () {
+        const lat = {{ $restaurante->latitud }};
+        const lng = {{ $restaurante->longitud }};
+
+        const mapa = L.map('show-mapa-restaurante', {
+            zoomControl: true,
+            scrollWheelZoom: false
+        }).setView([lat, lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mapa);
+
+        const iconoNaranja = L.divIcon({
+            html: '<div style="background:#ea580c;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            className: ''
+        });
+
+        {{-- ✅ CORRECCIÓN: usar variables PHP separadas para evitar HTML crudo en el popup --}}
+        const popupNombre = @json($restaurante->nombre);
+        const popupDireccion = @json($restaurante->direccion);
+
+        const popupContent = `<strong>${popupNombre}</strong>${popupDireccion ? `<br><span style="font-size:11px;color:#6b7280">${popupDireccion}</span>` : ''}`;
+
+        L.marker([lat, lng], { icon: iconoNaranja })
+            .addTo(mapa)
+            .bindPopup(popupContent)
+            .openPopup();
+    })();
+    </script>
+    @endif
+
 </x-app-layout>

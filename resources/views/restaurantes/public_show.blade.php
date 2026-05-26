@@ -7,35 +7,63 @@
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-        <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=playfair-display:400,700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
             :root {
-                --orange: #ea580c;
+                --orange:       #ea580c;
                 --orange-light: #fed7aa;
-                --dark: #0c0a09;
-                --stone-soft: #fafaf9;
+                --orange-glow:  rgba(234,88,12,0.18);
+                --dark:         #0c0a09;
+                --stone:        #fafaf9;
+                --border:       #e7e5e4;
+                --text-muted:   #78716c;
+                --text-main:    #1c1917;
             }
+
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
             body {
                 font-family: 'Instrument Sans', sans-serif;
+                background: var(--stone);
+                color: var(--text-main);
                 overflow-x: hidden;
-                background: var(--stone-soft);
             }
 
             .premium-title { font-family: 'Playfair Display', serif; }
 
-            /* ── HERO ── */
-            .hero-section {
+            /* ─────────────────────────────────────────────────────
+               HERO  —  altura reducida, sin espacio en blanco
+            ───────────────────────────────────────────────────── */
+            .hero-wrap {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                /* Altura automática según contenido, con mínimo razonable */
+                min-height: auto;
                 position: relative;
-                height: 65vh;          /* ← reducido de 92vh */
-                min-height: 420px;     /* ← reducido de 580px */
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
+            }
+
+            @media (max-width: 900px) {
+                .hero-wrap { grid-template-columns: 1fr; }
+                .hero-img-col { height: 52vw; min-height: 220px; max-height: 380px; }
+            }
+
+            /* Columna imagen — altura fija, no 100vh */
+            .hero-img-col {
+                position: relative;
                 overflow: hidden;
+                /* Altura fija para que no sea enorme */
+                height: 420px;
+            }
+
+            @media (min-width: 900px) {
+                /* La columna imagen iguala la altura de la columna info */
+                .hero-img-col {
+                    height: auto;
+                    min-height: 420px;
+                }
             }
 
             .hero-bg {
@@ -43,422 +71,581 @@
                 inset: 0;
                 background-size: cover;
                 background-position: center;
-                background-repeat: no-repeat;
-                transform: scale(1.04);
-                transition: transform 8s ease;
+                transition: transform 9s ease;
             }
 
-            .hero-section:hover .hero-bg { transform: scale(1); }
+            .hero-img-col:hover .hero-bg { transform: scale(1.05); }
 
-            .hero-overlay {
+            .hero-img-overlay {
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(
-                    to top,
-                    rgba(12, 10, 9, 0.92) 0%,
-                    rgba(12, 10, 9, 0.55) 45%,
-                    rgba(12, 10, 9, 0.15) 100%
-                );
+                background: linear-gradient(135deg, rgba(12,10,9,0.35) 0%, transparent 60%);
             }
 
-            .hero-content {
+            /* Botón zoom portada */
+            .btn-zoom-portada {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                z-index: 10;
+                background: rgba(255,255,255,0.14);
+                border: 1px solid rgba(255,255,255,0.25);
+                backdrop-filter: blur(14px);
+                color: white;
+                font-size: 12px;
+                font-weight: 700;
+                padding: 8px 16px;
+                border-radius: 999px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                transition: background 0.2s, transform 0.2s;
+                letter-spacing: 0.04em;
+            }
+            .btn-zoom-portada:hover { background: rgba(234,88,12,0.75); transform: translateY(-2px); }
+
+            /* Columna info — se ajusta al contenido */
+            .hero-info-col {
+                background: var(--dark);
+                display: flex;
+                flex-direction: column;
+                padding: 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero-info-col::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: radial-gradient(circle at 80% 20%, rgba(234,88,12,0.12) 0%, transparent 55%),
+                                  radial-gradient(circle at 10% 85%, rgba(234,88,12,0.07) 0%, transparent 45%);
+                pointer-events: none;
+            }
+
+            /* NAV dentro del hero-info */
+            .nav-inner {
                 position: relative;
                 z-index: 10;
-                padding: 0 2rem 4rem;
-                max-width: 72rem;
-                margin: 0 auto;
-                width: 100%;
-            }
-
-            /* ── NAV ── */
-            .nav-glass {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 50;
-                background: linear-gradient(to bottom, rgba(12,10,9,0.7) 0%, transparent 100%);
-                backdrop-filter: blur(0px);
-            }
-
-            /* ── BADGE ── */
-            .badge-pill {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 6px 16px;
-                border-radius: 999px;
-                font-size: 10px;
-                font-weight: 800;
-                letter-spacing: 0.12em;
-                text-transform: uppercase;
-            }
-
-            /* ── CARDS ── */
-            .info-card {
-                background: white;
-                border-radius: 24px;
-                border: 1px solid rgba(231,229,228,0.6);
-                box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
-
-            .info-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 32px rgba(0,0,0,0.07);
-            }
-
-            /* ── STAT CHIPS ── */
-            .stat-chip {
+                padding: 22px 40px;
                 display: flex;
                 align-items: center;
-                gap: 14px;
-                padding: 18px 20px;
+                justify-content: space-between;
+                border-bottom: 1px solid rgba(255,255,255,0.06);
             }
 
-            .stat-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-            }
+            @media (max-width: 900px) { .nav-inner { padding: 18px 20px; } }
 
-            /* ── SOCIAL ICONS ── */
-            .social-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 52px;
-                height: 52px;
-                border-radius: 16px;
-                transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-                text-decoration: none;
-                font-size: 20px;
-            }
-
-            .social-btn:hover { transform: translateY(-4px) scale(1.08); }
-
-            .social-btn.whatsapp  { background: #dcfce7; color: #16a34a; }
-            .social-btn.whatsapp:hover  { background: #22c55e; color: white; box-shadow: 0 8px 24px rgba(34,197,94,0.4); }
-            .social-btn.instagram { background: #fce7f3; color: #db2777; }
-            .social-btn.instagram:hover { background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); color: white; box-shadow: 0 8px 24px rgba(236,72,153,0.4); }
-            .social-btn.tiktok    { background: #f1f5f9; color: #0f172a; }
-            .social-btn.tiktok:hover    { background: #0f172a; color: white; box-shadow: 0 8px 24px rgba(15,23,42,0.3); }
-            .social-btn.facebook  { background: #dbeafe; color: #2563eb; }
-            .social-btn.facebook:hover  { background: #2563eb; color: white; box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
-
-            /* ── CTA BUTTON ── */
-            .cta-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                width: 100%;
-                background: var(--dark);
-                color: white;
-                font-weight: 700;
-                font-size: 14px;
-                padding: 16px 24px;
-                border-radius: 16px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                border: none;
-                cursor: pointer;
-                letter-spacing: 0.02em;
-            }
-
-            .cta-btn:hover {
-                background: var(--orange);
-                color: white;
-                transform: translateY(-1px);
-                box-shadow: 0 12px 32px rgba(234,88,12,0.35);
-            }
-
-            /* ── DIVIDER ── */
-            .section-label {
-                font-size: 10px;
-                font-weight: 800;
-                letter-spacing: 0.18em;
-                text-transform: uppercase;
-                color: #a8a29e;
+            .logo-link {
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                text-decoration: none;
             }
 
-            .section-label::after {
-                content: '';
+            .logo-icon {
+                width: 34px; height: 34px;
+                background: var(--orange);
+                border-radius: 10px;
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 4px 16px rgba(234,88,12,0.4);
+                flex-shrink: 0;
+            }
+
+            .btn-back {
+                display: flex; align-items: center; gap: 7px;
+                background: rgba(255,255,255,0.07);
+                border: 1px solid rgba(255,255,255,0.12);
+                color: rgba(255,255,255,0.75);
+                font-size: 12px; font-weight: 700;
+                padding: 7px 16px; border-radius: 999px;
+                text-decoration: none;
+                transition: all 0.2s;
+                letter-spacing: 0.04em;
+            }
+            .btn-back:hover { background: rgba(234,88,12,0.2); color: white; border-color: rgba(234,88,12,0.4); }
+
+            /* Bloque central del hero — padding equilibrado */
+            .hero-center {
+                position: relative;
+                z-index: 10;
+                padding: 32px 40px;
                 flex: 1;
-                height: 1px;
-                background: #e7e5e4;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
 
-            /* ── GALERÍA ── */
-            .gallery-item {
-                aspect-ratio: 1;
+            @media (max-width: 900px) { .hero-center { padding: 24px 20px; } }
+
+            .hero-badge {
+                display: inline-flex; align-items: center; gap: 6px;
+                background: rgba(234,88,12,0.18);
+                border: 1px solid rgba(234,88,12,0.35);
+                color: #fb923c;
+                font-size: 10px; font-weight: 800;
+                letter-spacing: 0.14em; text-transform: uppercase;
+                padding: 5px 12px; border-radius: 999px;
+                margin-bottom: 16px;
+                width: fit-content;
+            }
+
+            .hero-title {
+                font-size: clamp(2rem, 3.5vw, 3.2rem);
+                font-weight: 900; line-height: 1.08;
+                color: white;
+                margin-bottom: 14px;
+            }
+
+            .hero-location {
+                display: flex; align-items: center; gap: 8px;
+                color: rgba(255,255,255,0.55);
+                font-size: 13px; font-weight: 600;
+                margin-bottom: 28px;
+            }
+            .hero-location i { color: var(--orange); }
+            .hero-location strong { color: rgba(255,255,255,0.85); }
+
+            /* Stat row en el hero */
+            .hero-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1px;
+                background: rgba(255,255,255,0.07);
+                border: 1px solid rgba(255,255,255,0.07);
                 border-radius: 16px;
                 overflow: hidden;
-                border: 1px solid #e7e5e4;
+            }
+
+            .hero-stat {
+                background: rgba(255,255,255,0.04);
+                padding: 16px 18px;
+                transition: background 0.2s;
+            }
+            .hero-stat:hover { background: rgba(255,255,255,0.08); }
+
+            .hero-stat-label {
+                font-size: 9px; font-weight: 800;
+                letter-spacing: 0.16em; text-transform: uppercase;
+                color: rgba(255,255,255,0.3);
+                display: block; margin-bottom: 5px;
+            }
+            .hero-stat-value {
+                font-size: 14px; font-weight: 800;
+                color: white;
+            }
+
+            /* Pie del hero-info */
+            .hero-foot {
+                position: relative; z-index: 10;
+                padding: 18px 40px;
+                border-top: 1px solid rgba(255,255,255,0.06);
+                display: flex; align-items: center; gap: 10px;
+                flex-wrap: wrap;
+            }
+            @media (max-width: 900px) { .hero-foot { padding: 14px 20px; } }
+
+            /* ─────────────────────────────────────────────────────
+               MAIN LAYOUT
+            ───────────────────────────────────────────────────── */
+            .main-wrap {
+                max-width: 1240px;
+                margin: 0 auto;
+                padding: 48px 40px 80px;
+                display: grid;
+                grid-template-columns: 1fr 360px;
+                gap: 28px;
+                align-items: start;
+            }
+
+            @media (max-width: 1024px) {
+                .main-wrap { grid-template-columns: 1fr; }
+            }
+            @media (max-width: 600px) {
+                .main-wrap { padding: 28px 16px 60px; }
+            }
+
+            /* ─────────────────────────────────────────────────────
+               CARDS
+            ───────────────────────────────────────────────────── */
+            .card {
+                background: white;
+                border-radius: 20px;
+                border: 1px solid var(--border);
+                box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+                overflow: hidden;
+                transition: box-shadow 0.25s ease;
+            }
+            .card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); }
+
+            .card-body { padding: 28px 32px; }
+            @media (max-width: 600px) { .card-body { padding: 20px 18px; } }
+
+            .section-label {
+                font-size: 10px; font-weight: 800;
+                letter-spacing: 0.18em; text-transform: uppercase;
+                color: #a8a29e;
+                display: flex; align-items: center; gap: 10px;
+                margin-bottom: 20px;
+            }
+            .section-label i { color: var(--orange); font-size: 11px; }
+            .section-label::after {
+                content: ''; flex: 1; height: 1px; background: var(--border);
+            }
+
+            /* Descripción */
+            .desc-text {
+                color: #57534e;
+                font-size: 15px;
+                line-height: 1.8;
+            }
+
+            /* ─────────────────────────────────────────────────────
+               GALERÍA
+            ───────────────────────────────────────────────────── */
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                grid-auto-rows: 120px;
+                gap: 8px;
+            }
+
+            @media (max-width: 700px) {
+                .gallery-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    grid-auto-rows: 90px;
+                }
+            }
+            @media (max-width: 420px) {
+                .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            }
+
+            .gallery-grid .g-item:first-child {
+                grid-column: span 2;
+                grid-row: span 2;
+            }
+
+            .g-item {
+                border-radius: 12px;
+                overflow: hidden;
                 cursor: zoom-in;
                 position: relative;
+                border: 1px solid var(--border);
             }
 
-            .gallery-item img {
-                width: 100%;
-                height: 100%;
+            .g-item img {
+                width: 100%; height: 100%;
                 object-fit: cover;
                 transition: transform 0.5s ease;
+                display: block;
             }
 
-            .gallery-item:hover img { transform: scale(1.08); }
+            .g-item:hover img { transform: scale(1.08); }
 
-            /* Overlay oscuro en hover */
-            .gallery-item::after {
+            .g-item::after {
                 content: '\f00e';
-                font-family: 'Font Awesome 6 Free';
-                font-weight: 900;
-                position: absolute;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 26px;
-                color: white;
+                font-family: 'Font Awesome 6 Free'; font-weight: 900;
+                position: absolute; inset: 0;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 20px; color: white;
                 background: rgba(12,10,9,0);
-                transition: background 0.3s ease, opacity 0.3s ease;
+                transition: background 0.3s, opacity 0.3s;
                 opacity: 0;
             }
+            .g-item:hover::after { background: rgba(12,10,9,0.38); opacity: 1; }
 
-            .gallery-item:hover::after {
-                background: rgba(12,10,9,0.38);
-                opacity: 1;
+            /* ─────────────────────────────────────────────────────
+               MAPA
+            ───────────────────────────────────────────────────── */
+            #mapa-publico {
+                height: 260px;
+                border-radius: 14px;
+                overflow: hidden;
+                border: 1px solid var(--border);
             }
 
-            /* ══════════════════════════════════════════════════ */
-            /*  LIGHTBOX                                          */
-            /* ══════════════════════════════════════════════════ */
+            .dir-box {
+                display: flex; align-items: flex-start; gap: 10px;
+                background: #fff7ed;
+                border: 1px solid var(--orange-light);
+                border-radius: 12px;
+                padding: 12px 16px;
+                margin-bottom: 14px;
+                font-size: 13.5px; color: #57534e; line-height: 1.6;
+            }
+            .dir-box i { color: var(--orange); margin-top: 2px; flex-shrink: 0; }
+
+            .btn-gmaps {
+                display: inline-flex; align-items: center; gap: 8px;
+                background: var(--dark); color: white;
+                text-decoration: none;
+                font-size: 13px; font-weight: 700;
+                padding: 10px 20px; border-radius: 10px;
+                margin-top: 14px;
+                transition: background 0.2s, transform 0.2s;
+                letter-spacing: 0.02em;
+            }
+            .btn-gmaps:hover { background: var(--orange); transform: translateY(-1px); }
+
+            /* ─────────────────────────────────────────────────────
+               SIDEBAR
+            ───────────────────────────────────────────────────── */
+            .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+            @media (min-width: 1024px) {
+                .sidebar { position: sticky; top: 24px; }
+            }
+
+            /* Contacto */
+            .contact-row {
+                background: #fafaf9;
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 12px 14px;
+                font-size: 13px; font-weight: 600; color: #292524;
+                word-break: break-all;
+                display: flex; align-items: center; gap: 10px;
+            }
+            .contact-row i { color: var(--orange); }
+
+            /* Social */
+            .social-btn {
+                display: flex; align-items: center; justify-content: center;
+                width: 48px; height: 48px; border-radius: 14px;
+                font-size: 18px; text-decoration: none;
+                transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            }
+            .social-btn:hover { transform: translateY(-4px) scale(1.08); }
+            .social-btn.wa  { background: #dcfce7; color: #16a34a; }
+            .social-btn.wa:hover  { background: #22c55e; color: white; box-shadow: 0 8px 24px rgba(34,197,94,0.4); }
+            .social-btn.ig  { background: #fce7f3; color: #db2777; }
+            .social-btn.ig:hover  { background: linear-gradient(135deg,#f59e0b,#ec4899,#8b5cf6); color: white; box-shadow: 0 8px 24px rgba(236,72,153,0.4); }
+            .social-btn.tt  { background: #f1f5f9; color: #0f172a; }
+            .social-btn.tt:hover  { background: #0f172a; color: white; box-shadow: 0 8px 24px rgba(15,23,42,0.3); }
+            .social-btn.fb  { background: #dbeafe; color: #2563eb; }
+            .social-btn.fb:hover  { background: #2563eb; color: white; box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
+
+            /* CTA */
+            .cta-btn {
+                display: flex; align-items: center; justify-content: center; gap: 9px;
+                width: 100%; background: var(--dark); color: white;
+                font-weight: 700; font-size: 14px;
+                padding: 15px 20px; border-radius: 14px;
+                text-decoration: none;
+                transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+                letter-spacing: 0.03em;
+            }
+            .cta-btn:hover {
+                background: var(--orange);
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(234,88,12,0.35);
+            }
+
+            /* ─────────────────────────────────────────────────────
+               LIGHTBOX
+            ───────────────────────────────────────────────────── */
             #lightbox {
-                position: fixed;
-                inset: 0;
-                z-index: 9999;
-                background: rgba(12, 10, 9, 0.96);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0;
-                pointer-events: none;
+                position: fixed; inset: 0; z-index: 9999;
+                background: rgba(12,10,9,0.96);
+                display: flex; align-items: center; justify-content: center;
+                opacity: 0; pointer-events: none;
                 transition: opacity 0.3s ease;
                 padding: 20px;
             }
-
-            #lightbox.active {
-                opacity: 1;
-                pointer-events: all;
-            }
+            #lightbox.active { opacity: 1; pointer-events: all; }
 
             #lightbox-img {
-                max-width: min(90vw, 960px);
-                max-height: 85vh;
-                border-radius: 20px;
-                object-fit: contain;
+                max-width: min(90vw, 960px); max-height: 85vh;
+                border-radius: 18px; object-fit: contain;
                 box-shadow: 0 32px 80px rgba(0,0,0,0.6);
                 transform: scale(0.92);
-                transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
                 user-select: none;
             }
+            #lightbox.active #lightbox-img { transform: scale(1); }
 
-            #lightbox.active #lightbox-img {
-                transform: scale(1);
-            }
-
-            /* Botones prev / next */
             .lb-nav-btn {
-                position: fixed;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 52px;
-                height: 52px;
+                position: fixed; top: 50%; transform: translateY(-50%);
+                width: 48px; height: 48px; border-radius: 50%;
                 background: rgba(255,255,255,0.1);
                 border: 1px solid rgba(255,255,255,0.15);
                 backdrop-filter: blur(8px);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 18px;
-                cursor: pointer;
-                transition: background 0.2s ease, transform 0.2s ease;
+                display: flex; align-items: center; justify-content: center;
+                color: white; font-size: 16px; cursor: pointer;
+                transition: background 0.2s, transform 0.2s;
                 z-index: 10000;
             }
+            .lb-nav-btn:hover { background: rgba(234,88,12,0.7); transform: translateY(-50%) scale(1.08); }
+            #lb-prev { left: 16px; }
+            #lb-next { right: 16px; }
 
-            .lb-nav-btn:hover {
-                background: rgba(234,88,12,0.7);
-                transform: translateY(-50%) scale(1.08);
-            }
-
-            #lb-prev { left: 20px; }
-            #lb-next { right: 20px; }
-
-            /* Botón cerrar */
             #lb-close {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                width: 44px;
-                height: 44px;
+                position: fixed; top: 16px; right: 16px;
+                width: 40px; height: 40px; border-radius: 50%;
                 background: rgba(255,255,255,0.1);
                 border: 1px solid rgba(255,255,255,0.2);
                 backdrop-filter: blur(8px);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 16px;
-                cursor: pointer;
-                transition: background 0.2s ease;
-                z-index: 10000;
+                display: flex; align-items: center; justify-content: center;
+                color: white; font-size: 14px; cursor: pointer;
+                transition: background 0.2s; z-index: 10000;
             }
-
             #lb-close:hover { background: rgba(239,68,68,0.7); }
 
-            /* Contador de fotos */
             #lb-counter {
-                position: fixed;
-                bottom: 24px;
-                left: 50%;
-                transform: translateX(-50%);
-                color: rgba(255,255,255,0.5);
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: 0.08em;
-                z-index: 10000;
-                display: flex;
-                gap: 8px;
-                align-items: center;
+                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;
+                letter-spacing: 0.08em; z-index: 10000;
+                display: flex; gap: 8px; align-items: center;
             }
 
-            #lb-dots {
-                display: flex;
-                gap: 6px;
-                align-items: center;
-            }
-
+            #lb-dots { display: flex; gap: 6px; align-items: center; }
             .lb-dot {
-                width: 7px;
-                height: 7px;
-                border-radius: 50%;
+                width: 6px; height: 6px; border-radius: 50%;
                 background: rgba(255,255,255,0.25);
-                transition: background 0.2s, transform 0.2s;
-                cursor: pointer;
+                transition: background 0.2s, transform 0.2s; cursor: pointer;
             }
+            .lb-dot.active { background: #ea580c; transform: scale(1.35); }
 
-            .lb-dot.active {
-                background: #ea580c;
-                transform: scale(1.3);
-            }
-
-            /* ── STICKY SIDEBAR ── */
-            @media (min-width: 1024px) {
-                .sticky-panel { position: sticky; top: 24px; }
-            }
-
-            /* ── ANIMATIONS ── */
+            /* ─────────────────────────────────────────────────────
+               ANIMACIONES
+            ───────────────────────────────────────────────────── */
             @keyframes fadeUp {
-                from { opacity: 0; transform: translateY(28px); }
+                from { opacity: 0; transform: translateY(20px); }
                 to   { opacity: 1; transform: translateY(0); }
             }
-
-            .fade-up { animation: fadeUp 0.7s ease both; }
-            .delay-1 { animation-delay: 0.1s; }
-            .delay-2 { animation-delay: 0.2s; }
-            .delay-3 { animation-delay: 0.3s; }
+            .fu  { animation: fadeUp 0.6s ease both; }
+            .d1  { animation-delay: 0.08s; }
+            .d2  { animation-delay: 0.16s; }
+            .d3  { animation-delay: 0.24s; }
+            .d4  { animation-delay: 0.32s; }
         </style>
     </head>
     <body>
 
-        {{-- ── HERO CON FOTO DE FONDO ── --}}
-        <section class="hero-section">
-            @php
-                $bgUrl = '';
-                if($restaurante->foto_portada)
-                    $bgUrl = asset('storage/' . $restaurante->foto_portada);
-                elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                    $bgUrl = asset('storage/' . $restaurante->imagenes->first()->ruta_foto);
-                else
-                    $bgUrl = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1600&q=80';
-            @endphp
-            <div class="hero-bg" style="background-image: url('{{ $bgUrl }}')"></div>
-            <div class="hero-overlay"></div>
+        {{-- ══════════════════════════════════════════════════════════
+             HERO SPLIT-SCREEN
+        ════════════════════════════════════════════════════════════ --}}
+        <section class="hero-wrap">
 
-            {{-- Botón zoom en la portada --}}
-            @if($restaurante->foto_portada)
-                <button
-                    onclick="openLightbox('{{ asset('storage/' . $restaurante->foto_portada) }}', -1)"
-                    style="position:absolute;bottom:80px;right:2rem;z-index:20;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(12px);color:white;font-size:13px;font-weight:700;padding:10px 18px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;"
-                    onmouseover="this.style.background='rgba(234,88,12,0.7)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.12)'">
-                    <i class="fas fa-expand-alt" style="font-size:11px;"></i> Ver portada
-                </button>
-            @endif
+            {{-- Columna imagen --}}
+            <div class="hero-img-col">
+                @php
+                    $bgUrl = '';
+                    if($restaurante->foto_portada)
+                        $bgUrl = asset('storage/' . $restaurante->foto_portada);
+                    elseif($restaurante->imagenes && $restaurante->imagenes->count() > 0)
+                        $bgUrl = asset('storage/' . $restaurante->imagenes->first()->ruta_foto);
+                    else
+                        $bgUrl = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1600&q=80';
+                @endphp
+                <div class="hero-bg" style="background-image:url('{{ $bgUrl }}');"></div>
+                <div class="hero-img-overlay"></div>
 
-            {{-- NAV --}}
-            <nav class="nav-glass">
-                <div style="max-width:72rem;margin:0 auto;padding:0 2rem;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;height:80px;">
-                        <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-                            <div style="width:40px;height:40px;background:#ea580c;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(234,88,12,0.35);">
-                                <i class="fas fa-utensils" style="color:white;font-size:13px;"></i>
-                            </div>
-                            <span class="premium-title" style="font-size:22px;font-weight:700;color:white;font-style:italic;">Gastro<span style="color:#fb923c;">Nicaragua</span></span>
-                        </a>
-                        <a href="{{ route('restaurantes.index') }}" style="display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(12px);color:white;font-size:13px;font-weight:700;padding:10px 20px;border-radius:999px;transition:all 0.2s;">
-                            <i class="fas fa-arrow-left" style="font-size:11px;"></i> Volver a inicio
-                        </a>
-                    </div>
-                </div>
-            </nav>
+                @if($restaurante->foto_portada)
+                    <button class="btn-zoom-portada"
+                            onclick="openLightbox('{{ asset('storage/' . $restaurante->foto_portada) }}', -1)">
+                        <i class="fas fa-expand-alt" style="font-size:10px;"></i> Ver portada
+                    </button>
+                @endif
+            </div>
 
-            {{-- Hero content --}}
-            <div class="hero-content">
-                <div style="max-width:680px;">
-                    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;" class="fade-up">
-                        <span class="badge-pill" style="background:#ea580c;color:white;">
-                            <i class="fas fa-utensils" style="font-size:9px;"></i> Establecimiento
+            {{-- Columna info --}}
+            <div class="hero-info-col">
+
+                {{-- NAV --}}
+                <nav class="nav-inner">
+                    <a href="{{ route('home') }}" class="logo-link">
+                        <div class="logo-icon">
+                            <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+                        </div>
+                        <span class="premium-title" style="font-size:19px;font-weight:700;color:white;font-style:italic;">
+                            Gastro<span style="color:#fb923c;">Nicaragua</span>
                         </span>
+                    </a>
+                    <a href="{{ route('restaurantes.index') }}" class="btn-back">
+                        <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
+                    </a>
+                </nav>
+
+                {{-- Contenido central --}}
+                <div class="hero-center">
+
+                    <div class="hero-badge fu">
+                        <i class="fas fa-utensils" style="font-size:9px;"></i>
+                        Establecimiento
                         @if($restaurante->especialidad)
-                            <span class="badge-pill" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);color:#fb923c;backdrop-filter:blur(8px);">
-                                <i class="fas fa-tags" style="font-size:9px;"></i> {{ $restaurante->especialidad }}
-                            </span>
+                            &nbsp;·&nbsp; {{ $restaurante->especialidad }}
                         @endif
                     </div>
 
-                    <h1 class="premium-title fade-up delay-1" style="font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;color:white;line-height:1.1;margin:0 0 20px;text-shadow:0 2px 24px rgba(0,0,0,0.4);">
+                    <h1 class="premium-title hero-title fu d1">
                         {{ $restaurante->nombre }}
                     </h1>
 
-                    <div class="fade-up delay-2" style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(12px);padding:10px 20px;border-radius:999px;">
-                        <i class="fas fa-map-marker-alt" style="color:#fb923c;"></i>
-                        <span style="color:white;font-weight:700;font-size:14px;">{{ $restaurante->departamento->nombre }}</span>
+                    <div class="hero-location fu d2">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <strong>{{ $restaurante->departamento->nombre }}</strong>
                         @if($restaurante->municipio)
-                            <span style="color:rgba(255,255,255,0.4);">|</span>
-                            <span style="color:rgba(255,255,255,0.75);font-size:14px;">{{ $restaurante->municipio->nombre }}</span>
+                            <span style="opacity:.45;">·</span>
+                            <span>{{ $restaurante->municipio->nombre }}</span>
                         @endif
                     </div>
+
+                    {{-- Stats --}}
+                    @php
+                        $totalReviews = $restaurante->reviews()->count();
+                        $avgRating    = $totalReviews > 0 ? round($restaurante->reviews()->avg('rating'),1) : null;
+                    @endphp
+                    <div class="hero-stats fu d3">
+                        <div class="hero-stat">
+                            <span class="hero-stat-label">Especialidad</span>
+                            <span class="hero-stat-value" style="color:#fb923c;">{{ $restaurante->especialidad ?? 'General' }}</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-label">Calificación</span>
+                            <span class="hero-stat-value">
+                                @if($avgRating)
+                                    ★ {{ $avgRating }}<span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;"> /5</span>
+                                @else
+                                    <span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;">Sin reseñas</span>
+                                @endif
+                            </span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-label">Municipio</span>
+                            <span class="hero-stat-value" style="font-size:12px;">{{ $restaurante->municipio->nombre }}</span>
+                        </div>
+                    </div>
                 </div>
+
+                {{-- Pie: redes + estado --}}
+                <div class="hero-foot fu d4">
+                    <span style="background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;font-size:11px;font-weight:800;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
+                        <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block;"></span> ABIERTO
+                    </span>
+
+                    @if(!empty($restaurante->whatsapp))
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$restaurante->whatsapp) }}" target="_blank" class="social-btn wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    @endif
+                    @if(!empty($restaurante->instagram))
+                        <a href="{{ $restaurante->instagram }}" target="_blank" class="social-btn ig" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    @endif
+                    @if(!empty($restaurante->tiktok))
+                        <a href="{{ $restaurante->tiktok }}" target="_blank" class="social-btn tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    @endif
+                    @if(!empty($restaurante->facebook))
+                        <a href="{{ $restaurante->facebook }}" target="_blank" class="social-btn fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    @endif
+                </div>
+
             </div>
         </section>
 
-        {{-- ── MAIN CONTENT ── --}}
+        {{-- ══════════════════════════════════════════════════════════
+             MAIN CONTENT
+        ════════════════════════════════════════════════════════════ --}}
         @php
-            $totalReviews = $restaurante->reviews()->count();
-            $avgRating    = $totalReviews > 0 ? round($restaurante->reviews()->avg('rating'), 1) : null;
-
-            // Construir el array de todas las imágenes para el lightbox
             $todasLasImagenes = [];
             if($restaurante->imagenes) {
                 foreach($restaurante->imagenes as $foto) {
@@ -467,100 +654,63 @@
             }
         @endphp
 
-        <main style="max-width:72rem;margin:0 auto;padding:48px 2rem 80px;">
-            <div style="display:grid;grid-template-columns:1fr;gap:28px;" class="lg-grid">
+        <main class="main-wrap">
 
-                {{-- ── COLUMNA IZQUIERDA ── --}}
-                <div style="display:flex;flex-direction:column;gap:24px;">
+            {{-- ── COLUMNA PRINCIPAL ── --}}
+            <div style="display:flex;flex-direction:column;gap:24px;">
 
-                    {{-- FICHAS STATS --}}
-                    <div class="info-card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
-                        <div class="stat-chip">
-                            <div class="stat-icon" style="background:#fff7ed;">
-                                <i class="fas fa-utensils" style="color:#ea580c;font-size:18px;"></i>
-                            </div>
-                            <div>
-                                <span style="font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:4px;">Especialidad</span>
-                                <span style="font-size:14px;font-weight:800;color:#1c1917;">{{ $restaurante->especialidad ?? 'General' }}</span>
-                            </div>
+                {{-- Descripción --}}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-label">
+                            <i class="fas fa-align-left"></i> Sobre el restaurante
                         </div>
-                        <div class="stat-chip" style="border-left:1px solid #f5f5f4;">
-                            <div class="stat-icon" style="background:#fffbeb;">
-                                <i class="fas fa-map-signs" style="color:#d97706;font-size:18px;"></i>
-                            </div>
-                            <div>
-                                <span style="font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:4px;">Municipio</span>
-                                <span style="font-size:14px;font-weight:700;color:#292524;">{{ $restaurante->municipio->nombre }}</span>
-                            </div>
-                        </div>
-                        <div class="stat-chip" style="border-left:1px solid #f5f5f4;">
-                            <div class="stat-icon" style="background:#fefce8;">
-                                <i class="fas fa-star" style="color:#eab308;font-size:18px;"></i>
-                            </div>
-                            <div>
-                                <span style="font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:4px;">Calificación</span>
-                                <span style="font-size:14px;font-weight:700;color:#292524;">
-                                    @if($avgRating)
-                                        {{ $avgRating }} <span style="color:#a8a29e;font-weight:500;">/ 5.0</span>
-                                    @else
-                                        <span style="color:#a8a29e;font-weight:500;">Sin reseñas</span>
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- DESCRIPCIÓN --}}
-                    <div class="info-card" style="padding:36px 40px;">
-                        <div class="section-label" style="margin-bottom:20px;">
-                            <i class="fas fa-align-left" style="color:#ea580c;"></i>
-                            Sobre el restaurante
-                        </div>
-                        <p style="color:#57534e;font-size:16px;line-height:1.8;margin:0;">
-                            Bienvenidos a <strong style="color:#1c1917;">{{ $restaurante->nombre }}</strong>. Somos especialistas en ofrecer la mejor experiencia culinaria en la hermosa localidad de {{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}. ¡Visítanos y disfruta de una sazón inigualable!
+                        <p class="desc-text">
+                            Bienvenidos a <strong style="color:var(--text-main);">{{ $restaurante->nombre }}</strong>.
+                            Somos especialistas en ofrecer la mejor experiencia culinaria en la hermosa localidad
+                            de {{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}.
+                            ¡Visítanos y disfruta de una sazón inigualable!
                         </p>
                     </div>
+                </div>
 
-                    {{-- ══ MAPA DE UBICACIÓN ══ --}}
-@if($restaurante->latitud && $restaurante->longitud)
-    <div class="info-card" style="padding:36px 40px;">
-        <div class="section-label" style="margin-bottom:20px;">
-            <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i> Cómo llegar
-        </div>
-
-        @if($restaurante->direccion)
-            <div style="display:flex;align-items:flex-start;gap:10px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;padding:14px 18px;margin-bottom:16px;">
-                <i class="fas fa-map-pin" style="color:#ea580c;margin-top:2px;flex-shrink:0;"></i>
-                <p style="margin:0;font-size:14px;color:#57534e;line-height:1.6;">{{ $restaurante->direccion }}</p>
-            </div>
-        @endif
-
-        <div id="mapa-publico" style="height:320px;border-radius:20px;overflow:hidden;border:1px solid #e7e5e4;"></div>
-
-        <a href="https://www.google.com/maps?q={{ $restaurante->latitud }},{{ $restaurante->longitud }}"
-           target="_blank"
-           style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:#1c1917;color:white;text-decoration:none;font-size:13px;font-weight:700;padding:10px 20px;border-radius:12px;transition:all .2s;"
-           onmouseover="this.style.background='#ea580c'"
-           onmouseout="this.style.background='#1c1917'">
-            <i class="fas fa-directions"></i> Abrir en Google Maps
-        </a>
-    </div>
-@endif
-
-                    {{-- GALERÍA CON LIGHTBOX --}}
-                    @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                        <div class="info-card" style="padding:36px 40px;">
-                            <div class="section-label" style="margin-bottom:20px;">
-                                <i class="fas fa-images" style="color:#ea580c;"></i>
-                                Galería de fotos
-                                <span style="font-size:10px;color:#d6d3d1;font-weight:500;normal-case;letter-spacing:0;">
-                                    — clic para ampliar
-                                </span>
+                {{-- Mapa --}}
+                @if($restaurante->latitud && $restaurante->longitud)
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="section-label">
+                                <i class="fas fa-map-marker-alt"></i> Cómo llegar
                             </div>
-                            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;">
+
+                            @if($restaurante->direccion)
+                                <div class="dir-box">
+                                    <i class="fas fa-map-pin"></i>
+                                    <p>{{ $restaurante->direccion }}</p>
+                                </div>
+                            @endif
+
+                            <div id="mapa-publico"></div>
+
+                            <a href="https://www.google.com/maps?q={{ $restaurante->latitud }},{{ $restaurante->longitud }}"
+                               target="_blank" class="btn-gmaps">
+                                <i class="fas fa-directions"></i> Abrir en Google Maps
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Galería --}}
+                @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="section-label">
+                                <i class="fas fa-images"></i>
+                                Galería de fotos
+                                <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">— clic para ampliar</span>
+                            </div>
+                            <div class="gallery-grid">
                                 @foreach($restaurante->imagenes as $index => $foto)
-                                    <div class="gallery-item"
-                                         onclick="openLightbox('{{ asset('storage/' . $foto->ruta_foto) }}', {{ $index }})">
+                                    <div class="g-item" onclick="openLightbox('{{ asset('storage/' . $foto->ruta_foto) }}', {{ $index }})">
                                         <img src="{{ asset('storage/' . $foto->ruta_foto) }}"
                                              alt="Foto {{ $index + 1 }} de {{ $restaurante->nombre }}"
                                              loading="lazy">
@@ -568,88 +718,84 @@
                                 @endforeach
                             </div>
                         </div>
-                    @endif
+                    </div>
+                @endif
 
-                </div>
+            </div>
 
-                {{-- ── SIDEBAR ── --}}
-                <div class="sticky-panel" style="display:flex;flex-direction:column;gap:20px;">
+            {{-- ── SIDEBAR ── --}}
+            <aside class="sidebar">
 
-                    {{-- DISPONIBILIDAD + CONTACTO --}}
-                    <div class="info-card" style="padding:28px 32px;">
-                        <div class="section-label" style="margin-bottom:20px;">
+                {{-- Contacto --}}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-label">
                             <i class="far fa-clock"></i> Información
                         </div>
 
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #f5f5f4;">
-                            <span style="font-size:13px;font-weight:600;color:#78716c;">Estado actual</span>
-                            <span style="background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;font-size:11px;font-weight:800;padding:6px 14px;border-radius:999px;letter-spacing:0.06em;">● ABIERTO</span>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f5f5f4;">
+                            <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Estado actual</span>
+                            <span style="background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.06em;display:inline-flex;align-items:center;gap:5px;">
+                                <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block;"></span>
+                                ABIERTO
+                            </span>
                         </div>
 
-                        <div>
-                            <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Contacto</span>
-                            <div style="background:#fafaf9;border:1px solid #e7e5e4;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:600;color:#292524;word-break:break-all;">
-                                <i class="fas fa-envelope" style="color:#ea580c;margin-right:8px;"></i>
-                                {{ $restaurante->email ?? 'No disponible' }}
+                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:10px;">Contacto</span>
+                        <div class="contact-row">
+                            <i class="fas fa-envelope"></i>
+                            {{ $restaurante->email ?? 'No disponible' }}
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Redes --}}
+                @if(!empty($restaurante->whatsapp) || !empty($restaurante->instagram) || !empty($restaurante->tiktok) || !empty($restaurante->facebook))
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="section-label">
+                                <i class="fas fa-share-alt"></i> Redes sociales
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                                @if(!empty($restaurante->whatsapp))
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$restaurante->whatsapp) }}" target="_blank" class="social-btn wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                @endif
+                                @if(!empty($restaurante->instagram))
+                                    <a href="{{ $restaurante->instagram }}" target="_blank" class="social-btn ig" title="Instagram"><i class="fab fa-instagram"></i></a>
+                                @endif
+                                @if(!empty($restaurante->tiktok))
+                                    <a href="{{ $restaurante->tiktok }}" target="_blank" class="social-btn tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                                @endif
+                                @if(!empty($restaurante->facebook))
+                                    <a href="{{ $restaurante->facebook }}" target="_blank" class="social-btn fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                @endif
                             </div>
                         </div>
                     </div>
+                @endif
 
-                    {{-- REDES SOCIALES --}}
-                    @if(!empty($restaurante->whatsapp) || !empty($restaurante->instagram) || !empty($restaurante->tiktok) || !empty($restaurante->facebook))
-                        <div class="info-card" style="padding:28px 32px;">
-                            <div class="section-label" style="margin-bottom:20px;">
-                                <i class="fas fa-share-alt"></i> Redes sociales
-                            </div>
-                            <div style="display:flex;flex-wrap:wrap;gap:12px;">
-                                @if(!empty($restaurante->whatsapp))
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $restaurante->whatsapp) }}" target="_blank" class="social-btn whatsapp" title="WhatsApp">
-                                        <i class="fab fa-whatsapp"></i>
-                                    </a>
-                                @endif
-                                @if(!empty($restaurante->instagram))
-                                    <a href="{{ $restaurante->instagram }}" target="_blank" class="social-btn instagram" title="Instagram">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                @endif
-                                @if(!empty($restaurante->tiktok))
-                                    <a href="{{ $restaurante->tiktok }}" target="_blank" class="social-btn tiktok" title="TikTok">
-                                        <i class="fab fa-tiktok"></i>
-                                    </a>
-                                @endif
-                                @if(!empty($restaurante->facebook))
-                                    <a href="{{ $restaurante->facebook }}" target="_blank" class="social-btn facebook" title="Facebook">
-                                        <i class="fab fa-facebook-f"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
+                {{-- CTA --}}
+                <a href="mailto:{{ $restaurante->email ?? 'contacto@gastronicaragua.com' }}" class="cta-btn">
+                    <i class="fas fa-paper-plane" style="font-size:13px;"></i>
+                    Enviar consulta al local
+                </a>
 
-                    {{-- CTA --}}
-                    <a href="mailto:{{ $restaurante->email ?? 'contacto@gastronicaragua.com' }}" class="cta-btn">
-                        <i class="fas fa-paper-plane" style="font-size:13px;"></i>
-                        Enviar consulta al local
-                    </a>
+            </aside>
 
-                </div>
-
-            </div>
         </main>
 
-        <footer style="background:#0c0a09;color:white;padding:48px 2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
+        {{-- Footer --}}
+        <footer style="background:#0c0a09;color:white;padding:40px 2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
             <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
-                <div style="width:32px;height:32px;background:#ea580c;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+                <div style="width:30px;height:30px;background:#ea580c;border-radius:9px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-utensils" style="color:white;font-size:11px;"></i>
                 </div>
-                <span class="premium-title" style="color:white;font-size:18px;font-style:italic;">Gastro<span style="color:#fb923c;">Nicaragua</span></span>
+                <span class="premium-title" style="color:white;font-size:17px;font-style:italic;">Gastro<span style="color:#fb923c;">Nicaragua</span></span>
             </div>
             <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">© 2026 — Experiencias Culinarias de Nicaragua</p>
         </footer>
 
-        {{-- ══════════════════════════════════════════════════════════════ --}}
-        {{-- LIGHTBOX HTML                                                  --}}
-        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- ══ LIGHTBOX HTML ══ --}}
         <div id="lightbox" onclick="handleLightboxClick(event)">
             <button id="lb-close"  onclick="closeLightbox()"><i class="fas fa-times"></i></button>
             <button id="lb-prev"   class="lb-nav-btn" onclick="navigateLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -661,68 +807,54 @@
             </div>
         </div>
 
-        {{-- ══════════════════════════════════════════════════════════════ --}}
-        {{-- LIGHTBOX JS                                                    --}}
-        {{-- ══════════════════════════════════════════════════════════════ --}}
+        {{-- ══ LIGHTBOX JS ══ --}}
         <script>
-            // Array de imágenes de la galería (inyectado desde PHP)
             const galeriaImages = @json($todasLasImagenes);
+            let currentIndex = 0, isPortada = false;
 
-            let currentIndex  = 0;   // índice actual dentro de galeriaImages
-            let isPortada     = false; // si estamos mostrando la portada suelta
-
-            const lb          = document.getElementById('lightbox');
-            const lbImg       = document.getElementById('lightbox-img');
-            const lbText      = document.getElementById('lb-text');
-            const lbDots      = document.getElementById('lb-dots');
-            const lbPrev      = document.getElementById('lb-prev');
-            const lbNext      = document.getElementById('lb-next');
+            const lb    = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lightbox-img');
+            const lbText= document.getElementById('lb-text');
+            const lbDots= document.getElementById('lb-dots');
+            const lbPrev= document.getElementById('lb-prev');
+            const lbNext= document.getElementById('lb-next');
 
             function openLightbox(src, index) {
-                isPortada    = (index === -1);   // -1 significa portada
+                isPortada    = (index === -1);
                 currentIndex = isPortada ? 0 : index;
-
                 lbImg.src = src;
                 lb.classList.add('active');
                 document.body.style.overflow = 'hidden';
-
                 updateControls();
             }
 
             function closeLightbox() {
                 lb.classList.remove('active');
                 document.body.style.overflow = '';
-                // Limpia src tras la transición para evitar parpadeo
                 setTimeout(() => { lbImg.src = ''; }, 300);
             }
 
             function navigateLightbox(dir) {
                 if (isPortada || galeriaImages.length === 0) return;
                 currentIndex = (currentIndex + dir + galeriaImages.length) % galeriaImages.length;
-
-                // Transición suave
-                lbImg.style.opacity = '0';
+                lbImg.style.opacity   = '0';
                 lbImg.style.transform = 'scale(0.94)';
                 setTimeout(() => {
-                    lbImg.src = galeriaImages[currentIndex];
-                    lbImg.style.opacity  = '1';
+                    lbImg.src             = galeriaImages[currentIndex];
+                    lbImg.style.opacity   = '1';
                     lbImg.style.transform = 'scale(1)';
                     updateControls();
                 }, 180);
             }
 
             function updateControls() {
-                // Ocultar nav si es portada o solo hay 1 foto
                 const showNav = !isPortada && galeriaImages.length > 1;
                 lbPrev.style.display = showNav ? 'flex' : 'none';
                 lbNext.style.display = showNav ? 'flex' : 'none';
-
-                // Contador y dots
                 if (!isPortada && galeriaImages.length > 0) {
                     lbText.textContent = `${currentIndex + 1} / ${galeriaImages.length}`;
-                    lbDots.innerHTML = galeriaImages.map((_, i) =>
-                        `<span class="lb-dot ${i === currentIndex ? 'active' : ''}"
-                               onclick="jumpTo(${i})"></span>`
+                    lbDots.innerHTML = galeriaImages.map((_,i) =>
+                        `<span class="lb-dot ${i === currentIndex ? 'active' : ''}" onclick="jumpTo(${i})"></span>`
                     ).join('');
                 } else {
                     lbText.textContent = 'Foto de portada';
@@ -730,62 +862,47 @@
                 }
             }
 
-            function jumpTo(index) {
-                currentIndex = index;
-                lbImg.src = galeriaImages[index];
-                updateControls();
-            }
+            function jumpTo(i) { currentIndex = i; lbImg.src = galeriaImages[i]; updateControls(); }
+            function handleLightboxClick(e) { if (e.target === lb) closeLightbox(); }
 
-            // Cerrar al hacer clic en el fondo oscuro (no en la imagen)
-            function handleLightboxClick(e) {
-                if (e.target === lb) closeLightbox();
-            }
-
-            // Navegación con teclado
             document.addEventListener('keydown', e => {
                 if (!lb.classList.contains('active')) return;
-                if (e.key === 'Escape')      closeLightbox();
-                if (e.key === 'ArrowRight')  navigateLightbox(1);
-                if (e.key === 'ArrowLeft')   navigateLightbox(-1);
+                if (e.key === 'Escape')     closeLightbox();
+                if (e.key === 'ArrowRight') navigateLightbox(1);
+                if (e.key === 'ArrowLeft')  navigateLightbox(-1);
             });
 
-            // Transición suave de la imagen
             lbImg.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
         </script>
 
-        <style>
-            @media (min-width: 1024px) {
-                .lg-grid { grid-template-columns: 1fr 380px !important; align-items: start; }
-            }
-        </style>
-
+        {{-- ══ MAPA JS ══ --}}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    @if($restaurante->latitud && $restaurante->longitud)
-    document.addEventListener('DOMContentLoaded', function() {
-        const mapa = L.map('mapa-publico', { scrollWheelZoom: false })
-                      .setView([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], 16);
+        <script>
+            @if($restaurante->latitud && $restaurante->longitud)
+            document.addEventListener('DOMContentLoaded', function() {
+                const mapa = L.map('mapa-publico', { scrollWheelZoom: false })
+                              .setView([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], 16);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            maxZoom: 19
-        }).addTo(mapa);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 19
+                }).addTo(mapa);
 
-        const icono = L.divIcon({
-            html: `<div style="width:24px;height:24px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.4);"></div>`,
-            iconSize: [24, 24], iconAnchor: [12, 24], className: ''
-        });
+                const icono = L.divIcon({
+                    html: `<div style="width:22px;height:22px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.4);"></div>`,
+                    iconSize: [22,22], iconAnchor: [11,22], className: ''
+                });
 
-        L.marker([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], { icon: icono })
-            .addTo(mapa)
-            .bindPopup(`
-                <strong style="font-size:14px;color:#1c1917;">{{ $restaurante->nombre }}</strong><br>
-                <span style="font-size:12px;color:#78716c;">{{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}</span>
-            `, { maxWidth: 220 })
-            .openPopup();
-    });
-    @endif
-</script>
+                L.marker([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], { icon: icono })
+                    .addTo(mapa)
+                    .bindPopup(`
+                        <strong style="font-size:13px;color:#1c1917;">{{ $restaurante->nombre }}</strong><br>
+                        <span style="font-size:12px;color:#78716c;">{{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}</span>
+                    `, { maxWidth: 200 })
+                    .openPopup();
+            });
+            @endif
+        </script>
 
     </body>
 </html>

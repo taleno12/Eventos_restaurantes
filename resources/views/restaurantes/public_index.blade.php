@@ -17,14 +17,12 @@
         body { font-family: 'Instrument Sans', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
         .premium-title { font-family: 'Playfair Display', serif; }
 
-        /* ── Hero ── */
         @keyframes heroFloat {
             0%,100% { transform: translateY(0px); }
             50%      { transform: translateY(-8px); }
         }
         .hero-icon { animation: heroFloat 4s ease-in-out infinite; }
 
-        /* ── Cards Premium ── */
         .rest-card {
             background: #ffffff;
             border: 1px solid rgba(28,25,23,0.05);
@@ -38,8 +36,7 @@
             border-color: rgba(234,88,12,0.15);
         }
         .rest-card .card-img-wrap {
-            position: relative; overflow: hidden; height: 240px;
-            background: #f5f5f4;
+            position: relative; overflow: hidden; height: 240px; background: #f5f5f4;
         }
         .rest-card .card-img-wrap img {
             width: 100%; height: 100%; object-fit: cover;
@@ -47,76 +44,282 @@
         }
         .rest-card:hover .card-img-wrap img { transform: scale(1.05); }
 
-        /* ── Badge Especialidad ── */
         .esp-badge {
             display: inline-block; font-size: 10px; font-weight: 700;
             letter-spacing: .05em; text-transform: uppercase;
             padding: 4px 12px; border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-blur: 4px;
-            color: #c2410c;
+            background: rgba(255,255,255,0.9); color: #c2410c;
             border: 1px solid rgba(234,88,12,0.1);
         }
 
-        /* ── Paginación ── */
         .page-link { color: #ea580c; border-radius: 50%; margin: 0 3px; }
         .page-item.active .page-link { background-color: #ea580c; border-color: #ea580c; }
 
-        /* ── Select municipio deshabilitado ── */
-        select:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
+        /* ══ SEARCH BOX ══ */
+        .search-box {
+            display: flex;
+            align-items: stretch;
+            background: #f8f7f6;
+            border: 1.5px solid #e7e5e4;
+            border-radius: 18px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            /* Sin max-width — lo controla el padre */
         }
+        .search-box:focus-within {
+            border-color: #ea580c;
+            box-shadow: 0 0 0 3px rgba(234,88,12,0.10);
+            background: #fff;
+        }
+        .search-segment {
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 7px 12px; min-width: 0; flex: 1; position: relative;
+        }
+        .search-segment + .search-segment::before {
+            content: ''; position: absolute; left: 0; top: 20%;
+            height: 60%; width: 1px; background: #e7e5e4;
+        }
+        .search-segment label {
+            font-size: 9px; font-weight: 900; letter-spacing: 0.14em;
+            text-transform: uppercase; color: #a8a29e; margin-bottom: 2px;
+            display: flex; align-items: center; gap: 4px; cursor: pointer;
+            white-space: nowrap;
+        }
+        .search-segment select,
+        .search-segment input {
+            background: transparent; border: none; outline: none;
+            font-size: 12px; font-weight: 600; color: #1c1917;
+            font-family: 'Instrument Sans', sans-serif; width: 100%; padding: 0; cursor: pointer;
+        }
+        .search-segment select option { font-weight: 500; }
+        .search-segment input::placeholder { color: #c4bfbb; font-weight: 500; }
+        .search-segment select:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .search-btn {
+            display: flex; align-items: center; gap: 6px;
+            background: #ea580c; color: white; border: none;
+            padding: 0 18px; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: background 0.2s;
+            white-space: nowrap; border-radius: 0 16px 16px 0;
+            flex-shrink: 0;
+        }
+        .search-btn:hover { background: #c2410c; }
+
+        /* ── Mobile Search Panel ── */
+        #mobileSearchPanel {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(12px);
+            border-top: 1px solid #e7e5e4; padding: 1rem 1.5rem;
+            z-index: 40; box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        #mobileSearchPanel.open { display: block; }
+
+        .nav-select-mobile {
+            background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
+            padding: 10px 16px; font-size: 13px; color: #1c1917; appearance: none;
+            cursor: pointer; transition: all 0.2s ease; outline: none; width: 100%;
+            font-family: 'Instrument Sans', sans-serif; font-weight: 600;
+        }
+        .nav-select-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+        .nav-input-mobile {
+            background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
+            padding: 10px 16px; font-size: 13px; color: #1c1917;
+            transition: all 0.2s ease; outline: none; width: 100%;
+            font-family: 'Instrument Sans', sans-serif; font-weight: 600;
+        }
+        .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+        .nav-input-mobile::placeholder { color: #c4bfbb; }
     </style>
 </head>
 <body class="bg-stone-50/50 text-stone-900">
 
     {{-- ══════════════ NAVBAR ══════════════ --}}
-    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-stone-100">
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center gap-4">
+            <div class="flex h-20 items-center gap-3">
 
-                <div class="flex items-center gap-2 shrink-0">
-                    <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20">
-                        <i class="fas fa-utensils text-white"></i>
+                {{-- Logo --}}
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 no-underline">
+                    <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
+                        <i class="fas fa-utensils text-white text-sm"></i>
                     </div>
-                    <a href="{{ route('home') }}" class="no-underline">
-                        <span class="text-2xl font-bold tracking-tight premium-title italic text-stone-900">
-                            Gastro<span class="text-orange-600">Nicaragua</span>
-                        </span>
-                    </a>
-                </div>
+                    <span class="text-xl font-bold tracking-tight premium-title italic text-stone-900 hidden lg:block">
+                        Gastro<span class="text-orange-600">Nicaragua</span>
+                    </span>
+                </a>
 
-                <div class="flex items-center gap-3 shrink-0 ml-auto">
-                    {{-- Botón Restaurantes (activo) --}}
+                {{-- ── Search Bar (desktop) — ocupa todo el espacio disponible ── --}}
+                <form action="{{ route('restaurantes.index') }}" method="GET"
+                      class="hidden md:flex flex-1 search-box" style="min-width:0;">
+
+                    <div class="search-segment">
+                        <label for="nav-departamento">
+                            <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:8px;"></i> Destino
+                        </label>
+                        <select id="nav-departamento" name="departamento">
+                            <option value="">Todos</option>
+                            @foreach($departamentos as $depto)
+                                <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
+                                    {{ $depto->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="search-segment">
+                        <label for="nav-municipio">
+                            <i class="fas fa-city" style="color:#ea580c;font-size:8px;"></i> Municipio
+                        </label>
+                        <select id="nav-municipio" name="municipio"
+                                {{ request('departamento') ? '' : 'disabled' }}>
+                            <option value="">{{ request('departamento') ? 'Todos' : 'Elige destino...' }}</option>
+                            @foreach($municipios as $mun)
+                                <option value="{{ $mun->id }}"
+                                        data-departamento="{{ $mun->departamento_id }}"
+                                        {{ request('municipio') == $mun->id ? 'selected' : '' }}
+                                        style="{{ request('departamento') && $mun->departamento_id == request('departamento') ? '' : 'display:none' }}">
+                                    {{ $mun->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="search-segment">
+                        <label for="nav-especialidad">
+                            <i class="fas fa-utensils" style="color:#ea580c;font-size:8px;"></i> Especialidad
+                        </label>
+                        <input type="text" id="nav-especialidad" name="especialidad"
+                               value="{{ request('especialidad') }}"
+                               placeholder="Asados...">
+                    </div>
+
+                    <div class="search-segment">
+                        <label for="nav-search">
+                            <i class="fas fa-store" style="color:#ea580c;font-size:8px;"></i> Nombre
+                        </label>
+                        <input type="text" id="nav-search" name="search"
+                               value="{{ request('search') }}"
+                               placeholder="Restaurante...">
+                    </div>
+
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search" style="font-size:11px;"></i>
+                        <span>Buscar</span>
+                    </button>
+                </form>
+
+                {{-- ── Botones de acción ── --}}
+                <div class="flex items-center gap-2 shrink-0">
+
+                    {{-- Búsqueda móvil --}}
+                    <button id="mobileSearchToggle"
+                            class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
+                        <i class="fas fa-search text-sm"></i>
+                    </button>
+
+                    {{-- Inicio --}}
+                    <a href="{{ route('home') }}"
+                       class="hidden sm:flex items-center gap-1.5 border border-stone-200 text-stone-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
+                        <i class="fas fa-home text-xs"></i>
+                        <span class="hidden lg:inline">Inicio</span>
+                    </a>
+
+                    {{-- Restaurantes (página activa) --}}
                     <a href="{{ route('restaurantes.index') }}"
-                       class="hidden sm:flex items-center gap-2 bg-orange-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-orange-600/10 no-underline hover:bg-orange-700 transition-all">
+                       class="hidden sm:flex items-center gap-1.5 border border-orange-600 text-white bg-orange-600 px-3 py-2 rounded-full text-sm font-semibold shadow-sm no-underline">
                         <i class="fas fa-store text-xs"></i>
-                        <span>Restaurantes</span>
+                        <span class="hidden lg:inline">Restaurantes</span>
                     </a>
 
                     {{-- Empleos --}}
                     <a href="{{ route('empleos.index') }}"
-                       class="hidden sm:flex items-center gap-2 border border-stone-200 text-stone-600 bg-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-stone-50 transition-all shadow-sm group no-underline">
-                        <i class="fas fa-briefcase text-xs group-hover:animate-bounce text-stone-400 group-hover:text-orange-600"></i>
-                        <span>Empleos</span>
+                       class="hidden sm:flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 px-3 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm no-underline">
+                        <i class="fas fa-briefcase text-xs"></i>
+                        <span class="hidden lg:inline">Empleos</span>
                     </a>
 
-                    <a href="{{ route('contacto') }}" class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors px-2 no-underline">Contacto</a>
+                    <a href="{{ route('contacto') }}"
+                       class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors px-2 no-underline hidden lg:inline">Contacto</a>
 
-                    {{-- BOTÓN PANEL ELIMINADO --}}
+                    @if (Route::has('login'))
+                        @auth
+                            @if(auth()->user()->email === 'admin@turismo.ni')
+                                <a href="{{ url('/dashboard') }}"
+                                   class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-2 hidden lg:inline">Panel</a>
+                            @endif
+                            <form method="POST" action="{{ route('logout') }}" class="inline m-0">
+                                @csrf
+                                <button type="submit"
+                                        class="text-sm font-semibold text-stone-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-2">Salir</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}"
+                               class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-2">Ingresar</a>
+                        @endauth
+                    @endif
                 </div>
+
             </div>
+        </div>
+
+        {{-- Panel de búsqueda móvil --}}
+        <div id="mobileSearchPanel">
+            <form action="{{ route('restaurantes.index') }}" method="GET" class="flex flex-col gap-3">
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                        <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
+                    </label>
+                    <select id="nav-departamento-mobile" name="departamento" class="nav-select-mobile">
+                        <option value="">Todos los destinos</option>
+                        @foreach($departamentos as $depto)
+                            <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                        <i class="fas fa-city text-orange-500"></i> Municipio
+                    </label>
+                    <select id="nav-municipio-mobile" name="municipio"
+                            class="nav-select-mobile" {{ request('departamento') ? '' : 'disabled' }}>
+                        <option value="">{{ request('departamento') ? 'Todos los municipios' : 'Primero elige destino...' }}</option>
+                        @foreach($municipios as $mun)
+                            <option value="{{ $mun->id }}"
+                                    data-departamento="{{ $mun->departamento_id }}"
+                                    {{ request('municipio') == $mun->id ? 'selected' : '' }}
+                                    style="{{ request('departamento') && $mun->departamento_id == request('departamento') ? '' : 'display:none' }}">
+                                {{ $mun->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                        <i class="fas fa-utensils text-orange-500"></i> Especialidad
+                    </label>
+                    <input type="text" name="especialidad" value="{{ request('especialidad') }}"
+                           class="nav-input-mobile" placeholder="Asados, mariscos...">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                        <i class="fas fa-store text-orange-500"></i> Nombre
+                    </label>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           class="nav-input-mobile" placeholder="Buscar restaurante...">
+                </div>
+                <button type="submit"
+                        class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
+                    <i class="fas fa-search text-xs"></i> Filtrar Restaurantes
+                </button>
+            </form>
         </div>
     </nav>
 
     {{-- ══════════════ HERO ══════════════ --}}
     <section class="pt-20">
         <div class="relative bg-stone-900 overflow-hidden">
-            {{-- Fondo decorativo --}}
             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 50%, #ea580c 0%, transparent 50%), radial-gradient(circle at 80% 20%, #f97316 0%, transparent 40%);"></div>
             <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.02\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-
             <div class="relative max-w-7xl mx-auto px-4 py-20 sm:py-24 flex flex-col md:flex-row items-center justify-between gap-10">
                 <div class="flex-1" data-aos="fade-right">
                     <span class="bg-orange-600/10 text-orange-400 text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block border border-orange-500/20">
@@ -139,88 +342,9 @@
         </div>
     </section>
 
-    {{-- ══════════════ FILTROS ══════════════ --}}
-    <section class="bg-white border-b border-stone-200/60 sticky top-20 z-40 shadow-sm backdrop-blur-md bg-white/95">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <form action="{{ route('restaurantes.index') }}" method="GET"
-                  class="flex flex-wrap items-center gap-3">
-
-                {{-- Búsqueda por nombre --}}
-                <div class="relative flex-1 min-w-[200px]">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm pointer-events-none"></i>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                           class="w-full bg-stone-50 border border-stone-200 rounded-full py-2.5 pl-11 pr-4 text-sm outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-4 focus:ring-orange-500/5 text-stone-800 placeholder-stone-400"
-                           placeholder="Buscar por nombre...">
-                </div>
-
-                {{-- Departamento --}}
-                <div class="relative min-w-[170px] flex-1 sm:flex-initial">
-                    <i class="fas fa-map-marker-alt absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm pointer-events-none z-10"></i>
-                    <select id="selectDepartamento" name="departamento"
-                            class="w-full bg-stone-50 border border-stone-200 rounded-full py-2.5 pl-11 pr-10 text-sm outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-4 focus:ring-orange-500/5 text-stone-800 appearance-none cursor-pointer">
-                        <option value="">Todos los destinos</option>
-                        @foreach($departamentos as $depto)
-                            <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
-                                {{ $depto->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                </div>
-
-                {{-- Municipio (dinámico) --}}
-                <div class="relative min-w-[170px] flex-1 sm:flex-initial">
-                    <i class="fas fa-city absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm pointer-events-none z-10"></i>
-                    <select id="selectMunicipio" name="municipio"
-                            class="w-full bg-stone-50 border border-stone-200 rounded-full py-2.5 pl-11 pr-10 text-sm outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-4 focus:ring-orange-500/5 text-stone-800 appearance-none cursor-pointer"
-                            {{ !request('departamento') ? 'disabled' : '' }}>
-                        <option value="">
-                            {{ request('departamento') ? 'Todos los municipios' : 'Elige un destino primero' }}
-                        </option>
-                        @foreach($municipios as $mun)
-                            <option value="{{ $mun->id }}"
-                                    data-departamento="{{ $mun->departamento_id }}"
-                                    {{ request('municipio') == $mun->id ? 'selected' : '' }}
-                                    style="{{ request('departamento') && $mun->departamento_id == request('departamento') ? '' : 'display:none' }}">
-                                {{ $mun->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none"></i>
-                </div>
-
-                {{-- Especialidad --}}
-                <div class="relative min-w-[160px] flex-1 sm:flex-initial">
-                    <i class="fas fa-concierge-bell absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm pointer-events-none"></i>
-                    <input type="text" name="especialidad" value="{{ request('especialidad') }}"
-                           class="w-full bg-stone-50 border border-stone-200 rounded-full py-2.5 pl-11 pr-4 text-sm outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-4 focus:ring-orange-500/5 text-stone-800 placeholder-stone-400"
-                           placeholder="Especialidad...">
-                </div>
-
-                {{-- Botón Filtrar --}}
-                <button type="submit"
-                        class="bg-stone-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-orange-600 transition-all shadow-sm flex items-center gap-2 border-0 cursor-pointer shrink-0">
-                    <i class="fas fa-sliders-h text-xs text-stone-400 group-hover:text-white"></i> Filtrar
-                </button>
-
-                @if(request('search') || request('departamento') || request('municipio') || request('especialidad'))
-                    <a href="{{ route('restaurantes.index') }}"
-                       class="text-stone-400 hover:text-red-500 text-sm font-medium transition-colors no-underline flex items-center gap-1.5">
-                        <i class="fas fa-times-circle text-xs"></i> Limpiar
-                    </a>
-                @endif
-
-                <span class="ml-auto text-xs text-stone-400 font-semibold tracking-wide uppercase shrink-0">
-                    {{ $restaurantes->total() }} disponible{{ $restaurantes->total() != 1 ? 's' : '' }}
-                </span>
-            </form>
-        </div>
-    </section>
-
     {{-- ══════════════ GRID DE RESTAURANTES ══════════════ --}}
     <main class="max-w-7xl mx-auto px-4 py-16">
 
-        {{-- Filtros activos --}}
         @if(request('search') || request('departamento') || request('municipio') || request('especialidad'))
             <div class="mb-8 flex flex-wrap items-center gap-2 text-sm bg-stone-100/60 p-3 rounded-2xl border border-stone-200/40">
                 <span class="text-stone-500 font-medium pl-1">Filtros aplicados:</span>
@@ -250,6 +374,19 @@
                         <a href="{{ request()->fullUrlWithoutQuery(['especialidad']) }}" class="text-stone-400 hover:text-red-600 no-underline font-bold text-sm">×</a>
                     </span>
                 @endif
+                <span class="ml-auto text-xs text-stone-400 font-semibold tracking-wide uppercase">
+                    {{ $restaurantes->total() }} disponible{{ $restaurantes->total() != 1 ? 's' : '' }}
+                </span>
+                <a href="{{ route('restaurantes.index') }}"
+                   class="text-stone-400 hover:text-red-500 text-sm font-medium transition-colors no-underline flex items-center gap-1.5">
+                    <i class="fas fa-times-circle text-xs"></i> Limpiar
+                </a>
+            </div>
+        @else
+            <div class="mb-8 flex justify-end">
+                <span class="text-xs text-stone-400 font-semibold tracking-wide uppercase">
+                    {{ $restaurantes->total() }} disponible{{ $restaurantes->total() != 1 ? 's' : '' }}
+                </span>
             </div>
         @endif
 
@@ -257,18 +394,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($restaurantes as $restaurante)
                     <article class="rest-card" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}">
-
-                        {{-- Imagen --}}
                         <div class="card-img-wrap">
                             @if($restaurante->foto_portada)
                                 <img src="{{ asset('storage/' . $restaurante->foto_portada) }}" alt="{{ $restaurante->nombre }}">
                             @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-50 to-stone-100/80 text-5xl">
-                                    🍴
-                                </div>
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-50 to-stone-100/80 text-5xl">🍴</div>
                             @endif
-
-                            {{-- Badges sobre la imagen --}}
                             <div class="absolute top-4 left-4 flex flex-col gap-2">
                                 @if($restaurante->departamento)
                                     <span class="bg-stone-900/75 backdrop-blur-md text-white text-[11px] font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
@@ -280,29 +411,23 @@
                                     </span>
                                 @endif
                             </div>
-
                             @if($restaurante->especialidad)
                                 <div class="absolute top-4 right-4">
                                     <span class="esp-badge shadow-sm">{{ $restaurante->especialidad }}</span>
                                 </div>
                             @endif
                         </div>
-
-                        {{-- Cuerpo de la tarjeta --}}
                         <div class="p-6 flex flex-col gap-4">
                             <div>
                                 <h3 class="premium-title text-xl font-bold text-stone-900 mb-2 leading-snug">
                                     {{ $restaurante->nombre }}
                                 </h3>
-
                                 @if($restaurante->descripcion)
                                     <p class="text-stone-500 text-sm leading-relaxed line-clamp-2 font-light">
                                         {{ $restaurante->descripcion }}
                                     </p>
                                 @endif
                             </div>
-
-                            {{-- Meta info --}}
                             <div class="flex flex-col gap-2.5 text-xs text-stone-500 border-t border-stone-100 pt-3">
                                 @if($restaurante->direccion)
                                     <span class="flex items-start gap-2.5">
@@ -323,16 +448,12 @@
                                     </span>
                                 @endif
                             </div>
-
-                            {{-- Eventos activos del restaurante --}}
                             @if(isset($restaurante->eventos_count) && $restaurante->eventos_count > 0)
                                 <div class="bg-orange-50/60 border border-orange-100 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs text-orange-800 font-medium">
                                     <i class="fas fa-calendar-alt text-orange-500"></i>
                                     {{ $restaurante->eventos_count }} evento{{ $restaurante->eventos_count != 1 ? 's' : '' }} próximo{{ $restaurante->eventos_count != 1 ? 's' : '' }}
                                 </div>
                             @endif
-
-                            {{-- Footer de tarjeta --}}
                             <div class="pt-3 border-t border-stone-100 flex items-center justify-between mt-1">
                                 @if($restaurante->precio_rango)
                                     <span class="text-stone-400 text-xs font-semibold tracking-wide">
@@ -341,7 +462,6 @@
                                 @else
                                     <span></span>
                                 @endif
-
                                 <a href="{{ route('restaurantes.show', $restaurante->id) }}"
                                    class="bg-stone-900 text-white text-xs font-semibold px-5 py-2.5 rounded-full hover:bg-orange-600 transition-all no-underline flex items-center gap-2 group shadow-sm">
                                     <span>Ver perfil</span>
@@ -353,7 +473,6 @@
                 @endforeach
             </div>
 
-            {{-- Paginación --}}
             @if($restaurantes->hasPages())
                 <div class="mt-16 flex justify-center">
                     {{ $restaurantes->withQueryString()->links() }}
@@ -361,14 +480,13 @@
             @endif
 
         @else
-            {{-- Estado vacío --}}
             <div class="py-24 flex flex-col items-center text-center max-w-md mx-auto" data-aos="fade-up">
-                <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 mb-6 border border-stone-200/60 shadow-sm relative">
+                <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 mb-6 border border-stone-200/60 shadow-sm">
                     <i class="fas fa-store-slash text-2xl"></i>
                 </div>
                 <h3 class="premium-title text-2xl font-bold text-stone-900 mb-2">Sin resultados</h3>
                 <p class="text-stone-500 text-sm leading-relaxed mb-6 font-light">
-                    No encontramos restaurantes que coincidan con tus filtros. ¡Intenta ajustar los criterios de búsqueda!
+                    No encontramos restaurantes que coincidan con tus filtros.
                 </p>
                 <a href="{{ route('restaurantes.index') }}"
                    class="bg-stone-900 text-white text-xs font-bold tracking-wider uppercase px-5 py-3 rounded-full no-underline hover:bg-orange-600 transition-all shadow-md flex items-center gap-2">
@@ -442,52 +560,53 @@
     <script>
         AOS.init({ duration: 800, once: true });
 
-        // ── Municipio dinámico ──
-        const selectDepto = document.getElementById('selectDepartamento');
-        const selectMun   = document.getElementById('selectMunicipio');
-        const allOpts     = Array.from(selectMun.querySelectorAll('option[data-departamento]'));
+        function configurarCascadaNav(deptoId, munId) {
+            const deptoSel = document.getElementById(deptoId);
+            const munSel   = document.getElementById(munId);
+            if (!deptoSel || !munSel) return;
+            const opts = Array.from(munSel.querySelectorAll('option[data-departamento]'));
 
-        function actualizarMunicipios(deptoId, municipioSeleccionado) {
-            // Ocultar/mostrar opciones según el departamento
-            allOpts.forEach(opt => {
-                if (!deptoId || opt.dataset.departamento === deptoId) {
-                    opt.style.display = '';
+            deptoSel.addEventListener('change', function () {
+                const val = this.value;
+                opts.forEach(opt => {
+                    opt.style.display = (!val || opt.dataset.departamento === val) ? '' : 'none';
+                    if (opt.style.display === 'none') opt.selected = false;
+                });
+                const ph = munSel.querySelector('option:not([data-departamento])');
+                if (val) {
+                    munSel.disabled = false;
+                    ph.textContent = 'Todos los municipios';
                 } else {
-                    opt.style.display = 'none';
-                    opt.selected = false;
+                    munSel.disabled = true;
+                    munSel.value = '';
+                    ph.textContent = 'Elige destino...';
                 }
             });
 
-            // Texto del placeholder y estado del select
-            const placeholder = selectMun.querySelector('option:not([data-departamento])');
-            if (deptoId) {
-                selectMun.disabled = false;
-                placeholder.textContent = 'Todos los municipios';
-                // Restaurar selección previa si corresponde al mismo departamento
-                if (municipioSeleccionado) {
-                    const targetOpt = selectMun.querySelector(`option[value="${municipioSeleccionado}"]`);
-                    if (targetOpt && targetOpt.style.display !== 'none') {
-                        targetOpt.selected = true;
-                    }
-                }
-            } else {
-                selectMun.disabled = true;
-                selectMun.value = '';
-                placeholder.textContent = 'Elige un destino primero';
+            const currentDepto = deptoSel.value;
+            if (currentDepto) {
+                opts.forEach(opt => {
+                    opt.style.display = (opt.dataset.departamento === currentDepto) ? '' : 'none';
+                });
+                munSel.disabled = false;
             }
         }
 
-        // Al cambiar departamento
-        selectDepto.addEventListener('change', function () {
-            actualizarMunicipios(this.value, null);
-        });
+        configurarCascadaNav('nav-departamento',        'nav-municipio');
+        configurarCascadaNav('nav-departamento-mobile', 'nav-municipio-mobile');
 
-        // Al cargar la página, si ya hay un departamento y municipio seleccionado
-        (function init() {
-            const deptoVal = selectDepto.value;
-            const munVal   = '{{ request('municipio') }}';
-            if (deptoVal) actualizarMunicipios(deptoVal, munVal);
-        })();
+        const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+        const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
+        if (mobileSearchToggle && mobileSearchPanel) {
+            mobileSearchToggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                mobileSearchPanel.classList.toggle('open');
+            });
+            document.addEventListener('click', function (e) {
+                if (!mobileSearchPanel.contains(e.target) && e.target !== mobileSearchToggle)
+                    mobileSearchPanel.classList.remove('open');
+            });
+        }
     </script>
 </body>
 </html>

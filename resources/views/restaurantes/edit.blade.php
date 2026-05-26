@@ -12,6 +12,9 @@
         </div>
     </x-slot>
 
+    {{-- Leaflet CSS --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
     <div class="max-w-3xl">
         {{-- ✅ enctype necesario para subir archivos --}}
         <form action="{{ route('admin.restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
@@ -281,6 +284,73 @@
                     {{-- Separador --}}
                     <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
 
+                    {{-- ══════════════════════════════════════════════════════════ --}}
+                    {{-- Sección 6: Ubicación y Mapa                              --}}
+                    {{-- Campos del modelo: direccion, latitud, longitud           --}}
+                    {{-- ══════════════════════════════════════════════════════════ --}}
+                    <div class="md:col-span-2">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2 mb-4">
+                            <i class="fas fa-map-marker-alt text-orange-400"></i> Ubicación del Restaurante
+                        </h4>
+
+                        {{-- Buscador de dirección --}}
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Dirección</label>
+                            <div class="flex gap-2">
+                                <div class="relative flex-1">
+                                    <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
+                                        <i class="fas fa-search text-sm"></i>
+                                    </div>
+                                    <input type="text" id="edit-direccion-buscar"
+                                           placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
+                                           class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50">
+                                </div>
+                                <button type="button" id="edit-btn-buscar-mapa"
+                                        class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-colors border-0 cursor-pointer whitespace-nowrap shadow-md shadow-orange-200">
+                                    <i class="fas fa-search mr-1"></i> Buscar
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                                <i class="fas fa-info-circle text-gray-300"></i>
+                                Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
+                            </p>
+                        </div>
+
+                        {{-- Campo dirección guardada --}}
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Dirección Exacta
+                                <span class="text-gray-400 font-normal">(se actualiza al buscar o hacer clic en el mapa)</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-4 flex items-center text-orange-400 pointer-events-none">
+                                    <i class="fas fa-map-pin text-sm"></i>
+                                </div>
+                                <input type="text" name="direccion" id="edit-direccion"
+                                       value="{{ old('direccion', $restaurante->direccion) }}"
+                                       placeholder="La dirección aparecerá aquí..."
+                                       class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50">
+                            </div>
+                        </div>
+
+                        {{-- Coordenadas ocultas --}}
+                        <input type="hidden" name="latitud"  id="edit-latitud"  value="{{ old('latitud', $restaurante->latitud) }}">
+                        <input type="hidden" name="longitud" id="edit-longitud" value="{{ old('longitud', $restaurante->longitud) }}">
+
+                        {{-- Mapa Leaflet --}}
+                        <div id="edit-mapa-restaurante"
+                             class="w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm"
+                             style="height: 340px;"></div>
+
+                        <p id="edit-mapa-coords-info" class="text-xs text-gray-400 mt-2 hidden">
+                            <i class="fas fa-crosshairs text-orange-400 mr-1"></i>
+                            Coordenadas guardadas: <span id="edit-coords-display" class="font-mono text-gray-600 ml-1"></span>
+                        </p>
+                    </div>
+
+                    {{-- Separador --}}
+                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
+
                     {{-- Descripción --}}
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Descripción Comercial <span class="text-gray-400 font-normal">(opcional)</span></label>
@@ -426,4 +496,160 @@
 
         });
     </script>
+
+    {{-- Leaflet JS --}}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    {{-- ─── Mapa de Ubicación ──────────────────────────────────────────────── --}}
+    <script>
+    (function () {
+        function initEditMapa() {
+
+            const defaultLat = 12.8654;
+            const defaultLng = -85.2072;
+
+            const savedLat = document.getElementById('edit-latitud').value;
+            const savedLng = document.getElementById('edit-longitud').value;
+
+            const initLat  = savedLat ? parseFloat(savedLat) : defaultLat;
+            const initLng  = savedLng ? parseFloat(savedLng) : defaultLng;
+            const initZoom = savedLat ? 16 : 7;
+
+            // Inicializar mapa
+            const mapa = L.map('edit-mapa-restaurante').setView([initLat, initLng], initZoom);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mapa);
+
+            // Ícono naranja personalizado
+            const iconoNaranja = L.divIcon({
+                html: '<div style="background:#ea580c;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 20],
+                className: ''
+            });
+
+            let marker = null;
+
+            // Si el restaurante ya tiene coordenadas, mostrar el pin
+            if (savedLat && savedLng) {
+                marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                actualizarInfo(initLat, initLng);
+
+                marker.on('dragend', function () {
+                    const pos = marker.getLatLng();
+                    actualizarCoordenadas(pos.lat, pos.lng);
+                    geocodeInverso(pos.lat, pos.lng);
+                });
+            }
+
+            // Clic en el mapa → colocar / mover pin
+            mapa.on('click', function (e) {
+                const { lat, lng } = e.latlng;
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                    marker.on('dragend', function () {
+                        const pos = marker.getLatLng();
+                        actualizarCoordenadas(pos.lat, pos.lng);
+                        geocodeInverso(pos.lat, pos.lng);
+                    });
+                }
+                actualizarCoordenadas(lat, lng);
+                geocodeInverso(lat, lng);
+            });
+
+            // Botón buscar
+            document.getElementById('edit-btn-buscar-mapa').addEventListener('click', buscarDireccion);
+            document.getElementById('edit-direccion-buscar').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
+            });
+
+            function buscarDireccion() {
+                const query = document.getElementById('edit-direccion-buscar').value.trim();
+                if (!query) return;
+
+                const btn = document.getElementById('edit-btn-buscar-mapa');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Buscando...';
+                btn.disabled = true;
+
+                const queryFinal = query.toLowerCase().includes('nicaragua')
+                    ? query
+                    : query + ', Nicaragua';
+
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
+                    headers: { 'Accept-Language': 'es' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
+                    btn.disabled = false;
+
+                    if (data.length === 0) {
+                        alert('No se encontró esa dirección. Intenta ser más específico o haz clic directamente en el mapa.');
+                        return;
+                    }
+
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+
+                    mapa.setView([lat, lng], 17);
+
+                    if (marker) {
+                        marker.setLatLng([lat, lng]);
+                    } else {
+                        marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                        marker.on('dragend', function () {
+                            const pos = marker.getLatLng();
+                            actualizarCoordenadas(pos.lat, pos.lng);
+                            geocodeInverso(pos.lat, pos.lng);
+                        });
+                    }
+
+                    actualizarCoordenadas(lat, lng);
+                    document.getElementById('edit-direccion').value = data[0].display_name;
+                })
+                .catch(() => {
+                    btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
+                    btn.disabled = false;
+                    alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
+                });
+            }
+
+            function geocodeInverso(lat, lng) {
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
+                    headers: { 'Accept-Language': 'es' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById('edit-direccion').value = data.display_name;
+                    }
+                })
+                .catch(() => {});
+            }
+
+            function actualizarCoordenadas(lat, lng) {
+                document.getElementById('edit-latitud').value  = lat.toFixed(7);
+                document.getElementById('edit-longitud').value = lng.toFixed(7);
+                actualizarInfo(lat, lng);
+            }
+
+            function actualizarInfo(lat, lng) {
+                document.getElementById('edit-mapa-coords-info').classList.remove('hidden');
+                document.getElementById('edit-coords-display').textContent =
+                    `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initEditMapa);
+        } else {
+            initEditMapa();
+        }
+    })();
+    </script>
+
 </x-app-layout>

@@ -18,20 +18,79 @@
                 --sidebar-width: 260px;
                 --sidebar-color: #11111d;
                 --accent-color: #3b82f6;
+                --topbar-height: 60px;
             }
+
+            * { box-sizing: border-box; }
             body { background-color: #f4f6f9; font-family: 'Figtree', sans-serif; margin: 0; }
 
+            /* ── SIDEBAR ── */
             .sidebar {
                 width: var(--sidebar-width);
                 height: 100vh;
                 background: var(--sidebar-color);
                 position: fixed;
                 left: 0; top: 0;
-                color: #270b0b;
+                color: #c2c7d0;
                 z-index: 1000;
                 overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch; /* scroll suave en iOS/Android */
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
+            /* En móvil el sidebar se oculta fuera de pantalla */
+            @media (max-width: 1023px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                }
+                .sidebar.open {
+                    transform: translateX(0);
+                }
+            }
+
+            /* ── OVERLAY ── */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                backdrop-filter: blur(2px);
+            }
+            .sidebar-overlay.open { display: block; }
+
+            /* ── TOPBAR MÓVIL ── */
+            .topbar-mobile {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; right: 0;
+                height: var(--topbar-height);
+                background: var(--sidebar-color);
+                z-index: 998;
+                align-items: center;
+                padding: 0 16px;
+                gap: 12px;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            @media (max-width: 1023px) {
+                .topbar-mobile { display: flex; }
+            }
+
+            .hamburger-btn {
+                background: rgba(255,255,255,0.08);
+                border: none;
+                color: white;
+                width: 38px; height: 38px;
+                border-radius: 10px;
+                cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0;
+                transition: background 0.2s;
+            }
+            .hamburger-btn:hover { background: rgba(255,255,255,0.15); }
+
+            /* ── BRAND ── */
             .brand-link {
                 padding: 24px 20px;
                 display: flex;
@@ -41,7 +100,8 @@
                 background: rgba(0,0,0,0.1);
             }
 
-            .nav-menu { padding: 15px 0; }
+            /* ── NAV ── */
+            .nav-menu { padding: 15px 0 40px; } /* padding-bottom para que el último ítem no quede cortado */
 
             .nav-item {
                 padding: 12px 24px;
@@ -53,10 +113,12 @@
                 transition: all 0.3s ease;
                 font-size: 0.9rem;
                 border-left: 4px solid transparent;
+                cursor: pointer;
+                background: transparent;
+                border-top: none; border-right: none; border-bottom: none;
+                width: 100%; text-align: left;
             }
-
             .nav-item i { width: 20px; text-align: center; }
-
             .nav-item:hover, .nav-item.active {
                 background: rgba(255,255,255,0.05);
                 color: #fff;
@@ -72,35 +134,61 @@
                 font-weight: 800;
             }
 
-            .badge-lock {
-                background: #e11d48;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-size: 10px;
-                margin-left: auto;
-                color: white;
-            }
-
+            /* ── CONTENIDO ── */
             .content-wrapper {
                 margin-left: var(--sidebar-width);
                 padding: 40px;
                 min-height: 100vh;
+                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            @media (max-width: 1023px) {
+                .content-wrapper {
+                    margin-left: 0;
+                    padding: calc(var(--topbar-height) + 24px) 16px 24px;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .content-wrapper {
+                    padding: calc(var(--topbar-height) + 16px) 12px 16px;
+                }
             }
         </style>
     </head>
     <body class="font-sans antialiased">
+
+        {{-- Overlay para cerrar sidebar en móvil --}}
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        {{-- Topbar solo visible en móvil --}}
+        <div class="topbar-mobile">
+            <button class="hamburger-btn" id="hamburgerBtn">
+                <i class="fas fa-bars text-sm"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-utensils text-blue-400 text-sm"></i>
+                <span class="font-bold text-white text-sm tracking-tight">GASTRO STUDIO</span>
+            </div>
+        </div>
+
         <div class="min-h-screen">
 
-            <aside class="sidebar">
+            {{-- ── SIDEBAR ── --}}
+            <aside class="sidebar" id="sidebar">
+
+                {{-- Brand --}}
                 <div class="brand-link">
                     <i class="fas fa-utensils text-blue-500 text-xl"></i>
                     <div>
-                        <span class="font-bold text-lg tracking-tight block">GASTRO STUDIO</span>
+                        <span class="font-bold text-lg tracking-tight block text-white">GASTRO STUDIO</span>
                         <span class="text-[10px] uppercase opacity-40 font-black tracking-widest text-blue-400">Admin Panel</span>
                     </div>
                 </div>
 
+                {{-- Navegación principal --}}
                 <nav class="nav-menu">
+
                     <a href="{{ route('dashboard') }}"
                        class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="fas fa-chart-line"></i>
@@ -116,9 +204,9 @@
                     </a>
 
                     <a href="{{ route('admin.restaurantes.index') }}"
-                     class="nav-item {{ request()->routeIs('admin.restaurantes.*') ? 'active' : '' }}">
-                     <i class="fas fa-store"></i>
-                     <span>Restaurantes</span>
+                       class="nav-item {{ request()->routeIs('admin.restaurantes.*') ? 'active' : '' }}">
+                        <i class="fas fa-store"></i>
+                        <span>Restaurantes</span>
                     </a>
 
                     <a href="{{ route('eventos.index') }}"
@@ -135,71 +223,69 @@
 
                     <div class="section-title">Personal y Seguridad</div>
 
-                    {{-- Trabajadores (Habilitado) --}}
-                    <a href="{{ route('trabajadores.index') }}" 
+                    <a href="{{ route('trabajadores.index') }}"
                        class="nav-item {{ request()->routeIs('trabajadores.*') ? 'active' : '' }}">
                         <i class="fas fa-user-shield"></i>
                         <span>Trabajadores</span>
                     </a>
 
-                    {{-- Área de Contratos (Nuevo) --}}
-                    <a href="{{ route('contratos.index') }}" 
+                    <a href="{{ route('contratos.index') }}"
                        class="nav-item {{ request()->routeIs('contratos.*') ? 'active' : '' }}">
                         <i class="fas fa-file-signature"></i>
                         <span>Contratos</span>
                     </a>
 
-                    {{-- Área de Soporte (Nuevo) --}}
-                    <a href="{{ route('soporte.index') }}" 
+                    <a href="{{ route('soporte.index') }}"
                        class="nav-item {{ request()->routeIs('soporte.*') ? 'active' : '' }}">
                         <i class="fas fa-headset"></i>
                         <span>Soporte Técnico</span>
                     </a>
 
-                    {{-- Configuración (Habilitado) --}}
-                    <a href="{{ route('configuracion.index') }}" 
+                    <a href="{{ route('configuracion.index') }}"
                        class="nav-item {{ request()->routeIs('configuracion.*') ? 'active' : '' }}">
                         <i class="fas fa-cogs"></i>
                         <span>Configuración</span>
                     </a>
 
-                    <div class="mt-10 border-t border-gray-800/50 pt-4">
+                    {{-- ── SECCIÓN INFERIOR: Logout + Ver Sitio ── --}}
+                    <div class="mt-4 border-t border-gray-800/50 pt-3">
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit"
-                                    class="nav-item w-full text-left bg-transparent border-none cursor-pointer text-red-400 hover:text-red-300">
+                            <button type="submit" class="nav-item text-red-400 hover:text-red-300">
                                 <i class="fas fa-power-off"></i>
                                 <span>Cerrar Sesión</span>
                             </button>
                         </form>
 
-                        <div class="mt-10 border-t border-gray-800/50 pt-4">
-    {{-- Botón Ver Sitio Web --}}
-    <a href="{{ route('home') }}"
-       class="nav-item text-blue-400 hover:text-blue-300">
-        <i class="fas fa-globe"></i>
-        <span>Ver Sitio Web</span>
-    </a>
+                        <div class="mt-4 border-t border-gray-800/50 pt-2 mb-6">
+                            <a href="{{ route('home') }}" class="nav-item text-blue-400 hover:text-blue-300">
+                                <i class="fas fa-globe"></i>
+                                <span>Ver Sitio Web</span>
+                            </a>
+                        </div>
+
                     </div>
+                    {{-- ── FIN SECCIÓN INFERIOR ── --}}
+
                 </nav>
             </aside>
 
+            {{-- ── CONTENIDO PRINCIPAL ── --}}
             <main class="content-wrapper">
+
                 @isset($header)
                     <header class="mb-8">
                         {{ $header }}
                     </header>
                 @else
-                    <div class="flex justify-between items-center mb-8">
+                    <div class="flex flex-wrap justify-between items-center mb-8 gap-3">
                         <h2 class="text-2xl font-bold text-gray-800">Panel de Control</h2>
-                        
                         @auth
-                            {{-- Solo muestra el badge si el usuario está autenticado en la plataforma --}}
                             <span class="text-xs bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full font-bold border border-blue-100">
                                 <i class="fas fa-user-circle mr-1"></i> Admin: {{ Auth::user()->email }}
                             </span>
                         @else
-                            {{-- Si entra un visitante externo a un perfil público --}}
                             <span class="text-xs bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full font-bold border border-gray-200">
                                 <i class="fas fa-eye mr-1"></i> Modo Visitante
                             </span>
@@ -208,18 +294,50 @@
                 @endisset
 
                 @if(session('success'))
-                    <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm font-bold shadow-sm">
+                    <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm font-bold shadow-sm rounded-lg">
                         {{ session('success') }}
                     </div>
                 @endif
 
-                @if(isset($slot))
+                @isset($slot)
                     {{ $slot }}
                 @else
                     @yield('content')
-                @endif
+                @endisset
+
             </main>
 
         </div>
+
+        <script>
+            const sidebar      = document.getElementById('sidebar');
+            const overlay      = document.getElementById('sidebarOverlay');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+
+            function openSidebar() {
+                sidebar.classList.add('open');
+                overlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            hamburgerBtn?.addEventListener('click', () => {
+                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+            });
+
+            overlay?.addEventListener('click', closeSidebar);
+
+            // Cerrar sidebar al navegar en móvil
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) closeSidebar();
+                });
+            });
+        </script>
     </body>
 </html>

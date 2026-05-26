@@ -20,7 +20,7 @@ class Review extends Model
     ];
 
     // Relaciones
-    public function restaurant(): BelongsTo
+    public function restaurante(): BelongsTo
     {
         return $this->belongsTo(Restaurante::class);
     }

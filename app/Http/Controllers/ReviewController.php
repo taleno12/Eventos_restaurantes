@@ -6,6 +6,7 @@ use App\Models\Restaurante;
 use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
@@ -42,7 +43,7 @@ class ReviewController extends Controller
     /** Actualizar reseña propia */
     public function update(Request $request, Review $review): RedirectResponse
     {
-        $this->authorize('update', $review);
+        Gate::authorize('update', $review);
 
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
@@ -58,7 +59,7 @@ class ReviewController extends Controller
     /** Eliminar reseña propia */
     public function destroy(Review $review): RedirectResponse
     {
-        $this->authorize('delete', $review);
+        Gate::authorize('delete', $review);
 
         $review->delete();
 

@@ -721,6 +721,386 @@
                     </div>
                 @endif
 
+                {{-- ══ RESEÑAS ══ --}}
+<div class="card" id="resenas">
+    <div class="card-body">
+        <div class="section-label">
+            <i class="fas fa-star"></i> Reseñas
+            <span style="font-size:10px;color:#d6d3d1;font-weight:500;
+                         text-transform:none;letter-spacing:0;">
+                — {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
+            </span>
+        </div>
+
+        {{-- Mensajes flash --}}
+        @if(session('success'))
+            <div style="background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;
+                        border-radius:12px;padding:12px 16px;margin-bottom:20px;
+                        font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div style="background:#fee2e2;border:1px solid #fecaca;color:#dc2626;
+                        border-radius:12px;padding:12px 16px;margin-bottom:20px;
+                        font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        {{-- Resumen de calificación --}}
+        @if($totalReviews > 0)
+            <div style="display:flex;align-items:center;gap:20px;
+                        background:#fff7ed;border:1px solid #fed7aa;
+                        border-radius:16px;padding:20px 24px;margin-bottom:24px;">
+                <div style="text-align:center;min-width:64px;">
+                    <div style="font-size:3rem;font-weight:900;color:#ea580c;line-height:1;">
+                        {{ $avgRating }}
+                    </div>
+                    <div style="font-size:11px;color:#a8a29e;font-weight:700;
+                                text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;">
+                        de 5
+                    </div>
+                </div>
+                <div style="flex:1;">
+                    {{-- Barras por estrella --}}
+                    @for($s = 5; $s >= 1; $s--)
+                        @php $cnt = $restaurante->reviews()->where('rating',$s)->count(); @endphp
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                            <span style="font-size:11px;font-weight:700;color:#78716c;
+                                         min-width:12px;">{{ $s }}</span>
+                            <i class="fas fa-star" style="font-size:10px;color:#f59e0b;"></i>
+                            <div style="flex:1;height:6px;background:#e7e5e4;border-radius:999px;overflow:hidden;">
+                                <div style="height:100%;background:#ea580c;border-radius:999px;
+                                            width:{{ $totalReviews > 0 ? round($cnt/$totalReviews*100) : 0 }}%;
+                                            transition:width 0.6s ease;"></div>
+                            </div>
+                            <span style="font-size:11px;color:#a8a29e;font-weight:600;min-width:20px;">
+                                {{ $cnt }}
+                            </span>
+                        </div>
+                    @endfor
+                </div>
+            </div>
+        @endif
+
+        {{-- Formulario: solo usuarios logueados sin reseña propia --}}
+        @auth
+            @php
+                $miResena = $restaurante->reviews()
+                    ->where('user_id', auth()->id())->first();
+            @endphp
+
+            @if(!$miResena)
+                <div style="background:#f9fafb;border:1px solid #e7e5e4;
+                            border-radius:16px;padding:24px;margin-bottom:28px;">
+                    <p style="font-size:13px;font-weight:800;color:#1c1917;
+                               text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">
+                        <i class="fas fa-pencil-alt" style="color:#ea580c;margin-right:6px;"></i>
+                        Deja tu reseña
+                    </p>
+
+                    <form action="{{ route('reviews.store', $restaurante) }}" method="POST">
+                        @csrf
+
+                        {{-- Estrellas interactivas --}}
+                        <div style="margin-bottom:16px;">
+                            <label style="font-size:11px;font-weight:700;color:#78716c;
+                                          text-transform:uppercase;letter-spacing:0.1em;
+                                          display:block;margin-bottom:8px;">
+                                Calificación
+                            </label>
+                            <div style="display:flex;gap:6px;" id="star-selector">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <button type="button"
+                                            onclick="setRating({{ $i }})"
+                                            data-star="{{ $i }}"
+                                            style="font-size:28px;background:none;border:none;
+                                                   cursor:pointer;color:#d6d3d1;
+                                                   transition:color 0.15s,transform 0.15s;
+                                                   padding:0 2px;"
+                                            onmouseover="hoverRating({{ $i }})"
+                                            onmouseout="resetHover()">
+                                        ★
+                                    </button>
+                                @endfor
+                            </div>
+                            <input type="hidden" name="rating" id="rating-input" value="">
+                            @error('rating')
+                                <p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Título --}}
+                        <div style="margin-bottom:12px;">
+                            <label style="font-size:11px;font-weight:700;color:#78716c;
+                                          text-transform:uppercase;letter-spacing:0.1em;
+                                          display:block;margin-bottom:6px;">
+                                Título <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
+                            </label>
+                            <input type="text" name="title"
+                                   value="{{ old('title') }}"
+                                   placeholder="Ej: Excelente experiencia"
+                                   maxlength="100"
+                                   style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;
+                                          border-radius:10px;font-size:14px;outline:none;
+                                          font-family:inherit;background:white;
+                                          transition:border-color 0.2s;"
+                                   onfocus="this.style.borderColor='#ea580c'"
+                                   onblur="this.style.borderColor='#e7e5e4'">
+                            @error('title')
+                                <p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Comentario --}}
+                        <div style="margin-bottom:16px;">
+                            <label style="font-size:11px;font-weight:700;color:#78716c;
+                                          text-transform:uppercase;letter-spacing:0.1em;
+                                          display:block;margin-bottom:6px;">
+                                Comentario <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
+                            </label>
+                            <textarea name="body" rows="3"
+                                      placeholder="Cuéntanos tu experiencia..."
+                                      maxlength="1000"
+                                      style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;
+                                             border-radius:10px;font-size:14px;outline:none;
+                                             font-family:inherit;background:white;resize:vertical;
+                                             transition:border-color 0.2s;"
+                                      onfocus="this.style.borderColor='#ea580c'"
+                                      onblur="this.style.borderColor='#e7e5e4'">{{ old('body') }}</textarea>
+                            @error('body')
+                                <p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <button type="submit"
+                                style="display:inline-flex;align-items:center;gap:8px;
+                                       background:#ea580c;color:white;border:none;
+                                       padding:12px 24px;border-radius:12px;font-size:14px;
+                                       font-weight:700;cursor:pointer;font-family:inherit;
+                                       transition:background 0.2s,transform 0.2s;"
+                                onmouseover="this.style.background='#c2410c';this.style.transform='translateY(-1px)'"
+                                onmouseout="this.style.background='#ea580c';this.style.transform='none'">
+                            <i class="fas fa-paper-plane" style="font-size:12px;"></i>
+                            Publicar reseña
+                        </button>
+                    </form>
+                </div>
+            @endif
+        @else
+            {{-- No logueado --}}
+            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;
+                        padding:20px 24px;margin-bottom:28px;text-align:center;">
+                <i class="fas fa-lock" style="color:#ea580c;font-size:20px;margin-bottom:8px;display:block;"></i>
+                <p style="font-size:14px;color:#57534e;font-weight:600;margin-bottom:12px;">
+                    Inicia sesión para dejar tu reseña
+                </p>
+                <a href="{{ route('login') }}"
+                   style="display:inline-flex;align-items:center;gap:7px;
+                          background:#ea580c;color:white;text-decoration:none;
+                          padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;">
+                    <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesión
+                </a>
+            </div>
+        @endauth
+
+        {{-- Lista de reseñas --}}
+        @php $reviews = $restaurante->reviews()->with('user')->latest()->get(); @endphp
+
+        @forelse($reviews as $review)
+            <div style="border-bottom:1px solid #f5f5f4;padding-bottom:20px;margin-bottom:20px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
+
+                    {{-- Avatar + nombre --}}
+                    <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+                        <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;
+                                    background:#fed7aa;display:flex;align-items:center;justify-content:center;">
+                            @if($review->user->avatar)
+                                <img src="{{ $review->user->avatar }}" alt=""
+                                     style="width:100%;height:100%;object-fit:cover;">
+                            @else
+                                <span style="font-size:15px;font-weight:800;color:#ea580c;">
+                                    {{ strtoupper(substr($review->user->name,0,1)) }}
+                                </span>
+                            @endif
+                        </div>
+                        <div style="min-width:0;">
+                            <p style="font-size:14px;font-weight:700;color:#1c1917;margin:0;
+                                       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                {{ $review->user->name }}
+                            </p>
+                            <p style="font-size:11px;color:#a8a29e;margin:0;">
+                                {{ $review->created_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Estrellas --}}
+                    <div style="display:flex;gap:2px;flex-shrink:0;">
+                        @for($i = 1; $i <= 5; $i++)
+                            <span style="color:{{ $i <= $review->rating ? '#f59e0b' : '#e7e5e4' }};font-size:14px;">★</span>
+                        @endfor
+                    </div>
+                </div>
+
+                @if($review->title)
+                    <p style="font-size:14px;font-weight:700;color:#1c1917;margin-bottom:4px;">
+                        {{ $review->title }}
+                    </p>
+                @endif
+
+                @if($review->body)
+                    <p style="font-size:14px;color:#57534e;line-height:1.7;margin:0;">
+                        {{ $review->body }}
+                    </p>
+                @endif
+
+                {{-- Acciones: editar/eliminar (solo el autor) --}}
+                @auth
+                    @if(auth()->id() === $review->user_id || auth()->user()->email === 'admin@turismo.ni')
+                        <div style="display:flex;gap:8px;margin-top:10px;">
+
+                            {{-- Botón editar (toggle) --}}
+                            <button onclick="toggleEdit({{ $review->id }})"
+                                    style="font-size:12px;font-weight:600;color:#78716c;background:none;
+                                           border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;
+                                           cursor:pointer;font-family:inherit;
+                                           transition:all 0.2s;"
+                                    onmouseover="this.style.borderColor='#ea580c';this.style.color='#ea580c'"
+                                    onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
+                                <i class="fas fa-pencil-alt" style="font-size:10px;"></i> Editar
+                            </button>
+
+                            {{-- Botón eliminar --}}
+                            <form action="{{ route('reviews.destroy', $review) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('¿Eliminar esta reseña?')">
+                                @csrf @method('DELETE')
+                                <button type="submit"
+                                        style="font-size:12px;font-weight:600;color:#78716c;background:none;
+                                               border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;
+                                               cursor:pointer;font-family:inherit;
+                                               transition:all 0.2s;"
+                                        onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'"
+                                        onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
+                                    <i class="fas fa-trash" style="font-size:10px;"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+
+                        {{-- Form edición (oculto por defecto) --}}
+                        <div id="edit-form-{{ $review->id }}"
+                             style="display:none;margin-top:14px;background:#f9fafb;
+                                    border:1px solid #e7e5e4;border-radius:12px;padding:16px;">
+                            <form action="{{ route('reviews.update', $review) }}" method="POST">
+                                @csrf @method('PUT')
+
+                                {{-- Estrellas edición --}}
+                                <div style="margin-bottom:12px;">
+                                    <label style="font-size:11px;font-weight:700;color:#78716c;
+                                                  text-transform:uppercase;letter-spacing:0.1em;
+                                                  display:block;margin-bottom:6px;">Calificación</label>
+                                    <div style="display:flex;gap:4px;" id="edit-stars-{{ $review->id }}">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <button type="button"
+                                                    onclick="setEditRating({{ $review->id }},{{ $i }})"
+                                                    data-star="{{ $i }}"
+                                                    style="font-size:24px;background:none;border:none;
+                                                           cursor:pointer;padding:0 2px;
+                                                           color:{{ $i <= $review->rating ? '#f59e0b' : '#d6d3d1' }};
+                                                           transition:color 0.15s;">★</button>
+                                        @endfor
+                                    </div>
+                                    <input type="hidden" name="rating"
+                                           id="edit-rating-{{ $review->id }}"
+                                           value="{{ $review->rating }}">
+                                </div>
+
+                                <input type="text" name="title"
+                                       value="{{ $review->title }}"
+                                       placeholder="Título"
+                                       maxlength="100"
+                                       style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;
+                                              border-radius:9px;font-size:13px;font-family:inherit;
+                                              margin-bottom:10px;outline:none;"
+                                       onfocus="this.style.borderColor='#ea580c'"
+                                       onblur="this.style.borderColor='#e7e5e4'">
+
+                                <textarea name="body" rows="3"
+                                          maxlength="1000"
+                                          style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;
+                                                 border-radius:9px;font-size:13px;font-family:inherit;
+                                                 resize:vertical;outline:none;margin-bottom:12px;"
+                                          onfocus="this.style.borderColor='#ea580c'"
+                                          onblur="this.style.borderColor='#e7e5e4'">{{ $review->body }}</textarea>
+
+                                <button type="submit"
+                                        style="background:#ea580c;color:white;border:none;
+                                               padding:9px 20px;border-radius:9px;font-size:13px;
+                                               font-weight:700;cursor:pointer;font-family:inherit;">
+                                    Guardar cambios
+                                </button>
+                                <button type="button" onclick="toggleEdit({{ $review->id }})"
+                                        style="background:none;border:1px solid #e7e5e4;color:#78716c;
+                                               padding:9px 16px;border-radius:9px;font-size:13px;
+                                               font-weight:600;cursor:pointer;font-family:inherit;margin-left:6px;">
+                                    Cancelar
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                @endauth
+            </div>
+        @empty
+            <div style="text-align:center;padding:40px 20px;">
+                <i class="far fa-comment-dots" style="font-size:36px;color:#d6d3d1;display:block;margin-bottom:12px;"></i>
+                <p style="color:#a8a29e;font-size:14px;font-weight:600;">Aún no hay reseñas. ¡Sé el primero!</p>
+            </div>
+        @endforelse
+
+    </div>
+</div>
+
+{{-- JS para estrellas --}}
+<script>
+    // ── Formulario nuevo ──────────────────────────────────────
+    let selectedRating = 0;
+
+    function setRating(val) {
+        selectedRating = val;
+        document.getElementById('rating-input').value = val;
+        updateStars('star-selector', val, '#f59e0b');
+    }
+
+    function hoverRating(val) {
+        updateStars('star-selector', val, '#fb923c');
+    }
+
+    function resetHover() {
+        updateStars('star-selector', selectedRating, '#f59e0b');
+    }
+
+    function updateStars(containerId, val, activeColor) {
+        document.querySelectorAll(`#${containerId} button`).forEach(btn => {
+            btn.style.color = parseInt(btn.dataset.star) <= val ? activeColor : '#d6d3d1';
+        });
+    }
+
+    // ── Edición ───────────────────────────────────────────────
+    function toggleEdit(id) {
+        const el = document.getElementById(`edit-form-${id}`);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function setEditRating(reviewId, val) {
+        document.getElementById(`edit-rating-${reviewId}`).value = val;
+        document.querySelectorAll(`#edit-stars-${reviewId} button`).forEach(btn => {
+            btn.style.color = parseInt(btn.dataset.star) <= val ? '#f59e0b' : '#d6d3d1';
+        });
+    }
+</script>
+
             </div>
 
             {{-- ── SIDEBAR ── --}}

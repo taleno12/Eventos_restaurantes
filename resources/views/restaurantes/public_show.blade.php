@@ -30,8 +30,8 @@
             /* ── HERO ── */
             .hero-section {
                 position: relative;
-                height: 92vh;
-                min-height: 580px;
+                height: 65vh;          /* ← reducido de 92vh */
+                min-height: 420px;     /* ← reducido de 580px */
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
@@ -399,7 +399,7 @@
             @if($restaurante->foto_portada)
                 <button
                     onclick="openLightbox('{{ asset('storage/' . $restaurante->foto_portada) }}', -1)"
-                    style="position:absolute;bottom:120px;right:2rem;z-index:20;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(12px);color:white;font-size:13px;font-weight:700;padding:10px 18px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;"
+                    style="position:absolute;bottom:80px;right:2rem;z-index:20;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(12px);color:white;font-size:13px;font-weight:700;padding:10px 18px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;"
                     onmouseover="this.style.background='rgba(234,88,12,0.7)'"
                     onmouseout="this.style.background='rgba(255,255,255,0.12)'">
                     <i class="fas fa-expand-alt" style="font-size:11px;"></i> Ver portada

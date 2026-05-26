@@ -26,8 +26,8 @@
             /* ── HERO ── */
             .hero-section {
                 position: relative;
-                height: 92vh;
-                min-height: 580px;
+                height: 65vh;          /* ← reducido de 92vh */
+                min-height: 420px;     /* ← reducido de 580px */
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
@@ -295,7 +295,7 @@
             /* Botón "Ver imagen hero" */
             .hero-zoom-btn {
                 position: absolute;
-                bottom: 120px; right: 2rem;
+                bottom: 80px; right: 2rem;  /* ← reducido de 120px */
                 z-index: 20;
                 background: rgba(255,255,255,0.12);
                 border: 1px solid rgba(255,255,255,0.2);

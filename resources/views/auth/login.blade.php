@@ -1,200 +1,390 @@
 <x-guest-layout>
     <style>
-        @import url('https://fonts.bunny.net/css?family=instrument-sans:400,600|playfair-display:700,700i');
-        
-        .font-premium-serif { font-family: 'Playfair Display', serif; }
-        .font-premium-sans { font-family: 'Instrument Sans', sans-serif; }
-        
-        nav img, .min-h-screen > div:first-child svg { display: none !important; }
-        
-        @keyframes premiumFadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes premiumFadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes premiumZoomIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        @import url('https://fonts.bunny.net/css?family=syne:700,800|dm-sans:400,500,600');
+
+        /* ── ESCAPE del guest-layout ── */
+        /* Neutralizar el wrapper que pone Laravel */
+        body { background: #0D0D0D !important; margin: 0 !important; padding: 0 !important; }
+
+        /* El componente x-guest-layout suele poner algo como:
+           min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100
+           Sobreescribimos todo eso */
+        body > div:first-child,
+        .min-h-screen {
+            display: block !important;
+            align-items: unset !important;
+            justify-content: unset !important;
+            padding: 0 !important;
+            background: transparent !important;
+            min-height: unset !important;
         }
 
-        .animate-premium-down { animation: premiumFadeInDown 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; opacity: 0; }
-        .animate-premium-up { animation: premiumFadeInUp 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; opacity: 0; }
-        .animate-premium-zoom { animation: premiumZoomIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards; opacity: 0; }
+        /* Ocultar el logo SVG que inyecta el guest layout */
+        .min-h-screen > div:first-child:not(.login-root) { display: none !important; }
+        nav, .min-h-screen > div:first-child svg { display: none !important; }
 
-        .del-1 { animation-delay: 0.1s; }
-        .del-2 { animation-delay: 0.2s; }
-        .del-3 { animation-delay: 0.3s; }
-        .del-4 { animation-delay: 0.4s; }
-        .del-5 { animation-delay: 0.5s; }
-        .del-6 { animation-delay: 0.6s; }
+        /* ── RESET ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.02);
+        /* ── ROOT ── */
+        .login-root {
+            font-family: 'DM Sans', sans-serif;
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #0D0D0D;
         }
 
-        .input-premium {
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            border: 1px solid transparent !important;
-        }
-        .input-premium:focus {
-            background-color: white !important;
-            border-color: rgba(0,0,0,0.05) !important;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-        }
-
-        .btn-premium {
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        /* ── LEFT PANEL ── */
+        .panel-left {
+            display: none;
+            width: 42%;
+            background: #FF5500;
             position: relative;
             overflow: hidden;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.5rem;
+            flex-shrink: 0;
         }
-        .btn-premium:hover {
-            background-color: #1a1a1a;
-            letter-spacing: 0.25em;
-            transform: translateY(-1px);
-            box-shadow: 0 15px 30px -5px rgba(0,0,0,0.2);
+        @media (min-width: 860px) { .panel-left { display: flex; } }
+
+        /* dots texture */
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
+            background-size: 22px 22px;
+            pointer-events: none;
         }
 
+        /* big decorative letter */
+        .panel-left::after {
+            content: 'G';
+            position: absolute;
+            bottom: -2rem;
+            right: -1.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18rem;
+            color: rgba(0,0,0,0.05);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .lp-logo { position: relative; display: flex; align-items: center; gap: 10px; }
+        .lb { width: 38px; height: 38px; background: #000; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .lb span { color: #FF5500; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; }
+        .ln { font-family: 'Syne', sans-serif; font-weight: 700; color: #000; font-size: 0.82rem; letter-spacing: 0.04em; }
+
+        .lp-hero { position: relative; }
+        .badge {
+            display: inline-block;
+            background: #000; color: #FF5500;
+            font-size: 0.6rem; font-weight: 600;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            padding: 0.3rem 0.7rem; border-radius: 999px;
+            margin-bottom: 1.25rem;
+        }
+        .ht {
+            font-family: 'Syne', sans-serif; font-weight: 800;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            color: #000; line-height: 1.05; letter-spacing: -0.02em;
+        }
+        .ht em { color: #fff; font-style: normal; }
+        .hs { margin-top: 1rem; color: rgba(0,0,0,0.5); font-size: 0.875rem; line-height: 1.6; max-width: 320px; }
+
+        .stats { position: relative; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .sc { background: rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 0.65rem 1rem; }
+        .sc .n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: #000; }
+        .sc .l { font-size: 0.6rem; color: rgba(0,0,0,0.45); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+        /* ── RIGHT PANEL ── */
+        .panel-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
+            background: #0D0D0D;
+            overflow-y: auto;
+        }
+
+        .right-inner { width: 100%; max-width: 400px; }
+
+        /* Mobile logo */
+        .mobile-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; justify-content: center; }
+        @media (min-width: 860px) { .mobile-logo { display: none; } }
+        .lb-m { width: 38px; height: 38px; background: #FF5500; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .lb-m span { color: #000; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; }
+        .ln-m { font-family: 'Syne', sans-serif; font-weight: 700; color: #fff; font-size: 0.82rem; letter-spacing: 0.04em; }
+
+        /* heading */
+        .fh { margin-bottom: 1.75rem; }
+        .fh h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2rem; color: #fff; letter-spacing: -0.02em; }
+        .fh p { margin-top: 0.4rem; color: #666; font-size: 0.85rem; }
+
+        /* alerts */
+        .alert-error {
+            background: rgba(255,85,0,0.08); border: 1px solid rgba(255,85,0,0.2);
+            border-left: 3px solid #FF5500; border-radius: 10px;
+            color: #FF7733; font-size: 0.8rem; padding: 0.8rem 1rem; margin-bottom: 1.25rem;
+        }
+        .session-ok { font-size: 0.8rem; color: #4CAF50; margin-bottom: 1rem; text-align: center; }
+
+        /* fields */
+        .field { margin-bottom: 1.1rem; }
+        .field label {
+            display: block; font-size: 0.65rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: #555; margin-bottom: 0.45rem;
+        }
+        .field input {
+            width: 100%; background: #181818; border: 1px solid #262626;
+            border-radius: 11px; padding: 0.85rem 1rem;
+            color: #fff; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field input::placeholder { color: #383838; }
+        .field input:focus { border-color: #FF5500; box-shadow: 0 0 0 3px rgba(255,85,0,0.14); }
+        .field-error { font-size: 0.73rem; color: #FF5500; margin-top: 0.35rem; }
+
+        /* remember / forgot row */
+        .row-opts { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+        .remember { display: flex; align-items: center; gap: 0.45rem; cursor: pointer; }
+        .remember input { accent-color: #FF5500; width: 14px; height: 14px; }
+        .remember span { font-size: 0.78rem; color: #666; }
+        .forgot { font-size: 0.78rem; color: #FF5500; text-decoration: none; }
+        .forgot:hover { color: #FF7733; }
+
+        /* main button */
+        .btn-main {
+            width: 100%; background: #FF5500; color: #000;
+            border: none; border-radius: 11px; padding: 0.95rem;
+            font-family: 'Syne', sans-serif; font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+            cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+        .btn-main:hover { background: #FF6A1A; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,85,0,0.3); }
+        .btn-main:active { transform: translateY(0); }
+
+        /* divider */
+        .divider { display: flex; align-items: center; gap: 0.85rem; margin: 1.25rem 0 1rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #222; }
+        .divider span { font-size: 0.6rem; color: #444; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+
+        /* google button */
         .btn-google {
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            width: 100%; background: #181818; border: 1px solid #262626;
+            border-radius: 11px; padding: 0.85rem;
+            color: #ccc; font-family: 'DM Sans', sans-serif; font-weight: 500;
+            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+            gap: 0.6rem; text-decoration: none;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
         }
-        .btn-google:hover {
-            background-color: #f8f8f8;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        .btn-google:hover { background: #1F1F1F; border-color: #333; transform: translateY(-1px); }
+
+        /* register */
+        .btn-register {
+            display: block; width: 100%; margin-top: 0.85rem;
+            background: transparent; border: 1px solid #262626;
+            border-radius: 11px; padding: 0.85rem;
+            color: #777; font-family: 'DM Sans', sans-serif; font-weight: 500;
+            font-size: 0.85rem; text-align: center; text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
         }
+        .btn-register:hover { border-color: #FF5500; color: #FF5500; }
+
+        /* back */
+        .back-link {
+            display: block; text-align: center; margin-top: 1.75rem;
+            font-size: 0.7rem; color: #3A3A3A; letter-spacing: 0.08em;
+            text-transform: uppercase; text-decoration: none; transition: color 0.2s;
+        }
+        .back-link:hover { color: #FF5500; }
+
+        /* ── LEFT PANEL TEXT ANIMATIONS ── */
+        @keyframes slideInLeft {
+            from { opacity:0; transform: translateX(-40px); }
+            to   { opacity:1; transform: translateX(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity:0; transform: translateY(20px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        @keyframes wordReveal {
+            0%   { opacity:0; transform: translateY(100%); }
+            100% { opacity:1; transform: translateY(0); }
+        }
+        @keyframes badgePop {
+            0%   { opacity:0; transform: scale(0.7); }
+            70%  { transform: scale(1.08); }
+            100% { opacity:1; transform: scale(1); }
+        }
+        @keyframes statsSlide {
+            from { opacity:0; transform: translateY(30px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        /* Floating subtle pulse on the big decorative G */
+        @keyframes floatG {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50%       { transform: translateY(-18px) rotate(-1deg); }
+        }
+
+        .badge { animation: badgePop 0.6s cubic-bezier(0.22,1,0.36,1) 0.3s both; }
+
+        /* Each line of the hero title clips and slides up */
+        .ht-wrap { overflow: hidden; display: block; }
+        .ht-line {
+            display: block;
+            animation: wordReveal 0.75s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .ht-line:nth-child(1) { animation-delay: 0.45s; }
+        .ht-line:nth-child(2) { animation-delay: 0.62s; }
+        .ht-line:nth-child(3) { animation-delay: 0.79s; }
+
+        .hs { animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) 1s both; }
+        .stats { animation: statsSlide 0.7s cubic-bezier(0.22,1,0.36,1) 1.15s both; }
+        .lp-logo { animation: slideInLeft 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
+
+        /* Decorative G floats */
+        .panel-left::after {
+            animation: floatG 6s ease-in-out infinite;
+            transform-origin: center bottom;
+        }
+
+        /* ── RIGHT PANEL ANIMATIONS ── */
+        @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+        .fu { animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+        .d1{animation-delay:.05s} .d2{animation-delay:.12s} .d3{animation-delay:.19s}
+        .d4{animation-delay:.26s} .d5{animation-delay:.33s} .d6{animation-delay:.4s}
+        .d7{animation-delay:.47s} .d8{animation-delay:.54s}
     </style>
 
-    <div class="min-h-screen flex flex-col items-center justify-center p-6 bg-[#FAF9F7] font-premium-sans antialiased">
-        
-        <!-- Logo -->
-        <div class="mb-14 text-center animate-premium-down">
-            <a href="/" class="flex flex-col items-center gap-4 no-underline group">
-                <div class="w-16 h-16 bg-black rounded-[1.6rem] flex items-center justify-center rotate-3 shadow-2xl transition-transform group-hover:rotate-0 duration-500">
-                    <span class="text-white font-bold text-3xl">G</span>
+    <div class="login-root">
+
+        {{-- ══ PANEL IZQUIERDO ══ --}}
+        <div class="panel-left">
+            <div class="lp-logo">
+                <div class="lb"><span>G</span></div>
+                <span class="ln">GastroNicaragua</span>
+            </div>
+
+            <div class="lp-hero">
+                <div class="badge">🍽 Gastronomía · Nicaragua</div>
+                <div class="ht" aria-label="Descubre los sabores auténticos de Nicaragua">
+                    <span class="ht-wrap"><span class="ht-line">Descubre los</span></span>
+                    <span class="ht-wrap"><span class="ht-line"><em>sabores</em> que</span></span>
+                    <span class="ht-wrap"><span class="ht-line">nos definen.</span></span>
                 </div>
-                <div class="space-y-1.5">
-                    <span class="block font-black tracking-[0.4em] text-sm text-black uppercase">Gastro Nicaragua</span>
-                    <span class="block h-[1px] w-full bg-black/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></span>
-                </div>
-            </a>
+                <p class="hs">
+                    Explora los mejores restaurantes del país, conoce sus platos estrella
+                    y vive la riqueza culinaria de Nicaragua desde donde estés.
+                </p>
+            </div>
+
+            <div class="stats">
+                <div class="sc"><div class="n">200+</div><div class="l">Restaurantes</div></div>
+                <div class="sc"><div class="n">500+</div><div class="l">Platillos</div></div>
+                <div class="sc"><div class="n">18</div><div class="l">Deptos</div></div>
+            </div>
         </div>
 
-        <!-- Card -->
-        <div class="w-full max-w-[440px] glass-card rounded-[3rem] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.06)] animate-premium-zoom del-1 relative">
-            
-            <!-- Detalle decorativo -->
-            <div class="absolute top-8 right-8 w-8 h-8 flex flex-col gap-1.5 opacity-20">
-                <span class="h-[1px] w-full bg-black"></span>
-                <span class="h-[1px] w-full bg-black"></span>
-                <span class="h-[1px] w-4 bg-black self-end"></span>
-            </div>
+        {{-- ══ PANEL DERECHO ══ --}}
+        <div class="panel-right">
+            <div class="right-inner">
 
-            <div class="text-center mb-10">
-                <h2 class="text-4xl font-premium-serif italic text-black mb-3">Login</h2>
-                <div class="flex justify-center items-center gap-2">
-                    <span class="h-[1px] w-8 bg-black/10"></span>
-                    <p class="text-gray-400 text-[9px] uppercase tracking-[0.3em] font-bold">Portal de Administración</p>
-                    <span class="h-[1px] w-8 bg-black/10"></span>
-                </div>
-            </div>
-
-            <x-auth-session-status class="mb-6 text-center" :status="session('status')" />
-
-            @if(session('error'))
-                <div class="mb-6 text-center text-xs text-red-500 bg-red-50 rounded-xl py-3 px-4">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-7">
-                @csrf
-
-                <!-- Email -->
-                <div class="group animate-premium-up del-2">
-                    <label for="email" class="block text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3 ml-4 transition-colors group-focus-within:text-black">Correo Institucional</label>
-                    <input id="email" 
-                        class="input-premium block w-full bg-[#F3F2EE] border-none rounded-2xl px-7 py-5 outline-none focus:ring-1 focus:ring-black/5 text-sm text-black placeholder-gray-300" 
-                        type="email" name="email" :value="old('email')" 
-                        required autofocus autocomplete="username" 
-                        placeholder="admin@turismo.ni" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2 ml-4" />
+                <div class="mobile-logo fu d1">
+                    <div class="lb-m"><span>G</span></div>
+                    <span class="ln-m">GastroNicaragua</span>
                 </div>
 
-                <!-- Password -->
-                <div class="group animate-premium-up del-3">
-                    <label for="password" class="block text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3 ml-4 transition-colors group-focus-within:text-black">Contraseña</label>
-                    <input id="password" 
-                        class="input-premium block w-full bg-[#F3F2EE] border-none rounded-2xl px-7 py-5 outline-none focus:ring-1 focus:ring-black/5 text-sm text-black placeholder-gray-300"
-                        type="password" name="password"
-                        required autocomplete="current-password" 
-                        placeholder="••••••••••••" />
-                    <x-input-error :messages="$errors->get('password')" class="mt-2 ml-4" />
+                <div class="fh fu d1">
+                    <h1>Bienvenido</h1>
+                    <p>Ingresa tus credenciales para continuar.</p>
                 </div>
 
-                <!-- Recordar / Recuperar -->
-                <div class="flex items-center justify-between px-2 pt-1 animate-premium-up del-4">
-                    <label for="remember_me" class="inline-flex items-center cursor-pointer group">
-                        <input id="remember_me" type="checkbox" class="w-4 h-4 rounded-full border-gray-200 text-black shadow-sm focus:ring-black transition-all" name="remember">
-                        <span class="ms-3 text-[11px] text-gray-400 group-hover:text-black transition-colors">Recordarme</span>
-                    </label>
-                    @if (Route::has('password.request'))
-                        <a class="text-[11px] text-gray-400 hover:text-black transition-all no-underline italic font-premium-serif" href="{{ route('password.request') }}">
-                            ¿Problemas con el acceso?
-                        </a>
-                    @endif
-                </div>
+                @if(session('status'))
+                    <div class="session-ok fu d2">{{ session('status') }}</div>
+                @endif
 
-                <!-- Botón entrar -->
-                <div class="pt-2 animate-premium-up del-5">
-                    <button type="submit" class="btn-premium w-full bg-black text-white font-bold py-5 rounded-2xl uppercase tracking-[0.2em] text-[10px]">
-                        Entrar al Sistema
-                    </button>
-                </div>
-            </form>
+                @if(session('error'))
+                    <div class="alert-error fu d2">{{ session('error') }}</div>
+                @endif
 
-            {{-- Separador Google --}}
-            <div class="animate-premium-up del-5">
-                <div class="flex items-center gap-3 my-6">
-                    <div class="flex-1 h-[1px] bg-black/8"></div>
-                    <span class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-300">o continúa con</span>
-                    <div class="flex-1 h-[1px] bg-black/8"></div>
-                </div>
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
 
-                <!-- Botón Google -->
-                <a href="{{ route('auth.google') }}"
-                   class="btn-google flex items-center justify-center gap-3 w-full border border-black/8 bg-white text-black font-bold py-4 rounded-2xl text-[10px] uppercase tracking-[0.15em] no-underline">
-                    <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    <div class="field fu d3">
+                        <label for="email">Correo institucional</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}"
+                               placeholder="admin@turismo.ni" required autofocus autocomplete="username"/>
+                        @error('email') <div class="field-error">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="field fu d4">
+                        <label for="password">Contraseña</label>
+                        <input id="password" type="password" name="password"
+                               placeholder="••••••••••••" required autocomplete="current-password"/>
+                        @error('password') <div class="field-error">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="row-opts fu d5">
+                        <label class="remember">
+                            <input type="checkbox" name="remember" id="remember_me">
+                            <span>Recordarme</span>
+                        </label>
+                        @if(Route::has('password.request'))
+                            <a href="{{ route('password.request') }}" class="forgot">¿Olvidaste tu contraseña?</a>
+                        @endif
+                    </div>
+
+                    <div class="fu d6">
+                        <button type="submit" class="btn-main">Entrar al sistema</button>
+                    </div>
+                </form>
+
+                <div class="divider fu d7"><span>o continúa con</span></div>
+
+                <a href="{{ route('auth.google') }}" class="btn-google fu d7">
+                    <svg width="17" height="17" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                     </svg>
                     Continuar con Google
                 </a>
-            </div>
 
-            {{-- Registro --}}
-            <div class="pt-6 text-center animate-premium-up del-6">
-                <p class="text-[10px] text-gray-300 uppercase tracking-widest mb-4">¿No tienes cuenta?</p>
-                <a href="{{ route('register') }}"
-                   class="block w-full border border-black/10 text-black font-bold py-5 rounded-2xl uppercase tracking-[0.2em] text-[10px] hover:bg-black hover:text-white transition-all duration-300 no-underline text-center">
-                    Crear Cuenta
-                </a>
-            </div>
-        </div>
+                <a href="{{ route('register') }}" class="btn-register fu d8">¿No tienes cuenta? Crear cuenta</a>
 
-        <!-- Volver -->
-        <div class="mt-12 group animate-premium-up del-6">
-            <a href="/" class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-300 group-hover:text-black transition-all duration-500 no-underline flex items-center gap-3">
-                <span class="h-[1px] w-4 bg-gray-200 group-hover:w-8 group-hover:bg-black transition-all duration-500"></span>
-                Volver a la Galería
-            </a>
+                <a href="/" class="back-link fu d8">← Volver a la galería</a>
+
+            </div>
         </div>
     </div>
+
+    <script>
+        // Aseguramos que el login-root ocupe toda la pantalla
+        // eliminando cualquier padding/margin que inyecte el guest-layout de Breeze
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.style.cssText = 'margin:0;padding:0;background:#0D0D0D;overflow:hidden;';
+
+            // Ocultar el wrapper de Breeze si existe (el div que envuelve al slot)
+            const root = document.querySelector('.login-root');
+            if (root) {
+                let parent = root.parentElement;
+                while (parent && parent !== document.body) {
+                    parent.style.cssText = 'display:contents;';
+                    parent = parent.parentElement;
+                }
+            }
+        });
+    </script>
 </x-guest-layout>

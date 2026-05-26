@@ -8,6 +8,8 @@ use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmpleoController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SocialiteController;
+
 
 use App\Models\Restaurante;
 use App\Models\Evento;
@@ -16,7 +18,15 @@ use App\Models\Empleo;
 use App\Models\User;
 
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
-Route::get('/', [EventoController::class, 'welcome'])->name('home');
+Route::get('/', function () {
+    return auth()->check()
+        ? app(App\Http\Controllers\EventoController::class)->welcome(request())
+        : redirect()->route('login');
+})->name('home');
+
+// ── LOGIN CON GOOGLE ──────────────────────────────────────────────────────────
+Route::get('/auth/google',          [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // ── CONTACTO ─────────────────────────────────────────────────────────────────
 Route::get('/contacto', function () {

@@ -20,7 +20,10 @@ class Restaurante extends Model
         'facebook',
         'whatsapp',
         'foto_portada', // IMPORTANTE: Agregado para permitir la asignación masiva de la imagen principal
-        'activo'        // Agregado por si manejas estados de activación en el panel
+        'activo',      // Agregado por si manejas estados de activación en el panel
+        'direccion', 
+        'latitud', 
+        'longitud'
     ];
 
     /**

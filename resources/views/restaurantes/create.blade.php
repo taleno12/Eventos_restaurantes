@@ -168,6 +168,61 @@
 
                         </div>
 
+                        {{-- SECCIÓN UBICACIÓN Y MAPA --}}
+<div class="pt-4 space-y-4">
+    <h4 class="text-sm font-bold text-zinc-700 border-b border-gray-100 pb-2">
+        <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>Ubicación del Restaurante
+    </h4>
+
+    {{-- Buscador de dirección --}}
+    <div>
+        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
+            Buscar Dirección
+        </label>
+        <div class="flex gap-2">
+            <div class="relative flex-1">
+                <i class="fas fa-search absolute left-4 top-3.5 text-gray-300"></i>
+                <input type="text" id="direccion-buscar"
+                       placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
+                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none">
+            </div>
+            <button type="button" id="btn-buscar-mapa"
+                    class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl font-bold text-sm transition-colors border-0 cursor-pointer whitespace-nowrap">
+                <i class="fas fa-search mr-1"></i> Buscar
+            </button>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">
+            <i class="fas fa-info-circle mr-1"></i>
+            Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
+        </p>
+    </div>
+
+    {{-- Campo dirección guardada --}}
+    <div>
+        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
+            Dirección Exacta (se guarda automáticamente al buscar o hacer clic en el mapa)
+        </label>
+        <div class="relative">
+            <i class="fas fa-map-pin absolute left-4 top-3.5 text-orange-400"></i>
+            <input type="text" name="direccion" id="direccion" value="{{ old('direccion') }}"
+                   placeholder="La dirección aparecerá aquí..."
+                   class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none bg-gray-50">
+        </div>
+    </div>
+
+    {{-- Coordenadas ocultas --}}
+    <input type="hidden" name="latitud"  id="latitud"  value="{{ old('latitud') }}">
+    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
+
+    {{-- Mapa Leaflet --}}
+    <div id="mapa-restaurante" class="w-full rounded-2xl overflow-hidden border border-gray-200 shadow-sm" style="height: 350px;"></div>
+
+    <p id="mapa-coords-info" class="text-xs text-gray-400 hidden">
+        <i class="fas fa-crosshairs text-orange-400 mr-1"></i>
+        Coordenadas: <span id="coords-display"></span>
+    </p>
+</div>
+
                         {{-- SECCIÓN GALERÍA --}}
                         <div class="pt-4 space-y-4">
                             <h4 class="text-sm font-bold text-zinc-700 border-b border-gray-100 pb-2">
@@ -287,5 +342,150 @@
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+
+    {{-- Leaflet CSS y JS --}}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Coordenadas por defecto: centro de Nicaragua
+    const defaultLat = 12.8654;
+    const defaultLng = -85.2072;
+
+    const savedLat = document.getElementById('latitud').value;
+    const savedLng = document.getElementById('longitud').value;
+
+    const initLat = savedLat ? parseFloat(savedLat) : defaultLat;
+    const initLng = savedLng ? parseFloat(savedLng) : defaultLng;
+
+    // Inicializar mapa
+    const mapa = L.map('mapa-restaurante').setView([initLat, initLng], savedLat ? 16 : 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mapa);
+
+    // Marker personalizado naranja
+    const iconoNaranja = L.divIcon({
+        html: '<div style="background:#ea580c;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 20],
+        className: ''
+    });
+
+    let marker = null;
+
+    // Si hay coordenadas guardadas, colocar marker
+    if (savedLat && savedLng) {
+        marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+        actualizarInfo(initLat, initLng);
+        marker.on('dragend', function () {
+            const pos = marker.getLatLng();
+            actualizarCoordenadas(pos.lat, pos.lng);
+            geocodeInverso(pos.lat, pos.lng);
+        });
+    }
+
+    // Clic en el mapa → colocar/mover pin
+    mapa.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+            marker.on('dragend', function () {
+                const pos = marker.getLatLng();
+                actualizarCoordenadas(pos.lat, pos.lng);
+                geocodeInverso(pos.lat, pos.lng);
+            });
+        }
+        actualizarCoordenadas(lat, lng);
+        geocodeInverso(lat, lng);
+    });
+
+    // Botón buscar
+    document.getElementById('btn-buscar-mapa').addEventListener('click', buscarDireccion);
+    document.getElementById('direccion-buscar').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
+    });
+
+    function buscarDireccion() {
+        const query = document.getElementById('direccion-buscar').value.trim();
+        if (!query) return;
+
+        const btn = document.getElementById('btn-buscar-mapa');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Buscando...';
+        btn.disabled = true;
+
+        // Si no menciona Nicaragua, agregarlo para mejores resultados
+        const queryFinal = query.toLowerCase().includes('nicaragua') ? query : query + ', Nicaragua';
+
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
+            headers: { 'Accept-Language': 'es' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
+            btn.disabled = false;
+
+            if (data.length === 0) {
+                alert('No se encontró esa dirección. Intenta ser más específico o haz clic en el mapa.');
+                return;
+            }
+
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            const nombre = data[0].display_name;
+
+            mapa.setView([lat, lng], 17);
+
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                marker.on('dragend', function () {
+                    const pos = marker.getLatLng();
+                    actualizarCoordenadas(pos.lat, pos.lng);
+                    geocodeInverso(pos.lat, pos.lng);
+                });
+            }
+
+            actualizarCoordenadas(lat, lng);
+            document.getElementById('direccion').value = nombre;
+        })
+        .catch(() => {
+            btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
+            btn.disabled = false;
+            alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
+        });
+    }
+
+    function geocodeInverso(lat, lng) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
+            headers: { 'Accept-Language': 'es' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.display_name) {
+                document.getElementById('direccion').value = data.display_name;
+            }
+        })
+        .catch(() => {});
+    }
+
+    function actualizarCoordenadas(lat, lng) {
+        document.getElementById('latitud').value  = lat.toFixed(7);
+        document.getElementById('longitud').value = lng.toFixed(7);
+        actualizarInfo(lat, lng);
+    }
+
+    function actualizarInfo(lat, lng) {
+        document.getElementById('mapa-coords-info').classList.remove('hidden');
+        document.getElementById('coords-display').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+});
+</script>
 
 </x-app-layout>

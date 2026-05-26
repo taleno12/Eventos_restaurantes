@@ -601,7 +601,6 @@
                             <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Restaurantes</a></li>
                             <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
                             <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Contacto</a></li>
-                            <li><a href="{{ route('login') }}" class="text-stone-400 hover:text-orange-500 hover:translate-x-1 transition-all inline-block no-underline">Acceso Administrativo</a></li>
                         </ul>
                     </div>
 

@@ -6,6 +6,7 @@
         <title>{{ $restaurante->nombre }} | Gastro Nicaragua</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
         <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -520,6 +521,32 @@
                         </p>
                     </div>
 
+                    {{-- ══ MAPA DE UBICACIÓN ══ --}}
+@if($restaurante->latitud && $restaurante->longitud)
+    <div class="info-card" style="padding:36px 40px;">
+        <div class="section-label" style="margin-bottom:20px;">
+            <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i> Cómo llegar
+        </div>
+
+        @if($restaurante->direccion)
+            <div style="display:flex;align-items:flex-start;gap:10px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;padding:14px 18px;margin-bottom:16px;">
+                <i class="fas fa-map-pin" style="color:#ea580c;margin-top:2px;flex-shrink:0;"></i>
+                <p style="margin:0;font-size:14px;color:#57534e;line-height:1.6;">{{ $restaurante->direccion }}</p>
+            </div>
+        @endif
+
+        <div id="mapa-publico" style="height:320px;border-radius:20px;overflow:hidden;border:1px solid #e7e5e4;"></div>
+
+        <a href="https://www.google.com/maps?q={{ $restaurante->latitud }},{{ $restaurante->longitud }}"
+           target="_blank"
+           style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:#1c1917;color:white;text-decoration:none;font-size:13px;font-weight:700;padding:10px 20px;border-radius:12px;transition:all .2s;"
+           onmouseover="this.style.background='#ea580c'"
+           onmouseout="this.style.background='#1c1917'">
+            <i class="fas fa-directions"></i> Abrir en Google Maps
+        </a>
+    </div>
+@endif
+
                     {{-- GALERÍA CON LIGHTBOX --}}
                     @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
                         <div class="info-card" style="padding:36px 40px;">
@@ -731,6 +758,34 @@
                 .lg-grid { grid-template-columns: 1fr 380px !important; align-items: start; }
             }
         </style>
+
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    @if($restaurante->latitud && $restaurante->longitud)
+    document.addEventListener('DOMContentLoaded', function() {
+        const mapa = L.map('mapa-publico', { scrollWheelZoom: false })
+                      .setView([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        }).addTo(mapa);
+
+        const icono = L.divIcon({
+            html: `<div style="width:24px;height:24px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.4);"></div>`,
+            iconSize: [24, 24], iconAnchor: [12, 24], className: ''
+        });
+
+        L.marker([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], { icon: icono })
+            .addTo(mapa)
+            .bindPopup(`
+                <strong style="font-size:14px;color:#1c1917;">{{ $restaurante->nombre }}</strong><br>
+                <span style="font-size:12px;color:#78716c;">{{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}</span>
+            `, { maxWidth: 220 })
+            .openPopup();
+    });
+    @endif
+</script>
 
     </body>
 </html>

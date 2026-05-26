@@ -110,6 +110,10 @@ class RestauranteController extends Controller
             'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'galeria'          => 'nullable|array|max:4',
             'galeria.*'        => 'image|mimes:jpeg,png,jpg,webp|max:3072',
+            // Validacion de mapa 
+            'direccion' => 'nullable|string|max:255',
+            'latitud'   => 'nullable|numeric|between:-90,90',
+            'longitud'  => 'nullable|numeric|between:-180,180',
         ]);
 
         // 1. Instanciar el restaurante omitiendo los archivos temporales
@@ -171,6 +175,10 @@ class RestauranteController extends Controller
             'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'galeria'          => 'nullable|array|max:4',
             'galeria.*'        => 'image|mimes:jpeg,png,jpg,webp|max:3072',
+            // Validacion de mapa
+            'direccion' => 'nullable|string|max:255',
+            'latitud'   => 'nullable|numeric|between:-90,90',
+            'longitud'  => 'nullable|numeric|between:-180,180',
         ]);
 
         // 1. Asignar los campos básicos

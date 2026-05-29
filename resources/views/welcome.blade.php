@@ -12,6 +12,15 @@
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+        {{-- ▼ DATOS PARA REACT ▼ --}}
+        <script>
+            window.__RESTAURANTES__ = @json($restaurantes->values());
+        </script>
+
+        {{-- ▼ VITE + REACT ▼ --}}
+        @viteReactRefresh
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+
         <style>
             body { font-family: 'Instrument Sans', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
             .premium-title { font-family: 'Playfair Display', serif; }
@@ -118,72 +127,42 @@
             /* ── HERO RESPONSIVO ── */
             .hero-slide {
                 position: relative; width: 100%;
-                height: 75vw;           /* proporcional en móvil */
+                height: 75vw;
                 min-height: 360px;
                 max-height: 650px;
                 overflow: hidden;
                 display: flex;
-                align-items: flex-end;  /* contenido pegado abajo en móvil */
+                align-items: flex-end;
             }
             @media (min-width: 640px) {
                 .hero-slide { align-items: center; }
             }
 
-            /* Badges info (Ubicación / Fecha) en el carrusel */
-            .hero-badges {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
+            .hero-badges { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
             .hero-badge {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                background: rgba(255,255,255,0.12);
-                backdrop-filter: blur(12px);
-                padding: 8px 14px;
-                border-radius: 14px;
-                border: 1px solid rgba(255,255,255,0.2);
-                flex: 1 1 auto;
-                min-width: 0;
+                display: flex; align-items: center; gap: 10px;
+                background: rgba(255,255,255,0.12); backdrop-filter: blur(12px);
+                padding: 8px 14px; border-radius: 14px;
+                border: 1px solid rgba(255,255,255,0.2); flex: 1 1 auto; min-width: 0;
             }
-            .hero-badge-icon {
-                width: 34px; height: 34px;
-                border-radius: 50%;
-                display: flex; align-items: center; justify-content: center;
-                flex-shrink: 0;
-            }
+            .hero-badge-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
             .hero-badge-icon.orange { background: #ea580c; }
             .hero-badge-icon.white  { background: rgba(255,255,255,0.2); }
             .hero-badge p { margin: 0; line-height: 1.3; }
             .hero-badge .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(214,211,208,0.9); font-weight: 800; }
             .hero-badge .value { font-size: 13px; font-weight: 700; color: #fff; }
 
-            /* Título hero responsive */
             .hero-title {
-                font-family: 'Playfair Display', serif;
-                font-weight: 900;
-                line-height: 1.05;
-                font-size: clamp(1.8rem, 7vw, 5rem);
-                color: #fff;
-                margin-bottom: 6px;
+                font-family: 'Playfair Display', serif; font-weight: 900; line-height: 1.05;
+                font-size: clamp(1.8rem, 7vw, 5rem); color: #fff; margin-bottom: 6px;
                 text-shadow: 0 2px 16px rgba(0,0,0,0.4);
             }
             .hero-desc {
-                font-size: clamp(0.85rem, 2.5vw, 1.25rem);
-                color: rgba(214,211,208,0.9);
-                margin-bottom: 16px;
-                max-width: 520px;
-                line-height: 1.6;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+                font-size: clamp(0.85rem, 2.5vw, 1.25rem); color: rgba(214,211,208,0.9);
+                margin-bottom: 16px; max-width: 520px; line-height: 1.6;
+                display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
             }
-            @media (min-width: 640px) {
-                .hero-desc { -webkit-line-clamp: 4; }
-            }
+            @media (min-width: 640px) { .hero-desc { -webkit-line-clamp: 4; } }
 
             /* ── SECTION EVENTOS ── */
             @keyframes pulse-dot {
@@ -196,13 +175,10 @@
             }
             .eventos-ghost-text {
                 font-family: 'Playfair Display', serif; font-weight: 900;
-                font-size: clamp(4rem, 15vw, 13rem); line-height: 1;
-                color: transparent;
-                -webkit-text-stroke: 1.5px rgba(234,88,12,0.10);
-                letter-spacing: -0.04em;
+                font-size: clamp(4rem, 15vw, 13rem); line-height: 1; color: transparent;
+                -webkit-text-stroke: 1.5px rgba(234,88,12,0.10); letter-spacing: -0.04em;
                 position: absolute; top: -1rem; left: -0.5rem;
-                pointer-events: none; user-select: none;
-                white-space: nowrap; z-index: 0;
+                pointer-events: none; user-select: none; white-space: nowrap; z-index: 0;
             }
             .eventos-pill {
                 display: inline-flex; align-items: center; gap: 8px;
@@ -212,14 +188,13 @@
                 padding: 6px 18px; border-radius: 999px;
             }
             .eventos-pill .dot {
-                width: 7px; height: 7px;
-                background: #ea580c; border-radius: 50%;
+                width: 7px; height: 7px; background: #ea580c; border-radius: 50%;
                 animation: pulse-dot 1.6s ease-in-out infinite; flex-shrink: 0;
             }
             .eventos-heading {
                 font-family: 'Playfair Display', serif; font-weight: 900;
-                font-size: clamp(1.8rem, 6vw, 4.5rem);
-                line-height: 1.05; letter-spacing: -0.03em; color: #1c1917; margin: 0;
+                font-size: clamp(1.8rem, 6vw, 4.5rem); line-height: 1.05;
+                letter-spacing: -0.03em; color: #1c1917; margin: 0;
             }
             .eventos-heading em { font-style: italic; color: #ea580c; position: relative; }
             .underline-svg {
@@ -228,32 +203,125 @@
                 animation: draw-underline 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s forwards;
             }
             .eventos-divider-icon {
-                width: 34px; height: 34px;
-                background: #ea580c; border-radius: 50%;
+                width: 34px; height: 34px; background: #ea580c; border-radius: 50%;
                 display: flex; align-items: center; justify-content: center;
                 box-shadow: 0 0 0 7px rgba(234,88,12,0.1); flex-shrink: 0;
             }
 
             /* ── CARD EVENTO ── */
-            /* En móvil: imagen arriba (pequeña), texto abajo */
             .event-card-img {
-                height: 200px;
-                overflow: hidden;
-                border-radius: 1.8rem 1.8rem 0 0;
-                position: relative;
-                background: #e7e5e4;
+                height: 200px; overflow: hidden; border-radius: 1.8rem 1.8rem 0 0;
+                position: relative; background: #e7e5e4;
             }
             @media (min-width: 768px) {
-                /* En tablet+: layout horizontal */
-                .event-card-img {
-                    height: 100%;
-                    min-height: 220px;
-                    border-radius: 0 2rem 2rem 0;
-                }
+                .event-card-img { height: 100%; min-height: 220px; border-radius: 0 2rem 2rem 0; }
                 .event-card-body { border-radius: 2rem 0 0 2rem; }
             }
 
+            /* ══ CARRUSEL RESTAURANTES ══ */
+            .rest-carousel-section {
+                background: #fff;
+                border-top: 1px solid #f1f0ee;
+                border-bottom: 1px solid #f1f0ee;
+                padding: 28px 0;
+                overflow: hidden;
+            }
+            .rest-carousel-header {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 1rem 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+            }
+            .rest-carousel-label {
+                display: inline-flex; align-items: center; gap: 8px;
+                font-size: 10px; font-weight: 800; letter-spacing: 0.2em;
+                text-transform: uppercase; color: #c2410c;
+            }
+            .rest-carousel-label .dot {
+                width: 7px; height: 7px; background: #ea580c; border-radius: 50%;
+                animation: pulse-dot 1.6s ease-in-out infinite;
+            }
+            .rest-carousel-title {
+                font-family: 'Playfair Display', serif; font-weight: 900;
+                font-size: clamp(1.1rem, 3vw, 1.6rem); color: #1c1917; margin: 0;
+            }
+            .rest-carousel-title em { font-style: italic; color: #ea580c; }
 
+            /* Pista infinita — arranca desde el principio */
+            .rest-track-wrapper {
+                overflow: hidden;
+                position: relative;
+                padding: 8px 0 12px 0;
+            }
+            .rest-track {
+                display: flex;
+                gap: 36px;
+                width: max-content;
+                padding: 4px 0;
+                margin-left: 24px;
+                /* La animación la maneja JS para que sea exacta */
+                will-change: transform;
+            }
+
+            /* Ítem circular */
+            .rest-item {
+                flex-shrink: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .rest-circle {
+                width: 110px;
+                height: 110px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 3px solid #fff;
+                box-shadow: 0 4px 18px rgba(28,25,23,0.10);
+                transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s, border-color 0.3s;
+                background: linear-gradient(135deg, #fef3c7, #fed7aa);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .rest-item:hover .rest-circle {
+                transform: scale(1.08) translateY(-4px);
+                box-shadow: 0 12px 32px rgba(234,88,12,0.22);
+                border-color: #ea580c;
+            }
+            .rest-circle img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .rest-circle-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .rest-item-name {
+                font-family: 'Instrument Sans', sans-serif;
+                font-weight: 700;
+                font-size: 12px;
+                color: #1c1917;
+                text-align: center;
+                max-width: 110px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                transition: color 0.2s;
+            }
+            .rest-item:hover .rest-item-name {
+                color: #ea580c;
+            }
         </style>
     </head>
     <body class="bg-stone-50 text-stone-900">
@@ -273,7 +341,7 @@
                         </span>
                     </a>
 
-                    {{-- Search bar desktop --}}
+                    {{-- ── Search bar desktop (Blade puro — funciona perfecto) ── --}}
                     <form action="{{ route('home') }}" method="GET"
                           class="hidden md:flex flex-1 max-w-2xl search-box">
                         <div class="search-segment" style="min-width:130px;">
@@ -322,13 +390,13 @@
                     {{-- Acciones derecha --}}
                     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
 
-                        {{-- Búsqueda: ícono lupa (solo md abajo) --}}
+                        {{-- Búsqueda: ícono lupa (solo móvil) --}}
                         <button id="mobileSearchToggle"
                                 class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
                         </button>
 
-                        {{-- Restaurantes icono (xs) / con texto (lg+) --}}
+                        {{-- Restaurantes --}}
                         <a href="{{ route('restaurantes.index') }}"
                            class="flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline justify-center">
                             <i class="fas fa-store text-xs"></i>
@@ -338,7 +406,7 @@
                             @endif
                         </a>
 
-                        {{-- Empleos icono (xs) / con texto (lg+) --}}
+                        {{-- Empleos --}}
                         <a href="{{ route('empleos.index') }}"
                            class="flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline justify-center">
                             <i class="fas fa-briefcase text-xs"></i>
@@ -348,7 +416,7 @@
                             @endif
                         </a>
 
-                        {{-- Contacto: ícono en móvil, texto en lg+ --}}
+                        {{-- Contacto --}}
                         <a href="{{ route('contacto') }}"
                            class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-stone-100 sm:bg-transparent text-stone-600 hover:text-orange-600 transition-colors no-underline"
                            title="Contacto">
@@ -359,7 +427,6 @@
                         @if (Route::has('login'))
                             @auth
                                 @if(auth()->user()->email === 'admin@turismo.ni')
-                                    {{-- Panel: ícono en móvil, texto en lg+ --}}
                                     <a href="{{ url('/dashboard') }}"
                                        class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-orange-50 sm:bg-transparent border border-orange-200 sm:border-0 text-orange-600 hover:text-orange-700 transition-colors no-underline"
                                        title="Panel Admin">
@@ -381,7 +448,7 @@
                 </div>
             </div>
 
-            {{-- Panel búsqueda móvil desplegable --}}
+            {{-- ── Panel búsqueda móvil desplegable (Blade puro) ── --}}
             <div id="mobileSearchPanel">
                 <form action="{{ route('home') }}" method="GET" class="flex flex-col gap-3">
                     <div class="flex flex-col gap-1">
@@ -421,7 +488,6 @@
                         <i class="fas fa-search text-xs"></i> Filtrar Experiencias
                     </button>
                 </form>
-
             </div>
         </nav>
 
@@ -439,8 +505,6 @@
                         @foreach($eventosDestacados as $key => $evento)
                             <div class="carousel-item {{ $key == 0 ? 'active' : '' }}" data-bs-interval="6000">
                                 <div class="hero-slide text-white">
-
-                                    {{-- Imagen de fondo --}}
                                     <div class="absolute inset-0 z-0">
                                         <a href="{{ route('eventos.show', $evento->id) }}" class="block w-full h-full">
                                             <img src="{{ asset('storage/' . $evento->imagen) }}"
@@ -448,33 +512,19 @@
                                                  alt="{{ $evento->titulo }}">
                                         </a>
                                         <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 pointer-events-none"></div>
-                                        {{-- Degradado extra en la parte inferior en móvil --}}
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none sm:hidden"></div>
                                     </div>
-
-                                    {{-- Contenido --}}
-                                    <div class="relative z-10 w-full px-4 sm:px-10 md:px-20 py-8 sm:py-0
-                                                {{ $key == 0 ? 'animate-slide-left' : '' }}">
-
-                                        {{-- Badge --}}
+                                    <div class="relative z-10 w-full px-4 sm:px-10 md:px-20 py-8 sm:py-0 {{ $key == 0 ? 'animate-slide-left' : '' }}">
                                         <span class="bg-orange-600/90 backdrop-blur-sm text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-4 inline-block">
                                             Evento Destacado
                                         </span>
-
-                                        {{-- Título --}}
                                         <h1 class="hero-title mb-2">
                                             <a href="{{ route('eventos.show', $evento->id) }}"
                                                class="text-white hover:text-orange-400 transition-colors no-underline">
                                                 {{ $evento->titulo }}
                                             </a>
                                         </h1>
-
-                                        {{-- Descripción --}}
-                                        <p class="hero-desc">
-                                            {{ Str::limit($evento->descripcion, 150) }}
-                                        </p>
-
-                                        {{-- Badges Ubicación / Fecha --}}
+                                        <p class="hero-desc">{{ Str::limit($evento->descripcion, 150) }}</p>
                                         <div class="hero-badges" style="max-width: 520px;">
                                             <div class="hero-badge">
                                                 <div class="hero-badge-icon orange">
@@ -495,7 +545,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -514,6 +563,55 @@
                 </div>
             @endif
         </section>
+
+        {{-- ══════════════════════════════════════════════════════
+             CARRUSEL ANIMADO DE RESTAURANTES
+        ══════════════════════════════════════════════════════ --}}
+        @if($restaurantes->count() > 0)
+        <section class="rest-carousel-section">
+
+            {{-- Encabezado --}}
+            <div class="rest-carousel-header">
+                <div>
+                    <div class="rest-carousel-label mb-1">
+                        <span class="dot"></span>
+                        Establecimientos en la plataforma
+                    </div>
+                    <h2 class="rest-carousel-title">
+                        Nuestros <em>Restaurantes</em>
+                    </h2>
+                </div>
+                <a href="{{ route('restaurantes.index') }}"
+                   class="hidden sm:inline-flex items-center gap-2 text-xs font-bold text-orange-600 hover:text-orange-700 no-underline border border-orange-200 bg-orange-50 hover:bg-orange-100 px-4 py-2 rounded-full transition-all">
+                    Ver todos
+                    <i class="fas fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+
+            {{-- Pista — el JS la llena dinámicamente --}}
+            <div class="rest-track-wrapper" id="restWrapper">
+                <div class="rest-track" id="restTrack">
+                    @foreach($restaurantes as $rest)
+                    <a href="{{ route('restaurantes.show', $rest->id) }}" class="rest-item">
+                        <div class="rest-circle">
+                            @if($rest->foto_portada)
+                                <img src="{{ asset('storage/' . $rest->foto_portada) }}"
+                                     alt="{{ $rest->nombre }}" loading="lazy">
+                            @else
+                                <div class="rest-circle-placeholder">
+                                    <i class="fas fa-utensils" style="font-size:1.6rem; color:#ea580c; opacity:0.45;"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <span class="rest-item-name">{{ $rest->nombre }}</span>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+
+        </section>
+        @endif
+        {{-- ══ FIN CARRUSEL RESTAURANTES ══ --}}
 
         {{-- ══ MAIN ══ --}}
         <main class="max-w-7xl mx-auto px-4 py-12 sm:py-20 md:py-24">
@@ -552,14 +650,12 @@
             {{-- ── SECTION HEADER ── --}}
             <div class="relative mb-14 sm:mb-20" style="overflow:visible;">
                 <div class="eventos-ghost-text" aria-hidden="true">Eventos</div>
-
                 <div class="relative z-10 mb-4">
                     <span class="eventos-pill">
                         <span class="dot"></span>
                         Descubre · Reserva · Disfruta
                     </span>
                 </div>
-
                 <div class="relative z-10">
                     <h2 class="eventos-heading">
                         Próximos&nbsp;<em style="position:relative;">
@@ -570,7 +666,6 @@
                         </em>&nbsp;Gastronómicos
                     </h2>
                 </div>
-
                 <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-7">
                     <p style="color:#78716c; font-size:0.95rem; max-width:500px; line-height:1.7; margin:0;">
                         Experiencias culinarias únicas en los mejores restaurantes de Nicaragua.
@@ -583,7 +678,6 @@
                         </span>
                     </div>
                 </div>
-
                 <div class="relative z-10 flex items-center gap-4 mt-8">
                     <div style="flex:1; height:1px; background:#e7e5e4;"></div>
                     <div class="eventos-divider-icon">
@@ -629,9 +723,9 @@
                                             {{ \Carbon\Carbon::parse($item->fecha_evento)->translatedFormat('d M, Y') }}
                                         </span>
                                     </div>
+                                    {{-- ▼ COUNTDOWN — React lo maneja aquí ▼ --}}
                                     <div class="bg-red-50 px-3 py-1.5 rounded-xl border border-red-100/50">
-                                        <span class="countdown text-[10px] font-black text-red-600 uppercase tracking-wider"
-                                              data-expire="{{ $item->fecha_evento }}">Cargando...</span>
+                                        <span data-countdown="{{ $item->fecha_evento }}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -684,7 +778,6 @@
         <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
             <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
-
                     <div class="sm:col-span-2 lg:col-span-4 space-y-4">
                         <div class="flex items-center gap-2.5">
                             <div class="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-md shadow-orange-600/20">
@@ -702,7 +795,6 @@
                             <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
                         </div>
                     </div>
-
                     <div class="lg:col-span-2 space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
                         <ul class="space-y-2.5 text-sm p-0 list-none m-0">
@@ -712,7 +804,6 @@
                             <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
                         </ul>
                     </div>
-
                     <div class="lg:col-span-3 space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
                         <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
@@ -725,7 +816,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="border-t border-stone-800 pt-6 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
                     <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
                     <div class="flex gap-4">
@@ -741,6 +831,7 @@
         <script>
             AOS.init({ duration: 800, once: true });
 
+            {{-- ── FILTRO CASCADA (Blade JS — se queda igual) ── --}}
             const todosLosRestaurantes = @json($restaurantes->values());
 
             function configurarFiltroCascada(selectDeptoId, selectRestId) {
@@ -769,6 +860,7 @@
             configurarFiltroCascada('search-departamento',        'search-restaurante');
             configurarFiltroCascada('search-departamento-mobile', 'search-restaurante-mobile');
 
+            {{-- ── MOBILE TOGGLE (Blade JS — se queda igual) ── --}}
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
             const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
             if (mobileSearchToggle && mobileSearchPanel) {
@@ -782,26 +874,61 @@
                 });
             }
 
-            document.querySelectorAll('.countdown').forEach(el => {
-                const targetDateStr = el.getAttribute('data-expire');
-                if (!targetDateStr) return;
-                const targetDate = new Date(targetDateStr.replace(/-/g, "/")).getTime();
-                const interval = setInterval(() => {
-                    const now  = new Date().getTime();
-                    const diff = targetDate - now;
-                    if (diff <= 0) {
-                        el.textContent = "Finalizado / En Curso";
-                        el.className   = "text-[10px] font-bold text-stone-400 uppercase tracking-wider";
-                        clearInterval(interval);
-                        return;
+            {{-- ── COUNTDOWN ahora lo maneja React (app.jsx) ── --}}
+            {{-- El span con data-countdown="{{ $item->fecha_evento }}" es montado por React --}}
+
+            // ── CARRUSEL RESTAURANTES ──
+            document.addEventListener('DOMContentLoaded', function () {
+                const wrapper = document.getElementById('restWrapper');
+                const track   = document.getElementById('restTrack');
+                if (!track || !wrapper) return;
+
+                const GAP   = 36;   // px, mismo que CSS gap
+                const SPEED = 0.6;  // px por frame
+
+                // Solo duplicar si el contenido no llena el ancho de la pantalla
+                function clonarSiNecesario() {
+                    const wrapperW  = wrapper.offsetWidth;
+                    let   trackW    = track.scrollWidth;
+
+                    // Clonar hasta que el track sea al menos 2x el wrapper
+                    while (trackW < wrapperW * 2.5) {
+                        const original = Array.from(track.querySelectorAll('.rest-item'));
+                        original.forEach(function (item) {
+                            const clon = item.cloneNode(true);
+                            clon.setAttribute('aria-hidden', 'true');
+                            clon.setAttribute('tabindex', '-1');
+                            track.appendChild(clon);
+                        });
+                        trackW = track.scrollWidth;
                     }
-                    const dias    = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const horas   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    if (dias > 0)       el.textContent = `Faltan ${dias} d y ${horas} h`;
-                    else if (horas > 0) el.textContent = `Faltan ${horas} h y ${minutos} m`;
-                    else                el.textContent = `Inicia en menos de 1 h`;
-                }, 1000);
+                }
+
+                clonarSiNecesario();
+
+                // Ancho del set original (antes de clonar)
+                const itemsOriginales = track.querySelectorAll('.rest-item:not([aria-hidden])');
+                let setW = 0;
+                itemsOriginales.forEach(function (el) {
+                    setW += el.offsetWidth + GAP;
+                });
+
+                let pos    = 0;
+                let paused = false;
+
+                track.addEventListener('mouseenter', function () { paused = true;  });
+                track.addEventListener('mouseleave', function () { paused = false; });
+
+                function animar() {
+                    if (!paused) {
+                        pos += SPEED;
+                        if (pos >= setW) pos -= setW; // reset al inicio sin salto
+                        track.style.transform = 'translateX(-' + pos + 'px)';
+                    }
+                    requestAnimationFrame(animar);
+                }
+
+                requestAnimationFrame(animar);
             });
         </script>
     </body>

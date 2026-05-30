@@ -18,37 +18,48 @@ class EmpleoController extends Controller
     // ─────────────────────────────────────────────────────────────────────────
 
     public function publicIndex(Request $request)
-    {
-        $query = Empleo::with(['restaurante', 'departamento', 'municipio'])
-            ->where('activo', true)
-            ->orderByDesc('created_at');
+{
+    $departamentoPredefinido = auth()->check()
+        ? auth()->user()->departamento_id
+        : null;
 
-        if ($search = $request->input('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('titulo', 'like', "%{$search}%")
-                  ->orWhere('descripcion', 'like', "%{$search}%")
-                  ->orWhereHas('restaurante', fn($r) => $r->where('nombre', 'like', "%{$search}%"));
-            });
-        }
+    $hayFiltroActivo = $request->hasAny(['departamento', 'search']);
 
-        if ($departamentoId = $request->input('departamento')) {
-            $query->where('departamento_id', $departamentoId);
-        }
+    $deptoFiltro = $hayFiltroActivo
+        ? ($request->filled('departamento') ? $request->input('departamento') : null)
+        : $departamentoPredefinido;
 
-        $empleos            = $query->paginate(9)->withQueryString();
-        $departamentos      = Departamento::orderBy('nombre')->get();
-        $totalRestaurantes  = Restaurante::count();
-        $totalDepartamentos = Departamento::count();
-        $totalActivos       = Empleo::where('activo', true)->count();
+    $query = Empleo::with(['restaurante', 'departamento', 'municipio'])
+        ->where('activo', true)
+        ->orderByDesc('created_at');
 
-        return view('empleos', compact(
-            'empleos',
-            'departamentos',
-            'totalRestaurantes',
-            'totalDepartamentos',
-            'totalActivos'
-        ));
+    if ($search = $request->input('search')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('titulo', 'like', "%{$search}%")
+              ->orWhere('descripcion', 'like', "%{$search}%")
+              ->orWhereHas('restaurante', fn($r) => $r->where('nombre', 'like', "%{$search}%"));
+        });
     }
+
+    if ($deptoFiltro) {
+        $query->where('departamento_id', $deptoFiltro);
+    }
+
+    $empleos            = $query->paginate(9)->withQueryString();
+    $departamentos      = Departamento::orderBy('nombre')->get();
+    $totalRestaurantes  = Restaurante::count();
+    $totalDepartamentos = Departamento::count();
+    $totalActivos       = Empleo::where('activo', true)->count();
+
+    return view('empleos', compact(
+        'empleos',
+        'departamentos',
+        'totalRestaurantes',
+        'totalDepartamentos',
+        'totalActivos',
+        'departamentoPredefinido'
+    ));
+}
 
     public function show(Empleo $empleo)
     {

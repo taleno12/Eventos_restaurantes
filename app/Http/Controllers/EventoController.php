@@ -15,17 +15,37 @@ class EventoController extends Controller
     public function welcome(Request $request)
     {
         $departamentos = Departamento::all();
-        $restaurantes  = Restaurante::orderBy('nombre')->get();
 
+        // Departamento predefinido del usuario autenticado
+        $departamentoPredefinido = auth()->check()
+            ? auth()->user()->departamento_id
+            : null;
+
+        // Si el usuario usó el filtro respetamos su elección,
+        // si no, usamos su departamento predefinido
+        $hayFiltroActivo = $request->hasAny(['departamento', 'restaurante_id', 'especialidad']);
+
+        $deptoFiltro = $hayFiltroActivo
+            ? ($request->filled('departamento') ? $request->departamento : null)
+            : $departamentoPredefinido;
+
+        // Restaurantes filtrados por departamento
+        $restaurantes = Restaurante::orderBy('nombre')
+            ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
+            ->get();
+
+        // Eventos destacados filtrados por departamento
         $eventosDestacados = Evento::with(['restaurante', 'departamento'])
             ->where('is_destacado', true)
+            ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
             ->latest()
             ->get();
 
+        // Query principal de eventos
         $query = Evento::with(['restaurante', 'departamento']);
 
-        if ($request->filled('departamento')) {
-            $query->where('departamento_id', $request->departamento);
+        if ($deptoFiltro) {
+            $query->where('departamento_id', $deptoFiltro);
         }
 
         if ($request->filled('restaurante_id')) {
@@ -40,11 +60,18 @@ class EventoController extends Controller
 
         $eventos = $query->latest()->get();
 
-        if ($eventos->isEmpty() && !$request->anyFilled(['departamento', 'restaurante_id', 'especialidad'])) {
+        // Si no hay eventos y no hay filtro activo ni departamento predefinido, mostrar los últimos 6
+        if ($eventos->isEmpty() && !$hayFiltroActivo && !$departamentoPredefinido) {
             $eventos = Evento::with(['restaurante', 'departamento'])->latest()->take(6)->get();
         }
 
-        return view('welcome', compact('eventos', 'eventosDestacados', 'departamentos', 'restaurantes'));
+        return view('welcome', compact(
+            'eventos',
+            'eventosDestacados',
+            'departamentos',
+            'restaurantes',
+            'departamentoPredefinido'
+        ));
     }
 
     public function show(Evento $evento)
@@ -104,7 +131,7 @@ class EventoController extends Controller
         }
 
         return redirect()->route('eventos.index')
-            ->with('success', 'Evento publicado con exito.');
+            ->with('success', 'Evento publicado con éxito.');
     }
 
     public function edit(Evento $evento)
@@ -140,10 +167,10 @@ class EventoController extends Controller
             'municipio_id'    => 'required|exists:municipios,id',
             'restaurante_id'  => 'required|exists:restaurantes,id',
             'is_destacado'    => 'nullable|boolean',
-            'galeria.*'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // ← AÑADIDO
+            'galeria.*'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $datos = $request->except(['imagen', 'galeria']); // ← 'galeria' también excluido
+        $datos = $request->except(['imagen', 'galeria']);
         $datos['is_destacado'] = $request->boolean('is_destacado', false);
 
         if ($request->hasFile('imagen')) {
@@ -155,7 +182,6 @@ class EventoController extends Controller
 
         $evento->update($datos);
 
-        // ← AÑADIDO: guardar fotos de galería al editar
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $img) {
                 if ($img && $img->isValid()) {

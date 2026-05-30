@@ -16,38 +16,49 @@ class RestauranteController extends Controller
     // ─────────────────────────────────────────────────────────────────────────
 
     public function publicIndex(Request $request)
-    {
-        $query = Restaurante::with(['departamento', 'municipio'])
-            ->withCount(['eventos' => function ($q) {
-                $q->where('fecha_evento', '>=', now());
-            }]);
+{
+    $departamentoPredefinido = auth()->check()
+        ? auth()->user()->departamento_id
+        : null;
 
-        if ($request->filled('search')) {
-            $query->where('nombre', 'like', '%' . $request->search . '%');
-        }
+    $hayFiltroActivo = $request->hasAny(['departamento', 'municipio', 'especialidad', 'search']);
 
-        if ($request->filled('departamento')) {
-            $query->where('departamento_id', $request->departamento);
-        }
+    $deptoFiltro = $hayFiltroActivo
+        ? ($request->filled('departamento') ? $request->departamento : null)
+        : $departamentoPredefinido;
 
-        if ($request->filled('municipio')) {        // ← AÑADIDO
-            $query->where('municipio_id', $request->municipio);
-        }
+    $query = Restaurante::with(['departamento', 'municipio'])
+        ->withCount(['eventos' => function ($q) {
+            $q->where('fecha_evento', '>=', now());
+        }]);
 
-        if ($request->filled('especialidad')) {
-            $query->where('especialidad', 'like', '%' . $request->especialidad . '%');
-        }
-
-        $restaurantes  = $query->orderBy('nombre')->paginate(12);
-        $departamentos = Departamento::orderBy('nombre')->get();
-        $municipios    = Municipio::orderBy('nombre')->get(); // ← AÑADIDO
-
-        return view('restaurantes.public_index', compact(
-            'restaurantes',
-            'departamentos',
-            'municipios'                            // ← AÑADIDO
-        ));
+    if ($request->filled('search')) {
+        $query->where('nombre', 'like', '%' . $request->search . '%');
     }
+
+    if ($deptoFiltro) {
+        $query->where('departamento_id', $deptoFiltro);
+    }
+
+    if ($request->filled('municipio')) {
+        $query->where('municipio_id', $request->municipio);
+    }
+
+    if ($request->filled('especialidad')) {
+        $query->where('especialidad', 'like', '%' . $request->especialidad . '%');
+    }
+
+    $restaurantes  = $query->orderBy('nombre')->paginate(12);
+    $departamentos = Departamento::orderBy('nombre')->get();
+    $municipios    = Municipio::orderBy('nombre')->get();
+
+    return view('restaurantes.public_index', compact(
+        'restaurantes',
+        'departamentos',
+        'municipios',
+        'departamentoPredefinido'
+    ));
+}
 
     public function publicShow(Restaurante $restaurante)
     {

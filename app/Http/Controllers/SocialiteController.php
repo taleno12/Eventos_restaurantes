@@ -47,6 +47,9 @@ class SocialiteController extends Controller
 
         Auth::login($user, true);
 
+        if (!$user->departamento_id) {
+            return redirect()->route('usuario.departamento.show');
+        }
         return redirect()->intended('/dashboard');
     }
 }

@@ -273,9 +273,10 @@
                     <select id="mob-departamento" name="departamento" class="nav-select-mobile">
                         <option value="">Todos los destinos</option>
                         @foreach($departamentos as $depto)
-                            <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
-                                {{ $depto->nombre }}
-                            </option>
+                            <option value="{{ $depto->id }}"
+    {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
+    {{ $depto->nombre }}
+</option>
                         @endforeach
                     </select>
                 </div>

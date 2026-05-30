@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmpleoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\DepartamentoUsuarioController;
 
 
 use App\Models\Restaurante;
@@ -16,6 +17,13 @@ use App\Models\Evento;
 use App\Models\Departamento;
 use App\Models\Empleo;
 use App\Models\User;
+
+// departamento
+Route::middleware('auth')->group(function () {
+    Route::get('/seleccionar-departamento',  [DepartamentoUsuarioController::class, 'show'])->name('usuario.departamento.show');
+    Route::post('/seleccionar-departamento', [DepartamentoUsuarioController::class, 'save'])->name('usuario.departamento.save');
+    Route::get('/saltar-departamento',       [DepartamentoUsuarioController::class, 'skip'])->name('usuario.departamento.skip');
+});
 
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
 Route::get('/', function () {

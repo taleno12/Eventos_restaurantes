@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'departamento_id',
     ];
 
     /**
@@ -46,4 +47,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function departamento()
+{
+    return $this->belongsTo(\App\Models\Departamento::class);
+}
 }

@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-    
+
     {{-- ── Encabezado Principal ── --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -65,12 +65,12 @@
                     <tbody class="border-top-0">
                         @forelse($departamentos as $depto)
                         <tr class="border-bottom" style="border-color: #edf2f7 !important;">
-                            
+
                             {{-- ID --}}
                             <td class="ps-4 py-3">
                                 <span class="text-muted fw-semibold" style="font-size: 0.85rem;">#{{ $depto->id }}</span>
                             </td>
-                            
+
                             {{-- Información Regional --}}
                             <td class="py-3">
                                 <div class="d-flex align-items-center">
@@ -83,24 +83,32 @@
                                             <span class="text-muted fw-bold d-inline-flex align-items-center gap-1" style="font-size: 0.7rem; letter-spacing: 0.3px;">
                                                 <i class="bi bi-flag-fill text-secondary"></i> NICARAGUA
                                             </span>
-                                            
-                                            <a href="{{ route('admin.restaurantes.index', ['departamento_id' => $depto->id]) }}" 
-                                               class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 text-decoration-none d-inline-flex align-items-center gap-1 fw-bold transition-all btn-badge" style="font-size: 0.7rem;">
-                                                <i class="bi bi-egg-fried"></i> 
+
+                                            {{-- Badge Restaurantes --}}
+                                            <a href="{{ route('admin.restaurantes.index', ['departamento_id' => $depto->id]) }}"
+                                               class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 text-decoration-none d-inline-flex align-items-center gap-1 fw-bold btn-badge" style="font-size: 0.7rem;">
+                                                <i class="bi bi-egg-fried"></i>
                                                 <span>{{ $depto->restaurantes_count }} Restaurantes inscritos</span>
+                                            </a>
+
+                                            {{-- Badge Gastrobares --}}
+                                            <a href="{{ route('admin.gastrobares.index', ['departamento_id' => $depto->id]) }}"
+                                               class="badge px-2 py-1 text-decoration-none d-inline-flex align-items-center gap-1 fw-bold btn-badge-gastro" style="font-size: 0.7rem; color: #7c3aed; background-color: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25);">
+                                                <i class="bi bi-cup-straw"></i>
+                                                <span>{{ $depto->gastrobares_count }} Gastrobares inscritos</span>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </td>
-                            
+
                             {{-- Panel de Acciones --}}
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-3">
                                     <a href="{{ route('departamentos.edit', $depto->id) }}" class="text-secondary p-1 action-icon-edit" title="Editar Departamento" style="transition: color 0.2s;">
                                         <i class="bi bi-pencil fs-5"></i>
                                     </a>
-                                    
+
                                     <form action="{{ route('departamentos.destroy', $depto->id) }}" method="POST" class="d-inline m-0" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este departamento?');">
                                         @csrf
                                         @method('DELETE')
@@ -127,20 +135,18 @@
 </div>
 
 <style>
-    .action-icon-edit:hover { color: #ffc107 !important; }
+    .action-icon-edit:hover  { color: #ffc107 !important; }
     .action-icon-delete:hover { color: #dc3545 !important; }
     .table-hover tbody tr:hover { background-color: #f8fafc !important; }
-    .btn-badge:hover { background-color: rgba(13, 110, 253, 0.2) !important; }
+    .btn-badge:hover       { background-color: rgba(13, 110, 253, 0.2) !important; }
+    .btn-badge-gastro:hover { background-color: rgba(124, 58, 237, 0.2) !important; }
 </style>
 
-{{-- Scripts de Filtro Funcional --}}
 <script>
     document.getElementById('busquedaDepartamento').addEventListener('input', function() {
         const val = this.value.toLowerCase();
         document.querySelectorAll('#tablaDepartamentos tbody tr').forEach(row => {
-            // Asegurarse de que no evalúe la fila vacía
-            if(row.querySelector('td[colspan]')) return;
-            
+            if (row.querySelector('td[colspan]')) return;
             const text = row.innerText.toLowerCase();
             row.style.display = text.includes(val) ? '' : 'none';
         });

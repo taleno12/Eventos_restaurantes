@@ -9,6 +9,7 @@
         <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
         <style>
             :root {
@@ -95,54 +96,132 @@
             .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
             .nav-input-mobile::placeholder { color: #c4bfbb; }
 
-            /* ── HERO ── */
+            /* ══ HERO NUEVO ══ */
             .hero-section {
-                background: linear-gradient(160deg, #1a0800 0%, #0c0a09 60%, #1c1410 100%);
-                padding: 140px 2rem 80px; position: relative; overflow: hidden;
+                position: relative;
+                overflow: hidden;
+                min-height: 580px;
+                display: flex;
+                align-items: center;
             }
-            .hero-section::before {
-                content: ''; position: absolute; top: -80px; right: -80px;
-                width: 500px; height: 500px;
-                background: radial-gradient(circle, rgba(234,88,12,0.18) 0%, transparent 70%);
-                pointer-events: none;
-            }
-            .hero-section::after {
-                content: ''; position: absolute; bottom: -60px; left: 20%;
-                width: 400px; height: 400px;
-                background: radial-gradient(circle, rgba(251,146,60,0.07) 0%, transparent 70%);
-                pointer-events: none;
-            }
-            .hero-dots {
+            .hero-bg-img {
                 position: absolute; inset: 0;
-                background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
-                background-size: 22px 22px; pointer-events: none;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
             }
-            .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 10; text-align: center; }
+            .hero-bg-overlay {
+                position: absolute; inset: 0;
+                background: linear-gradient(120deg,
+                    rgba(12,10,9,0.92) 0%,
+                    rgba(26,8,0,0.82) 45%,
+                    rgba(12,10,9,0.60) 100%);
+            }
+            .hero-inner {
+                position: relative; z-index: 10;
+                max-width: 1280px; margin: 0 auto;
+                width: 100%;
+                padding: 0 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+            }
+            .hero-left { max-width: 620px; }
+
+            /* Badge animado */
             .hero-badge {
                 display: inline-flex; align-items: center; gap: 8px;
-                background: rgba(234,88,12,0.15); border: 1px solid rgba(234,88,12,0.3);
+                background: rgba(234,88,12,0.18); border: 1px solid rgba(234,88,12,0.4);
                 color: #fb923c; font-size: 10px; font-weight: 800; letter-spacing: 0.2em;
-                text-transform: uppercase; padding: 8px 20px; border-radius: 999px; margin-bottom: 28px;
+                text-transform: uppercase; padding: 7px 18px; border-radius: 999px; margin-bottom: 24px;
             }
-            .hero-title { font-size: clamp(2.4rem, 5.5vw, 5rem); font-weight: 900; color: white; line-height: 1.08; margin-bottom: 20px; }
+            .hero-badge-dot {
+                width: 6px; height: 6px; background: #fb923c; border-radius: 50%;
+                animation: heroPulse 2s infinite;
+            }
+            @keyframes heroPulse {
+                0%,100% { opacity:1; transform:scale(1); }
+                50%      { opacity:.4; transform:scale(0.75); }
+            }
+
+            .hero-title {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+                font-weight: 900; color: white; line-height: 1.08; margin: 0 0 18px;
+            }
             .hero-title span {
                 color: transparent;
-                background: linear-gradient(90deg, #fb923c, #f59e0b);
+                background: linear-gradient(90deg, #fb923c, #fbbf24);
                 -webkit-background-clip: text; background-clip: text;
             }
-            .hero-sub { color: #a8a29e; font-size: 15px; max-width: 540px; margin: 0 auto 48px; line-height: 1.75; font-weight: 400; }
-            .stats-row {
-                display: inline-flex; flex-wrap: wrap; justify-content: center;
-                background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
-                border-radius: 20px; padding: 24px 40px; backdrop-filter: blur(8px);
+            .hero-sub {
+                color: #d6d3d1; font-size: 14px; line-height: 1.8;
+                margin: 0 0 32px; max-width: 500px;
             }
-            .stat-item { padding: 0 40px; text-align: center; position: relative; }
-            .stat-item + .stat-item::before {
-                content: ''; position: absolute; left: 0; top: 10%; bottom: 10%;
-                width: 1px; background: rgba(255,255,255,0.08);
+
+            /* Pills de confianza */
+            .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0; }
+            .hero-pill {
+                display: inline-flex; align-items: center; gap: 7px;
+                background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+                color: #e7e5e4; font-size: 12px; font-weight: 600;
+                padding: 7px 14px; border-radius: 999px;
             }
-            .stat-num { font-size: 2.5rem; font-weight: 900; color: #fb923c; line-height: 1; display: block; }
-            .stat-label { font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: #78716c; margin-top: 8px; display: block; }
+            .hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+            /* Tarjeta flotante de stats */
+            .hero-stats-card {
+                background: rgba(255,255,255,0.07);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255,255,255,0.12);
+                border-radius: 24px;
+                padding: 32px 36px;
+                text-align: center;
+                min-width: 200px;
+                flex-shrink: 0;
+            }
+            .hero-stats-icon {
+                width: 56px; height: 56px;
+                background: #ea580c; border-radius: 18px;
+                display: flex; align-items: center; justify-content: center;
+                margin: 0 auto 18px;
+            }
+            .hero-stats-icon i { color: white; font-size: 22px; }
+            .hero-stat-big-num {
+                font-family: 'Playfair Display', serif;
+                font-size: 3rem; font-weight: 900;
+                color: #fb923c; display: block; line-height: 1;
+            }
+            .hero-stat-big-lbl {
+                font-size: 9px; font-weight: 800; letter-spacing: 0.2em;
+                text-transform: uppercase; color: #78716c;
+                margin-top: 6px; display: block;
+            }
+            .hero-stat-divider {
+                border: none; border-top: 1px solid rgba(255,255,255,0.08);
+                margin: 20px 0;
+            }
+            .hero-stat-mini-row { display: flex; gap: 32px; justify-content: center; }
+            .hero-stat-mini { text-align: center; }
+            .hero-stat-mini-num {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.5rem; font-weight: 900;
+                color: #e7e5e4; display: block; line-height: 1;
+            }
+            .hero-stat-mini-lbl {
+                font-size: 9px; font-weight: 800; letter-spacing: 0.15em;
+                text-transform: uppercase; color: #57534e;
+                margin-top: 4px; display: block;
+            }
+
+            /* Tag marca */
+            .hero-brand-tag {
+                position: absolute; bottom: 28px; right: 2rem;
+                font-size: 10px; font-weight: 800; letter-spacing: 0.22em;
+                text-transform: uppercase; color: rgba(255,255,255,0.18);
+                z-index: 10;
+            }
 
             /* ── MAIN ── */
             .main-wrap { max-width: 1280px; margin: 0 auto; padding: 64px 2rem 80px; }
@@ -229,11 +308,14 @@
             .footer-link { color: #78716c; font-size: 13px; text-decoration: none; transition: color 0.2s; }
             .footer-link:hover { color: #fb923c; }
 
+            @media (max-width: 900px) {
+                .hero-inner { flex-direction: column; align-items: flex-start; }
+                .hero-stats-card { width: 100%; }
+                .hero-brand-tag { display: none; }
+            }
             @media (max-width: 768px) {
-                .stats-row { padding: 20px 24px; }
-                .stat-item { padding: 0 20px; }
-                .stat-num { font-size: 2rem; }
-                .hero-section { padding: 120px 1.25rem 64px; }
+                .hero-section { min-height: auto; }
+                .hero-left { max-width: 100%; }
                 .main-wrap { padding: 40px 1.25rem 64px; }
                 .footer-grid { grid-template-columns: 1fr; gap: 32px; }
                 .footer-bottom { flex-direction: column; align-items: flex-start; }
@@ -243,16 +325,13 @@
     </head>
     <body>
 
-        {{-- ══ NAVBAR (idéntico al de la home) ══ --}}
+        {{-- ══ NAVBAR ══ --}}
         <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 sm:h-20 items-center gap-2 sm:gap-4">
 
                     {{-- Logo --}}
                     <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
-                            <i class="fas fa-utensils text-white text-xs sm:text-sm"></i>
-                        </div>
                         <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
                             Gastro<span class="text-orange-600">Nicaragua</span>
                         </span>
@@ -276,9 +355,9 @@
                                 <option value="">Todos los destinos</option>
                                 @foreach($departamentos as $depto)
                                     <option value="{{ $depto->id }}"
-    {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
-    {{ $depto->nombre }}
-</option>
+                                        {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
+                                        {{ $depto->nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -297,11 +376,11 @@
                             <i class="fas fa-search text-sm"></i>
                         </button>
 
-                        {{-- Restaurantes --}}
-                        <a href="{{ route('restaurantes.index') }}"
-                           class="flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm no-underline justify-center">
-                            <i class="fas fa-store text-xs"></i>
-                            <span class="hidden lg:inline">Restaurantes</span>
+                        {{-- Inicio --}}
+                        <a href="{{ route('home') }}"
+                           class="flex items-center gap-1.5 border border-stone-200 text-stone-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
+                            <i class="fas fa-home text-xs"></i>
+                            <span class="hidden lg:inline">Inicio</span>
                         </a>
 
                         {{-- Empleos (activo) --}}
@@ -361,9 +440,9 @@
                             <option value="">Todos los destinos</option>
                             @foreach($departamentos as $depto)
                                 <option value="{{ $depto->id }}"
-    {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
-    {{ $depto->nombre }}
-</option>
+                                    {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
+                                    {{ $depto->nombre }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -375,36 +454,78 @@
             </div>
         </nav>
 
-        {{-- ── HERO ── --}}
-        <section class="hero-section" style="padding-top: calc(140px + 64px);">
-            <div class="hero-dots"></div>
+        {{-- ══ HERO CON FOTO DE FONDO ══ --}}
+        <section class="hero-section" style="padding-top: 80px; padding-bottom: 80px;">
+
+            {{-- Foto de fondo --}}
+            <div class="hero-bg-img" style="background-image: url('{{ asset('img/hero-empleos.jpg') }}');"></div>
+            {{-- Overlay oscuro --}}
+            <div class="hero-bg-overlay"></div>
+
             <div class="hero-inner">
-                <div class="hero-badge">
-                    <i class="fas fa-briefcase" style="font-size:9px;"></i>
-                    Oportunidades Laborales
+
+                {{-- Columna izquierda: texto --}}
+                <div class="hero-left" data-aos="fade-right">
+
+                    <div class="hero-badge">
+                        <span class="hero-badge-dot"></span>
+                        Oportunidades Laborales
+                    </div>
+
+                    <h1 class="premium-title hero-title">
+                        Nuestros<br>
+                        <span>Empleos</span>
+                    </h1>
+
+                    <p class="hero-sub">
+                        Desde el corazón de la cocina hasta la excelencia en el servicio —
+                        encuentra tu lugar en la gastronomía nicaragüense.
+                    </p>
+
+                    <div class="hero-pills">
+                        <span class="hero-pill">
+                            <span class="hero-pill-dot" style="background:#22c55e;"></span>
+                            Información verificada
+                        </span>
+                        <span class="hero-pill">
+                            <span class="hero-pill-dot" style="background:#f59e0b;"></span>
+                            Salarios actualizados
+                        </span>
+                        <span class="hero-pill">
+                            <span class="hero-pill-dot" style="background:#fb923c;"></span>
+                            Postulación directa
+                        </span>
+                    </div>
                 </div>
-                <h1 class="premium-title hero-title">
-                    Trabaja en los mejores<br>
-                    <span>restaurantes</span> de Nicaragua
-                </h1>
-                <p class="hero-sub">
-                    Encuentra tu lugar en la gastronomía local. Desde el corazón de la cocina hasta la excelencia en el servicio, hay un puesto premium esperándote.
-                </p>
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <span class="stat-num">{{ $empleos->total() }}</span>
-                        <span class="stat-label">Vacantes activas</span>
+
+                {{-- Columna derecha: tarjeta de stats --}}
+                <div class="hero-stats-card" data-aos="fade-left">
+                    <div class="hero-stats-icon">
+                        <i class="fas fa-briefcase"></i>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-num">{{ $totalRestaurantes }}</span>
-                        <span class="stat-label">Restaurantes</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-num">{{ $totalDepartamentos }}</span>
-                        <span class="stat-label">Destinos</span>
+                    <span class="hero-stat-big-num">{{ $empleos->total() }}</span>
+                    <span class="hero-stat-big-lbl">Vacantes activas</span>
+                    <hr class="hero-stat-divider">
+                    <div class="hero-stat-mini-row">
+                        <div class="hero-stat-mini">
+                            <span class="hero-stat-mini-num">{{ $totalRestaurantes }}</span>
+                            <span class="hero-stat-mini-lbl">Restaurantes</span>
+                        </div>
+                        <div class="hero-stat-mini">
+                            <span class="hero-stat-mini-num">{{ $totalDepartamentos }}</span>
+                            <span class="hero-stat-mini-lbl">Destinos</span>
+                        </div>
                     </div>
                 </div>
+
             </div>
+
+            {{-- Tag de marca --}}
+            <span class="hero-brand-tag">Gastro Nicaragua</span>
+
+            {{-- Borde inferior degradado igual que en restaurantes --}}
+            <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#faf9f6);pointer-events:none;z-index:20;"></div>
+
         </section>
 
         {{-- ── MAIN ── --}}
@@ -460,7 +581,7 @@
                     <div class="jobs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;">
                 @endif
 
-                <article class="job-card">
+                <article class="job-card" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}">
 
                     {{-- Encabezado --}}
                     <div style="display:flex;align-items:flex-start;gap:14px;">
@@ -603,9 +724,6 @@
             <div class="footer-grid">
                 <div>
                     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                        <div style="width:36px;height:36px;background:#ea580c;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
-                        </div>
                         <span class="premium-title" style="color:white;font-size:20px;font-style:italic;">
                             Gastro<span style="color:#fb923c;">Nicaragua</span>
                         </span>
@@ -651,7 +769,10 @@
             </div>
         </footer>
 
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
+            AOS.init({ duration: 800, once: true });
+
             // ── Toggle búsqueda móvil ──
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
             const mobileSearchPanel  = document.getElementById('mobileSearchPanel');

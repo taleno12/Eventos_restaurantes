@@ -250,7 +250,7 @@
             }
             .rest-carousel-title em { font-style: italic; color: #ea580c; }
 
-            /* Pista infinita — arranca desde el principio */
+            /* Pista infinita */
             .rest-track-wrapper {
                 overflow: hidden;
                 position: relative;
@@ -262,7 +262,6 @@
                 width: max-content;
                 padding: 4px 0;
                 margin-left: 24px;
-                /* La animación la maneja JS para que sea exacta */
                 will-change: transform;
             }
 
@@ -333,15 +332,12 @@
 
                     {{-- Logo --}}
                     <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
-                            <i class="fas fa-utensils text-white text-xs sm:text-sm"></i>
-                        </div>
                         <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
                             Gastro<span class="text-orange-600">Nicaragua</span>
                         </span>
                     </a>
 
-                    {{-- ── Search bar desktop (Blade puro — funciona perfecto) ── --}}
+                    {{-- ── Search bar desktop ── --}}
                     <form action="{{ route('home') }}" method="GET"
                           class="hidden md:flex flex-1 max-w-2xl search-box">
                         <div class="search-segment" style="min-width:130px;">
@@ -351,7 +347,7 @@
                             <select id="search-departamento" name="departamento">
                                 <option value="">Todos los destinos</option>
                                 @foreach($departamentos as $depto)
-                                    <option value="{{ $depto->id }}" 
+                                    <option value="{{ $depto->id }}"
                                       {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
                                       {{ $depto->nombre }}
                                     </option>
@@ -407,6 +403,16 @@
                             @endif
                         </a>
 
+                        {{-- ★ Gastrobares ★ --}}
+                        <a href="{{ route('gastrobares.index') }}"
+                           class="flex items-center gap-1.5 border border-purple-200 text-purple-600 bg-purple-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all shadow-sm group no-underline justify-center">
+                            <i class="fas fa-cocktail text-xs"></i>
+                            <span class="hidden lg:inline">Gastrobares</span>
+                            @if(isset($totalGastrobares) && $totalGastrobares > 0)
+                                <span class="hidden lg:flex bg-purple-600 group-hover:bg-white group-hover:text-purple-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalGastrobares }}</span>
+                            @endif
+                        </a>
+
                         {{-- Empleos --}}
                         <a href="{{ route('empleos.index') }}"
                            class="flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline justify-center">
@@ -449,7 +455,7 @@
                 </div>
             </div>
 
-            {{-- ── Panel búsqueda móvil desplegable (Blade puro) ── --}}
+            {{-- ── Panel búsqueda móvil desplegable ── --}}
             <div id="mobileSearchPanel">
                 <form action="{{ route('home') }}" method="GET" class="flex flex-col gap-3">
                     <div class="flex flex-col gap-1">
@@ -495,7 +501,7 @@
         {{-- ══ HERO / CARRUSEL ══ --}}
         <section class="relative" style="padding-top: 64px;">
             @if(isset($eventosDestacados) && $eventosDestacados->count() > 0)
-                <div id="bannerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div id="bannerCarousel" class="carousel slide carousel-fade" data-bs-ride="false">
                     <div class="carousel-indicators">
                         @foreach($eventosDestacados as $key => $evento)
                             <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="{{ $key }}"
@@ -504,7 +510,7 @@
                     </div>
                     <div class="carousel-inner">
                         @foreach($eventosDestacados as $key => $evento)
-                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}" data-bs-interval="6000">
+                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                 <div class="hero-slide text-white">
                                     <div class="absolute inset-0 z-0">
                                         <a href="{{ route('eventos.show', $evento->id) }}" class="block w-full h-full">
@@ -781,9 +787,6 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
                     <div class="sm:col-span-2 lg:col-span-4 space-y-4">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-md shadow-orange-600/20">
-                                <i class="fas fa-utensils text-white text-xs"></i>
-                            </div>
                             <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
                         </div>
                         <p class="text-stone-400 text-sm leading-relaxed font-light">
@@ -801,6 +804,7 @@
                         <ul class="space-y-2.5 text-sm p-0 list-none m-0">
                             <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
                             <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Restaurantes</a></li>
+                            <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all inline-block no-underline">Gastrobares</a></li>
                             <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
                             <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
                         </ul>
@@ -832,7 +836,21 @@
         <script>
             AOS.init({ duration: 800, once: true });
 
-            {{-- ── FILTRO CASCADA (Blade JS — se queda igual) ── --}}
+            // ── INICIALIZAR CARRUSEL BOOTSTRAP MANUALMENTE ──
+            // Se hace así para garantizar que funcione aunque Vite/React cargue en paralelo
+            var bannerCarouselEl = document.getElementById('bannerCarousel');
+            if (bannerCarouselEl) {
+                var bannerCarousel = new bootstrap.Carousel(bannerCarouselEl, {
+                    interval: 6000,
+                    ride: true,
+                    wrap: true,
+                    pause: 'hover',
+                    touch: true
+                });
+                bannerCarousel.cycle();
+            }
+
+            {{-- ── FILTRO CASCADA ── --}}
             const todosLosRestaurantes = @json($restaurantes->values());
 
             function configurarFiltroCascada(selectDeptoId, selectRestId) {
@@ -861,7 +879,7 @@
             configurarFiltroCascada('search-departamento',        'search-restaurante');
             configurarFiltroCascada('search-departamento-mobile', 'search-restaurante-mobile');
 
-            {{-- ── MOBILE TOGGLE (Blade JS — se queda igual) ── --}}
+            {{-- ── MOBILE TOGGLE ── --}}
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
             const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
             if (mobileSearchToggle && mobileSearchPanel) {
@@ -875,24 +893,18 @@
                 });
             }
 
-            {{-- ── COUNTDOWN ahora lo maneja React (app.jsx) ── --}}
-            {{-- El span con data-countdown="{{ $item->fecha_evento }}" es montado por React --}}
-
             // ── CARRUSEL RESTAURANTES ──
             document.addEventListener('DOMContentLoaded', function () {
                 const wrapper = document.getElementById('restWrapper');
                 const track   = document.getElementById('restTrack');
                 if (!track || !wrapper) return;
 
-                const GAP   = 36;   // px, mismo que CSS gap
-                const SPEED = 0.6;  // px por frame
+                const GAP   = 36;
+                const SPEED = 0.6;
 
-                // Solo duplicar si el contenido no llena el ancho de la pantalla
                 function clonarSiNecesario() {
                     const wrapperW  = wrapper.offsetWidth;
                     let   trackW    = track.scrollWidth;
-
-                    // Clonar hasta que el track sea al menos 2x el wrapper
                     while (trackW < wrapperW * 2.5) {
                         const original = Array.from(track.querySelectorAll('.rest-item'));
                         original.forEach(function (item) {
@@ -907,7 +919,6 @@
 
                 clonarSiNecesario();
 
-                // Ancho del set original (antes de clonar)
                 const itemsOriginales = track.querySelectorAll('.rest-item:not([aria-hidden])');
                 let setW = 0;
                 itemsOriginales.forEach(function (el) {
@@ -923,7 +934,7 @@
                 function animar() {
                     if (!paused) {
                         pos += SPEED;
-                        if (pos >= setW) pos -= setW; // reset al inicio sin salto
+                        if (pos >= setW) pos -= setW;
                         track.style.transform = 'translateX(-' + pos + 'px)';
                     }
                     requestAnimationFrame(animar);

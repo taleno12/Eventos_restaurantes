@@ -1,10 +1,10 @@
-{{-- resources/views/restaurantes/index.blade.php --}}
+{{-- resources/views/gastrobares/public_index.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Restaurantes | Gastro Nicaragua</title>
+    <title>Gastrobares | Gastro Nicaragua</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
@@ -22,9 +22,6 @@
             50%      { transform: translateY(-8px); }
         }
         .hero-icon { animation: heroFloat 4s ease-in-out infinite; }
-
-        .page-link { color: #ea580c; border-radius: 50%; margin: 0 3px; }
-        .page-item.active .page-link { background-color: #ea580c; border-color: #ea580c; }
 
         /* ══ SEARCH BOX (desktop) ══ */
         .search-box {
@@ -140,14 +137,6 @@
         .pag-btn:hover { border-color: #ea580c; color: #ea580c; }
         .pag-btn.active { background: #ea580c; border-color: #ea580c; color: #fff; }
         .pag-btn.disabled { color: #d4cfc9; pointer-events: none; }
-
-        /* ══ REDES SOCIALES ══ */
-        .social-btn {
-            width: 32px; height: 32px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none; transition: all 0.2s; flex-shrink: 0;
-        }
-        .social-btn:hover { transform: scale(1.15); }
     </style>
 </head>
 <body class="bg-stone-50/50 text-stone-900">
@@ -165,7 +154,7 @@
                 </a>
 
                 {{-- Search Bar desktop --}}
-                <form action="{{ route('restaurantes.index') }}" method="GET"
+                <form action="{{ route('gastrobares.index') }}" method="GET"
                       class="hidden md:flex flex-1 search-box" style="min-width:0;">
                     <div class="search-segment">
                         <label for="nav-departamento">
@@ -181,35 +170,33 @@
                         </select>
                     </div>
                     <div class="search-segment">
-                        <label for="nav-municipio">
-                            <i class="fas fa-city" style="color:#ea580c;font-size:8px;"></i> Municipio
+                        <label for="nav-tipo_bar">
+                            <i class="fas fa-cocktail" style="color:#ea580c;font-size:8px;"></i> Tipo de Bar
                         </label>
-                        <select id="nav-municipio" name="municipio"
-                                {{ request('departamento') ? '' : 'disabled' }}>
-                            <option value="">{{ request('departamento') ? 'Todos' : 'Elige destino...' }}</option>
-                            @foreach($municipios as $mun)
-                                <option value="{{ $mun->id }}"
-                                        data-departamento="{{ $mun->departamento_id }}"
-                                        {{ request('municipio') == $mun->id ? 'selected' : '' }}
-                                        style="{{ request('departamento') && $mun->departamento_id == request('departamento') ? '' : 'display:none' }}">
-                                    {{ $mun->nombre }}
-                                </option>
+                        <select id="nav-tipo_bar" name="tipo_bar">
+                            <option value="">Todos</option>
+                            @foreach(['Cocktail Bar','Sports Bar','Rooftop Bar','Lounge Bar','Bar de Tapas','Bar de Vinos','Bar de Cervezas','Otro'] as $tipo)
+                                <option value="{{ $tipo }}" {{ request('tipo_bar') == $tipo ? 'selected' : '' }}>{{ $tipo }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="search-segment">
-                        <label for="nav-especialidad">
-                            <i class="fas fa-utensils" style="color:#ea580c;font-size:8px;"></i> Especialidad
+                        <label for="nav-ambiente">
+                            <i class="fas fa-chair" style="color:#ea580c;font-size:8px;"></i> Ambiente
                         </label>
-                        <input type="text" id="nav-especialidad" name="especialidad"
-                               value="{{ request('especialidad') }}" placeholder="Asados...">
+                        <select id="nav-ambiente" name="ambiente">
+                            <option value="">Todos</option>
+                            @foreach(['Interior','Exterior','Rooftop','Mixto'] as $amb)
+                                <option value="{{ $amb }}" {{ request('ambiente') == $amb ? 'selected' : '' }}>{{ $amb }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="search-segment">
                         <label for="nav-search">
-                            <i class="fas fa-store" style="color:#ea580c;font-size:8px;"></i> Nombre
+                            <i class="fas fa-search" style="color:#ea580c;font-size:8px;"></i> Nombre
                         </label>
                         <input type="text" id="nav-search" name="search"
-                               value="{{ request('search') }}" placeholder="Restaurante...">
+                               value="{{ request('search') }}" placeholder="Gastrobar...">
                     </div>
                     <button type="submit" class="search-btn">
                         <i class="fas fa-search" style="font-size:11px;"></i>
@@ -220,7 +207,6 @@
                 {{-- Botones de acción --}}
                 <div class="flex items-center gap-2 shrink-0">
 
-                    {{-- Lupa móvil --}}
                     <button id="mobileSearchToggle"
                             class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                         <i class="fas fa-search text-sm"></i>
@@ -231,10 +217,11 @@
                         <i class="fas fa-home text-xs"></i>
                         <span class="hidden lg:inline">Inicio</span>
                     </a>
-                    <a href="{{ route('restaurantes.index') }}"
+
+                    <a href="{{ route('gastrobares.index') }}"
                        class="flex items-center gap-1.5 border border-orange-600 text-white bg-orange-600 px-3 py-2 rounded-full text-sm font-semibold shadow-sm no-underline">
-                        <i class="fas fa-store text-xs"></i>
-                        <span class="hidden lg:inline">Restaurantes</span>
+                        <i class="fas fa-cocktail text-xs"></i>
+                        <span class="hidden lg:inline">Gastrobares</span>
                     </a>
 
                     <a href="{{ route('contacto') }}"
@@ -266,55 +253,50 @@
 
         {{-- Panel búsqueda móvil --}}
         <div id="mobileSearchPanel">
-            <form action="{{ route('restaurantes.index') }}" method="GET" class="flex flex-col gap-3">
+            <form action="{{ route('gastrobares.index') }}" method="GET" class="flex flex-col gap-3">
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
                     </label>
-                    <select id="mob-departamento" name="departamento" class="nav-select-mobile">
+                    <select name="departamento" class="nav-select-mobile">
                         <option value="">Todos los destinos</option>
                         @foreach($departamentos as $depto)
-                            <option value="{{ $depto->id }}"
-                                {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
-                                {{ $depto->nombre }}
-                            </option>
+                            <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-city text-orange-500"></i> Municipio
+                        <i class="fas fa-cocktail text-orange-500"></i> Tipo de Bar
                     </label>
-                    <select id="mob-municipio" name="municipio" class="nav-select-mobile"
-                            {{ request('departamento') ? '' : 'disabled' }}>
-                        <option value="">{{ request('departamento') ? 'Todos' : 'Elige destino...' }}</option>
-                        @foreach($municipios as $mun)
-                            <option value="{{ $mun->id }}"
-                                    data-departamento="{{ $mun->departamento_id }}"
-                                    {{ request('municipio') == $mun->id ? 'selected' : '' }}
-                                    style="{{ request('departamento') && $mun->departamento_id == request('departamento') ? '' : 'display:none' }}">
-                                {{ $mun->nombre }}
-                            </option>
+                    <select name="tipo_bar" class="nav-select-mobile">
+                        <option value="">Todos</option>
+                        @foreach(['Cocktail Bar','Sports Bar','Rooftop Bar','Lounge Bar','Bar de Tapas','Bar de Vinos','Bar de Cervezas','Otro'] as $tipo)
+                            <option value="{{ $tipo }}" {{ request('tipo_bar') == $tipo ? 'selected' : '' }}>{{ $tipo }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-utensils text-orange-500"></i> Especialidad
+                        <i class="fas fa-chair text-orange-500"></i> Ambiente
                     </label>
-                    <input type="text" name="especialidad" value="{{ request('especialidad') }}"
-                           class="nav-input-mobile" placeholder="Asados, mariscos...">
+                    <select name="ambiente" class="nav-select-mobile">
+                        <option value="">Todos</option>
+                        @foreach(['Interior','Exterior','Rooftop','Mixto'] as $amb)
+                            <option value="{{ $amb }}" {{ request('ambiente') == $amb ? 'selected' : '' }}>{{ $amb }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-store text-orange-500"></i> Nombre
+                        <i class="fas fa-search text-orange-500"></i> Nombre
                     </label>
                     <input type="text" name="search" value="{{ request('search') }}"
-                           class="nav-input-mobile" placeholder="Restaurante...">
+                           class="nav-input-mobile" placeholder="Gastrobar...">
                 </div>
                 <button type="submit"
                         class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
-                    <i class="fas fa-search text-xs"></i> Buscar Restaurantes
+                    <i class="fas fa-search text-xs"></i> Buscar Gastrobares
                 </button>
             </form>
         </div>
@@ -326,7 +308,7 @@
 
             {{-- Imagen de fondo --}}
             <div class="absolute inset-0"
-                 style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1800&q=80');
+                 style="background-image:url('{{ asset('img/coctel.jpeg') }}');
                         background-size:cover;background-position:center;
                         transform:scale(1.04);transition:transform 8s ease;">
             </div>
@@ -364,11 +346,11 @@
                     <h1 class="premium-title mb-5 leading-tight"
                         style="font-size:clamp(2.8rem,5vw,4.2rem);font-weight:900;color:white;line-height:1.05;">
                         Nuestros<br>
-                        <span style="color:#f97316;font-style:italic;font-weight:400;">Restaurantes</span>
+                        <span style="color:#f97316;font-style:italic;font-weight:400;">Gastrobares</span>
                     </h1>
 
                     <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.8;max-width:520px;margin-bottom:32px;font-weight:300;">
-                        Desde fritangas familiares hasta cocina gourmet — descubre cada sabor auténtico de Nicaragua en un solo lugar.
+                        Desde cocktail bars íntimos hasta rooftops con vistas — descubre los mejores espacios para tomar y disfrutar en Nicaragua.
                     </p>
 
                     {{-- Pills de stats --}}
@@ -417,16 +399,16 @@
                                     border-radius:24px;display:flex;align-items:center;justify-content:center;
                                     box-shadow:0 12px 32px rgba(234,88,12,0.5);
                                     animation:heroFloat 4s ease-in-out infinite;">
-                            <i class="fas fa-utensils" style="color:white;font-size:32px;"></i>
+                            <i class="fas fa-cocktail" style="color:white;font-size:32px;"></i>
                         </div>
 
                         <div style="text-align:center;">
                             <p style="color:white;font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;">
-                                {{ $restaurantes->total() }}
+                                {{ $gastrobares->total() }}
                             </p>
                             <p style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;
                                       text-transform:uppercase;letter-spacing:0.15em;">
-                                Restaurantes
+                                Gastrobares
                             </p>
                         </div>
 
@@ -448,7 +430,7 @@
 
                     {{-- Texto debajo de la tarjeta --}}
                     <p style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
-                        Gastronomía auténtica 🇳🇮
+                        Vida nocturna auténtica 🇳🇮
                     </p>
                 </div>
 
@@ -469,57 +451,56 @@
     {{-- ══════════════ MAIN ══════════════ --}}
     <main class="max-w-7xl mx-auto px-4 py-16">
 
-        {{-- Barra filtros activos + contador --}}
+        {{-- Filtros activos + contador --}}
         <div class="mb-8 flex flex-wrap items-center gap-2">
-            @if(request('departamento') || request('municipio') || request('especialidad') || request('search'))
+            @if(request('departamento') || request('tipo_bar') || request('ambiente') || request('search'))
                 <span class="text-stone-500 font-medium text-sm pl-1">Filtros:</span>
 
                 @if(request('departamento'))
                     <span class="filter-pill">
                         <i class="fas fa-map-marker-alt" style="font-size:9px;opacity:0.7;"></i>
                         {{ $departamentos->find(request('departamento'))?->nombre }}
-                        <a href="{{ request()->fullUrlWithoutQuery(['departamento','municipio']) }}">×</a>
+                        <a href="{{ request()->fullUrlWithoutQuery(['departamento']) }}">×</a>
                     </span>
                 @endif
-                @if(request('municipio'))
+                @if(request('tipo_bar'))
                     <span class="filter-pill">
-                        <i class="fas fa-city" style="font-size:9px;opacity:0.7;"></i>
-                        {{ $municipios->find(request('municipio'))?->nombre }}
-                        <a href="{{ request()->fullUrlWithoutQuery(['municipio']) }}">×</a>
+                        <i class="fas fa-cocktail" style="font-size:9px;opacity:0.7;"></i>
+                        {{ request('tipo_bar') }}
+                        <a href="{{ request()->fullUrlWithoutQuery(['tipo_bar']) }}">×</a>
                     </span>
                 @endif
-                @if(request('especialidad'))
+                @if(request('ambiente'))
                     <span class="filter-pill">
-                        <i class="fas fa-utensils" style="font-size:9px;opacity:0.7;"></i>
-                        {{ request('especialidad') }}
-                        <a href="{{ request()->fullUrlWithoutQuery(['especialidad']) }}">×</a>
+                        <i class="fas fa-chair" style="font-size:9px;opacity:0.7;"></i>
+                        {{ request('ambiente') }}
+                        <a href="{{ request()->fullUrlWithoutQuery(['ambiente']) }}">×</a>
                     </span>
                 @endif
                 @if(request('search'))
                     <span class="filter-pill">
-                        <i class="fas fa-store" style="font-size:9px;opacity:0.7;"></i>
+                        <i class="fas fa-search" style="font-size:9px;opacity:0.7;"></i>
                         "{{ request('search') }}"
                         <a href="{{ request()->fullUrlWithoutQuery(['search']) }}">×</a>
                     </span>
                 @endif
 
-                <a href="{{ route('restaurantes.index') }}"
+                <a href="{{ route('gastrobares.index') }}"
                    class="text-stone-400 hover:text-red-500 text-xs font-semibold no-underline flex items-center gap-1 ml-1">
                     <i class="fas fa-times-circle text-xs"></i> Limpiar todo
                 </a>
             @endif
 
-            {{-- Contador --}}
             <div class="ml-auto flex items-center gap-2">
                 <div style="height:1px;width:32px;background:linear-gradient(to right,#ea580c,transparent);"></div>
                 <span style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;">
-                    {{ $restaurantes->total() }} local{{ $restaurantes->total() != 1 ? 'es' : '' }}
+                    {{ $gastrobares->total() }} gastrobar{{ $gastrobares->total() != 1 ? 'es' : '' }}
                 </span>
             </div>
         </div>
 
-        {{-- Grid de restaurantes --}}
-        @forelse($restaurantes as $restaurante)
+        {{-- Grid --}}
+        @forelse($gastrobares as $gastrobar)
             @if($loop->first)
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             @endif
@@ -528,32 +509,32 @@
 
                 {{-- Imagen --}}
                 <div class="card-img" style="position:relative;height:240px;overflow:hidden;background:#f5f5f4;">
-                    @if($restaurante->foto_portada)
-                        <img src="{{ asset('storage/' . $restaurante->foto_portada) }}"
-                             alt="{{ $restaurante->nombre }}"
+                    @if($gastrobar->imagen_principal)
+                        <img src="{{ asset('storage/' . $gastrobar->imagen_principal) }}"
+                             alt="{{ $gastrobar->nombre }}"
                              style="width:100%;height:100%;object-fit:cover;">
                     @else
-                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;">🍴</div>
+                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;">🍹</div>
                     @endif
 
                     {{-- Badge ubicación --}}
-                    @if($restaurante->departamento)
+                    @if($gastrobar->departamento)
                         <div style="position:absolute;top:14px;left:14px;">
                             <span style="background:rgba(28,25,23,0.75);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:500;padding:5px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
                                 <i class="fas fa-map-marker-alt" style="color:#fb923c;font-size:9px;"></i>
-                                {{ $restaurante->departamento->nombre }}
-                                @if($restaurante->municipio)
-                                    <span style="opacity:0.5;">·</span>{{ $restaurante->municipio->nombre }}
+                                {{ $gastrobar->departamento->nombre }}
+                                @if($gastrobar->municipio)
+                                    <span style="opacity:0.5;">·</span>{{ $gastrobar->municipio->nombre }}
                                 @endif
                             </span>
                         </div>
                     @endif
 
-                    {{-- Badge especialidad --}}
-                    @if($restaurante->especialidad)
+                    {{-- Badge tipo de bar --}}
+                    @if($gastrobar->tipo_bar)
                         <div style="position:absolute;top:14px;right:14px;">
                             <span style="background:rgba(255,255,255,0.9);color:#c2410c;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid rgba(234,88,12,0.1);">
-                                {{ $restaurante->especialidad }}
+                                {{ $gastrobar->tipo_bar }}
                             </span>
                         </div>
                     @endif
@@ -563,90 +544,69 @@
                 <div style="padding:24px;display:flex;flex-direction:column;gap:14px;">
                     <div>
                         <h3 class="premium-title" style="font-size:20px;font-weight:700;color:#1c1917;margin-bottom:6px;line-height:1.3;">
-                            {{ $restaurante->nombre }}
+                            {{ $gastrobar->nombre }}
                         </h3>
-                        @if($restaurante->descripcion)
+                        @if($gastrobar->descripcion)
                             <p style="color:#78716c;font-size:13px;line-height:1.6;font-weight:400;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                {{ $restaurante->descripcion }}
+                                {{ $gastrobar->descripcion }}
                             </p>
                         @endif
                     </div>
 
                     {{-- Info --}}
                     <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#78716c;border-top:1px solid #f5f5f4;padding-top:12px;">
-                        @if($restaurante->direccion)
+                        @if($gastrobar->direccion)
                             <span style="display:flex;align-items:flex-start;gap:8px;">
                                 <i class="fas fa-map-marker-alt" style="color:#a8a29e;font-size:11px;margin-top:1px;flex-shrink:0;"></i>
-                                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $restaurante->direccion }}</span>
+                                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $gastrobar->direccion }}</span>
                             </span>
                         @endif
-                        @if($restaurante->telefono)
-                            <span style="display:flex;align-items:center;gap:8px;">
-                                <i class="fas fa-phone" style="color:#a8a29e;font-size:11px;flex-shrink:0;"></i>
-                                {{ $restaurante->telefono }}
-                            </span>
-                        @endif
-                        @if($restaurante->horario)
+                        @if($gastrobar->hora_apertura && $gastrobar->hora_cierre)
                             <span style="display:flex;align-items:center;gap:8px;">
                                 <i class="fas fa-clock" style="color:#a8a29e;font-size:11px;flex-shrink:0;"></i>
-                                {{ $restaurante->horario }}
+                                {{ \Carbon\Carbon::parse($gastrobar->hora_apertura)->format('g:i A') }} –
+                                {{ \Carbon\Carbon::parse($gastrobar->hora_cierre)->format('g:i A') }}
+                            </span>
+                        @endif
+                        @if($gastrobar->tipo_musica)
+                            <span style="display:flex;align-items:center;gap:8px;">
+                                <i class="fas fa-music" style="color:#a8a29e;font-size:11px;flex-shrink:0;"></i>
+                                {{ $gastrobar->tipo_musica }}
+                            </span>
+                        @endif
+                        @if($gastrobar->capacidad)
+                            <span style="display:flex;align-items:center;gap:8px;">
+                                <i class="fas fa-users" style="color:#a8a29e;font-size:11px;flex-shrink:0;"></i>
+                                Capacidad: {{ $gastrobar->capacidad }} personas
                             </span>
                         @endif
                     </div>
 
-                    {{-- Badge eventos --}}
-                    @if(isset($restaurante->eventos_count) && $restaurante->eventos_count > 0)
-                        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:12px;color:#9a3412;font-weight:600;">
-                            <i class="fas fa-calendar-alt" style="color:#ea580c;"></i>
-                            {{ $restaurante->eventos_count }} evento{{ $restaurante->eventos_count != 1 ? 's' : '' }} próximo{{ $restaurante->eventos_count != 1 ? 's' : '' }}
-                        </div>
-                    @endif
-
-                    {{-- ══ REDES SOCIALES ══ --}}
-                    @if($restaurante->whatsapp || $restaurante->instagram || $restaurante->tiktok || $restaurante->facebook)
-                        <div style="display:flex;align-items:center;gap:8px;padding-top:2px;">
-                            @if($restaurante->whatsapp)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $restaurante->whatsapp) }}"
-                                   target="_blank"
-                                   class="social-btn"
-                                   title="WhatsApp"
-                                   style="background:#f0fdf4;border:1px solid #bbf7d0;"
-                                   onmouseover="this.style.background='#22c55e';this.style.borderColor='#22c55e';this.querySelector('i').style.color='#fff'"
-                                   onmouseout="this.style.background='#f0fdf4';this.style.borderColor='#bbf7d0';this.querySelector('i').style.color='#16a34a'">
-                                    <i class="fab fa-whatsapp" style="color:#16a34a;font-size:14px;"></i>
+                    {{-- Redes sociales --}}
+                    @if($gastrobar->whatsapp || $gastrobar->instagram || $gastrobar->facebook || $gastrobar->tiktok)
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            @if($gastrobar->whatsapp)
+                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $gastrobar->whatsapp) }}" target="_blank"
+                                   style="width:28px;height:28px;border-radius:50%;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+                                    <i class="fab fa-whatsapp" style="color:#16a34a;font-size:12px;"></i>
                                 </a>
                             @endif
-                            @if($restaurante->instagram)
-                                <a href="{{ $restaurante->instagram }}"
-                                   target="_blank"
-                                   class="social-btn"
-                                   title="Instagram"
-                                   style="background:#fdf2f8;border:1px solid #f9a8d4;"
-                                   onmouseover="this.style.background='#ec4899';this.style.borderColor='#ec4899';this.querySelector('i').style.color='#fff'"
-                                   onmouseout="this.style.background='#fdf2f8';this.style.borderColor='#f9a8d4';this.querySelector('i').style.color='#db2777'">
-                                    <i class="fab fa-instagram" style="color:#db2777;font-size:14px;"></i>
+                            @if($gastrobar->instagram)
+                                <a href="{{ $gastrobar->instagram }}" target="_blank"
+                                   style="width:28px;height:28px;border-radius:50%;background:#fdf4ff;border:1px solid #f5d0fe;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+                                    <i class="fab fa-instagram" style="color:#a21caf;font-size:12px;"></i>
                                 </a>
                             @endif
-                            @if($restaurante->tiktok)
-                                <a href="{{ $restaurante->tiktok }}"
-                                   target="_blank"
-                                   class="social-btn"
-                                   title="TikTok"
-                                   style="background:#f8fafc;border:1px solid #e2e8f0;"
-                                   onmouseover="this.style.background='#1c1917';this.style.borderColor='#1c1917';this.querySelector('i').style.color='#fff'"
-                                   onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0';this.querySelector('i').style.color='#1c1917'">
-                                    <i class="fab fa-tiktok" style="color:#1c1917;font-size:13px;"></i>
+                            @if($gastrobar->facebook)
+                                <a href="{{ $gastrobar->facebook }}" target="_blank"
+                                   style="width:28px;height:28px;border-radius:50%;background:#eff6ff;border:1px solid #bfdbfe;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+                                    <i class="fab fa-facebook-f" style="color:#1d4ed8;font-size:12px;"></i>
                                 </a>
                             @endif
-                            @if($restaurante->facebook)
-                                <a href="{{ $restaurante->facebook }}"
-                                   target="_blank"
-                                   class="social-btn"
-                                   title="Facebook"
-                                   style="background:#eff6ff;border:1px solid #bfdbfe;"
-                                   onmouseover="this.style.background='#3b82f6';this.style.borderColor='#3b82f6';this.querySelector('i').style.color='#fff'"
-                                   onmouseout="this.style.background='#eff6ff';this.style.borderColor='#bfdbfe';this.querySelector('i').style.color='#2563eb'">
-                                    <i class="fab fa-facebook-f" style="color:#2563eb;font-size:13px;"></i>
+                            @if($gastrobar->tiktok)
+                                <a href="{{ $gastrobar->tiktok }}" target="_blank"
+                                   style="width:28px;height:28px;border-radius:50%;background:#f9fafb;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+                                    <i class="fab fa-tiktok" style="color:#1c1917;font-size:12px;"></i>
                                 </a>
                             @endif
                         </div>
@@ -654,15 +614,15 @@
 
                     {{-- Footer card --}}
                     <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f5f5f4;padding-top:12px;">
-                        @if(isset($restaurante->precio_rango) && $restaurante->precio_rango)
+                        @if($gastrobar->ambiente)
                             <span style="font-size:11px;font-weight:600;color:#a8a29e;">
-                                <i class="fas fa-tags" style="margin-right:4px;opacity:0.6;"></i>
-                                {{ $restaurante->precio_rango }}
+                                <i class="fas fa-chair" style="margin-right:4px;opacity:0.6;"></i>
+                                {{ $gastrobar->ambiente }}
                             </span>
                         @else
                             <span></span>
                         @endif
-                        <a href="{{ route('restaurantes.show', $restaurante->id) }}"
+                        <a href="{{ route('gastrobares.show', $gastrobar->id) }}"
                            class="btn-ver"
                            style="background:#1c1917;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;border-radius:999px;text-decoration:none;display:flex;align-items:center;gap:6px;transition:background .2s;">
                             Ver perfil
@@ -680,17 +640,17 @@
             <div style="padding:80px 0;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:380px;margin:0 auto;"
                  data-aos="fade-up">
                 <div style="width:72px;height:72px;background:#fafaf9;border:1px solid #e7e5e4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;position:relative;">
-                    <i class="fas fa-store-slash" style="color:#a8a29e;"></i>
+                    <i class="fas fa-cocktail" style="color:#a8a29e;"></i>
                     <div style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;background:#ea580c;border-radius:50%;display:flex;align-items:center;justify-content:center;">
                         <i class="fas fa-times" style="color:#fff;font-size:9px;"></i>
                     </div>
                 </div>
                 <h3 class="premium-title" style="font-size:22px;font-weight:700;color:#1c1917;margin-bottom:8px;">Sin resultados</h3>
                 <p style="font-size:14px;color:#78716c;line-height:1.6;margin-bottom:24px;">
-                    No encontramos restaurantes con esos filtros.
+                    No encontramos gastrobares con esos filtros.
                 </p>
-                @if(request('departamento') || request('municipio') || request('especialidad') || request('search'))
-                    <a href="{{ route('restaurantes.index') }}"
+                @if(request('departamento') || request('tipo_bar') || request('ambiente') || request('search'))
+                    <a href="{{ route('gastrobares.index') }}"
                        style="background:#1c1917;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:10px 22px;border-radius:999px;text-decoration:none;display:flex;align-items:center;gap:8px;">
                         <i class="fas fa-undo" style="font-size:10px;"></i> Limpiar filtros
                     </a>
@@ -699,25 +659,21 @@
         @endforelse
 
         {{-- Paginación --}}
-        @if($restaurantes->hasPages())
+        @if($gastrobares->hasPages())
             <div style="margin-top:56px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">
 
-                {{-- Anterior --}}
-                @if($restaurantes->onFirstPage())
-                    <span class="pag-btn disabled">
-                        <i class="fas fa-chevron-left" style="font-size:10px;"></i>
-                    </span>
+                @if($gastrobares->onFirstPage())
+                    <span class="pag-btn disabled"><i class="fas fa-chevron-left" style="font-size:10px;"></i></span>
                 @else
-                    <a href="{{ $restaurantes->previousPageUrl() }}" class="pag-btn">
+                    <a href="{{ $gastrobares->previousPageUrl() }}" class="pag-btn">
                         <i class="fas fa-chevron-left" style="font-size:10px;"></i>
                     </a>
                 @endif
 
-                {{-- Números --}}
                 @php
-                    $current  = $restaurantes->currentPage();
-                    $last     = $restaurantes->lastPage();
-                    $pages    = [];
+                    $current = $gastrobares->currentPage();
+                    $last    = $gastrobares->lastPage();
+                    $pages   = [];
                     for ($i = 1; $i <= $last; $i++) {
                         if ($i === 1 || $i === $last || abs($i - $current) <= 1) {
                             $pages[] = $i;
@@ -731,24 +687,20 @@
                     @if($page === '…')
                         <span style="color:#a8a29e;font-size:13px;padding:0 2px;">…</span>
                     @else
-                        <a href="{{ $restaurantes->url($page) }}"
+                        <a href="{{ $gastrobares->url($page) }}"
                            class="pag-btn {{ $page == $current ? 'active' : '' }}">
                             {{ $page }}
                         </a>
                     @endif
                 @endforeach
 
-                {{-- Siguiente --}}
-                @if($restaurantes->hasMorePages())
-                    <a href="{{ $restaurantes->nextPageUrl() }}" class="pag-btn">
+                @if($gastrobares->hasMorePages())
+                    <a href="{{ $gastrobares->nextPageUrl() }}" class="pag-btn">
                         <i class="fas fa-chevron-right" style="font-size:10px;"></i>
                     </a>
                 @else
-                    <span class="pag-btn disabled">
-                        <i class="fas fa-chevron-right" style="font-size:10px;"></i>
-                    </span>
+                    <span class="pag-btn disabled"><i class="fas fa-chevron-right" style="font-size:10px;"></i></span>
                 @endif
-
             </div>
         @endif
     </main>
@@ -774,7 +726,8 @@
                     <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
                     <ul class="space-y-2.5 text-sm p-0 list-none m-0">
                         <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
-                        <li><a href="{{ route('restaurantes.index') }}" class="text-orange-500 font-semibold inline-block no-underline">Restaurantes</a></li>
+                        <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Restaurantes</a></li>
+                        <li><a href="{{ route('gastrobares.index') }}" class="text-orange-500 font-semibold inline-block no-underline">Gastrobares</a></li>
                         <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
                         <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
                     </ul>
@@ -806,50 +759,14 @@
     <script>
         AOS.init({ duration: 800, once: true });
 
-        // ── Cascada departamento → municipio (desktop) ──
-        function configurarCascada(deptoId, munId) {
-            const deptoSel = document.getElementById(deptoId);
-            const munSel   = document.getElementById(munId);
-            if (!deptoSel || !munSel) return;
-            const opts = Array.from(munSel.querySelectorAll('option[data-departamento]'));
-
-            deptoSel.addEventListener('change', function () {
-                const val = this.value;
-                opts.forEach(opt => {
-                    opt.style.display = (!val || opt.dataset.departamento === val) ? '' : 'none';
-                    if (opt.style.display === 'none') opt.selected = false;
-                });
-                const ph = munSel.querySelector('option:not([data-departamento])');
-                if (val) {
-                    munSel.disabled = false;
-                    ph.textContent = 'Todos los municipios';
-                } else {
-                    munSel.disabled = true;
-                    munSel.value = '';
-                    ph.textContent = 'Elige destino...';
-                }
-            });
-
-            if (deptoSel.value) {
-                opts.forEach(opt => {
-                    opt.style.display = opt.dataset.departamento === deptoSel.value ? '' : 'none';
-                });
-                munSel.disabled = false;
-            }
-        }
-
-        configurarCascada('nav-departamento', 'nav-municipio');
-        configurarCascada('mob-departamento', 'mob-municipio');
-
-        // ── Toggle búsqueda móvil ──
         const mobileSearchToggle = document.getElementById('mobileSearchToggle');
         const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
         if (mobileSearchToggle && mobileSearchPanel) {
-            mobileSearchToggle.addEventListener('click', function (e) {
+            mobileSearchToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 mobileSearchPanel.classList.toggle('open');
             });
-            document.addEventListener('click', function (e) {
+            document.addEventListener('click', function(e) {
                 if (!mobileSearchPanel.contains(e.target) && e.target !== mobileSearchToggle)
                     mobileSearchPanel.classList.remove('open');
             });

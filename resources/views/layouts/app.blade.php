@@ -24,7 +24,6 @@
             * { box-sizing: border-box; }
             body { background-color: #f4f6f9; font-family: 'Figtree', sans-serif; margin: 0; }
 
-            /* ── SIDEBAR ── */
             .sidebar {
                 width: var(--sidebar-width);
                 height: 100vh;
@@ -35,21 +34,15 @@
                 z-index: 1000;
                 overflow-y: auto;
                 overflow-x: hidden;
-                -webkit-overflow-scrolling: touch; /* scroll suave en iOS/Android */
+                -webkit-overflow-scrolling: touch;
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            /* En móvil el sidebar se oculta fuera de pantalla */
             @media (max-width: 1023px) {
-                .sidebar {
-                    transform: translateX(-100%);
-                }
-                .sidebar.open {
-                    transform: translateX(0);
-                }
+                .sidebar { transform: translateX(-100%); }
+                .sidebar.open { transform: translateX(0); }
             }
 
-            /* ── OVERLAY ── */
             .sidebar-overlay {
                 display: none;
                 position: fixed;
@@ -60,7 +53,6 @@
             }
             .sidebar-overlay.open { display: block; }
 
-            /* ── TOPBAR MÓVIL ── */
             .topbar-mobile {
                 display: none;
                 position: fixed;
@@ -90,7 +82,6 @@
             }
             .hamburger-btn:hover { background: rgba(255,255,255,0.15); }
 
-            /* ── BRAND ── */
             .brand-link {
                 padding: 24px 20px;
                 display: flex;
@@ -100,8 +91,7 @@
                 background: rgba(0,0,0,0.1);
             }
 
-            /* ── NAV ── */
-            .nav-menu { padding: 15px 0 40px; } /* padding-bottom para que el último ítem no quede cortado */
+            .nav-menu { padding: 15px 0 40px; }
 
             .nav-item {
                 padding: 12px 24px;
@@ -134,7 +124,6 @@
                 font-weight: 800;
             }
 
-            /* ── CONTENIDO ── */
             .content-wrapper {
                 margin-left: var(--sidebar-width);
                 padding: 40px;
@@ -158,10 +147,8 @@
     </head>
     <body class="font-sans antialiased">
 
-        {{-- Overlay para cerrar sidebar en móvil --}}
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        {{-- Topbar solo visible en móvil --}}
         <div class="topbar-mobile">
             <button class="hamburger-btn" id="hamburgerBtn">
                 <i class="fas fa-bars text-sm"></i>
@@ -174,10 +161,8 @@
 
         <div class="min-h-screen">
 
-            {{-- ── SIDEBAR ── --}}
             <aside class="sidebar" id="sidebar">
 
-                {{-- Brand --}}
                 <div class="brand-link">
                     <i class="fas fa-utensils text-blue-500 text-xl"></i>
                     <div>
@@ -186,7 +171,6 @@
                     </div>
                 </div>
 
-                {{-- Navegación principal --}}
                 <nav class="nav-menu">
 
                     <a href="{{ route('dashboard') }}"
@@ -207,6 +191,13 @@
                        class="nav-item {{ request()->routeIs('admin.restaurantes.*') ? 'active' : '' }}">
                         <i class="fas fa-store"></i>
                         <span>Restaurantes</span>
+                    </a>
+
+                    {{-- ── GASTROBARES (NUEVO) ── --}}
+                    <a href="{{ route('admin.gastrobares.index') }}"
+                       class="nav-item {{ request()->routeIs('admin.gastrobares.*') ? 'active' : '' }}">
+                        <i class="fas fa-cocktail"></i>
+                        <span>Gastrobares</span>
                     </a>
 
                     <a href="{{ route('eventos.index') }}"
@@ -247,7 +238,6 @@
                         <span>Configuración</span>
                     </a>
 
-                    {{-- ── SECCIÓN INFERIOR: Logout + Ver Sitio ── --}}
                     <div class="mt-4 border-t border-gray-800/50 pt-3">
 
                         <form method="POST" action="{{ route('logout') }}">
@@ -266,12 +256,10 @@
                         </div>
 
                     </div>
-                    {{-- ── FIN SECCIÓN INFERIOR ── --}}
 
                 </nav>
             </aside>
 
-            {{-- ── CONTENIDO PRINCIPAL ── --}}
             <main class="content-wrapper">
 
                 @isset($header)
@@ -332,7 +320,6 @@
 
             overlay?.addEventListener('click', closeSidebar);
 
-            // Cerrar sidebar al navegar en móvil
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     if (window.innerWidth < 1024) closeSidebar();

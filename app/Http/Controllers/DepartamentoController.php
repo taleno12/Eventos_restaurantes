@@ -13,7 +13,7 @@ class DepartamentoController extends Controller
      */
     public function index()
     {
-        $departamentos = Departamento::all();
+        $departamentos = Departamento::withCount(['restaurantes', 'gastrobares'])->get();
         return view('departamentos.index', compact('departamentos'));
     }
 

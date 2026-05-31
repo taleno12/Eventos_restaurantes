@@ -24,7 +24,7 @@ class Departamento extends Model
      * y $departamento->municipios_count directamente sin sobrecargar la base de datos.
      * * @var array<int, string>
      */
-    protected $withCount = ['restaurantes', 'municipios'];
+    protected $withCount = ['restaurantes', 'municipios', 'gastrobares'];
 
     /**
      * Obtener los municipios asociados al departamento.
@@ -44,5 +44,15 @@ class Departamento extends Model
     public function restaurantes(): HasMany
     {
         return $this->hasMany(Restaurante::class);
+    }
+
+    /**
+     * Obtener los gastrobares asociados al departamento.
+     * Relación de Uno a Muchos (Un departamento tiene muchos gastrobares).
+     * * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function gastrobares(): HasMany
+    {
+        return $this->hasMany(Gastrobar::class);
     }
 }

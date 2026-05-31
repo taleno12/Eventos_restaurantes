@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departamento;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +27,7 @@ class DepartamentoUsuarioController extends Controller
             'departamento_id' => 'required|exists:departamentos,id',
         ]);
 
-        Auth::user()->update([
+        User::where('id', Auth::id())->update([
             'departamento_id' => $request->departamento_id,
         ]);
 

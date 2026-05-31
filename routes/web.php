@@ -10,6 +10,7 @@ use App\Http\Controllers\EmpleoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\DepartamentoUsuarioController;
+use App\Http\Controllers\GastrobarController;
 
 
 use App\Models\Restaurante;
@@ -49,6 +50,10 @@ Route::post('/contacto', function (\Illuminate\Http\Request $request) {
 // ── RESTAURANTES PÚBLICOS ────────────────────────────────────────────────────
 Route::get('/restaurantes', [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
 Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'publicShow'])->name('restaurantes.show');
+
+// ── GASTROBARES PÚBLICOS ─────────────────────────────────────────────────────
+Route::get('/gastrobares', [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
+Route::get('/gastrobares/{gastrobar}', [GastrobarController::class, 'publicShow'])->name('gastrobares.show');
 
 // ── EMPLEOS PÚBLICOS ─────────────────────────────────────────────────────────
 Route::get('/empleos', [EmpleoController::class, 'publicIndex'])->name('empleos.index');
@@ -99,6 +104,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::put('/{restaurante}',      [RestauranteController::class, 'update'])->name('update');
         Route::delete('/{restaurante}',   [RestauranteController::class, 'destroy'])->name('destroy');
         Route::get('/{restaurante}',      [RestauranteController::class, 'adminShow'])->name('show');
+    });
+
+    // ADMINISTRACIÓN DE GASTROBARES
+    Route::prefix('admin/gastrobares')->name('admin.gastrobares.')->group(function () {
+        Route::get('/',                  [GastrobarController::class, 'index'])->name('index');
+        Route::get('/create',            [GastrobarController::class, 'create'])->name('create');
+        Route::post('/',                 [GastrobarController::class, 'store'])->name('store');
+        Route::get('/{gastrobar}/edit',  [GastrobarController::class, 'edit'])->name('edit');
+        Route::put('/{gastrobar}',       [GastrobarController::class, 'update'])->name('update');
+        Route::delete('/{gastrobar}',    [GastrobarController::class, 'destroy'])->name('destroy');
+        Route::get('/{gastrobar}',       [GastrobarController::class, 'adminShow'])->name('show');
     });
 
     // ADMINISTRACIÓN DE EVENTOS

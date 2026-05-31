@@ -165,6 +165,30 @@ Route::middleware(['auth', 'admin'])->group(function () {
     })->name('api.departamentos.restaurantes');
 });
 
+// ── PANEL DEL RESTAURANTE ─────────────────────────────────────────────────────
+Route::middleware(['auth', 'role:restaurante,admin'])
+    ->prefix('mi-restaurante')
+    ->name('restaurante.')
+    ->group(function () {
+        // Dashboard del restaurante
+        Route::get('/dashboard', [\App\Http\Controllers\Restaurante\RestauranteDashboardController::class, 'index'])
+            ->name('dashboard');
+        // Perfil
+        Route::get('/perfil', [\App\Http\Controllers\Restaurante\RestaurantePerfilController::class, 'edit'])
+            ->name('perfil.edit');
+        Route::put('/perfil', [\App\Http\Controllers\Restaurante\RestaurantePerfilController::class, 'update'])
+            ->name('perfil.update');
+        // Eventos
+        Route::resource('eventos', \App\Http\Controllers\Restaurante\RestauranteEventoController::class);
+        // Empleos
+        Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
+        // Galería
+        Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])
+            ->name('galeria.store');
+        Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
+            ->name('galeria.destroy');
+    });
+
 // ── EVENTOS PÚBLICOS (al final, con whereNumber para evitar capturar "create") ─
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])
     ->name('eventos.show')

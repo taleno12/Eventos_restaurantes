@@ -25,15 +25,21 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
 {
     $request->authenticate();
-
     $request->session()->regenerate();
 
-    // Si no tiene departamento → pantalla de selección
-    if (!Auth::user()->departamento_id) {
+    $user = Auth::user();
+
+    // Sin departamento → seleccionar primero
+    if (!$user->departamento_id && $user->isUsuario()) {
         return redirect()->route('usuario.departamento.show');
     }
 
-    return redirect()->intended(route('dashboard', absolute: false));
+    // Redirigir según rol
+    return match($user->role) {
+        'admin'       => redirect()->route('dashboard'),
+        'restaurante' => redirect()->route('restaurante.dashboard'),
+        default       => redirect()->route('home'),
+    };
 }
 
     /**

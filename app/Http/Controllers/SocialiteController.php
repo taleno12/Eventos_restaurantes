@@ -14,42 +14,59 @@ class SocialiteController extends Controller
     }
 
     public function handleGoogleCallback()
-    {
-        try {
-            $googleUser = Socialite::driver('google')->user();
-        } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'No se pudo autenticar con Google.');
-        }
-
-        // Primero busca por google_id
-        $user = User::where('google_id', $googleUser->getId())->first();
-
-        // Si no existe por google_id, busca por email (cuenta ya registrada)
-        if (!$user) {
-            $user = User::where('email', $googleUser->getEmail())->first();
-
-            if ($user) {
-                // Actualiza el google_id y avatar en la cuenta existente
-                $user->update([
-                    'google_id' => $googleUser->getId(),
-                    'avatar'    => $googleUser->getAvatar(),
-                ]);
-            } else {
-                // Crea un usuario completamente nuevo
-                $user = User::create([
-                    'name'      => $googleUser->getName(),
-                    'email'     => $googleUser->getEmail(),
-                    'google_id' => $googleUser->getId(),
-                    'avatar'    => $googleUser->getAvatar(),
-                ]);
-            }
-        }
-
-        Auth::login($user, true);
-
-        if (!$user->departamento_id) {
-            return redirect()->route('usuario.departamento.show');
-        }
-        return redirect()->intended('/dashboard');
+{
+    try {
+        $googleUser = Socialite::driver('google')->user();
+    } catch (\Exception $e) {
+        return redirect()->route('login')->with('error', 'No se pudo autenticar con Google.');
     }
+
+    // Buscar por google_id primero
+    $user = User::where('google_id', $googleUser->getId())->first();
+
+    if (!$user) {
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if ($user) {
+            $user->update([
+                'google_id' => $googleUser->getId(),
+                'avatar'    => $googleUser->getAvatar(),
+            ]);
+        } else {
+            // Usuario nuevo — verificar si su email está registrado como restaurante
+            $restaurante = \App\Models\Restaurante::where('email', $googleUser->getEmail())->first();
+
+            $user = User::create([
+                'name'           => $googleUser->getName(),
+                'email'          => $googleUser->getEmail(),
+                'google_id'      => $googleUser->getId(),
+                'avatar'         => $googleUser->getAvatar(),
+                'role'           => $restaurante ? 'restaurante' : 'usuario',
+                'restaurante_id' => $restaurante?->id,
+            ]);
+        }
+    }
+
+    // Si ya existe pero no tiene rol de restaurante y su email coincide con uno
+    if ($user->role === 'usuario') {
+        $restaurante = \App\Models\Restaurante::where('email', $user->email)->first();
+        if ($restaurante) {
+            $user->update([
+                'role'           => 'restaurante',
+                'restaurante_id' => $restaurante->id,
+            ]);
+        }
+    }
+
+    Auth::login($user, true);
+
+    // Redirigir según rol
+    return match($user->role) {
+        'admin'       => redirect()->route('dashboard'),
+        'restaurante' => redirect()->route('restaurante.dashboard'),
+        default       => $user->departamento_id
+                            ? redirect()->route('home')
+                            : redirect()->route('usuario.departamento.show'),
+    };
+}
 }

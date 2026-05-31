@@ -23,6 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'departamento_id',
+        'role',
+        'restaurante_id',
     ];
 
     /**
@@ -51,5 +53,27 @@ class User extends Authenticatable
     public function departamento()
 {
     return $this->belongsTo(\App\Models\Departamento::class);
+}
+
+//nuevo
+
+public function restaurante()
+{
+    return $this->belongsTo(\App\Models\Restaurante::class);
+}
+
+public function isAdmin(): bool
+{
+    return $this->role === 'admin';
+}
+
+public function isRestaurante(): bool
+{
+    return $this->role === 'restaurante';
+}
+
+public function isUsuario(): bool
+{
+    return $this->role === 'usuario';
 }
 }

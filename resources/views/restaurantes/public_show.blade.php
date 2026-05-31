@@ -567,6 +567,27 @@
                         <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
                     </a>
                 </nav>
+                
+                <div style="display:flex;align-items:center;gap:8px;">
+                        <a href="{{ route('restaurantes.index') }}" class="btn-back">
+                            <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
+                        </a>
+                        @auth
+                            @if(auth()->user()->restaurante && auth()->user()->restaurante->id === $restaurante->id)
+                                <a href="{{ route('restaurante.dashboard') }}"
+                                   style="display:inline-flex;align-items:center;gap:7px;
+                                          background:rgba(232,93,4,0.85);
+                                          border:1px solid rgba(232,93,4,0.6);
+                                          backdrop-filter:blur(14px);
+                                          color:white;font-size:12px;font-weight:700;
+                                          padding:7px 16px;border-radius:999px;
+                                          text-decoration:none;transition:all 0.2s;
+                                          letter-spacing:0.04em;">
+                                    <i class="fas fa-chart-pie" style="font-size:10px;"></i> Mi Panel
+                                </a>
+                            @endif
+                        @endauth
+                    </div>
 
                 {{-- Contenido central --}}
                 <div class="hero-center">

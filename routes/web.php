@@ -69,6 +69,13 @@ Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
     return App\Models\Restaurante::where('departamento_id', $id)->get(['id', 'nombre']);
 })->name('api.public.departamentos.restaurantes');
 
+// Agrega esta línea nueva, separada:
+Route::middleware('auth')->get('/mi-restaurante/api/municipios/{id}', function ($id) {
+    return response()->json(
+        App\Models\Municipio::where('departamento_id', $id)->get(['id', 'nombre'])
+    );
+});
+
 // ── REVIEWS Y SISTEMA DE COMENTARIOS (REQUIERE AUTH) ─────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
@@ -183,10 +190,12 @@ Route::middleware(['auth', 'role:restaurante,admin'])
         // Empleos
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
         // Galería
-        Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])
-            ->name('galeria.store');
-        Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
-            ->name('galeria.destroy');
+        Route::get('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])
+    ->name('galeria.index');
+Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])
+    ->name('galeria.store');
+Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
+    ->name('galeria.destroy');
     });
 
 // ── EVENTOS PÚBLICOS (al final, con whereNumber para evitar capturar "create") ─

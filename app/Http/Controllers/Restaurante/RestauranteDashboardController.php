@@ -21,7 +21,7 @@ class RestauranteDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('restaurantes.dashboardrestaurante', compact(
+        return view('restaurante.dashboard', compact(
             'restaurante',
             'totalEventos',
             'totalEmpleos',

@@ -5,6 +5,42 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
  
+/**
+ * @property int $id
+ * @property int $restaurante_id
+ * @property int $departamento_id
+ * @property int $municipio_id
+ * @property string $titulo
+ * @property string $descripcion
+ * @property string|null $requisitos
+ * @property string|null $tipo_contrato
+ * @property numeric|null $salario
+ * @property \Illuminate\Support\Carbon|null $fecha_limite
+ * @property bool $activo
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Departamento $departamento
+ * @property-read \App\Models\Municipio $municipio
+ * @property-read \App\Models\Restaurante $restaurante
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo activas()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereActivo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereDepartamentoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereDescripcion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereFechaLimite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereMunicipioId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereRequisitos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereRestauranteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereSalario($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereTipoContrato($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereTitulo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Empleo extends Model
 {
     protected $fillable = [

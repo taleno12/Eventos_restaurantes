@@ -7,6 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $departamento_id
+ * @property string $nombre
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Departamento $departamento
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Restaurante> $restaurantes
+ * @property-read int|null $restaurantes_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio whereDepartamentoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio whereNombre($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Municipio whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Municipio extends Model
 {
     use HasFactory;

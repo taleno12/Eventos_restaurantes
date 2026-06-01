@@ -1,330 +1,453 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Gastro.ni') }}</title>
+    <title>{{ config('app.name', 'Gastro.ni') }}</title>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <style>
-            :root {
-                --sidebar-width: 260px;
-                --sidebar-color: #11111d;
-                --accent-color: #3b82f6;
-                --topbar-height: 60px;
-            }
+    <style>
+        :root {
+            --sidebar-width: 255px;
+            --sidebar-bg: #1a2035;
+            --sidebar-bg-darker: #141929;
+            --sidebar-text: #a0aec0;
+            --sidebar-active-bg: rgba(255,255,255,0.07);
+            --sidebar-active-border: #3b82f6;
+            --sidebar-hover-bg: rgba(255,255,255,0.04);
+            --topbar-height: 60px;
+            --content-bg: #f0f2f8;
+        }
 
-            * { box-sizing: border-box; }
-            body { background-color: #f4f6f9; font-family: 'Figtree', sans-serif; margin: 0; }
+        * { box-sizing: border-box; }
 
-            .sidebar {
-                width: var(--sidebar-width);
-                height: 100vh;
-                background: var(--sidebar-color);
-                position: fixed;
-                left: 0; top: 0;
-                color: #c2c7d0;
-                z-index: 1000;
-                overflow-y: auto;
-                overflow-x: hidden;
-                -webkit-overflow-scrolling: touch;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+        body {
+            background-color: var(--content-bg);
+            font-family: 'Figtree', 'Segoe UI', sans-serif;
+            margin: 0;
+        }
 
-            @media (max-width: 1023px) {
-                .sidebar { transform: translateX(-100%); }
-                .sidebar.open { transform: translateX(0); }
-            }
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            position: fixed;
+            left: 0; top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+        }
 
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 999;
-                backdrop-filter: blur(2px);
-            }
-            .sidebar-overlay.open { display: block; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-            .topbar-mobile {
-                display: none;
-                position: fixed;
-                top: 0; left: 0; right: 0;
-                height: var(--topbar-height);
-                background: var(--sidebar-color);
-                z-index: 998;
-                align-items: center;
-                padding: 0 16px;
-                gap: 12px;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-            }
-            @media (max-width: 1023px) {
-                .topbar-mobile { display: flex; }
-            }
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+        }
 
-            .hamburger-btn {
-                background: rgba(255,255,255,0.08);
-                border: none;
-                color: white;
-                width: 38px; height: 38px;
-                border-radius: 10px;
-                cursor: pointer;
-                display: flex; align-items: center; justify-content: center;
-                flex-shrink: 0;
-                transition: background 0.2s;
-            }
-            .hamburger-btn:hover { background: rgba(255,255,255,0.15); }
+        /* ── Overlay ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+        .sidebar-overlay.open { display: block; }
 
-            .brand-link {
-                padding: 24px 20px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-                background: rgba(0,0,0,0.1);
-            }
+        /* ── Topbar móvil ── */
+        .topbar-mobile {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--topbar-height);
+            background: var(--sidebar-bg);
+            z-index: 998;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        @media (max-width: 1023px) {
+            .topbar-mobile { display: flex; }
+        }
 
-            .nav-menu { padding: 15px 0 40px; }
+        /* ── Brand ── */
+        .sidebar-brand {
+            padding: 20px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--sidebar-bg-darker);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
 
-            .nav-item {
-                padding: 12px 24px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                color: #c2c7d0;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                font-size: 0.9rem;
-                border-left: 4px solid transparent;
-                cursor: pointer;
-                background: transparent;
-                border-top: none; border-right: none; border-bottom: none;
-                width: 100%; text-align: left;
-            }
-            .nav-item i { width: 20px; text-align: center; }
-            .nav-item:hover, .nav-item.active {
-                background: rgba(255,255,255,0.05);
-                color: #fff;
-                border-left: 4px solid var(--accent-color);
-            }
+        .brand-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+        }
 
-            .section-title {
-                padding: 24px 24px 8px;
-                font-size: 0.65rem;
-                text-transform: uppercase;
-                color: #6c757d;
-                letter-spacing: 1.5px;
-                font-weight: 800;
-            }
+        /* ── Nav ── */
+        .nav-menu {
+            padding: 12px 0 32px;
+            flex: 1;
+        }
 
+        .nav-section-title {
+            padding: 20px 20px 6px;
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            color: #4a5568;
+            letter-spacing: 1.8px;
+            font-weight: 800;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: transparent;
+            border-top: none; border-right: none; border-bottom: none;
+            width: 100%; text-align: left;
+            white-space: nowrap;
+        }
+
+        .nav-item i, .nav-item .bi {
+            width: 20px;
+            text-align: center;
+            font-size: 0.95rem;
+            opacity: 0.75;
+            flex-shrink: 0;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-hover-bg);
+            color: #e2e8f0;
+            border-left-color: rgba(59,130,246,0.4);
+        }
+        .nav-item:hover i, .nav-item:hover .bi { opacity: 1; }
+
+        .nav-item.active {
+            background: var(--sidebar-active-bg);
+            color: #fff;
+            border-left-color: var(--sidebar-active-border);
+            font-weight: 600;
+        }
+        .nav-item.active i, .nav-item.active .bi {
+            opacity: 1;
+            color: #60a5fa;
+        }
+
+        /* ── Divider nav ── */
+        .nav-divider {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin: 8px 0;
+        }
+
+        /* ── Logout / sitio ── */
+        .nav-item.nav-danger { color: #fc8181; }
+        .nav-item.nav-danger:hover { color: #feb2b2; background: rgba(252,129,129,0.07); border-left-color: #fc8181; }
+
+        .nav-item.nav-info { color: #63b3ed; }
+        .nav-item.nav-info:hover { color: #90cdf4; background: rgba(99,179,237,0.07); border-left-color: #63b3ed; }
+
+        /* ── Contenido ── */
+        .content-wrapper {
+            margin-left: var(--sidebar-width);
+            padding: 36px 36px;
+            min-height: 100vh;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (max-width: 1023px) {
             .content-wrapper {
-                margin-left: var(--sidebar-width);
-                padding: 40px;
-                min-height: 100vh;
-                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                margin-left: 0;
+                padding: calc(var(--topbar-height) + 24px) 16px 24px;
             }
-
-            @media (max-width: 1023px) {
-                .content-wrapper {
-                    margin-left: 0;
-                    padding: calc(var(--topbar-height) + 24px) 16px 24px;
-                }
+        }
+        @media (max-width: 640px) {
+            .content-wrapper {
+                padding: calc(var(--topbar-height) + 14px) 12px 14px;
             }
+        }
 
-            @media (max-width: 640px) {
-                .content-wrapper {
-                    padding: calc(var(--topbar-height) + 16px) 12px 16px;
-                }
-            }
-        </style>
-    </head>
-    <body class="font-sans antialiased">
+        /* ── Hamburger ── */
+        .hamburger-btn {
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .hamburger-btn:hover { background: rgba(255,255,255,0.15); }
 
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        /* ── Alert de éxito ── */
+        .alert-success-custom {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            color: #166534;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
 
-        <div class="topbar-mobile">
-            <button class="hamburger-btn" id="hamburgerBtn">
-                <i class="fas fa-bars text-sm"></i>
-            </button>
-            <div class="flex items-center gap-2">
-                <i class="fas fa-utensils text-blue-400 text-sm"></i>
-                <span class="font-bold text-white text-sm tracking-tight">GASTRO STUDIO</span>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    {{-- ── Topbar móvil ── --}}
+    <div class="topbar-mobile">
+        <button class="hamburger-btn" id="hamburgerBtn">
+            <i class="bi bi-list" style="font-size:1.1rem;"></i>
+        </button>
+        <div class="d-flex align-items-center gap-2">
+            <div class="brand-icon" style="width:28px;height:28px;border-radius:7px;">
+                <i class="bi bi-grid-3x3-gap-fill text-white" style="font-size:0.75rem;"></i>
             </div>
+            <span class="fw-bold text-white" style="font-size:0.85rem;letter-spacing:0.04em;">GASTRO STUDIO</span>
         </div>
+    </div>
 
-        <div class="min-h-screen">
+    <div style="min-height:100vh;">
 
-            <aside class="sidebar" id="sidebar">
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- SIDEBAR                                   --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <aside class="sidebar" id="sidebar">
 
-                <div class="brand-link">
-                    <i class="fas fa-utensils text-blue-500 text-xl"></i>
-                    <div>
-                        <span class="font-bold text-lg tracking-tight block text-white">GASTRO STUDIO</span>
-                        <span class="text-[10px] uppercase opacity-40 font-black tracking-widest text-blue-400">Admin Panel</span>
+            {{-- Brand --}}
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="bi bi-grid-3x3-gap-fill text-white" style="font-size:1rem;"></i>
+                </div>
+                <div>
+                    <span class="d-block text-white fw-bold" style="font-size:0.95rem;letter-spacing:0.04em;line-height:1.2;">GASTRO STUDIO</span>
+                    <span class="text-uppercase fw-black" style="font-size:0.58rem;letter-spacing:0.15em;color:#3b82f6;opacity:0.8;">Admin Panel</span>
+                </div>
+            </div>
+
+            {{-- Nav --}}
+            <nav class="nav-menu">
+
+                <a href="{{ route('dashboard') }}"
+                   class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span>Resumen General</span>
+                </a>
+
+                <div class="nav-section-title">Logística Gastronómica</div>
+
+                <a href="{{ route('departamentos.index') }}"
+                   class="nav-item {{ request()->routeIs('departamentos.*') ? 'active' : '' }}">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Departamentos</span>
+                </a>
+
+                <a href="{{ route('admin.restaurantes.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.restaurantes.*') ? 'active' : '' }}">
+                    <i class="bi bi-shop"></i>
+                    <span>Restaurantes</span>
+                </a>
+
+                <a href="{{ route('admin.gastrobares.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.gastrobares.*') ? 'active' : '' }}">
+                    <i class="bi bi-cup-straw"></i>
+                    <span>Gastrobares</span>
+                </a>
+
+                <a href="{{ route('eventos.index') }}"
+                   class="nav-item {{ request()->routeIs('eventos.*') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Gestión de Eventos</span>
+                </a>
+
+                <a href="{{ route('admin.empleos.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.empleos.*') ? 'active' : '' }}">
+                    <i class="bi bi-briefcase"></i>
+                    <span>Ofertas de Empleo</span>
+                </a>
+
+                <div class="nav-section-title">Personal y Seguridad</div>
+
+                <a href="{{ route('trabajadores.index') }}"
+                   class="nav-item {{ request()->routeIs('trabajadores.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Trabajadores</span>
+                </a>
+
+                <a href="{{ route('contratos.index') }}"
+                   class="nav-item {{ request()->routeIs('contratos.*') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Contratos</span>
+                </a>
+
+                <a href="{{ route('soporte.index') }}"
+                   class="nav-item {{ request()->routeIs('soporte.*') ? 'active' : '' }}">
+                    <i class="bi bi-headset"></i>
+                    <span>Soporte Técnico</span>
+                </a>
+
+                <a href="{{ route('configuracion.index') }}"
+                   class="nav-item {{ request()->routeIs('configuracion.*') ? 'active' : '' }}">
+                    <i class="bi bi-gear"></i>
+                    <span>Configuración</span>
+                </a>
+
+                <div class="nav-divider mx-3"></div>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="nav-item nav-danger">
+                        <i class="bi bi-power"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+
+                <a href="{{ route('home') }}" class="nav-item nav-info">
+                    <i class="bi bi-globe2"></i>
+                    <span>Ver Sitio Web</span>
+                </a>
+
+            </nav>
+
+            {{-- Usuario en pie de sidebar --}}
+            @auth
+            <div class="px-3 pb-4 mt-auto flex-shrink-0">
+                <div class="d-flex align-items-center gap-2 px-3 py-3 rounded-3"
+                     style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                         style="width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);font-size:0.75rem;font-weight:700;color:white;">
+                        {{ strtoupper(substr(Auth::user()->name ?? Auth::user()->email, 0, 1)) }}
+                    </div>
+                    <div style="overflow:hidden;">
+                        <p class="text-white fw-semibold mb-0" style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            {{ Auth::user()->name ?? 'Administrador' }}
+                        </p>
+                        <p class="mb-0" style="font-size:0.65rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            {{ Auth::user()->email }}
+                        </p>
                     </div>
                 </div>
+            </div>
+            @endauth
 
-                <nav class="nav-menu">
+        </aside>
 
-                    <a href="{{ route('dashboard') }}"
-                       class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Resumen General</span>
-                    </a>
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CONTENIDO PRINCIPAL                       --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <main class="content-wrapper">
 
-                    <div class="section-title">Logística Gastronómica</div>
+            @isset($header)
+                <header class="mb-4">{{ $header }}</header>
+            @else
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <h2 class="fw-bold text-dark mb-0">Panel de Control</h2>
+                    @auth
+                        <span class="badge rounded-pill px-3 py-2 fw-bold"
+                              style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;font-size:0.75rem;">
+                            <i class="bi bi-person-circle me-1"></i> Admin: {{ Auth::user()->email }}
+                        </span>
+                    @else
+                        <span class="badge rounded-pill px-3 py-2 fw-bold"
+                              style="background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb;font-size:0.75rem;">
+                            <i class="bi bi-eye me-1"></i> Modo Visitante
+                        </span>
+                    @endauth
+                </div>
+            @endisset
 
-                    <a href="{{ route('departamentos.index') }}"
-                       class="nav-item {{ request()->routeIs('departamentos.*') ? 'active' : '' }}">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Departamentos</span>
-                    </a>
+            @if(session('success'))
+                <div class="alert-success-custom mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-check-circle-fill" style="color:#22c55e;font-size:1rem;flex-shrink:0;"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
 
-                    <a href="{{ route('admin.restaurantes.index') }}"
-                       class="nav-item {{ request()->routeIs('admin.restaurantes.*') ? 'active' : '' }}">
-                        <i class="fas fa-store"></i>
-                        <span>Restaurantes</span>
-                    </a>
+            @if(session('error'))
+                <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center gap-2"
+                     style="border-left:4px solid #ef4444 !important;">
+                    <i class="bi bi-exclamation-circle-fill text-danger flex-shrink-0"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
 
-                    {{-- ── GASTROBARES (NUEVO) ── --}}
-                    <a href="{{ route('admin.gastrobares.index') }}"
-                       class="nav-item {{ request()->routeIs('admin.gastrobares.*') ? 'active' : '' }}">
-                        <i class="fas fa-cocktail"></i>
-                        <span>Gastrobares</span>
-                    </a>
+            @isset($slot)
+                {{ $slot }}
+            @else
+                @yield('content')
+            @endisset
 
-                    <a href="{{ route('eventos.index') }}"
-                       class="nav-item {{ request()->routeIs('eventos.*') ? 'active' : '' }}">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Gestión de Eventos</span>
-                    </a>
+        </main>
+    </div>
 
-                    <a href="{{ route('admin.empleos.index') }}"
-                       class="nav-item {{ request()->routeIs('admin.empleos.*') ? 'active' : '' }}">
-                        <i class="fas fa-briefcase"></i>
-                        <span>Ofertas de Empleo</span>
-                    </a>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar      = document.getElementById('sidebar');
+        const overlay      = document.getElementById('sidebarOverlay');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
 
-                    <div class="section-title">Personal y Seguridad</div>
+        function openSidebar() {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
 
-                    <a href="{{ route('trabajadores.index') }}"
-                       class="nav-item {{ request()->routeIs('trabajadores.*') ? 'active' : '' }}">
-                        <i class="fas fa-user-shield"></i>
-                        <span>Trabajadores</span>
-                    </a>
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
 
-                    <a href="{{ route('contratos.index') }}"
-                       class="nav-item {{ request()->routeIs('contratos.*') ? 'active' : '' }}">
-                        <i class="fas fa-file-signature"></i>
-                        <span>Contratos</span>
-                    </a>
+        hamburgerBtn?.addEventListener('click', () => {
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
 
-                    <a href="{{ route('soporte.index') }}"
-                       class="nav-item {{ request()->routeIs('soporte.*') ? 'active' : '' }}">
-                        <i class="fas fa-headset"></i>
-                        <span>Soporte Técnico</span>
-                    </a>
+        overlay?.addEventListener('click', closeSidebar);
 
-                    <a href="{{ route('configuracion.index') }}"
-                       class="nav-item {{ request()->routeIs('configuracion.*') ? 'active' : '' }}">
-                        <i class="fas fa-cogs"></i>
-                        <span>Configuración</span>
-                    </a>
-
-                    <div class="mt-4 border-t border-gray-800/50 pt-3">
-
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="nav-item text-red-400 hover:text-red-300">
-                                <i class="fas fa-power-off"></i>
-                                <span>Cerrar Sesión</span>
-                            </button>
-                        </form>
-
-                        <div class="mt-4 border-t border-gray-800/50 pt-2 mb-6">
-                            <a href="{{ route('home') }}" class="nav-item text-blue-400 hover:text-blue-300">
-                                <i class="fas fa-globe"></i>
-                                <span>Ver Sitio Web</span>
-                            </a>
-                        </div>
-
-                    </div>
-
-                </nav>
-            </aside>
-
-            <main class="content-wrapper">
-
-                @isset($header)
-                    <header class="mb-8">
-                        {{ $header }}
-                    </header>
-                @else
-                    <div class="flex flex-wrap justify-between items-center mb-8 gap-3">
-                        <h2 class="text-2xl font-bold text-gray-800">Panel de Control</h2>
-                        @auth
-                            <span class="text-xs bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full font-bold border border-blue-100">
-                                <i class="fas fa-user-circle mr-1"></i> Admin: {{ Auth::user()->email }}
-                            </span>
-                        @else
-                            <span class="text-xs bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full font-bold border border-gray-200">
-                                <i class="fas fa-eye mr-1"></i> Modo Visitante
-                            </span>
-                        @endauth
-                    </div>
-                @endisset
-
-                @if(session('success'))
-                    <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm font-bold shadow-sm rounded-lg">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @isset($slot)
-                    {{ $slot }}
-                @else
-                    @yield('content')
-                @endisset
-
-            </main>
-
-        </div>
-
-        <script>
-            const sidebar      = document.getElementById('sidebar');
-            const overlay      = document.getElementById('sidebarOverlay');
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-                document.body.style.overflow = '';
-            }
-
-            hamburgerBtn?.addEventListener('click', () => {
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 1024) closeSidebar();
             });
-
-            overlay?.addEventListener('click', closeSidebar);
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (window.innerWidth < 1024) closeSidebar();
-                });
-            });
-        </script>
-    </body>
+        });
+    </script>
+</body>
 </html>

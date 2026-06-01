@@ -1,544 +1,541 @@
-<x-app-layout>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@extends('layouts.app')
 
-    <x-slot name="header">
-        <h2 class="font-black text-2xl text-gray-800 leading-tight tracking-tight">
-            {{ __('Editar Anuncio Gastronómico') }}
-        </h2>
-    </x-slot>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <style>
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .field-label {
-            display: block;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #9ca3af;
-            margin-bottom: 8px;
-        }
-        .field-input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1.5px solid #e5e7eb;
-            font-size: 14px;
-            color: #1c1917;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.2s ease;
-            background: white;
-        }
-        .field-input:focus {
-            border-color: #ea580c;
-            box-shadow: 0 0 0 4px rgba(234,88,12,0.08);
-        }
-        select.field-input { background: #fafaf9; cursor: pointer; }
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 10px;
-            margin-top: 14px;
-        }
-        .photo-thumb {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #e5e7eb;
-            background: #f5f5f4;
-        }
-        .photo-thumb img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .photo-thumb .delete-btn {
-            position: absolute;
-            top: 5px; right: 5px;
-            width: 24px; height: 24px;
-            background: rgba(220,38,38,0.85);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-size: 10px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .photo-thumb:hover .delete-btn { opacity: 1; }
-        .photo-add-btn {
-            aspect-ratio: 1;
-            border-radius: 12px;
-            border: 2px dashed #d1d5db;
-            background: #fafaf9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #9ca3af;
-            font-size: 11px;
-            font-weight: 600;
-            position: relative;
-        }
-        .photo-add-btn:hover {
-            border-color: #ea580c;
-            color: #ea580c;
-            background: #fff7ed;
-        }
-        .photo-add-btn input {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%; height: 100%;
-        }
-        #new-photos-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .new-thumb {
-            position: relative;
-            width: 80px; height: 80px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #fed7aa;
-        }
-        .new-thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .new-thumb .remove-new {
-            position: absolute;
-            top: 3px; right: 3px;
-            width: 18px; height: 18px;
-            background: rgba(220,38,38,0.85);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            font-size: 9px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-    </style>
+@section('content')
+<div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-    <div class="py-12 animate-fade-in bg-gray-50/50 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    {{-- ── Encabezado ── --}}
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="{{ route('eventos.index') }}"
+           class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center"
+           style="width: 38px; height: 38px;">
+            <i class="bi bi-arrow-left text-secondary"></i>
+        </a>
+        <div>
+            <h1 class="h3 mb-0 fw-bold text-dark">
+                <i class="bi bi-pencil-square text-warning me-2"></i> Editar Anuncio Gastronómico
+            </h1>
+            <p class="text-muted small mb-0">Modifica la información de <span class="fw-semibold text-dark">{{ $evento->titulo }}</span>.</p>
+        </div>
+    </div>
 
-            @if ($errors->any())
-                <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:14px;padding:16px 20px;">
-                    <p style="font-weight:800;font-size:13px;color:#dc2626;margin-bottom:8px;">
-                        <i class="fas fa-exclamation-circle"></i> Corrige los siguientes errores:
-                    </p>
-                    <ul style="margin:0;padding-left:18px;font-size:13px;color:#b91c1c;">
+    {{-- Errores globales --}}
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-exclamation-circle-fill fs-5"></i>
+                <div>
+                    <p class="fw-semibold mb-1">Corrige los siguientes errores:</p>
+                    <ul class="mb-0 ps-3">
                         @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li class="small">{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-            @endif
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
-            {{-- CARD PRINCIPAL --}}
-            <div class="bg-white overflow-hidden shadow-sm rounded-[1.5rem] border border-gray-100">
+    {{-- ══════════════════════════════════════════ --}}
+    {{-- CARD PRINCIPAL: Datos del Evento          --}}
+    {{-- ══════════════════════════════════════════ --}}
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
 
-                <div class="bg-gradient-to-r from-zinc-900 to-zinc-800 p-8">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-yellow-500/20 p-3 rounded-xl border border-yellow-500/30">
-                            <i class="fas fa-edit text-yellow-400 text-xl"></i>
+        {{-- Header oscuro --}}
+        <div class="rounded-top-3 px-4 py-4 d-flex align-items-center gap-3"
+             style="background: linear-gradient(to right, #18181b, #27272a);">
+            <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                 style="width:46px;height:46px;background:rgba(234,179,8,0.2);border:1px solid rgba(234,179,8,0.3);">
+                <i class="bi bi-pencil-square" style="color:#fbbf24;font-size:1.1rem;"></i>
+            </div>
+            <div>
+                <p class="text-white fw-bold mb-0">
+                    Modificar Evento: <span style="color:#fbbf24;">{{ $evento->titulo }}</span>
+                </p>
+                <p class="mb-0" style="color:#9ca3af;font-size:0.75rem;">Actualiza la información necesaria para tus clientes.</p>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <form action="{{ route('eventos.update', $evento->id) }}" method="POST" enctype="multipart/form-data" id="edit-form">
+                @csrf
+                @method('PUT')
+
+                <div class="row g-4">
+
+                    {{-- ── Columna Izquierda ── --}}
+                    <div class="col-12 col-md-6">
+
+                        {{-- Título --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark small">
+                                Título del Evento <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-type"></i></span>
+                                <input type="text" name="titulo" value="{{ old('titulo', $evento->titulo) }}" required maxlength="100"
+                                       placeholder="Ej: Festival del Vigorón"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-white font-bold text-lg">Modificar Evento: <span class="text-yellow-400">{{ $evento->titulo }}</span></h3>
-                            <p class="text-gray-400 text-xs mt-0.5">Actualiza la información necesaria para tus clientes.</p>
+
+                        {{-- Fecha y Precio --}}
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold text-dark small">
+                                    Fecha <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
+                                    <input type="date" name="fecha_evento"
+                                           value="{{ old('fecha_evento', \Carbon\Carbon::parse($evento->fecha_evento)->format('Y-m-d')) }}"
+                                           required class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold text-dark small">
+                                    Precio (C$) <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-currency-dollar"></i></span>
+                                    <input type="number" name="precio" step="0.01"
+                                           value="{{ old('precio', $evento->precio) }}"
+                                           required placeholder="0.00"
+                                           class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                </div>
+                            </div>
                         </div>
+
+                        {{-- Departamento --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">
+                                Departamento <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                                <select id="departamento_id" name="departamento_id" required
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="" disabled>Seleccionar...</option>
+                                    @foreach($departamentos as $dep)
+                                        <option value="{{ $dep->id }}" {{ $evento->departamento_id == $dep->id ? 'selected' : '' }}>
+                                            {{ $dep->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Municipio --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">
+                                Municipio <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                <select id="municipio_id" name="municipio_id" required
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="" disabled>Seleccionar...</option>
+                                    @foreach($municipios as $mun)
+                                        <option value="{{ $mun->id }}" {{ $evento->municipio_id == $mun->id ? 'selected' : '' }}>
+                                            {{ $mun->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Restaurante --}}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">
+                                Restaurante / Local <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                                <select id="restaurante_id" name="restaurante_id" required
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    @foreach($restaurantes as $rest)
+                                        <option value="{{ $rest->id }}" {{ $evento->restaurante_id == $rest->id ? 'selected' : '' }}>
+                                            {{ $rest->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Evento Destacado --}}
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold text-dark small">¿Es un evento destacado?</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-star-fill"></i></span>
+                                <select name="is_destacado"
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="0" {{ !$evento->is_destacado ? 'selected' : '' }}>Evento Normal</option>
+                                    <option value="1" {{ $evento->is_destacado ? 'selected' : '' }}>Evento Destacado (Banner Principal)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{-- ── Columna Derecha ── --}}
+                    <div class="col-12 col-md-6">
+
+                        {{-- Imagen Principal --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark small">Imagen Principal</label>
+
+                            {{-- Preview actual --}}
+                            <div class="mb-2">
+                                <p class="small fw-semibold text-muted mb-2">Imagen actual:</p>
+                                @if($evento->imagen)
+                                    <img id="img-portada-actual"
+                                         src="{{ asset('storage/' . $evento->imagen) }}"
+                                         alt="Imagen actual"
+                                         class="w-100 rounded-3 border shadow-sm" style="height:180px;object-fit:cover;">
+                                @else
+                                    <div id="img-portada-actual"
+                                         class="w-100 rounded-3 d-flex flex-column align-items-center justify-content-center text-muted gap-2"
+                                         style="height:180px;border:2px dashed #dee2e6;">
+                                        <i class="bi bi-image fs-2 text-secondary"></i>
+                                        <span class="small">Sin imagen principal</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- Input nueva imagen --}}
+                            <p class="small fw-semibold text-muted mb-2">Reemplazar imagen <span class="fw-normal">(opcional)</span></p>
+                            <label for="imagen" class="w-100" style="cursor:pointer;">
+                                <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
+                                     style="height:120px;border:2px dashed #dee2e6;transition:border-color 0.2s;"
+                                     onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
+                                    <input type="file" name="imagen" id="imagen" accept="image/*"
+                                           class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer;z-index:10;">
+                                    <div id="preview-placeholder" class="text-center">
+                                        <i class="bi bi-cloud-upload fs-3 text-secondary"></i>
+                                        <p class="small text-muted mt-1 mb-0">Haz clic para seleccionar</p>
+                                        <p class="text-secondary mb-0" style="font-size:0.72rem;">JPG, PNG o WEBP (Máx. 2MB)</p>
+                                    </div>
+                                    <img id="nueva-preview-portada" src="" alt=""
+                                         class="d-none position-absolute top-0 start-0 w-100 h-100" style="object-fit:cover;">
+                                </div>
+                            </label>
+                        </div>
+
+                        {{-- Descripción --}}
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold text-dark small">Descripción del Evento</label>
+                            <textarea name="descripcion" rows="6" maxlength="500"
+                                      class="form-control bg-light" style="box-shadow:none;resize:none;"
+                                      placeholder="Cuéntanos más sobre el evento...">{{ old('descripcion', $evento->descripcion) }}</textarea>
+                        </div>
+
                     </div>
                 </div>
 
-                <div class="p-8 md:p-10">
-                    <form action="{{ route('eventos.update', $evento->id) }}" method="POST" enctype="multipart/form-data" id="edit-form">
-                        @csrf
-                        @method('PUT')
+                {{-- ── Botones ── --}}
+                <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top">
+                    <a href="{{ route('eventos.index') }}"
+                       class="text-muted text-decoration-none small fw-medium">
+                        <i class="bi bi-chevron-left me-1"></i> Cancelar y volver
+                    </a>
+                    <button type="submit" id="btn-submit"
+                            class="btn btn-warning fw-semibold px-5 py-2 rounded-pill shadow-sm text-dark">
+                        <i class="bi bi-check2-circle me-1"></i> Guardar Cambios
+                    </button>
+                </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            </form>
+        </div>
+    </div>
 
-                            {{-- COL IZQUIERDA --}}
-                            <div class="space-y-5">
+    {{-- ══════════════════════════════════════════ --}}
+    {{-- CARD GALERÍA DE FOTOS ADICIONALES         --}}
+    {{-- ══════════════════════════════════════════ --}}
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
 
-                                <div>
-                                    <label class="field-label">Título del Evento</label>
-                                    <input type="text" name="titulo" value="{{ old('titulo', $evento->titulo) }}" required maxlength="100"
-                                           class="field-input" placeholder="Ej: Festival del Vigorón">
-                                </div>
-
-                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                                    <div>
-                                        <label class="field-label">Fecha</label>
-                                        <input type="date" name="fecha_evento"
-                                               value="{{ old('fecha_evento', \Carbon\Carbon::parse($evento->fecha_evento)->format('Y-m-d')) }}"
-                                               required class="field-input">
-                                    </div>
-                                    <div>
-                                        <label class="field-label">Precio (C$)</label>
-                                        <input type="number" name="precio" step="0.01"
-                                               value="{{ old('precio', $evento->precio) }}"
-                                               required class="field-input" placeholder="0.00">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="field-label">Departamento</label>
-                                    <select id="departamento_id" name="departamento_id" required class="field-input">
-                                        <option value="" disabled>Seleccionar...</option>
-                                        @foreach($departamentos as $dep)
-                                            <option value="{{ $dep->id }}" {{ $evento->departamento_id == $dep->id ? 'selected' : '' }}>
-                                                {{ $dep->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="field-label">Municipio</label>
-                                    <select id="municipio_id" name="municipio_id" required class="field-input">
-                                        <option value="" disabled>Seleccionar...</option>
-                                        @foreach($municipios as $mun)
-                                            <option value="{{ $mun->id }}" {{ $evento->municipio_id == $mun->id ? 'selected' : '' }}>
-                                                {{ $mun->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="field-label">Restaurante / Local</label>
-                                    <select id="restaurante_id" name="restaurante_id" required class="field-input">
-                                        @foreach($restaurantes as $rest)
-                                            <option value="{{ $rest->id }}" {{ $evento->restaurante_id == $rest->id ? 'selected' : '' }}>
-                                                {{ $rest->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="field-label">Es un evento destacado?</label>
-                                    <select name="is_destacado" class="field-input">
-                                        <option value="0" {{ !$evento->is_destacado ? 'selected' : '' }}>Evento Normal</option>
-                                        <option value="1" {{ $evento->is_destacado ? 'selected' : '' }}>Evento Destacado (Banner Principal)</option>
-                                    </select>
-                                </div>
-
-                            </div>
-
-                            {{-- COL DERECHA --}}
-                            <div class="space-y-5">
-
-                                <div>
-                                    <label class="field-label">Imagen Principal</label>
-                                    <div style="position:relative;border:2px dashed #e5e7eb;border-radius:18px;overflow:hidden;background:#fafaf9;min-height:180px;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;"
-                                         id="drop-zone">
-                                        <input type="file" name="imagen" id="imagen" accept="image/*"
-                                               style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:10;">
-                                        <div id="preview-container" class="{{ $evento->imagen ? 'hidden' : '' }}"
-                                             style="text-align:center;padding:20px;pointer-events:none;">
-                                            <i class="fas fa-cloud-upload-alt" style="font-size:28px;color:#d1d5db;"></i>
-                                            <p style="font-size:12px;color:#9ca3af;margin-top:8px;">Subir nueva imagen (Max. 2MB)</p>
-                                        </div>
-                                        <img id="image-preview"
-                                             src="{{ $evento->imagen ? asset('storage/' . $evento->imagen) : '' }}"
-                                             class="{{ $evento->imagen ? '' : 'hidden' }}"
-                                             style="width:100%;height:180px;object-fit:cover;pointer-events:none;">
-                                    </div>
-                                    @if($evento->imagen)
-                                        <p style="font-size:11px;color:#9ca3af;margin-top:6px;">
-                                            <i class="fas fa-info-circle"></i> Haz clic para reemplazar la imagen actual
-                                        </p>
-                                    @endif
-                                </div>
-
-                                <div>
-                                    <label class="field-label">Descripcion del Evento</label>
-                                    <textarea name="descripcion" rows="5" maxlength="500"
-                                              class="field-input" style="resize:none;"
-                                              placeholder="Cuentanos mas sobre el evento...">{{ old('descripcion', $evento->descripcion) }}</textarea>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        {{-- BOTONES --}}
-                        <div style="margin-top:32px;padding-top:24px;border-top:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;">
-                            <a href="{{ route('eventos.index') }}"
-                               style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#9ca3af;text-decoration:none;">
-                                <i class="fas fa-arrow-left"></i> Cancelar y volver
-                            </a>
-                            <button type="submit"
-                                    style="background:#eab308;color:white;padding:14px 32px;border-radius:12px;font-weight:800;font-size:14px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(234,179,8,0.3);"
-                                    onmouseover="this.style.background='#ca8a04'"
-                                    onmouseout="this.style.background='#eab308'">
-                                <i class="fas fa-save"></i> Guardar Cambios
-                            </button>
-                        </div>
-
-                    </form>
+            {{-- Header galería --}}
+            <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                     style="width:44px;height:44px;background:#fff7ed;border:1px solid #fed7aa;">
+                    <i class="bi bi-images" style="color:#ea580c;font-size:1.1rem;"></i>
+                </div>
+                <div>
+                    <p class="fw-bold text-dark mb-0">Galería de Fotos Adicionales</p>
+                    <p class="text-muted mb-0" style="font-size:0.75rem;">Las fotos adicionales se muestran en la página pública del evento.</p>
                 </div>
             </div>
 
-            {{-- CARD GALERIA DE FOTOS --}}
-            <div class="bg-white overflow-hidden shadow-sm rounded-[1.5rem] border border-gray-100">
-
-                <div style="padding:28px 32px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:14px;">
-                    <div style="width:44px;height:44px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fas fa-images" style="color:#ea580c;font-size:17px;"></i>
-                    </div>
-                    <div>
-                        <h3 style="font-weight:800;font-size:16px;color:#1c1917;margin:0;">Galeria de Fotos Adicionales</h3>
-                        <p style="font-size:12px;color:#9ca3af;margin:4px 0 0;">Las fotos adicionales se muestran en la pagina publica del evento.</p>
-                    </div>
-                </div>
-
-                <div style="padding:28px 32px;">
-
-                    {{-- Fotos existentes --}}
-                    @if($evento->imagenes && $evento->imagenes->count() > 0)
-                        <div>
-                            <p class="field-label" style="margin-bottom:12px;">Fotos actuales</p>
-                            <div class="photo-grid">
-                                @foreach($evento->imagenes as $foto)
-                                    <div class="photo-thumb">
-                                        {{-- ← CORREGIDO: $foto->ruta en lugar de $foto->ruta_foto --}}
-                                        <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto del evento">
-                                        <form action="{{ route('evento.imagenes.destroy', $foto->id) }}" method="POST"
-                                              style="margin:0;" onsubmit="return confirm('Eliminar esta foto?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="delete-btn" title="Eliminar foto">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endforeach
-
-                                {{-- Boton agregar mas --}}
-                                <label class="photo-add-btn">
-                                    <input type="file" id="add-more-photos" accept="image/*" multiple>
-                                    <i class="fas fa-plus" style="font-size:18px;"></i>
-                                    <span>Anadir</span>
-                                </label>
+            {{-- Fotos existentes --}}
+            @if($evento->imagenes && $evento->imagenes->count() > 0)
+                <p class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.5px;">Fotos actuales</p>
+                <div class="row g-3 mb-4">
+                    @foreach($evento->imagenes as $foto)
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                            <div class="position-relative rounded-3 overflow-hidden border shadow-sm foto-thumb"
+                                 style="aspect-ratio:1/1;">
+                                <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto del evento"
+                                     class="w-100 h-100" style="object-fit:cover;">
+                                <form action="{{ route('evento.imagenes.destroy', $foto->id) }}" method="POST"
+                                      class="position-absolute top-0 end-0 m-1"
+                                      onsubmit="return confirm('¿Eliminar esta foto?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm d-flex align-items-center justify-content-center p-0 delete-foto-btn"
+                                            style="width:26px;height:26px;border-radius:6px;font-size:0.7rem;opacity:0;transition:opacity 0.2s;">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    @else
-                        <p style="font-size:13px;color:#9ca3af;font-style:italic;margin-bottom:16px;">
-                            Este evento aun no tiene fotos adicionales.
-                        </p>
-                        <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:2px dashed #e5e7eb;border-radius:16px;padding:36px 24px;background:#fafaf9;cursor:pointer;transition:all 0.2s;text-align:center;"
-                               id="upload-zone-label">
-                            <input type="file" id="add-more-photos" accept="image/*" multiple style="display:none;">
-                            <i class="fas fa-cloud-upload-alt" style="font-size:32px;color:#d1d5db;"></i>
-                            <div>
-                                <p style="font-size:14px;font-weight:700;color:#6b7280;margin:0;">Arrastra o haz clic para subir fotos</p>
-                                <p style="font-size:12px;color:#9ca3af;margin:4px 0 0;">JPG, PNG o WEBP - Puedes subir varias a la vez</p>
+                    @endforeach
+
+                    {{-- Botón agregar más --}}
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <label style="cursor:pointer;" class="w-100 h-100">
+                            <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative"
+                                 style="aspect-ratio:1/1;border:2px dashed #dee2e6;transition:border-color 0.2s;"
+                                 onmouseover="this.style.borderColor='#ea580c';this.style.background='#fff7ed';"
+                                 onmouseout="this.style.borderColor='#dee2e6';this.style.background='';">
+                                <input type="file" id="add-more-photos" accept="image/*" multiple
+                                       class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer;z-index:10;">
+                                <i class="bi bi-plus-lg fs-4 text-secondary"></i>
+                                <span class="small text-muted mt-1" style="font-size:0.7rem;">Añadir</span>
                             </div>
                         </label>
-                    @endif
-
-                    {{-- Preview fotos seleccionadas --}}
-                    <div id="new-photos-preview"></div>
-
-                    {{-- Formulario subida fotos adicionales --}}
-                    <form action="{{ route('evento.imagenes.store', $evento->id) }}" method="POST"
-                          enctype="multipart/form-data" id="photos-form" style="margin-top:16px;">
-                        @csrf
-                        <input type="file" name="fotos[]" id="fotos-hidden" accept="image/*" multiple style="display:none;">
-                        <div id="upload-actions" style="display:none;gap:10px;align-items:center;">
-                            <span id="files-count" style="font-size:13px;font-weight:600;color:#6b7280;"></span>
-                            <button type="submit"
-                                    style="background:#ea580c;color:white;padding:10px 24px;border-radius:10px;font-weight:700;font-size:13px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"
-                                    onmouseover="this.style.background='#c2410c'"
-                                    onmouseout="this.style.background='#ea580c'">
-                                <i class="fas fa-upload"></i> Subir fotos seleccionadas
-                            </button>
-                            <button type="button" id="cancel-upload"
-                                    style="background:transparent;border:1px solid #e5e7eb;color:#6b7280;padding:10px 20px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;">
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
-
+                    </div>
                 </div>
-            </div>
+            @else
+                <p class="text-muted small fst-italic mb-3">
+                    <i class="bi bi-info-circle text-secondary me-1"></i>
+                    Este evento aún no tiene fotos adicionales.
+                </p>
+
+                {{-- Zona de carga vacía --}}
+                <label id="upload-zone-label" class="w-100 mb-3" style="cursor:pointer;">
+                    <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center text-center p-5"
+                         style="border:2px dashed #dee2e6;transition:border-color 0.2s;"
+                         onmouseover="this.style.borderColor='#ea580c'" onmouseout="this.style.borderColor='#dee2e6'">
+                        <input type="file" id="add-more-photos" accept="image/*" multiple
+                               class="d-none">
+                        <i class="bi bi-cloud-upload fs-1 text-secondary mb-2"></i>
+                        <p class="fw-bold text-secondary mb-1">Arrastra o haz clic para subir fotos</p>
+                        <p class="text-muted mb-0" style="font-size:0.78rem;">JPG, PNG o WEBP — Puedes subir varias a la vez</p>
+                    </div>
+                </label>
+            @endif
+
+            {{-- Preview fotos nuevas seleccionadas --}}
+            <div id="new-photos-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
+
+            {{-- Formulario subida fotos adicionales --}}
+            <form action="{{ route('evento.imagenes.store', $evento->id) }}" method="POST"
+                  enctype="multipart/form-data" id="photos-form" class="mt-3">
+                @csrf
+                <input type="file" name="fotos[]" id="fotos-hidden" accept="image/*" multiple class="d-none">
+                <div id="upload-actions" class="d-none align-items-center gap-3">
+                    <span id="files-count" class="small fw-semibold text-muted"></span>
+                    <button type="submit"
+                            class="btn fw-bold text-white px-4"
+                            style="background:#ea580c;border:none;border-radius:10px;font-size:0.85rem;"
+                            onmouseover="this.style.background='#c2410c'" onmouseout="this.style.background='#ea580c'">
+                        <i class="bi bi-upload me-1"></i> Subir fotos seleccionadas
+                    </button>
+                    <button type="button" id="cancel-upload"
+                            class="btn btn-outline-secondary fw-semibold px-4"
+                            style="border-radius:10px;font-size:0.85rem;">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
 
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+</div>
 
-            // Preview imagen principal
-            const imgInput   = document.getElementById('imagen');
-            const imgPreview = document.getElementById('image-preview');
-            const imgHolder  = document.getElementById('preview-container');
-            const dropZone   = document.getElementById('drop-zone');
+<style>
+    .foto-thumb:hover .delete-foto-btn { opacity: 1 !important; }
+</style>
 
-            if (imgInput) {
-                imgInput.addEventListener('change', function () {
-                    const file = this.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = e => {
-                            imgPreview.src = e.target.result;
-                            imgPreview.classList.remove('hidden');
-                            if (imgHolder) imgHolder.classList.add('hidden');
-                            dropZone.style.borderColor = '#ea580c';
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-            // Cargar municipios al cambiar departamento
-            const depSelect  = document.getElementById('departamento_id');
-            const munSelect  = document.getElementById('municipio_id');
-            const restSelect = document.getElementById('restaurante_id');
+    // ── Preview imagen principal ──
+    const imgInput     = document.getElementById('imagen');
+    const imgActual    = document.getElementById('img-portada-actual');
+    const nuevaPreview = document.getElementById('nueva-preview-portada');
+    const placeholder  = document.getElementById('preview-placeholder');
 
-            if (depSelect) {
-                depSelect.addEventListener('change', function () {
-                    const depId = this.value;
-                    munSelect.disabled = true;
-                    munSelect.innerHTML = '<option>Cargando municipios...</option>';
-                    restSelect.disabled = true;
-                    restSelect.innerHTML = '<option>Seleccionar municipio primero...</option>';
-
-                    if (depId) {
-                        fetch(`/api/departamentos/${depId}/municipios`)
-                            .then(r => r.json())
-                            .then(data => {
-                                munSelect.innerHTML = '<option value="" disabled selected>Seleccionar municipio...</option>';
-                                data.forEach(mun => {
-                                    const opt = document.createElement('option');
-                                    opt.value = mun.id;
-                                    opt.textContent = mun.nombre;
-                                    munSelect.appendChild(opt);
-                                });
-                                munSelect.disabled = false;
-                            })
-                            .catch(() => {
-                                munSelect.innerHTML = '<option>Error de carga</option>';
-                            });
-                    }
-                });
-            }
-
-            // Cargar restaurantes al cambiar municipio
-            if (munSelect) {
-                munSelect.addEventListener('change', function () {
-                    const munId = this.value;
-                    restSelect.disabled = true;
-                    restSelect.innerHTML = '<option>Cargando locales...</option>';
-
-                    if (munId) {
-                        fetch(`/api/municipios/${munId}/restaurantes`)
-                            .then(r => r.json())
-                            .then(data => {
-                                restSelect.innerHTML = '<option value="" disabled selected>Seleccionar local...</option>';
-                                data.forEach(rest => {
-                                    const opt = document.createElement('option');
-                                    opt.value = rest.id;
-                                    opt.textContent = rest.nombre;
-                                    restSelect.appendChild(opt);
-                                });
-                                restSelect.disabled = false;
-                            })
-                            .catch(() => {
-                                restSelect.innerHTML = '<option>Error de carga</option>';
-                            });
-                    }
-                });
-            }
-
-            // Galeria: preview fotos adicionales
-            const addPhotosInput = document.getElementById('add-more-photos');
-            const fotosHidden    = document.getElementById('fotos-hidden');
-            const previewWrap    = document.getElementById('new-photos-preview');
-            const uploadActions  = document.getElementById('upload-actions');
-            const filesCount     = document.getElementById('files-count');
-            const cancelUpload   = document.getElementById('cancel-upload');
-
-            let selectedFiles = [];
-
-            function syncFilesToHidden() {
-                const dt = new DataTransfer();
-                selectedFiles.forEach(f => dt.items.add(f));
-                if (fotosHidden) fotosHidden.files = dt.files;
-            }
-
-            function renderPreviews() {
-                if (!previewWrap) return;
-                previewWrap.innerHTML = '';
-                selectedFiles.forEach((file, idx) => {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        const wrap = document.createElement('div');
-                        wrap.className = 'new-thumb';
-                        wrap.innerHTML = `
-                            <img src="${e.target.result}" alt="">
-                            <button type="button" class="remove-new" data-idx="${idx}">
-                                <i class="fas fa-times"></i>
-                            </button>`;
-                        previewWrap.appendChild(wrap);
-                        wrap.querySelector('.remove-new').addEventListener('click', function () {
-                            selectedFiles.splice(parseInt(this.dataset.idx), 1);
-                            syncFilesToHidden();
-                            renderPreviews();
-                            updateActions();
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-
-            function updateActions() {
-                if (!uploadActions) return;
-                if (selectedFiles.length > 0) {
-                    uploadActions.style.display = 'flex';
-                    if (filesCount) filesCount.textContent = `${selectedFiles.length} foto${selectedFiles.length > 1 ? 's' : ''} lista${selectedFiles.length > 1 ? 's' : ''}`;
-                } else {
-                    uploadActions.style.display = 'none';
+    if (imgInput) {
+        imgInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                // Actualizar imagen actual
+                if (imgActual && imgActual.tagName === 'IMG') {
+                    imgActual.src = e.target.result;
+                } else if (imgActual) {
+                    const img = document.createElement('img');
+                    img.id = 'img-portada-actual';
+                    img.src = e.target.result;
+                    img.className = 'w-100 rounded-3 border shadow-sm';
+                    img.style.cssText = 'height:180px;object-fit:cover;';
+                    imgActual.replaceWith(img);
                 }
-            }
-
-            if (addPhotosInput) {
-                addPhotosInput.addEventListener('change', function () {
-                    Array.from(this.files).forEach(f => selectedFiles.push(f));
-                    syncFilesToHidden();
-                    renderPreviews();
-                    updateActions();
-                    this.value = '';
-                });
-            }
-
-            if (cancelUpload) {
-                cancelUpload.addEventListener('click', function () {
-                    selectedFiles = [];
-                    syncFilesToHidden();
-                    renderPreviews();
-                    updateActions();
-                });
-            }
-
-            const uploadZoneLabel = document.getElementById('upload-zone-label');
-            if (uploadZoneLabel) {
-                uploadZoneLabel.addEventListener('mouseenter', () => uploadZoneLabel.style.borderColor = '#ea580c');
-                uploadZoneLabel.addEventListener('mouseleave', () => uploadZoneLabel.style.borderColor = '#e5e7eb');
-            }
+                // Mostrar preview en zona de carga
+                if (nuevaPreview) {
+                    nuevaPreview.src = e.target.result;
+                    nuevaPreview.classList.remove('d-none');
+                }
+                if (placeholder) placeholder.classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
         });
-    </script>
+    }
 
-</x-app-layout>
+    // ── Encadenamiento departamento → municipio → restaurante ──
+    const depSelect  = document.getElementById('departamento_id');
+    const munSelect  = document.getElementById('municipio_id');
+    const restSelect = document.getElementById('restaurante_id');
+
+    if (depSelect) {
+        depSelect.addEventListener('change', function () {
+            const depId = this.value;
+            munSelect.disabled = true;
+            munSelect.innerHTML = '<option>Cargando municipios...</option>';
+            restSelect.disabled = true;
+            restSelect.innerHTML = '<option>Seleccionar municipio primero...</option>';
+
+            if (!depId) return;
+            fetch(`/api/departamentos/${depId}/municipios`)
+                .then(r => r.json())
+                .then(data => {
+                    munSelect.innerHTML = '<option value="" disabled selected>Seleccionar municipio...</option>';
+                    data.forEach(mun => {
+                        const opt = document.createElement('option');
+                        opt.value = mun.id;
+                        opt.textContent = mun.nombre;
+                        munSelect.appendChild(opt);
+                    });
+                    munSelect.disabled = false;
+                })
+                .catch(() => { munSelect.innerHTML = '<option>Error de carga</option>'; });
+        });
+    }
+
+    if (munSelect) {
+        munSelect.addEventListener('change', function () {
+            const munId = this.value;
+            restSelect.disabled = true;
+            restSelect.innerHTML = '<option>Cargando locales...</option>';
+
+            if (!munId) return;
+            fetch(`/api/municipios/${munId}/restaurantes`)
+                .then(r => r.json())
+                .then(data => {
+                    restSelect.innerHTML = '<option value="" disabled selected>Seleccionar local...</option>';
+                    data.forEach(rest => {
+                        const opt = document.createElement('option');
+                        opt.value = rest.id;
+                        opt.textContent = rest.nombre;
+                        restSelect.appendChild(opt);
+                    });
+                    restSelect.disabled = false;
+                })
+                .catch(() => { restSelect.innerHTML = '<option>Error de carga</option>'; });
+        });
+    }
+
+    // ── Galería: preview fotos adicionales ──
+    const addPhotosInput = document.getElementById('add-more-photos');
+    const fotosHidden    = document.getElementById('fotos-hidden');
+    const previewWrap    = document.getElementById('new-photos-preview');
+    const uploadActions  = document.getElementById('upload-actions');
+    const filesCount     = document.getElementById('files-count');
+    const cancelUpload   = document.getElementById('cancel-upload');
+
+    let selectedFiles = [];
+
+    function syncFilesToHidden() {
+        if (!fotosHidden) return;
+        const dt = new DataTransfer();
+        selectedFiles.forEach(f => dt.items.add(f));
+        fotosHidden.files = dt.files;
+    }
+
+    function renderPreviews() {
+        if (!previewWrap) return;
+        previewWrap.innerHTML = '';
+        selectedFiles.forEach((file, idx) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const wrap = document.createElement('div');
+                wrap.className = 'position-relative rounded-3 overflow-hidden border';
+                wrap.style.cssText = 'width:80px;height:80px;border-color:#fed7aa!important;flex-shrink:0;';
+                wrap.innerHTML = `
+                    <img src="${e.target.result}" alt="" style="width:100%;height:100%;object-fit:cover;">
+                    <button type="button" class="btn btn-danger position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center remove-new"
+                            data-idx="${idx}" style="width:18px;height:18px;border-radius:4px;font-size:0.6rem;margin:3px;">
+                        <i class="bi bi-x"></i>
+                    </button>`;
+                previewWrap.appendChild(wrap);
+                wrap.querySelector('.remove-new').addEventListener('click', function () {
+                    selectedFiles.splice(parseInt(this.dataset.idx), 1);
+                    syncFilesToHidden();
+                    renderPreviews();
+                    updateActions();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function updateActions() {
+        if (!uploadActions) return;
+        if (selectedFiles.length > 0) {
+            uploadActions.classList.remove('d-none');
+            uploadActions.classList.add('d-flex');
+            if (filesCount) filesCount.textContent = `${selectedFiles.length} foto${selectedFiles.length > 1 ? 's' : ''} lista${selectedFiles.length > 1 ? 's' : ''}`;
+        } else {
+            uploadActions.classList.add('d-none');
+            uploadActions.classList.remove('d-flex');
+        }
+    }
+
+    if (addPhotosInput) {
+        addPhotosInput.addEventListener('change', function () {
+            Array.from(this.files).forEach(f => selectedFiles.push(f));
+            syncFilesToHidden();
+            renderPreviews();
+            updateActions();
+            this.value = '';
+        });
+    }
+
+    if (cancelUpload) {
+        cancelUpload.addEventListener('click', function () {
+            selectedFiles = [];
+            syncFilesToHidden();
+            renderPreviews();
+            updateActions();
+        });
+    }
+
+    // ── Spinner en submit ──
+    document.getElementById('edit-form').addEventListener('submit', function () {
+        const btn = document.getElementById('btn-submit');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Guardando...';
+        }
+    });
+});
+</script>
+
+@endsection

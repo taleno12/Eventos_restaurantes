@@ -6,6 +6,59 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property string $nombre
+ * @property int $activo
+ * @property string $email
+ * @property string|null $especialidad
+ * @property string|null $descripcion
+ * @property string|null $direccion
+ * @property numeric|null $latitud
+ * @property numeric|null $longitud
+ * @property string|null $foto_portada
+ * @property string|null $instagram
+ * @property string|null $tiktok
+ * @property string|null $facebook
+ * @property string|null $whatsapp
+ * @property int $departamento_id
+ * @property int|null $municipio_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Departamento $departamento
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Evento> $eventos
+ * @property-read int|null $eventos_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RestauranteFoto> $fotos
+ * @property-read int|null $fotos_count
+ * @property-read float|null $average_rating
+ * @property-read int|null $reviews_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RestauranteFoto> $imagenes
+ * @property-read int|null $imagenes_count
+ * @property-read \App\Models\Municipio|null $municipio
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $reviews
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereActivo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereDepartamentoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereDescripcion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereDireccion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereEspecialidad($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereFacebook($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereFotoPortada($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereInstagram($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereLatitud($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereLongitud($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereMunicipioId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereNombre($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereTiktok($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante whereWhatsapp($value)
+ * @mixin \Eloquent
+ */
 class Restaurante extends Model
 {
     protected $fillable = [

@@ -1,105 +1,107 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('admin.restaurantes.index') }}"
-               class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors no-underline">
-                <i class="fas fa-arrow-left text-sm"></i>
-            </a>
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800">Editar Restaurante</h2>
-                <p class="text-sm text-gray-500 mt-0.5">Modifica los parámetros y canales digitales del establecimiento seleccionado.</p>
-            </div>
+@extends('layouts.app')
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+@section('content')
+<div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    {{-- ── Encabezado ── --}}
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="{{ route('admin.restaurantes.index') }}"
+           class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center"
+           style="width: 38px; height: 38px;">
+            <i class="bi bi-arrow-left text-secondary"></i>
+        </a>
+        <div>
+            <h1 class="h3 mb-0 fw-bold text-dark">
+                <i class="bi bi-pencil-square text-warning me-2"></i> Editar Restaurante
+            </h1>
+            <p class="text-muted small mb-0">Modifica los parámetros y canales digitales del establecimiento seleccionado.</p>
         </div>
-    </x-slot>
+    </div>
 
-    {{-- Leaflet CSS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <form action="{{ route('admin.restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-    <div class="max-w-3xl">
-        {{-- ✅ enctype necesario para subir archivos --}}
-        <form action="{{ route('admin.restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            {{-- Errores globales de validación --}}
-            @if($errors->any())
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl text-sm">
-                    <p class="font-semibold mb-1">
-                        <i class="fas fa-exclamation-circle mr-1"></i> Corrige los siguientes errores:
-                    </p>
-                    <ul class="list-disc list-inside space-y-0.5">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+        {{-- Errores globales --}}
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                <div class="d-flex align-items-start gap-2">
+                    <i class="bi bi-exclamation-circle-fill fs-5 mt-0.5"></i>
+                    <div>
+                        <p class="fw-semibold mb-1">Corrige los siguientes errores:</p>
+                        <ul class="mb-0 ps-3">
+                            @foreach($errors->all() as $error)
+                                <li class="small">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
-            @endif
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
-            {{-- Card Principal --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 1: Datos Generales                   --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-info-circle text-warning"></i> Datos Generales: {{ $restaurante->nombre }}
+                </h6>
 
-                {{-- Sección 1: Datos de Identidad --}}
-                <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
-                    <i class="fas fa-edit text-orange-400"></i> Datos Generales: {{ $restaurante->nombre }}
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="row g-4">
 
                     {{-- Nombre Comercial --}}
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre Comercial <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fas fa-store text-sm"></i>
-                            </div>
-                            <input type="text" name="nombre" value="{{ old('nombre', $restaurante->nombre) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" required>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold text-dark small">Nombre Comercial <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                            <input type="text" name="nombre" value="{{ old('nombre', $restaurante->nombre) }}" required
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Nombre del restaurante">
                         </div>
                     </div>
 
                     {{-- Email de Contacto --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email de Contacto <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fas fa-envelope text-sm"></i>
-                            </div>
-                            <input type="email" name="email" value="{{ old('email', $restaurante->email) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" required>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Email de Contacto <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="email" value="{{ old('email', $restaurante->email) }}" required
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="correo@restaurante.com">
                         </div>
                     </div>
 
-                    {{-- Especialidad Culinaria --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Especialidad Culinaria <span class="text-gray-400 font-normal">(ej. Mariscos, Asados)</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fas fa-utensils text-sm"></i>
-                            </div>
+                    {{-- Especialidad --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Especialidad Culinaria <span class="text-muted fw-normal">(ej. Mariscos, Asados)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-egg-fried"></i></span>
                             <input type="text" name="especialidad" value="{{ old('especialidad', $restaurante->especialidad) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" placeholder="No especificada">
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="No especificada">
                         </div>
                     </div>
 
                     {{-- Separador --}}
-                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
+                    <div class="col-12"><hr class="text-muted opacity-25 my-1"></div>
 
-                    {{-- Sección 2: Ubicación Regional --}}
-                    <div class="md:col-span-2">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2 mb-1">
-                            <i class="fas fa-map-marked-alt text-orange-400"></i> Ubicación Geográfica
-                        </h4>
+                    {{-- Ubicación Geográfica --}}
+                    <div class="col-12">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                            <i class="bi bi-map text-warning"></i> Ubicación Geográfica
+                        </h6>
                     </div>
 
                     {{-- Departamento --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Departamento <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fas fa-map-marker-alt text-sm"></i>
-                            </div>
-                            <select id="select-departamento" name="departamento_id"
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" required>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Departamento <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                            <select id="select-departamento" name="departamento_id" required
+                                    class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
                                 @foreach($departamentos as $depto)
                                     <option value="{{ $depto->id }}" @selected(old('departamento_id', $restaurante->departamento_id) == $depto->id)>
                                         {{ $depto->nombre }}
@@ -110,443 +112,534 @@
                     </div>
 
                     {{-- Municipio --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Municipio <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fas fa-map text-sm"></i>
-                            </div>
-                            <select id="select-municipio" name="municipio_id"
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50 disabled:opacity-60 disabled:cursor-not-allowed" required disabled>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Municipio <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                            <select id="select-municipio" name="municipio_id" required disabled
+                                    class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
                                 <option value="">Cargando municipios...</option>
                             </select>
                         </div>
                     </div>
 
                     {{-- Separador --}}
-                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
+                    <div class="col-12"><hr class="text-muted opacity-25 my-1"></div>
 
-                    {{-- Sección 3: Redes y Canales Digitales --}}
-                    <div class="md:col-span-2">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2 mb-1">
-                            <i class="fas fa-share-alt text-orange-400"></i> Contacto Directo y Redes Sociales
-                        </h4>
+                    {{-- Redes Sociales --}}
+                    <div class="col-12">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                            <i class="bi bi-share text-warning"></i> Contacto Directo y Redes Sociales
+                        </h6>
                     </div>
 
                     {{-- WhatsApp --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">WhatsApp Comercial <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fab fa-whatsapp text-sm"></i>
-                            </div>
-                            <input type="text" name="whatsapp" value="{{ old('whatsapp', $restaurante->whatsapp) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" placeholder="Ej: +505 8888-8888" required>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">WhatsApp Comercial <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0" style="color:#25d366;"><i class="bi bi-whatsapp"></i></span>
+                            <input type="text" name="whatsapp" value="{{ old('whatsapp', $restaurante->whatsapp) }}" required
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="+505 8888-8888">
                         </div>
                     </div>
 
                     {{-- Instagram --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Enlace de Instagram <span class="text-gray-400 font-normal">(opcional)</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fab fa-instagram text-sm"></i>
-                            </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Instagram <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0" style="color:#e1306c;"><i class="bi bi-instagram"></i></span>
                             <input type="url" name="instagram" value="{{ old('instagram', $restaurante->instagram) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" placeholder="https://instagram.com/perfil">
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="https://instagram.com/perfil">
                         </div>
                     </div>
 
                     {{-- TikTok --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Enlace de TikTok <span class="text-gray-400 font-normal">(opcional)</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fab fa-tiktok text-sm"></i>
-                            </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">TikTok <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-dark"><i class="bi bi-tiktok"></i></span>
                             <input type="url" name="tiktok" value="{{ old('tiktok', $restaurante->tiktok) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" placeholder="https://tiktok.com/@usuario">
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="https://tiktok.com/@usuario">
                         </div>
                     </div>
 
                     {{-- Facebook --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Enlace de Facebook <span class="text-gray-400 font-normal">(opcional)</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                <i class="fab fa-facebook text-sm"></i>
-                            </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Facebook <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0" style="color:#1877f2;"><i class="bi bi-facebook"></i></span>
                             <input type="url" name="facebook" value="{{ old('facebook', $restaurante->facebook) }}"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50" placeholder="https://facebook.com/pagina">
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="https://facebook.com/pagina">
                         </div>
-                    </div>
-
-                    {{-- Separador --}}
-                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
-
-                    {{-- ══════════════════════════════════════════════════════════ --}}
-                    {{-- Sección 4: Foto de Portada                               --}}
-                    {{-- El controlador guarda en $restaurante->foto_portada       --}}
-                    {{-- ══════════════════════════════════════════════════════════ --}}
-                    <div class="md:col-span-2">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2 mb-4">
-                            <i class="fas fa-image text-orange-400"></i> Foto de Portada
-                        </h4>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-
-                            {{-- Imagen actual guardada en foto_portada --}}
-                            <div>
-                                <p class="text-xs font-semibold text-gray-500 mb-2">Imagen actual:</p>
-                                @if($restaurante->foto_portada)
-                                    <img id="img-portada-actual"
-                                         src="{{ asset('storage/' . $restaurante->foto_portada) }}"
-                                         alt="Portada actual"
-                                         class="w-full h-44 object-cover rounded-xl border border-gray-200 shadow-sm">
-                                @else
-                                    <div id="img-portada-actual"
-                                         class="w-full h-44 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 text-gray-400 gap-2">
-                                        <i class="fas fa-image text-2xl"></i>
-                                        <span class="text-xs">Sin imagen de portada</span>
-                                    </div>
-                                @endif
-                            </div>
-
-                            {{-- Input para reemplazar imagen --}}
-                            <div>
-                                <p class="text-xs font-semibold text-gray-500 mb-2">
-                                    Reemplazar imagen <span class="font-normal text-gray-400">(opcional)</span>
-                                </p>
-                                <div class="relative group border-2 border-dashed border-gray-200 rounded-xl hover:border-orange-400 transition-colors bg-gray-50 min-h-[11rem] flex flex-col justify-center items-center overflow-hidden">
-                                    <input type="file" name="imagen_principal" id="input-portada" accept="image/*"
-                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                    <div id="placeholder-portada" class="pointer-events-none text-center space-y-2 px-4">
-                                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-300 group-hover:text-orange-400 transition-colors"></i>
-                                        <p class="text-xs text-gray-400">Haz clic para seleccionar</p>
-                                        <p class="text-xs text-gray-300">JPG, PNG o WEBP</p>
-                                    </div>
-                                    <img id="nueva-preview-portada"
-                                         class="hidden absolute inset-0 w-full h-full object-cover rounded-xl pointer-events-none">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Separador --}}
-                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
-
-                    {{-- ══════════════════════════════════════════════════════════ --}}
-                    {{-- Sección 5: Galería de Fotos                              --}}
-                    {{-- Las fotos viven en RestauranteFoto (relación imagenes)    --}}
-                    {{-- Columna: ruta_foto                                        --}}
-                    {{-- ══════════════════════════════════════════════════════════ --}}
-                    <div class="md:col-span-2">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2 mb-1">
-                            <i class="fas fa-images text-orange-400"></i> Fotos del Álbum
-                            <span class="font-normal normal-case text-gray-300 text-[11px]">(Máx. 4 — las nuevas se agregan a las existentes)</span>
-                        </h4>
-
-                        {{-- Fotos ya guardadas en la relación "imagenes" --}}
-                        @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                            <p class="text-xs font-semibold text-gray-500 mt-3 mb-2">Imágenes actuales del álbum:</p>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                                @foreach($restaurante->imagenes as $foto)
-                                    <div class="relative h-24 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                                        {{-- ✅ Usa ruta_foto según el modelo RestauranteFoto --}}
-                                        <img src="{{ asset('storage/' . $foto->ruta_foto) }}"
-                                             alt="Foto álbum"
-                                             class="w-full h-full object-cover">
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <p class="text-xs text-gray-400 mt-3 mb-3 flex items-center gap-1.5">
-                                <i class="fas fa-info-circle text-gray-300"></i>
-                                Este restaurante aún no tiene fotos en el álbum.
-                            </p>
-                        @endif
-
-                        {{-- Input para agregar nuevas fotos --}}
-                        <div class="relative group border-2 border-dashed border-gray-200 rounded-xl hover:border-orange-400 transition-colors bg-gray-50 min-h-[100px] flex flex-col justify-center items-center overflow-hidden">
-                            <input type="file" name="galeria[]" id="input-galeria" accept="image/*" multiple
-                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                            <div id="placeholder-galeria" class="pointer-events-none text-center space-y-2 px-4 py-5">
-                                <i class="fas fa-images text-3xl text-gray-300 group-hover:text-orange-400 transition-colors"></i>
-                                <p class="text-xs text-gray-400">Haz clic para agregar fotos al álbum</p>
-                                <p class="text-xs text-gray-300">Hasta 4 imágenes — JPG, PNG o WEBP</p>
-                            </div>
-                        </div>
-
-                        {{-- Preview de las nuevas fotos seleccionadas --}}
-                        <div id="galeria-preview-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 hidden"></div>
-                    </div>
-
-                    {{-- Separador --}}
-                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
-
-                    {{-- ══════════════════════════════════════════════════════════ --}}
-                    {{-- Sección 6: Ubicación y Mapa                              --}}
-                    {{-- Campos del modelo: direccion, latitud, longitud           --}}
-                    {{-- ══════════════════════════════════════════════════════════ --}}
-                    <div class="md:col-span-2">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2 mb-4">
-                            <i class="fas fa-map-marker-alt text-orange-400"></i> Ubicación del Restaurante
-                        </h4>
-
-                        {{-- Buscador de dirección --}}
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Dirección</label>
-                            <div class="flex gap-2">
-                                <div class="relative flex-1">
-                                    <div class="absolute inset-y-0 left-4 flex items-center text-gray-400 pointer-events-none">
-                                        <i class="fas fa-search text-sm"></i>
-                                    </div>
-                                    <input type="text" id="edit-direccion-buscar"
-                                           placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
-                                           class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50">
-                                </div>
-                                <button type="button" id="edit-btn-buscar-mapa"
-                                        class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-colors border-0 cursor-pointer whitespace-nowrap shadow-md shadow-orange-200">
-                                    <i class="fas fa-search mr-1"></i> Buscar
-                                </button>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
-                                <i class="fas fa-info-circle text-gray-300"></i>
-                                Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
-                            </p>
-                        </div>
-
-                        {{-- Campo dirección guardada --}}
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Dirección Exacta
-                                <span class="text-gray-400 font-normal">(se actualiza al buscar o hacer clic en el mapa)</span>
-                            </label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-4 flex items-center text-orange-400 pointer-events-none">
-                                    <i class="fas fa-map-pin text-sm"></i>
-                                </div>
-                                <input type="text" name="direccion" id="edit-direccion"
-                                       value="{{ old('direccion', $restaurante->direccion) }}"
-                                       placeholder="La dirección aparecerá aquí..."
-                                       class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent bg-gray-50/50">
-                            </div>
-                        </div>
-
-                        {{-- Coordenadas ocultas --}}
-                        <input type="hidden" name="latitud"  id="edit-latitud"  value="{{ old('latitud', $restaurante->latitud) }}">
-                        <input type="hidden" name="longitud" id="edit-longitud" value="{{ old('longitud', $restaurante->longitud) }}">
-
-                        {{-- Mapa Leaflet --}}
-                        <div id="edit-mapa-restaurante"
-                             class="w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm"
-                             style="height: 340px;"></div>
-
-                        <p id="edit-mapa-coords-info" class="text-xs text-gray-400 mt-2 hidden">
-                            <i class="fas fa-crosshairs text-orange-400 mr-1"></i>
-                            Coordenadas guardadas: <span id="edit-coords-display" class="font-mono text-gray-600 ml-1"></span>
-                        </p>
-                    </div>
-
-                    {{-- Separador --}}
-                    <div class="md:col-span-2 my-2 border-t border-gray-100"></div>
-
-                    {{-- Descripción --}}
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Descripción Comercial <span class="text-gray-400 font-normal">(opcional)</span></label>
-                        <textarea name="descripcion" rows="4"
-                                  class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-gray-50/50 resize-none"
-                                  placeholder="Escribe detalles breves sobre el menú, ambiente o historia del restaurante...">{{ old('descripcion', $restaurante->descripcion) }}</textarea>
                     </div>
 
                 </div>
             </div>
+        </div>
 
-            {{-- Botones de Control Inferior --}}
-            <div class="flex items-center justify-between px-2">
-                <a href="{{ route('admin.restaurantes.index') }}"
-                   class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors no-underline">
-                    <i class="fas fa-chevron-left mr-1 text-xs"></i> Cancelar cambios
-                </a>
-                <button type="submit"
-                        class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-3 rounded-xl transition-all shadow-md shadow-orange-200 text-sm">
-                    <i class="fas fa-sync-alt text-xs"></i> Guardar Cambios
-                </button>
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 2: Cuenta del Propietario            --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-person-badge text-warning"></i> Cuenta del Propietario
+                </h6>
+                <p class="text-muted small mb-4">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Deja la contraseña en blanco si no deseas cambiarla.
+                </p>
+
+                <div class="row g-4">
+
+                    {{-- Nombre del Propietario --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Nombre del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                            <input type="text" name="propietario_nombre" required
+                                   value="{{ old('propietario_nombre', $restaurante->propietario->name ?? '') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Nombre completo">
+                        </div>
+                    </div>
+
+                    {{-- Correo del Propietario --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Correo del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="propietario_email" required
+                                   value="{{ old('propietario_email', $restaurante->propietario->email ?? '') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="correo@propietario.com">
+                        </div>
+                    </div>
+
+                    {{-- Nueva Contraseña --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Nueva Contraseña <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="propietario_password" minlength="8"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Mínimo 8 caracteres">
+                        </div>
+                    </div>
+
+                    {{-- Confirmar Contraseña --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" name="propietario_password_confirmation" minlength="8"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Repite la contraseña">
+                        </div>
+                    </div>
+
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 3: Foto de Portada                   --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-image text-warning"></i> Foto de Portada
+                </h6>
 
-            // ─── Departamento / Municipio ────────────────────────────────────
-            const deptoSelect = document.getElementById('select-departamento');
-            const muniSelect  = document.getElementById('select-municipio');
+                <div class="row g-4 align-items-start">
 
-            function cargarMunicipios(deptoId, municipioSeleccionado = null) {
-                muniSelect.disabled = true;
-                muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+                    {{-- Imagen actual --}}
+                    <div class="col-12 col-md-6">
+                        <p class="small fw-semibold text-muted mb-2">Imagen actual:</p>
+                        @if($restaurante->foto_portada)
+                            <img id="img-portada-actual"
+                                 src="{{ asset('storage/' . $restaurante->foto_portada) }}"
+                                 alt="Portada actual"
+                                 class="w-100 rounded-3 border shadow-sm" style="height: 180px; object-fit: cover;">
+                        @else
+                            <div id="img-portada-actual"
+                                 class="w-100 rounded-3 border-2 border-dashed bg-light d-flex flex-column align-items-center justify-content-center text-muted gap-2"
+                                 style="height: 180px; border-style: dashed !important;">
+                                <i class="bi bi-image fs-2 text-secondary"></i>
+                                <span class="small">Sin imagen de portada</span>
+                            </div>
+                        @endif
+                    </div>
 
-                fetch(`/api/departamentos/${deptoId}/municipios`)
-                    .then(r => r.json())
-                    .then(data => {
-                        muniSelect.innerHTML = '<option value="">— Seleccionar municipio —</option>';
-                        if (data.length > 0) {
-                            data.forEach(muni => {
-                                const opt = document.createElement('option');
-                                opt.value = muni.id;
-                                opt.textContent = muni.nombre;
-                                if (municipioSeleccionado && muni.id == municipioSeleccionado) {
-                                    opt.selected = true;
-                                }
-                                muniSelect.appendChild(opt);
-                            });
-                            muniSelect.disabled = false;
-                        } else {
-                            muniSelect.innerHTML = '<option value="">Sin municipios registrados</option>';
-                        }
-                    })
-                    .catch(() => {
-                        muniSelect.innerHTML = '<option value="">Error de servidor</option>';
-                    });
-            }
+                    {{-- Input nueva imagen --}}
+                    <div class="col-12 col-md-6">
+                        <p class="small fw-semibold text-muted mb-2">Reemplazar imagen <span class="fw-normal">(opcional)</span></p>
+                        <label for="input-portada" class="w-100 cursor-pointer">
+                            <div class="rounded-3 border-2 bg-light d-flex flex-column align-items-center justify-content-center text-muted position-relative overflow-hidden"
+                                 style="height: 180px; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
+                                 onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
+                                <input type="file" name="imagen_principal" id="input-portada" accept="image/*"
+                                       class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
+                                <div id="placeholder-portada" class="text-center">
+                                    <i class="bi bi-cloud-upload fs-2 text-secondary"></i>
+                                    <p class="small text-muted mt-1 mb-0">Haz clic para seleccionar</p>
+                                    <p class="small text-secondary" style="font-size:0.75rem;">JPG, PNG o WEBP</p>
+                                </div>
+                                <img id="nueva-preview-portada" src="" alt=""
+                                     class="d-none position-absolute top-0 start-0 w-100 h-100" style="object-fit:cover;">
+                            </div>
+                        </label>
+                    </div>
 
-            deptoSelect.addEventListener('change', function () {
-                if (this.value) {
-                    cargarMunicipios(this.value);
-                } else {
-                    muniSelect.innerHTML = '<option value="">— Primero elige departamento —</option>';
-                    muniSelect.disabled = true;
-                }
-            });
+                </div>
+            </div>
+        </div>
 
-            const deptoInicial = deptoSelect.value;
-            const muniInicial  = "{{ old('municipio_id', $restaurante->municipio_id) }}";
-            if (deptoInicial) cargarMunicipios(deptoInicial, muniInicial);
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 4: Galería de Fotos                  --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-images text-warning"></i> Fotos del Álbum
+                    <span class="fw-normal text-capitalize text-secondary" style="font-size: 0.7rem;">(Máx. 4 — las nuevas se agregan a las existentes)</span>
+                </h6>
 
+                {{-- Fotos existentes --}}
+                @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
+                    <p class="small fw-semibold text-muted mt-3 mb-2">Imágenes actuales del álbum:</p>
+                    <div class="row g-3 mb-4">
+                        @foreach($restaurante->imagenes as $foto)
+                            <div class="col-6 col-sm-3">
+                                <div class="rounded-3 border overflow-hidden shadow-sm" style="height: 90px;">
+                                    <img src="{{ asset('storage/' . $foto->ruta_foto) }}" alt="Foto álbum"
+                                         class="w-100 h-100" style="object-fit: cover;">
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="small text-muted mt-3 mb-3">
+                        <i class="bi bi-info-circle text-secondary me-1"></i>
+                        Este restaurante aún no tiene fotos en el álbum.
+                    </p>
+                @endif
 
-            // ─── Preview Foto de Portada ─────────────────────────────────────
-            const inputPortada        = document.getElementById('input-portada');
-            const nuevaPreviewPortada = document.getElementById('nueva-preview-portada');
-            const placeholderPortada  = document.getElementById('placeholder-portada');
+                {{-- Input para nuevas fotos --}}
+                <label for="input-galeria" class="w-100 cursor-pointer">
+                    <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
+                         style="min-height: 100px; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
+                         onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
+                        <input type="file" name="galeria[]" id="input-galeria" accept="image/*" multiple
+                               class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
+                        <div id="placeholder-galeria" class="text-center py-3">
+                            <i class="bi bi-images fs-2 text-secondary"></i>
+                            <p class="small text-muted mt-1 mb-0">Haz clic para agregar fotos al álbum</p>
+                            <p class="small text-secondary" style="font-size:0.75rem;">Hasta 4 imágenes — JPG, PNG o WEBP</p>
+                        </div>
+                    </div>
+                </label>
 
-            inputPortada.addEventListener('change', function () {
-                const file = this.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = e => {
-                    // Actualiza visualmente la imagen "actual" al instante
-                    const actual = document.getElementById('img-portada-actual');
-                    if (actual.tagName === 'IMG') {
-                        actual.src = e.target.result;
+                {{-- Preview nuevas fotos --}}
+                <div id="galeria-preview-container" class="row g-3 mt-1 d-none"></div>
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 5: Ubicación y Mapa                  --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-geo-alt text-warning"></i> Ubicación del Restaurante
+                </h6>
+
+                {{-- Buscador --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">Buscar Dirección</label>
+                    <div class="d-flex gap-2">
+                        <div class="input-group flex-1">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                            <input type="text" id="edit-direccion-buscar"
+                                   placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                        <button type="button" id="edit-btn-buscar-mapa"
+                                class="btn btn-warning fw-semibold px-4 text-dark" style="white-space:nowrap;">
+                            <i class="bi bi-search me-1"></i> Buscar
+                        </button>
+                    </div>
+                    <p class="small text-muted mt-1 mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
+                    </p>
+                </div>
+
+                {{-- Dirección exacta --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Dirección Exacta <span class="text-muted fw-normal">(se actualiza al buscar o hacer clic en el mapa)</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0" style="color:#f97316;"><i class="bi bi-pin-map-fill"></i></span>
+                        <input type="text" name="direccion" id="edit-direccion"
+                               value="{{ old('direccion', $restaurante->direccion) }}"
+                               placeholder="La dirección aparecerá aquí..."
+                               class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                    </div>
+                </div>
+
+                {{-- Coordenadas ocultas --}}
+                <input type="hidden" name="latitud"  id="edit-latitud"  value="{{ old('latitud', $restaurante->latitud) }}">
+                <input type="hidden" name="longitud" id="edit-longitud" value="{{ old('longitud', $restaurante->longitud) }}">
+
+                {{-- Mapa --}}
+                <div id="edit-mapa-restaurante" class="w-100 rounded-3 border shadow-sm" style="height: 340px;"></div>
+
+                <p id="edit-mapa-coords-info" class="small text-muted mt-2 d-none">
+                    <i class="bi bi-crosshair text-warning me-1"></i>
+                    Coordenadas guardadas: <span id="edit-coords-display" class="font-monospace text-dark ms-1"></span>
+                </p>
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 6: Descripción                       --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-text-paragraph text-warning"></i> Descripción Comercial
+                </h6>
+                <textarea name="descripcion" rows="4"
+                          class="form-control bg-light" style="box-shadow:none; resize:none;"
+                          placeholder="Escribe detalles breves sobre el menú, ambiente o historia del restaurante...">{{ old('descripcion', $restaurante->descripcion) }}</textarea>
+            </div>
+        </div>
+
+        {{-- ── Botones de Control ── --}}
+        <div class="d-flex align-items-center justify-content-between mt-2 mb-4">
+            <a href="{{ route('admin.restaurantes.index') }}"
+               class="text-muted text-decoration-none small fw-medium">
+                <i class="bi bi-chevron-left me-1"></i> Cancelar cambios
+            </a>
+            <button type="submit" class="btn btn-primary fw-semibold px-5 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-check2-circle me-1"></i> Guardar Cambios
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<style>
+    .cursor-pointer { cursor: pointer; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ─── Departamento / Municipio ────────────────────────────────────
+        const deptoSelect = document.getElementById('select-departamento');
+        const muniSelect  = document.getElementById('select-municipio');
+
+        function cargarMunicipios(deptoId, municipioSeleccionado = null) {
+            muniSelect.disabled = true;
+            muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+
+            fetch(`/api/departamentos/${deptoId}/municipios`)
+                .then(r => r.json())
+                .then(data => {
+                    muniSelect.innerHTML = '<option value="">— Seleccionar municipio —</option>';
+                    if (data.length > 0) {
+                        data.forEach(muni => {
+                            const opt = document.createElement('option');
+                            opt.value = muni.id;
+                            opt.textContent = muni.nombre;
+                            if (municipioSeleccionado && muni.id == municipioSeleccionado) {
+                                opt.selected = true;
+                            }
+                            muniSelect.appendChild(opt);
+                        });
+                        muniSelect.disabled = false;
                     } else {
-                        const img = document.createElement('img');
-                        img.id = 'img-portada-actual';
-                        img.src = e.target.result;
-                        img.alt = 'Nueva portada';
-                        img.className = 'w-full h-44 object-cover rounded-xl border border-gray-200 shadow-sm';
-                        actual.replaceWith(img);
+                        muniSelect.innerHTML = '<option value="">Sin municipios registrados</option>';
                     }
-                    nuevaPreviewPortada.src = e.target.result;
-                    nuevaPreviewPortada.classList.remove('hidden');
-                    placeholderPortada.classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
-            });
+                })
+                .catch(() => {
+                    muniSelect.innerHTML = '<option value="">Error de servidor</option>';
+                });
+        }
 
-
-            // ─── Preview Galería ─────────────────────────────────────────────
-            const inputGaleria   = document.getElementById('input-galeria');
-            const galeriaPreview = document.getElementById('galeria-preview-container');
-            const placeholderGal = document.getElementById('placeholder-galeria');
-
-            inputGaleria.addEventListener('change', function () {
-                galeriaPreview.innerHTML = '';
-                const files = Array.from(this.files).slice(0, 4);
-
-                if (files.length > 0) {
-                    galeriaPreview.classList.remove('hidden');
-                    placeholderGal.classList.add('opacity-40');
-
-                    files.forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = e => {
-                            const div = document.createElement('div');
-                            div.className = 'relative h-24 rounded-xl overflow-hidden border-2 border-orange-300 shadow-sm';
-
-                            const badge = document.createElement('span');
-                            badge.className = 'absolute top-1 right-1 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10';
-                            badge.textContent = 'NUEVA';
-
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.className = 'w-full h-full object-cover';
-
-                            div.appendChild(badge);
-                            div.appendChild(img);
-                            galeriaPreview.appendChild(div);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                } else {
-                    galeriaPreview.classList.add('hidden');
-                    placeholderGal.classList.remove('opacity-40');
-                }
-            });
-
+        deptoSelect.addEventListener('change', function () {
+            if (this.value) {
+                cargarMunicipios(this.value);
+            } else {
+                muniSelect.innerHTML = '<option value="">— Primero elige departamento —</option>';
+                muniSelect.disabled = true;
+            }
         });
-    </script>
 
-    {{-- Leaflet JS --}}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        const deptoInicial = deptoSelect.value;
+        const muniInicial  = "{{ old('municipio_id', $restaurante->municipio_id) }}";
+        if (deptoInicial) cargarMunicipios(deptoInicial, muniInicial);
 
-    {{-- ─── Mapa de Ubicación ──────────────────────────────────────────────── --}}
-    <script>
-    (function () {
-        function initEditMapa() {
+        // ─── Preview Foto de Portada ─────────────────────────────────────
+        document.getElementById('input-portada').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const actual = document.getElementById('img-portada-actual');
+                if (actual.tagName === 'IMG') {
+                    actual.src = e.target.result;
+                } else {
+                    const img = document.createElement('img');
+                    img.id = 'img-portada-actual';
+                    img.src = e.target.result;
+                    img.alt = 'Nueva portada';
+                    img.className = 'w-100 rounded-3 border shadow-sm';
+                    img.style.cssText = 'height:180px;object-fit:cover;';
+                    actual.replaceWith(img);
+                }
+                const preview = document.getElementById('nueva-preview-portada');
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                document.getElementById('placeholder-portada').classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
+        });
 
-            const defaultLat = 12.8654;
-            const defaultLng = -85.2072;
+        // ─── Preview Galería ─────────────────────────────────────────────
+        document.getElementById('input-galeria').addEventListener('change', function () {
+            const galeriaPreview = document.getElementById('galeria-preview-container');
+            galeriaPreview.innerHTML = '';
+            const files = Array.from(this.files).slice(0, 4);
 
-            const savedLat = document.getElementById('edit-latitud').value;
-            const savedLng = document.getElementById('edit-longitud').value;
+            if (files.length > 0) {
+                galeriaPreview.classList.remove('d-none');
+                document.getElementById('placeholder-galeria').classList.add('opacity-50');
 
-            const initLat  = savedLat ? parseFloat(savedLat) : defaultLat;
-            const initLng  = savedLng ? parseFloat(savedLng) : defaultLng;
-            const initZoom = savedLat ? 16 : 7;
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const col = document.createElement('div');
+                        col.className = 'col-6 col-sm-3';
 
-            // Inicializar mapa
-            const mapa = L.map('edit-mapa-restaurante').setView([initLat, initLng], initZoom);
+                        const div = document.createElement('div');
+                        div.className = 'rounded-3 border-2 overflow-hidden position-relative shadow-sm';
+                        div.style.cssText = 'height:90px;border:2px solid #ffc107 !important;';
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(mapa);
+                        const badge = document.createElement('span');
+                        badge.className = 'position-absolute top-0 end-0 m-1 badge bg-warning text-dark';
+                        badge.style.fontSize = '0.65rem';
+                        badge.textContent = 'NUEVA';
 
-            // Ícono naranja personalizado
-            const iconoNaranja = L.divIcon({
-                html: '<div style="background:#ea580c;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
-                iconSize: [20, 20],
-                iconAnchor: [10, 20],
-                className: ''
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-100 h-100';
+                        img.style.objectFit = 'cover';
+
+                        div.appendChild(badge);
+                        div.appendChild(img);
+                        col.appendChild(div);
+                        galeriaPreview.appendChild(col);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                galeriaPreview.classList.add('d-none');
+                document.getElementById('placeholder-galeria').classList.remove('opacity-50');
+            }
+        });
+
+    });
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+(function () {
+    function initEditMapa() {
+        const defaultLat = 12.8654;
+        const defaultLng = -85.2072;
+
+        const savedLat = document.getElementById('edit-latitud').value;
+        const savedLng = document.getElementById('edit-longitud').value;
+
+        const initLat  = savedLat ? parseFloat(savedLat) : defaultLat;
+        const initLng  = savedLng ? parseFloat(savedLng) : defaultLng;
+        const initZoom = savedLat ? 16 : 7;
+
+        const mapa = L.map('edit-mapa-restaurante').setView([initLat, initLng], initZoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mapa);
+
+        const iconoNaranja = L.divIcon({
+            html: '<div style="background:#ffc107;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            className: ''
+        });
+
+        let marker = null;
+
+        if (savedLat && savedLng) {
+            marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+            actualizarInfo(initLat, initLng);
+            marker.on('dragend', function () {
+                const pos = marker.getLatLng();
+                actualizarCoordenadas(pos.lat, pos.lng);
+                geocodeInverso(pos.lat, pos.lng);
             });
+        }
 
-            let marker = null;
-
-            // Si el restaurante ya tiene coordenadas, mostrar el pin
-            if (savedLat && savedLng) {
-                marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
-                actualizarInfo(initLat, initLng);
-
+        mapa.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
                 marker.on('dragend', function () {
                     const pos = marker.getLatLng();
                     actualizarCoordenadas(pos.lat, pos.lng);
                     geocodeInverso(pos.lat, pos.lng);
                 });
             }
+            actualizarCoordenadas(lat, lng);
+            geocodeInverso(lat, lng);
+        });
 
-            // Clic en el mapa → colocar / mover pin
-            mapa.on('click', function (e) {
-                const { lat, lng } = e.latlng;
+        document.getElementById('edit-btn-buscar-mapa').addEventListener('click', buscarDireccion);
+        document.getElementById('edit-direccion-buscar').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
+        });
+
+        function buscarDireccion() {
+            const query = document.getElementById('edit-direccion-buscar').value.trim();
+            if (!query) return;
+
+            const btn = document.getElementById('edit-btn-buscar-mapa');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
+            btn.disabled = true;
+
+            const queryFinal = query.toLowerCase().includes('nicaragua') ? query : query + ', Nicaragua';
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
+                headers: { 'Accept-Language': 'es' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+                btn.disabled = false;
+
+                if (data.length === 0) {
+                    alert('No se encontró esa dirección. Intenta ser más específico o haz clic directamente en el mapa.');
+                    return;
+                }
+
+                const lat = parseFloat(data[0].lat);
+                const lng = parseFloat(data[0].lon);
+                mapa.setView([lat, lng], 17);
+
                 if (marker) {
                     marker.setLatLng([lat, lng]);
                 } else {
@@ -557,99 +650,48 @@
                         geocodeInverso(pos.lat, pos.lng);
                     });
                 }
+
                 actualizarCoordenadas(lat, lng);
-                geocodeInverso(lat, lng);
+                document.getElementById('edit-direccion').value = data[0].display_name;
+            })
+            .catch(() => {
+                btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+                btn.disabled = false;
+                alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
             });
-
-            // Botón buscar
-            document.getElementById('edit-btn-buscar-mapa').addEventListener('click', buscarDireccion);
-            document.getElementById('edit-direccion-buscar').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
-            });
-
-            function buscarDireccion() {
-                const query = document.getElementById('edit-direccion-buscar').value.trim();
-                if (!query) return;
-
-                const btn = document.getElementById('edit-btn-buscar-mapa');
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Buscando...';
-                btn.disabled = true;
-
-                const queryFinal = query.toLowerCase().includes('nicaragua')
-                    ? query
-                    : query + ', Nicaragua';
-
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
-                    headers: { 'Accept-Language': 'es' }
-                })
-                .then(r => r.json())
-                .then(data => {
-                    btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
-                    btn.disabled = false;
-
-                    if (data.length === 0) {
-                        alert('No se encontró esa dirección. Intenta ser más específico o haz clic directamente en el mapa.');
-                        return;
-                    }
-
-                    const lat = parseFloat(data[0].lat);
-                    const lng = parseFloat(data[0].lon);
-
-                    mapa.setView([lat, lng], 17);
-
-                    if (marker) {
-                        marker.setLatLng([lat, lng]);
-                    } else {
-                        marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
-                        marker.on('dragend', function () {
-                            const pos = marker.getLatLng();
-                            actualizarCoordenadas(pos.lat, pos.lng);
-                            geocodeInverso(pos.lat, pos.lng);
-                        });
-                    }
-
-                    actualizarCoordenadas(lat, lng);
-                    document.getElementById('edit-direccion').value = data[0].display_name;
-                })
-                .catch(() => {
-                    btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
-                    btn.disabled = false;
-                    alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
-                });
-            }
-
-            function geocodeInverso(lat, lng) {
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
-                    headers: { 'Accept-Language': 'es' }
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data && data.display_name) {
-                        document.getElementById('edit-direccion').value = data.display_name;
-                    }
-                })
-                .catch(() => {});
-            }
-
-            function actualizarCoordenadas(lat, lng) {
-                document.getElementById('edit-latitud').value  = lat.toFixed(7);
-                document.getElementById('edit-longitud').value = lng.toFixed(7);
-                actualizarInfo(lat, lng);
-            }
-
-            function actualizarInfo(lat, lng) {
-                document.getElementById('edit-mapa-coords-info').classList.remove('hidden');
-                document.getElementById('edit-coords-display').textContent =
-                    `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-            }
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initEditMapa);
-        } else {
-            initEditMapa();
+        function geocodeInverso(lat, lng) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
+                headers: { 'Accept-Language': 'es' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.display_name) {
+                    document.getElementById('edit-direccion').value = data.display_name;
+                }
+            })
+            .catch(() => {});
         }
-    })();
-    </script>
 
-</x-app-layout>
+        function actualizarCoordenadas(lat, lng) {
+            document.getElementById('edit-latitud').value  = lat.toFixed(7);
+            document.getElementById('edit-longitud').value = lng.toFixed(7);
+            actualizarInfo(lat, lng);
+        }
+
+        function actualizarInfo(lat, lng) {
+            document.getElementById('edit-mapa-coords-info').classList.remove('d-none');
+            document.getElementById('edit-coords-display').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initEditMapa);
+    } else {
+        initEditMapa();
+    }
+})();
+</script>
+
+@endsection

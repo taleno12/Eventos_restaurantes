@@ -1,193 +1,237 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('admin.empleos.index') }}"
-               class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors text-gray-500"
-               style="text-decoration: none;">
-                <i class="fas fa-arrow-left text-sm"></i>
-            </a>
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 m-0">
-                    <i class="fas fa-plus-circle text-blue-500"></i>
-                    Nueva Oferta de Empleo
-                </h2>
-                <p class="text-sm text-gray-500 mt-0.5 mb-0">Completa los campos para publicar una vacante.</p>
-            </div>
+@extends('layouts.app')
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+@section('content')
+<div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    {{-- ── Encabezado ── --}}
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="{{ route('admin.empleos.index') }}"
+           class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center"
+           style="width: 38px; height: 38px;">
+            <i class="bi bi-arrow-left text-secondary"></i>
+        </a>
+        <div>
+            <h1 class="h3 mb-0 fw-bold text-dark">
+                <i class="bi bi-plus-circle text-primary me-2"></i> Nueva Oferta de Empleo
+            </h1>
+            <p class="text-muted small mb-0">Completa los campos para publicar una vacante.</p>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="max-w-3xl mx-auto" style="padding: 20px 0;">
-        <form action="{{ route('admin.empleos.store') }}" method="POST" style="display: flex; flex-direction: column; gap: 24px;">
-            @csrf
+    <form action="{{ route('admin.empleos.store') }}" method="POST" id="form-empleo">
+        @csrf
 
-            {{-- Errores globales --}}
-            @if($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl text-sm">
-                    <p class="font-semibold mb-1"><i class="fas fa-exclamation-circle mr-1"></i> Corrige los siguientes errores:</p>
-                    <ul class="list-disc list-inside space-y-0.5" style="margin: 0; padding-left: 5px;">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+        {{-- Errores globales --}}
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                <div class="d-flex align-items-start gap-2">
+                    <i class="bi bi-exclamation-circle-fill fs-5"></i>
+                    <div>
+                        <p class="fw-semibold mb-1">Corrige los siguientes errores:</p>
+                        <ul class="mb-0 ps-3">
+                            @foreach($errors->all() as $error)
+                                <li class="small">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
-            @endif
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
-            {{-- Card principal --}}
-            <div class="bg-white rounded-2xl p-6" style="border: 1px solid #f0f0f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 20px;">
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD: Información de la Vacante           --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
 
-                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 pb-3" style="margin: 0; font-size: 0.75rem; letter-spacing: 1px;">
-                    Información de la Vacante
-                </h3>
+                <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2"
+                    style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-briefcase text-primary"></i> Información de la Vacante
+                </h6>
 
-                {{-- PASO 1: Departamento --}}
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label class="block text-sm font-semibold text-gray-700">
-                        Departamento de la Vacante <span class="text-red-500">*</span>
+                {{-- Departamento --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Departamento de la Vacante <span class="text-danger">*</span>
                     </label>
-                    <select id="select-departamento" name="departamento_id"
-                            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('departamento_id') border-red-400 @enderror" required>
-                        <option value="">— Seleccionar departamento —</option>
-                        @foreach($departamentos as $depto)
-                            <option value="{{ $depto->id }}" {{ old('departamento_id') == $depto->id ? 'selected' : '' }}>
-                                {{ $depto->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('departamento_id')
-                        <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Grid de Municipio y Restaurante --}}
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-                    {{-- PASO 2: Municipio --}}
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label class="block text-sm font-semibold text-gray-700">
-                            Municipio de la Vacante <span class="text-red-500">*</span>
-                        </label>
-                        <select id="select-municipio" name="municipio_id" disabled
-                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-60 @error('municipio_id') border-red-400 @enderror" required>
-                            <option value="">— Primero elige departamento —</option>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                        <select id="select-departamento" name="departamento_id" required
+                                class="form-select bg-light border-start-0 ps-0 @error('departamento_id') is-invalid @enderror"
+                                style="box-shadow:none;">
+                            <option value="">— Seleccionar departamento —</option>
+                            @foreach($departamentos as $depto)
+                                <option value="{{ $depto->id }}" {{ old('departamento_id') == $depto->id ? 'selected' : '' }}>
+                                    {{ $depto->nombre }}
+                                </option>
+                            @endforeach
                         </select>
-                        @error('municipio_id')
-                            <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
+                        @error('departamento_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
 
-                    {{-- PASO 3: Restaurante --}}
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label class="block text-sm font-semibold text-gray-700">
-                            Restaurante <span class="text-red-500">*</span>
+                {{-- Municipio + Restaurante --}}
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">
+                            Municipio de la Vacante <span class="text-danger">*</span>
                         </label>
-                        <select id="select-restaurante" name="restaurante_id" disabled
-                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-60 @error('restaurante_id') border-red-400 @enderror" required>
-                            <option value="">— Primero elige municipio —</option>
-                        </select>
-                        @error('restaurante_id')
-                            <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
-                        @enderror
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                            <select id="select-municipio" name="municipio_id" required disabled
+                                    class="form-select bg-light border-start-0 ps-0 @error('municipio_id') is-invalid @enderror"
+                                    style="box-shadow:none;">
+                                <option value="">— Primero elige departamento —</option>
+                            </select>
+                            @error('municipio_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">
+                            Restaurante <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                            <select id="select-restaurante" name="restaurante_id" required disabled
+                                    class="form-select bg-light border-start-0 ps-0 @error('restaurante_id') is-invalid @enderror"
+                                    style="box-shadow:none;">
+                                <option value="">— Primero elige municipio —</option>
+                            </select>
+                            @error('restaurante_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
                 {{-- Título del puesto --}}
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label class="block text-sm font-semibold text-gray-700">
-                        Título del puesto <span class="text-red-500">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Título del puesto <span class="text-danger">*</span>
                     </label>
-                    <input type="text" name="titulo" value="{{ old('titulo') }}"
-                           placeholder="Ej: Mesero, Chef de cocina, Cajero..."
-                           class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('titulo') border-red-400 @enderror" required>
-                    @error('titulo')
-                        <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
-                    @enderror
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-workspace"></i></span>
+                        <input type="text" name="titulo" value="{{ old('titulo') }}" required
+                               placeholder="Ej: Mesero, Chef de cocina, Cajero..."
+                               class="form-control bg-light border-start-0 ps-0 @error('titulo') is-invalid @enderror"
+                               style="box-shadow:none;">
+                        @error('titulo')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 {{-- Descripción --}}
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label class="block text-sm font-semibold text-gray-700">
-                        Descripción del puesto <span class="text-red-500">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Descripción del puesto <span class="text-danger">*</span>
                     </label>
-                    <textarea name="descripcion" rows="4"
+                    <textarea name="descripcion" rows="4" required
                               placeholder="Describe las responsabilidades y funciones del puesto..."
-                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none @error('descripcion') border-red-400 @enderror" required>{{ old('descripcion') }}</textarea>
+                              class="form-control bg-light @error('descripcion') is-invalid @enderror"
+                              style="box-shadow:none;resize:none;">{{ old('descripcion') }}</textarea>
                     @error('descripcion')
-                        <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 {{-- Requisitos --}}
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label class="block text-sm font-semibold text-gray-700">
-                        Requisitos <span class="text-gray-400 font-normal">(opcional)</span>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Requisitos <span class="text-muted fw-normal">(opcional)</span>
                     </label>
                     <textarea name="requisitos" rows="3"
                               placeholder="Experiencia requerida, estudios, habilidades..."
-                              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none">{{ old('requisitos') }}</textarea>
+                              class="form-control bg-light"
+                              style="box-shadow:none;resize:none;">{{ old('requisitos') }}</textarea>
                 </div>
 
                 {{-- Tipo contrato + Salario --}}
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label class="block text-sm font-semibold text-gray-700">Tipo de contrato</label>
-                        <select name="tipo_contrato"
-                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                            <option value="">— Seleccionar —</option>
-                            @foreach(['Tiempo completo', 'Medio tiempo', 'Por horas', 'Temporal', 'Fines de semana'] as $tipo)
-                                <option value="{{ $tipo }}" {{ old('tipo_contrato') == $tipo ? 'selected' : '' }}>
-                                    {{ $tipo }}
-                                </option>
-                            @endforeach
-                        </select>
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Tipo de contrato</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-file-earmark-text"></i></span>
+                            <select name="tipo_contrato"
+                                    class="form-select bg-light border-start-0 ps-0"
+                                    style="box-shadow:none;">
+                                <option value="">— Seleccionar —</option>
+                                @foreach(['Tiempo completo','Medio tiempo','Por horas','Temporal','Fines de semana'] as $tipo)
+                                    <option value="{{ $tipo }}" {{ old('tipo_contrato') == $tipo ? 'selected' : '' }}>
+                                        {{ $tipo }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label class="block text-sm font-semibold text-gray-700">
-                            Salario mensual (C$) <span class="text-gray-400 font-normal">(opcional)</span>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">
+                            Salario mensual (C$) <span class="text-muted fw-normal">(opcional)</span>
                         </label>
-                        <input type="number" name="salario" value="{{ old('salario') }}"
-                               placeholder="Ej: 8000  (dejar vacío = En entrevista)"
-                               min="0" step="0.01"
-                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('salario') border-red-400 @enderror">
-                        @error('salario')
-                            <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
-                        @enderror
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-cash-coin"></i></span>
+                            <input type="number" name="salario" value="{{ old('salario') }}"
+                                   placeholder="Ej: 8000  (vacío = En entrevista)"
+                                   min="0" step="0.01"
+                                   class="form-control bg-light border-start-0 ps-0 @error('salario') is-invalid @enderror"
+                                   style="box-shadow:none;">
+                            @error('salario')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
-                {{-- Fecha límite + Estado --}}
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label class="block text-sm font-semibold text-gray-700">
-                            Fecha límite de aplicación <span class="text-gray-400 font-normal">(opcional)</span>
+                {{-- Fecha límite + Toggle estado --}}
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">
+                            Fecha límite de aplicación <span class="text-muted fw-normal">(opcional)</span>
                         </label>
-                        <input type="date" name="fecha_limite" value="{{ old('fecha_limite') }}"
-                               class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 @error('fecha_limite') border-red-400 @enderror">
-                        @error('fecha_limite')
-                            <p class="text-red-500 text-xs mt-1" style="margin: 0;">{{ $message }}</p>
-                        @enderror
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
+                            <input type="date" name="fecha_limite" value="{{ old('fecha_limite') }}"
+                                   class="form-control bg-light border-start-0 ps-0 @error('fecha_limite') is-invalid @enderror"
+                                   style="box-shadow:none;">
+                            @error('fecha_limite')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
-                    {{-- ✅ TOGGLE MEJORADO --}}
-                    <div style="display: flex; align-items: center; padding-top: 24px;">
+                    {{-- Toggle estado --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small d-block">Estado de la oferta</label>
                         <input type="hidden" name="activo" value="0">
                         <input type="checkbox" name="activo" value="1" id="activo"
                                {{ old('activo', '1') ? 'checked' : '' }}
-                               style="display: none;"
-                               onchange="actualizarEstadoToggle(this)">
+                               class="d-none" onchange="actualizarToggle(this)">
 
                         <label for="activo" id="toggle-label"
-                               style="display: inline-flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; margin: 0; padding: 10px 16px; border-radius: 12px; border: 2px solid; transition: all 0.2s ease;">
-                            {{-- Track del toggle --}}
+                               class="d-inline-flex align-items-center gap-3 rounded-3 px-3 py-2 w-100"
+                               style="cursor:pointer;user-select:none;border:2px solid;transition:all 0.2s;">
+                            {{-- Track --}}
                             <div id="toggle-track"
-                                 style="position: relative; width: 48px; height: 26px; border-radius: 999px; transition: background 0.2s ease; flex-shrink: 0;">
+                                 class="position-relative flex-shrink-0"
+                                 style="width:48px;height:26px;border-radius:999px;transition:background 0.2s;">
                                 <div id="toggle-thumb"
-                                     style="position: absolute; top: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left 0.2s ease;"></div>
+                                     class="position-absolute"
+                                     style="top:3px;width:20px;height:20px;background:white;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:left 0.2s;"></div>
                             </div>
-                            {{-- Ícono + Texto --}}
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <i id="toggle-icon" class="fas" style="font-size: 15px;"></i>
+                            {{-- Texto --}}
+                            <div class="d-flex align-items-center gap-2">
+                                <i id="toggle-icon" class="bi" style="font-size:1rem;"></i>
                                 <div>
-                                    <div id="toggle-texto" style="font-size: 0.875rem; font-weight: 700; line-height: 1.2;"></div>
-                                    <div id="toggle-subtexto" style="font-size: 0.72rem; font-weight: 400; opacity: 0.75; line-height: 1.2;"></div>
+                                    <div id="toggle-texto" class="fw-bold" style="font-size:0.875rem;line-height:1.2;"></div>
+                                    <div id="toggle-subtexto" style="font-size:0.72rem;line-height:1.2;opacity:0.75;"></div>
                                 </div>
                             </div>
                         </label>
@@ -195,137 +239,138 @@
                 </div>
 
             </div>
+        </div>
 
-            {{-- Botones --}}
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 8px;">
-                <a href="{{ route('admin.empleos.index') }}"
-                   class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
-                   style="text-decoration: none;">
-                    Cancelar
-                </a>
-                <button type="submit"
-                        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-all shadow border-0 cursor-pointer">
-                    <i class="fas fa-paper-plane"></i> Publicar Oferta
-                </button>
-            </div>
-        </form>
-    </div>
+        {{-- ── Botones ── --}}
+        <div class="d-flex align-items-center justify-content-between mt-2 mb-4">
+            <a href="{{ route('admin.empleos.index') }}"
+               class="text-muted text-decoration-none small fw-medium">
+                <i class="bi bi-chevron-left me-1"></i> Cancelar
+            </a>
+            <button type="submit" id="btn-submit"
+                    class="btn btn-primary fw-semibold px-5 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-send me-1"></i> Publicar Oferta
+            </button>
+        </div>
 
-    <script>
-        // ─── Función del Toggle Visual ────────────────────────────────────────
-        function actualizarEstadoToggle(checkbox) {
-            const label    = document.getElementById('toggle-label');
-            const track    = document.getElementById('toggle-track');
-            const thumb    = document.getElementById('toggle-thumb');
-            const icon     = document.getElementById('toggle-icon');
-            const texto    = document.getElementById('toggle-texto');
-            const subtexto = document.getElementById('toggle-subtexto');
+    </form>
+</div>
 
-            if (checkbox.checked) {
-                // ── ACTIVO ──
-                label.style.borderColor     = '#2563eb';
-                label.style.backgroundColor = '#eff6ff';
-                track.style.backgroundColor = '#2563eb';
-                thumb.style.left            = '25px';
-                icon.className              = 'fas fa-circle-check';
-                icon.style.color            = '#2563eb';
-                texto.textContent           = 'Oferta Activa';
-                texto.style.color           = '#1d4ed8';
-                subtexto.textContent        = 'Visible para los postulantes';
-                subtexto.style.color        = '#3b82f6';
-            } else {
-                // ── INACTIVO ──
-                label.style.borderColor     = '#d1d5db';
-                label.style.backgroundColor = '#f9fafb';
-                track.style.backgroundColor = '#9ca3af';
-                thumb.style.left            = '3px';
-                icon.className              = 'fas fa-circle-xmark';
-                icon.style.color            = '#6b7280';
-                texto.textContent           = 'Oferta Inactiva';
-                texto.style.color           = '#374151';
-                subtexto.textContent        = 'No visible para postulantes';
-                subtexto.style.color        = '#9ca3af';
-            }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ── Toggle visual ──
+    function actualizarToggle(checkbox) {
+        const label    = document.getElementById('toggle-label');
+        const track    = document.getElementById('toggle-track');
+        const thumb    = document.getElementById('toggle-thumb');
+        const icon     = document.getElementById('toggle-icon');
+        const texto    = document.getElementById('toggle-texto');
+        const subtexto = document.getElementById('toggle-subtexto');
+
+        if (checkbox.checked) {
+            label.style.borderColor     = '#2563eb';
+            label.style.backgroundColor = '#eff6ff';
+            track.style.backgroundColor = '#2563eb';
+            thumb.style.left            = '25px';
+            icon.className              = 'bi bi-check-circle-fill';
+            icon.style.color            = '#2563eb';
+            texto.textContent           = 'Oferta Activa';
+            texto.style.color           = '#1d4ed8';
+            subtexto.textContent        = 'Visible para los postulantes';
+            subtexto.style.color        = '#3b82f6';
+        } else {
+            label.style.borderColor     = '#d1d5db';
+            label.style.backgroundColor = '#f9fafb';
+            track.style.backgroundColor = '#9ca3af';
+            thumb.style.left            = '3px';
+            icon.className              = 'bi bi-x-circle-fill';
+            icon.style.color            = '#6b7280';
+            texto.textContent           = 'Oferta Inactiva';
+            texto.style.color           = '#374151';
+            subtexto.textContent        = 'No visible para postulantes';
+            subtexto.style.color        = '#9ca3af';
         }
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-            // Inicializar el toggle con su estado correcto al cargar la página
-            const checkbox = document.getElementById('activo');
-            actualizarEstadoToggle(checkbox);
+        // Inicializar toggle
+        actualizarToggle(document.getElementById('activo'));
 
-            // ─── Encadenamiento Departamento → Municipio → Restaurante ────────
-            const deptoSelect = document.getElementById('select-departamento');
-            const muniSelect  = document.getElementById('select-municipio');
-            const restSelect  = document.getElementById('select-restaurante');
+        // ── Encadenamiento departamento → municipio → restaurante ──
+        const deptoSelect = document.getElementById('select-departamento');
+        const muniSelect  = document.getElementById('select-municipio');
+        const restSelect  = document.getElementById('select-restaurante');
 
-            // --- EVENTO 1: Cambia el Departamento ---
-            deptoSelect.addEventListener('change', function () {
-                const deptoId = this.value;
+        deptoSelect.addEventListener('change', function () {
+            const deptoId = this.value;
+            muniSelect.disabled = true;
+            muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+            restSelect.disabled = true;
+            restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
 
-                muniSelect.disabled = true;
-                muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
-                restSelect.disabled = true;
-                restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
-
-                if (deptoId) {
-                    fetch(`/api/departamentos/${deptoId}/municipios`)
-                        .then(response => response.json())
-                        .then(data => {
-                            muniSelect.innerHTML = '<option value="">— Seleccionar municipio —</option>';
-                            if (data.length > 0) {
-                                data.forEach(muni => {
-                                    const option = document.createElement('option');
-                                    option.value = muni.id;
-                                    option.textContent = muni.nombre;
-                                    muniSelect.appendChild(option);
-                                });
-                                muniSelect.disabled = false;
-                            } else {
-                                muniSelect.innerHTML = '<option value="">Sin municipios registrados</option>';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            muniSelect.innerHTML = '<option value="">Error de servidor</option>';
+            if (!deptoId) {
+                muniSelect.innerHTML = '<option value="">— Primero elige departamento —</option>';
+                return;
+            }
+            fetch(`/api/departamentos/${deptoId}/municipios`)
+                .then(r => r.json())
+                .then(data => {
+                    muniSelect.innerHTML = '<option value="">— Seleccionar municipio —</option>';
+                    if (data.length > 0) {
+                        data.forEach(muni => {
+                            const opt = document.createElement('option');
+                            opt.value = muni.id;
+                            opt.textContent = muni.nombre;
+                            muniSelect.appendChild(opt);
                         });
-                } else {
-                    muniSelect.innerHTML = '<option value="">— Primero elige departamento —</option>';
-                }
-            });
-
-            // --- EVENTO 2: Cambia el Municipio ---
-            muniSelect.addEventListener('change', function () {
-                const muniId = this.value;
-
-                restSelect.disabled = true;
-                restSelect.innerHTML = '<option value="">Cargando establecimientos...</option>';
-
-                if (muniId) {
-                    fetch(`/api/municipios/${muniId}/restaurantes`)
-                        .then(response => response.json())
-                        .then(data => {
-                            restSelect.innerHTML = '<option value="">— Selecciona un restaurante —</option>';
-                            if (data.length > 0) {
-                                data.forEach(rest => {
-                                    const option = document.createElement('option');
-                                    option.value = rest.id;
-                                    option.textContent = rest.nombre;
-                                    restSelect.appendChild(option);
-                                });
-                                restSelect.disabled = false;
-                            } else {
-                                restSelect.innerHTML = '<option value="">No hay restaurantes en este municipio</option>';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            restSelect.innerHTML = '<option value="">Error de servidor</option>';
-                        });
-                } else {
-                    restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
-                }
-            });
+                        muniSelect.disabled = false;
+                    } else {
+                        muniSelect.innerHTML = '<option value="">Sin municipios registrados</option>';
+                    }
+                })
+                .catch(() => { muniSelect.innerHTML = '<option value="">Error de servidor</option>'; });
         });
-    </script>
-</x-app-layout>
+
+        muniSelect.addEventListener('change', function () {
+            const muniId = this.value;
+            restSelect.disabled = true;
+            restSelect.innerHTML = '<option value="">Cargando establecimientos...</option>';
+
+            if (!muniId) {
+                restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
+                return;
+            }
+            fetch(`/api/municipios/${muniId}/restaurantes`)
+                .then(r => r.json())
+                .then(data => {
+                    restSelect.innerHTML = '<option value="">— Selecciona un restaurante —</option>';
+                    if (data.length > 0) {
+                        data.forEach(rest => {
+                            const opt = document.createElement('option');
+                            opt.value = rest.id;
+                            opt.textContent = rest.nombre;
+                            restSelect.appendChild(opt);
+                        });
+                        restSelect.disabled = false;
+                    } else {
+                        restSelect.innerHTML = '<option value="">No hay restaurantes en este municipio</option>';
+                    }
+                })
+                .catch(() => { restSelect.innerHTML = '<option value="">Error de servidor</option>'; });
+        });
+
+        // ── Spinner submit ──
+        document.getElementById('form-empleo').addEventListener('submit', function () {
+            muniSelect.disabled = false;
+            restSelect.disabled = false;
+            const btn = document.getElementById('btn-submit');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Publicando...';
+            }
+        });
+    });
+</script>
+
+@endsection

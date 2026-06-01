@@ -1,131 +1,193 @@
 @extends('layouts.app')
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 @section('content')
-<div class="animate-fade-in" style="font-family: 'Segoe UI', Roboto, sans-serif;">
+<div class="container-fluid px-4 py-4 animate-fade-in" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-    {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+    {{-- ── Header ── --}}
+    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-5">
         <div>
-            <div class="flex items-center gap-3 mb-2 flex-wrap">
-                <span class="px-3 py-1 bg-indigo-600 text-[10px] font-black text-white rounded-full uppercase tracking-widest shadow-sm">v2.0 PRO</span>
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">Sistema de Control Integral</h2>
-            </div>
-            <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">Panel Central</h1>
-            <p class="text-slate-500 font-medium mt-2 text-sm sm:text-base">Analíticas de rendimiento para <span class="text-indigo-600 font-bold">Gastro.ni</span></p>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 self-start">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner shrink-0">
-                <i class="fas fa-bolt"></i>
-            </div>
-            <div>
-                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-wider">Estado Global</span>
-                <span class="text-sm font-bold text-emerald-500 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema Activo
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                <span class="badge rounded-pill fw-black text-white px-3 py-2"
+                      style="background:#4f46e5;font-size:0.65rem;letter-spacing:0.12em;">
+                    v2.0 PRO
+                </span>
+                <span class="text-uppercase fw-bold text-secondary" style="font-size:0.7rem;letter-spacing:0.3em;">
+                    Sistema de Control Integral
                 </span>
             </div>
+            <h1 class="fw-black text-dark mb-1" style="font-size:2.2rem;letter-spacing:-0.02em;line-height:1;">
+                Panel Central
+            </h1>
+            <p class="text-secondary fw-medium mb-0" style="font-size:0.9rem;">
+                Analíticas de rendimiento para <span class="fw-bold" style="color:#4f46e5;">Gastro.ni</span>
+            </p>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-3 flex-shrink-0">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                     style="width:40px;height:40px;background:#eef2ff;">
+                    <i class="bi bi-lightning-charge-fill" style="color:#4f46e5;"></i>
+                </div>
+                <div>
+                    <span class="d-block text-uppercase fw-black text-secondary"
+                          style="font-size:0.65rem;letter-spacing:0.1em;">Estado Global</span>
+                    <span class="fw-bold d-flex align-items-center gap-2" style="color:#10b981;font-size:0.85rem;">
+                        <span class="rounded-circle pulse-dot" style="width:8px;height:8px;background:#10b981;display:inline-block;"></span>
+                        Sistema Activo
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
-    {{-- Estadísticas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+    {{-- ── Estadísticas ── --}}
+    <div class="row g-4 mb-5">
 
-        <div class="group bg-white rounded-3xl border border-slate-100 p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-300 flex flex-col justify-between min-h-[150px]">
-            <div class="flex justify-between items-start">
-                <div class="space-y-1.5">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Unidades de Negocio</p>
-                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">
-                        {{ $totalRestaurantes }} <span class="text-sm font-semibold text-slate-400">Locales</span>
-                    </h3>
-                </div>
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl text-slate-700 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-inner shrink-0">
-                    <i class="fas fa-store text-lg sm:text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-emerald-500 font-bold bg-emerald-50/60 px-2.5 py-0.5 rounded-full"><i class="fas fa-caret-up me-1"></i>+12%</span>
-                    <span class="text-slate-400 font-medium">Rendimiento mensual</span>
-                </div>
-                <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-500 rounded-full w-2/3 group-hover:w-full transition-all duration-700 ease-out"></div>
+        {{-- Unidades de Negocio --}}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 stat-card stat-card-indigo">
+                <div class="card-body p-4 d-flex flex-column justify-content-between" style="min-height:150px;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-uppercase fw-black text-secondary mb-1"
+                               style="font-size:0.65rem;letter-spacing:0.15em;">Unidades de Negocio</p>
+                            <h3 class="fw-black text-dark mb-0" style="font-size:2rem;letter-spacing:-0.02em;">
+                                {{ $totalRestaurantes }}
+                                <span class="fw-semibold text-secondary" style="font-size:0.85rem;">Locales</span>
+                            </h3>
+                        </div>
+                        <div class="stat-icon rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:48px;height:48px;background:#f8fafc;">
+                            <i class="bi bi-shop" style="font-size:1.2rem;color:#475569;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge rounded-pill fw-bold px-3 py-1"
+                                  style="background:#ecfdf5;color:#059669;font-size:0.7rem;">
+                                <i class="bi bi-caret-up-fill me-1"></i>+12%
+                            </span>
+                            <span class="text-secondary" style="font-size:0.75rem;">Rendimiento mensual</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height:6px;background:#f1f5f9;">
+                            <div class="progress-bar stat-bar rounded-pill" role="progressbar"
+                                 style="width:66%;background:#4f46e5;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="group bg-white rounded-3xl border border-slate-100 p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-emerald-100 transition-all duration-300 flex flex-col justify-between min-h-[150px]">
-            <div class="flex justify-between items-start">
-                <div class="space-y-1.5">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Actividad Reciente</p>
-                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">
-                        {{ $totalEventos }} <span class="text-sm font-semibold text-slate-400">Publicaciones</span>
-                    </h3>
-                </div>
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl text-slate-700 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-inner shrink-0">
-                    <i class="fas fa-calendar-check text-lg sm:text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-blue-500 font-bold bg-blue-50/60 px-2.5 py-0.5 rounded-full">Al día</span>
-                    <span class="text-slate-400 font-medium">Actualizado hoy</span>
-                </div>
-                <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-emerald-500 rounded-full w-1/2 group-hover:w-3/4 transition-all duration-700 ease-out"></div>
+        {{-- Actividad Reciente --}}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 stat-card stat-card-emerald">
+                <div class="card-body p-4 d-flex flex-column justify-content-between" style="min-height:150px;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-uppercase fw-black text-secondary mb-1"
+                               style="font-size:0.65rem;letter-spacing:0.15em;">Actividad Reciente</p>
+                            <h3 class="fw-black text-dark mb-0" style="font-size:2rem;letter-spacing:-0.02em;">
+                                {{ $totalEventos }}
+                                <span class="fw-semibold text-secondary" style="font-size:0.85rem;">Publicaciones</span>
+                            </h3>
+                        </div>
+                        <div class="stat-icon rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:48px;height:48px;background:#f8fafc;">
+                            <i class="bi bi-calendar-check" style="font-size:1.2rem;color:#475569;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge rounded-pill fw-bold px-3 py-1"
+                                  style="background:#eff6ff;color:#3b82f6;font-size:0.7rem;">
+                                Al día
+                            </span>
+                            <span class="text-secondary" style="font-size:0.75rem;">Actualizado hoy</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height:6px;background:#f1f5f9;">
+                            <div class="progress-bar stat-bar rounded-pill" role="progressbar"
+                                 style="width:50%;background:#10b981;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="group bg-white rounded-3xl border border-slate-100 p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-amber-100 transition-all duration-300 flex flex-col justify-between min-h-[150px] sm:col-span-2 lg:col-span-1">
-            <div class="flex justify-between items-start">
-                <div class="space-y-1.5">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Cobertura Nacional</p>
-                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">
-                        {{ $totalDepartamentos }} <span class="text-sm font-semibold text-slate-400">Regiones</span>
-                    </h3>
-                </div>
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl text-slate-700 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-inner shrink-0">
-                    <i class="fas fa-map-marked-alt text-lg sm:text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-amber-600 font-bold bg-amber-50/60 px-2.5 py-0.5 rounded-full">Regional</span>
-                    <span class="text-slate-400 font-medium">Departamentos activos</span>
-                </div>
-                <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-amber-500 rounded-full w-4/5 group-hover:w-full transition-all duration-700 ease-out"></div>
+        {{-- Cobertura Nacional --}}
+        <div class="col-12 col-sm-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 stat-card stat-card-amber">
+                <div class="card-body p-4 d-flex flex-column justify-content-between" style="min-height:150px;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-uppercase fw-black text-secondary mb-1"
+                               style="font-size:0.65rem;letter-spacing:0.15em;">Cobertura Nacional</p>
+                            <h3 class="fw-black text-dark mb-0" style="font-size:2rem;letter-spacing:-0.02em;">
+                                {{ $totalDepartamentos }}
+                                <span class="fw-semibold text-secondary" style="font-size:0.85rem;">Regiones</span>
+                            </h3>
+                        </div>
+                        <div class="stat-icon rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:48px;height:48px;background:#f8fafc;">
+                            <i class="bi bi-map" style="font-size:1.2rem;color:#475569;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge rounded-pill fw-bold px-3 py-1"
+                                  style="background:#fffbeb;color:#d97706;font-size:0.7rem;">
+                                Regional
+                            </span>
+                            <span class="text-secondary" style="font-size:0.75rem;">Departamentos activos</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height:6px;background:#f1f5f9;">
+                            <div class="progress-bar stat-bar rounded-pill" role="progressbar"
+                                 style="width:80%;background:#f59e0b;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    {{-- Banner Acciones --}}
-    <div class="relative group">
-        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-slate-800 rounded-3xl blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
-        <div class="relative bg-slate-900 rounded-3xl p-6 sm:p-10 overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    {{-- ── Banner Centro de Operaciones ── --}}
+    <div class="position-relative rounded-4 overflow-hidden shadow-sm"
+         style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
 
-            <div class="absolute top-0 right-0 p-4 pointer-events-none opacity-5">
-                <i class="fas fa-rocket text-[8rem] sm:text-[12rem] -rotate-12 translate-x-10 translate-y-10 text-white"></i>
+        {{-- Ícono decorativo de fondo --}}
+        <div class="position-absolute top-0 end-0 pointer-events-none" style="opacity:0.04;overflow:hidden;">
+            <i class="bi bi-rocket-takeoff" style="font-size:12rem;color:white;transform:rotate(-12deg) translate(20px, -10px);display:block;"></i>
+        </div>
+
+        <div class="position-relative p-4 p-sm-5 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-4"
+             style="z-index:2;">
+            <div>
+                <h4 class="fw-black text-white mb-1" style="font-size:1.5rem;letter-spacing:-0.01em;">
+                    Centro de Operaciones
+                </h4>
+                <p class="mb-0" style="color:#94a3b8;font-size:0.88rem;max-width:440px;">
+                    "La excelencia no es un acto, sino un hábito." Gestiona tu red con precisión.
+                </p>
             </div>
 
-            <div class="relative z-10">
-                <h4 class="text-xl sm:text-2xl font-black text-white tracking-tight">Centro de Operaciones</h4>
-                <p class="text-slate-400 text-sm mt-1 max-w-md font-medium">"La excelencia no es un acto, sino un hábito." Gestiona tu red con precisión.</p>
-            </div>
-
-            <div class="relative z-10 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <div class="d-flex flex-column flex-sm-row gap-3 w-100 w-md-auto">
                 <a href="{{ route('admin.restaurantes.create') }}"
-                   class="inline-flex items-center justify-center px-5 py-3.5 bg-white text-slate-900 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-md active:scale-95 whitespace-nowrap no-underline">
-                    <i class="fas fa-plus me-2"></i> Nuevo Local
+                   class="btn fw-black text-dark px-4 py-3 text-decoration-none d-flex align-items-center justify-content-center gap-2"
+                   style="background:white;border-radius:12px;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;transition:all 0.2s;"
+                   onmouseover="this.style.background='#4f46e5';this.style.color='white';"
+                   onmouseout="this.style.background='white';this.style.color='#0f172a';">
+                    <i class="bi bi-plus-lg"></i> Nuevo Local
                 </a>
                 <a href="{{ route('eventos.create') }}"
-                   class="inline-flex items-center justify-center px-5 py-3.5 bg-slate-800 text-white border border-slate-700 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-700 transition-all active:scale-95 whitespace-nowrap no-underline">
-                    <i class="fas fa-bullhorn me-2"></i> Publicar Evento
+                   class="btn text-white px-4 py-3 text-decoration-none d-flex align-items-center justify-content-center gap-2 fw-black"
+                   style="background:#1e293b;border:1px solid #334155;border-radius:12px;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;transition:background 0.2s;"
+                   onmouseover="this.style.background='#334155';"
+                   onmouseout="this.style.background='#1e293b';">
+                    <i class="bi bi-megaphone"></i> Publicar Evento
                 </a>
             </div>
         </div>
@@ -141,5 +203,35 @@
         from { opacity: 0; transform: translateY(20px); }
         to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* Pulse dot */
+    .pulse-dot {
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    /* Hover en stat cards */
+    .stat-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; }
+    .stat-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important; }
+    .stat-card-indigo:hover { border-color: #c7d2fe; }
+    .stat-card-emerald:hover { border-color: #a7f3d0; }
+    .stat-card-amber:hover { border-color: #fde68a; }
+
+    /* Hover en ícono de stat */
+    .stat-card-indigo:hover .stat-icon { background:#4f46e5 !important; }
+    .stat-card-indigo:hover .stat-icon i { color:white !important; }
+    .stat-card-emerald:hover .stat-icon { background:#10b981 !important; }
+    .stat-card-emerald:hover .stat-icon i { color:white !important; }
+    .stat-card-amber:hover .stat-icon { background:#f59e0b !important; }
+    .stat-card-amber:hover .stat-icon i { color:white !important; }
+
+    /* Barra de progreso hover */
+    .stat-card:hover .stat-bar { width: 100% !important; transition: width 0.7s ease-out; }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 @endsection

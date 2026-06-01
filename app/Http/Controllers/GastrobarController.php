@@ -11,13 +11,29 @@ use Illuminate\Support\Facades\Storage;
 class GastrobarController extends Controller
 {
     // ── INDEX ────────────────────────────────────────────────────
-    public function index()
+    public function index(Request $request)
     {
-        $gastrobares = Gastrobar::with(['departamento', 'municipio'])
-            ->latest()
-            ->paginate(10);
+        $query = Gastrobar::with(['departamento', 'municipio'])->latest();
 
-        return view('gastrobares.index', compact('gastrobares'));
+        if ($request->filled('search')) {
+            $query->where('nombre', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('departamento_id')) {
+            $query->where('departamento_id', $request->departamento_id);
+        }
+
+        $gastrobares        = $query->paginate(10);
+        $activos            = Gastrobar::where('activo', true)->count();
+        $totalDepartamentos = Gastrobar::distinct('departamento_id')->count('departamento_id');
+        $departamentos      = Departamento::orderBy('nombre')->get();
+
+        return view('gastrobares.index', compact(
+            'gastrobares',
+            'activos',
+            'totalDepartamentos',
+            'departamentos'
+        ));
     }
 
     // ── CREATE ───────────────────────────────────────────────────

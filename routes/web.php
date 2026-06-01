@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\EventoImagenController;
 use App\Http\Controllers\RestauranteController;
@@ -28,7 +29,7 @@ Route::middleware('auth')->group(function () {
 
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
 Route::get('/', function () {
-    return auth()->check()
+    return Auth::check()
         ? app(App\Http\Controllers\EventoController::class)->welcome(request())
         : redirect()->route('login');
 })->name('home');
@@ -191,11 +192,11 @@ Route::middleware(['auth', 'role:restaurante,admin'])
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
         // Galería
         Route::get('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])
-    ->name('galeria.index');
-Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])
-    ->name('galeria.store');
-Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
-    ->name('galeria.destroy');
+            ->name('galeria.index');
+        Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])
+            ->name('galeria.store');
+        Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
+            ->name('galeria.destroy');
     });
 
 // ── EVENTOS PÚBLICOS (al final, con whereNumber para evitar capturar "create") ─

@@ -1,304 +1,443 @@
 <x-app-layout>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
     <x-slot name="header">
-        <h2 class="font-black text-2xl text-gray-800 leading-tight tracking-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Registrar Nuevo Restaurante') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 animate-fade-in bg-gray-50/50 min-h-screen">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-[1.5rem] border border-gray-100">
+    <div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-                <div class="bg-gradient-to-r from-zinc-900 to-zinc-800 p-8">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-orange-500/20 p-3 rounded-xl border border-orange-500/30">
-                            <i class="fas fa-utensils text-orange-400 text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold text-lg">Información del Restaurante</h3>
-                            <p class="text-gray-400 text-xs">Registra un nuevo establecimiento gastronomico en la plataforma administrativa.</p>
-                        </div>
+        {{-- ── Encabezado ── --}}
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="{{ route('admin.restaurantes.index') }}"
+               class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center"
+               style="width: 38px; height: 38px;">
+                <i class="bi bi-arrow-left text-secondary"></i>
+            </a>
+            <div>
+                <h1 class="h3 mb-0 fw-bold text-dark">
+                    <i class="bi bi-plus-circle text-warning me-2"></i> Registrar Nuevo Restaurante
+                </h1>
+                <p class="text-muted small mb-0">Registra un nuevo establecimiento gastronómico en la plataforma administrativa.</p>
+            </div>
+        </div>
+
+        {{-- Errores globales --}}
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                <div class="d-flex align-items-start gap-2">
+                    <i class="bi bi-exclamation-circle-fill fs-5 mt-0.5"></i>
+                    <div>
+                        <p class="fw-semibold mb-1">Por favor corrige los siguientes campos:</p>
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li class="small">{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
-
-                <div class="p-8 md:p-10">
-
-                    @if ($errors->any())
-                        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-xl text-red-700 text-sm">
-                            <p class="font-bold mb-1"><i class="fas fa-exclamation-circle mr-2"></i>Por favor corrige los siguientes campos:</p>
-                            <ul class="list-disc pl-5 space-y-1">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <form id="form-restaurante" action="{{ route('admin.restaurantes.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
-                        @csrf
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                            {{-- COLUMNA IZQUIERDA --}}
-                            <div class="space-y-6">
-                                <h4 class="text-sm font-bold text-zinc-700 border-b border-gray-100 pb-2">
-                                    <i class="fas fa-info-circle text-gray-400 mr-2"></i>Datos Generales
-                                </h4>
-
-                                <div>
-                                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Nombre del Restaurante *</label>
-                                    <div class="relative">
-                                        <i class="fas fa-store absolute left-4 top-3.5 text-gray-300"></i>
-                                        <input type="text" name="nombre" value="{{ old('nombre') }}" required maxlength="100"
-                                               placeholder="Nombre del restaurante"
-                                               class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Correo Electrónico *</label>
-                                    <div class="relative">
-                                        <i class="fas fa-envelope absolute left-4 top-3.5 text-gray-300"></i>
-                                        <input type="email" name="email" value="{{ old('email') }}" required
-                                               placeholder="correo@restaurante.com"
-                                               class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Especialidad Culinaria *</label>
-                                    <div class="relative">
-                                        <i class="fas fa-concierge-bell absolute left-4 top-3.5 text-gray-300"></i>
-                                        <input type="text" name="especialidad" value="{{ old('especialidad') }}" required
-                                               placeholder="Ej: Mariscos, Asados, Comida Típica..."
-                                               class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none">
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Departamento *</label>
-                                        <select id="departamento_id" name="departamento_id" required
-                                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all bg-gray-50 outline-none">
-                                            <option value="" disabled selected>Seleccionar...</option>
-                                            @foreach($departamentos as $dep)
-                                                <option value="{{ $dep->id }}" @selected(old('departamento_id') == $dep->id)>{{ $dep->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Municipio *</label>
-                                        <select id="municipio_id" name="municipio_id" required data-old-muni="{{ old('municipio_id') }}" disabled
-                                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all bg-gray-50 outline-none disabled:opacity-50">
-                                            <option value="" disabled selected>Elige departamento...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Descripción Corta (Opcional)</label>
-                                    <textarea name="descripcion" rows="3" maxlength="500"
-                                              placeholder="Breve reseña del ambiente, tipo de cocina..."
-                                              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none resize-none">{{ old('descripcion') }}</textarea>
-                                </div>
-                            </div>
-
-                            {{-- COLUMNA DERECHA --}}
-                            <div class="space-y-6">
-                                <h4 class="text-sm font-bold text-zinc-700 border-b border-gray-100 pb-2">
-                                    <i class="fas fa-share-alt text-gray-400 mr-2"></i>Contacto y Multimedia
-                                </h4>
-
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">WhatsApp</label>
-                                        <div class="relative">
-                                            <i class="fab fa-whatsapp absolute left-3 top-3 text-emerald-500"></i>
-                                            <input type="text" name="whatsapp" value="{{ old('whatsapp') }}"
-                                                   class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 focus:border-orange-500 outline-none" placeholder="+505 8888-8888">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Instagram</label>
-                                        <div class="relative">
-                                            <i class="fab fa-instagram absolute left-3 top-3 text-pink-500"></i>
-                                            <input type="text" name="instagram" value="{{ old('instagram') }}"
-                                                   class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 focus:border-orange-500 outline-none" placeholder="https://instagram.com/usuario">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Facebook</label>
-                                        <div class="relative">
-                                            <i class="fab fa-facebook absolute left-3 top-3 text-blue-600"></i>
-                                            <input type="text" name="facebook" value="{{ old('facebook') }}"
-                                                   class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 focus:border-orange-500 outline-none" placeholder="https://facebook.com/pagina">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">TikTok</label>
-                                        <div class="relative">
-                                            <i class="fab fa-tiktok absolute left-3 top-3 text-black"></i>
-                                            <input type="text" name="tiktok" value="{{ old('tiktok') }}"
-                                                   class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 focus:border-orange-500 outline-none" placeholder="https://tiktok.com/@usuario">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Foto de Portada --}}
-                                <div>
-                                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Foto de Portada *</label>
-                                    <label for="imagen" class="block cursor-pointer">
-                                        <div class="border-2 border-dashed border-gray-200 rounded-2xl hover:border-orange-400 transition-colors bg-gray-50 min-h-[160px] flex flex-col justify-center items-center overflow-hidden relative">
-                                            <input type="file" name="imagen_principal" id="imagen" accept="image/*" required
-                                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                            <div id="preview-container" class="flex flex-col items-center gap-2 pointer-events-none">
-                                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-300"></i>
-                                                <p class="text-xs text-gray-500">Haz clic para seleccionar</p>
-                                                <p class="text-[10px] text-gray-400">JPG, PNG o WEBP</p>
-                                            </div>
-                                            <img id="image-preview" src="" alt=""
-                                                 class="hidden absolute inset-0 w-full h-full object-cover pointer-events-none">
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        {{-- SECCIÓN UBICACIÓN Y MAPA --}}
-<div class="pt-4 space-y-4">
-    <h4 class="text-sm font-bold text-zinc-700 border-b border-gray-100 pb-2">
-        <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>Ubicación del Restaurante
-    </h4>
-
-    {{-- Buscador de dirección --}}
-    <div>
-        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
-            Buscar Dirección
-        </label>
-        <div class="flex gap-2">
-            <div class="relative flex-1">
-                <i class="fas fa-search absolute left-4 top-3.5 text-gray-300"></i>
-                <input type="text" id="direccion-buscar"
-                       placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
-                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <button type="button" id="btn-buscar-mapa"
-                    class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl font-bold text-sm transition-colors border-0 cursor-pointer whitespace-nowrap">
-                <i class="fas fa-search mr-1"></i> Buscar
-            </button>
-        </div>
-        <p class="text-xs text-gray-400 mt-1">
-            <i class="fas fa-info-circle mr-1"></i>
-            Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
-        </p>
-    </div>
+        @endif
 
-    {{-- Campo dirección guardada --}}
-    <div>
-        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
-            Dirección Exacta (se guarda automáticamente al buscar o hacer clic en el mapa)
-        </label>
-        <div class="relative">
-            <i class="fas fa-map-pin absolute left-4 top-3.5 text-orange-400"></i>
-            <input type="text" name="direccion" id="direccion" value="{{ old('direccion') }}"
-                   placeholder="La dirección aparecerá aquí..."
-                   class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none bg-gray-50">
-        </div>
-    </div>
+        <form id="form-restaurante" action="{{ route('admin.restaurantes.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-    {{-- Coordenadas ocultas --}}
-    <input type="hidden" name="latitud"  id="latitud"  value="{{ old('latitud') }}">
-    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
+            {{-- ══════════════════════════════════════════ --}}
+            {{-- CARD 1: Datos Generales                   --}}
+            {{-- ══════════════════════════════════════════ --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-info-circle text-warning"></i> Datos Generales
+                    </h6>
 
-    {{-- Mapa Leaflet --}}
-    <div id="mapa-restaurante" class="w-full rounded-2xl overflow-hidden border border-gray-200 shadow-sm" style="height: 350px;"></div>
+                    <div class="row g-4">
 
-    <p id="mapa-coords-info" class="text-xs text-gray-400 hidden">
-        <i class="fas fa-crosshairs text-orange-400 mr-1"></i>
-        Coordenadas: <span id="coords-display"></span>
-    </p>
-</div>
-
-                        {{-- SECCIÓN GALERÍA --}}
-                        <div class="pt-4 space-y-4">
-                            <h4 class="text-sm font-bold text-zinc-700 border-b border-gray-100 pb-2">
-                                <i class="fas fa-images text-gray-400 mr-2"></i>Fotos del Álbum (Opcional, Máx. 4 imágenes)
-                            </h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                @for($i = 0; $i < 4; $i++)
-                                <label for="galeria_{{ $i }}" class="block cursor-pointer">
-                                    <div class="border-2 border-dashed border-gray-200 rounded-2xl hover:border-orange-400 transition-colors bg-gray-50 aspect-square flex flex-col justify-center items-center overflow-hidden relative">
-                                        <input type="file" name="galeria[]" id="galeria_{{ $i }}" accept="image/*"
-                                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                        <div id="placeholder-{{ $i }}" class="flex flex-col items-center gap-2 pointer-events-none">
-                                            <i class="fas fa-plus text-gray-300 text-xl"></i>
-                                            <span class="text-[10px] text-gray-400 font-bold uppercase">Foto {{ $i + 1 }}</span>
-                                        </div>
-                                        <img id="preview-galeria-{{ $i }}" src="" alt=""
-                                             class="hidden absolute inset-0 w-full h-full object-cover pointer-events-none">
-                                    </div>
-                                </label>
-                                @endfor
+                        {{-- Nombre --}}
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-dark small">Nombre del Restaurante <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                                <input type="text" name="nombre" value="{{ old('nombre') }}" required maxlength="100"
+                                       placeholder="Nombre del restaurante"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
                             </div>
-                            <p class="text-xs text-gray-400"><i class="fas fa-info-circle mr-1"></i>Haz clic en cada casilla para agregar una foto individualmente.</p>
                         </div>
 
-                        {{-- Acciones --}}
-                        <div class="pt-6 border-t border-gray-100 flex items-center justify-between">
-                            <a href="{{ route('admin.restaurantes.index') }}" class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors no-underline">
-                                <i class="fas fa-arrow-left mr-2"></i> Volver al panel admin
-                            </a>
-                            <button type="submit" id="btn-submit-restaurante"
-                                    class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3.5 rounded-xl font-bold shadow-md shadow-orange-200 transition-all text-sm border-0 cursor-pointer">
-                                Registrar Restaurante
-                            </button>
+                        {{-- Email --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Correo Electrónico <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input type="email" name="email" value="{{ old('email') }}" required
+                                       placeholder="correo@restaurante.com"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
                         </div>
 
-                    </form>
+                        {{-- Especialidad --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Especialidad Culinaria <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-egg-fried"></i></span>
+                                <input type="text" name="especialidad" value="{{ old('especialidad') }}" required
+                                       placeholder="Ej: Mariscos, Asados, Comida Típica..."
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                        </div>
+
+                        {{-- Separador --}}
+                        <div class="col-12"><hr class="text-muted opacity-25 my-1"></div>
+
+                        {{-- Ubicación Geográfica --}}
+                        <div class="col-12">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                <i class="bi bi-map text-warning"></i> Ubicación Geográfica
+                            </h6>
+                        </div>
+
+                        {{-- Departamento --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Departamento <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                                <select id="departamento_id" name="departamento_id" required
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="" disabled selected>Seleccionar...</option>
+                                    @foreach($departamentos as $dep)
+                                        <option value="{{ $dep->id }}" @selected(old('departamento_id') == $dep->id)>{{ $dep->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Municipio --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Municipio <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                <select id="municipio_id" name="municipio_id" required disabled
+                                        data-old-muni="{{ old('municipio_id') }}"
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="" disabled selected>Elige departamento...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Separador --}}
+                        <div class="col-12"><hr class="text-muted opacity-25 my-1"></div>
+
+                        {{-- Redes Sociales --}}
+                        <div class="col-12">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                <i class="bi bi-share text-warning"></i> Contacto y Redes Sociales
+                            </h6>
+                        </div>
+
+                        {{-- WhatsApp --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">WhatsApp</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="color:#25d366;"><i class="bi bi-whatsapp"></i></span>
+                                <input type="text" name="whatsapp" value="{{ old('whatsapp') }}"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="+505 8888-8888">
+                            </div>
+                        </div>
+
+                        {{-- Instagram --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Instagram <span class="text-muted fw-normal">(opcional)</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="color:#e1306c;"><i class="bi bi-instagram"></i></span>
+                                <input type="url" name="instagram" value="{{ old('instagram') }}"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="https://instagram.com/usuario">
+                            </div>
+                        </div>
+
+                        {{-- Facebook --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Facebook <span class="text-muted fw-normal">(opcional)</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="color:#1877f2;"><i class="bi bi-facebook"></i></span>
+                                <input type="url" name="facebook" value="{{ old('facebook') }}"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="https://facebook.com/pagina">
+                            </div>
+                        </div>
+
+                        {{-- TikTok --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">TikTok <span class="text-muted fw-normal">(opcional)</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-dark"><i class="bi bi-tiktok"></i></span>
+                                <input type="url" name="tiktok" value="{{ old('tiktok') }}"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="https://tiktok.com/@usuario">
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {{-- ══════════════════════════════════════════ --}}
+            {{-- CARD 2: Cuenta del Propietario            --}}
+            {{-- ══════════════════════════════════════════ --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-person-badge text-warning"></i> Cuenta del Propietario
+                    </h6>
+                    <p class="text-muted small mb-4">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Se creará un usuario con acceso al panel del restaurante.
+                    </p>
+
+                    <div class="row g-4">
+
+                        {{-- Nombre del Propietario --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Nombre del Propietario <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <input type="text" name="propietario_nombre" value="{{ old('propietario_nombre') }}" required
+                                       placeholder="Nombre completo"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                        </div>
+
+                        {{-- Correo del Propietario --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Correo del Propietario <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input type="email" name="propietario_email" value="{{ old('propietario_email') }}" required
+                                       placeholder="correo@propietario.com"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                        </div>
+
+                        {{-- Contraseña --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Contraseña <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                                <input type="password" name="propietario_password" required minlength="8"
+                                       placeholder="Mínimo 8 caracteres"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                        </div>
+
+                        {{-- Confirmar Contraseña --}}
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" name="propietario_password_confirmation" required minlength="8"
+                                       placeholder="Repite la contraseña"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════ --}}
+            {{-- CARD 3: Foto de Portada                   --}}
+            {{-- ══════════════════════════════════════════ --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-image text-warning"></i> Foto de Portada
+                    </h6>
+
+                    <label for="imagen" class="w-100 cursor-pointer">
+                        <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
+                             style="min-height: 180px; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
+                             onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
+                            <input type="file" name="imagen_principal" id="imagen" accept="image/*" required
+                                   class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
+                            <div id="preview-container" class="text-center py-3">
+                                <i class="bi bi-cloud-upload fs-2 text-secondary"></i>
+                                <p class="small text-muted mt-1 mb-0">Haz clic para seleccionar</p>
+                                <p class="small text-secondary" style="font-size:0.75rem;">JPG, PNG o WEBP</p>
+                            </div>
+                            <img id="image-preview" src="" alt=""
+                                 class="d-none position-absolute top-0 start-0 w-100 h-100" style="object-fit:cover;">
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════ --}}
+            {{-- CARD 4: Galería de Fotos                  --}}
+            {{-- ══════════════════════════════════════════ --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-images text-warning"></i> Fotos del Álbum
+                        <span class="fw-normal text-capitalize text-secondary" style="font-size: 0.7rem;">(Opcional — Máx. 4 imágenes)</span>
+                    </h6>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Haz clic en cada casilla para agregar una foto individualmente.
+                    </p>
+
+                    <div class="row g-3">
+                        @for($i = 0; $i < 4; $i++)
+                        <div class="col-6 col-sm-3">
+                            <label for="galeria_{{ $i }}" class="w-100 cursor-pointer">
+                                <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
+                                     style="aspect-ratio: 1/1; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
+                                     onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
+                                    <input type="file" name="galeria[]" id="galeria_{{ $i }}" accept="image/*"
+                                           class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
+                                    <div id="placeholder-{{ $i }}" class="text-center pointer-events-none">
+                                        <i class="bi bi-plus-lg fs-4 text-secondary"></i>
+                                        <p class="small text-muted mb-0 mt-1" style="font-size:0.7rem;">Foto {{ $i + 1 }}</p>
+                                    </div>
+                                    <img id="preview-galeria-{{ $i }}" src="" alt=""
+                                         class="d-none position-absolute top-0 start-0 w-100 h-100" style="object-fit:cover;">
+                                </div>
+                            </label>
+                        </div>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════ --}}
+            {{-- CARD 5: Ubicación y Mapa                  --}}
+            {{-- ══════════════════════════════════════════ --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-geo-alt text-warning"></i> Ubicación del Restaurante
+                    </h6>
+
+                    {{-- Buscador --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark small">Buscar Dirección</label>
+                        <div class="d-flex gap-2">
+                            <div class="input-group flex-1">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" id="direccion-buscar"
+                                       placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                            <button type="button" id="btn-buscar-mapa"
+                                    class="btn btn-warning fw-semibold px-4 text-dark" style="white-space:nowrap;">
+                                <i class="bi bi-search me-1"></i> Buscar
+                            </button>
+                        </div>
+                        <p class="small text-muted mt-1 mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
+                        </p>
+                    </div>
+
+                    {{-- Dirección exacta --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark small">
+                            Dirección Exacta <span class="text-muted fw-normal">(se guarda automáticamente al buscar o hacer clic en el mapa)</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0" style="color:#f97316;"><i class="bi bi-pin-map-fill"></i></span>
+                            <input type="text" name="direccion" id="direccion"
+                                   value="{{ old('direccion') }}"
+                                   placeholder="La dirección aparecerá aquí..."
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    {{-- Coordenadas ocultas --}}
+                    <input type="hidden" name="latitud"  id="latitud"  value="{{ old('latitud') }}">
+                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
+
+                    {{-- Mapa --}}
+                    <div id="mapa-restaurante" class="w-100 rounded-3 border shadow-sm" style="height: 340px;"></div>
+
+                    <p id="mapa-coords-info" class="small text-muted mt-2 d-none">
+                        <i class="bi bi-crosshair text-warning me-1"></i>
+                        Coordenadas guardadas: <span id="coords-display" class="font-monospace text-dark ms-1"></span>
+                    </p>
+                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════ --}}
+            {{-- CARD 6: Descripción                       --}}
+            {{-- ══════════════════════════════════════════ --}}
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-text-paragraph text-warning"></i> Descripción Comercial
+                    </h6>
+                    <textarea name="descripcion" rows="4"
+                              class="form-control bg-light" style="box-shadow:none; resize:none;"
+                              placeholder="Breve reseña del ambiente, tipo de cocina...">{{ old('descripcion') }}</textarea>
+                </div>
+            </div>
+
+            {{-- ── Botones de Control ── --}}
+            <div class="d-flex align-items-center justify-content-between mt-2 mb-4">
+                <a href="{{ route('admin.restaurantes.index') }}"
+                   class="text-muted text-decoration-none small fw-medium">
+                    <i class="bi bi-chevron-left me-1"></i> Volver al panel admin
+                </a>
+                <button type="submit" id="btn-submit-restaurante"
+                        class="btn btn-warning fw-semibold px-5 py-2 rounded-pill shadow-sm text-dark">
+                    <i class="bi bi-check2-circle me-1"></i> Registrar Restaurante
+                </button>
+            </div>
+
+        </form>
     </div>
+
+    <style>
+        .cursor-pointer { cursor: pointer; }
+    </style>
 
     <script>
         // ── Preview Portada ──
-        document.getElementById('imagen').addEventListener('change', function() {
+        document.getElementById('imagen').addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
-            const preview = document.getElementById('image-preview');
-            const placeholder = document.getElementById('preview-container');
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
+                const preview = document.getElementById('image-preview');
+                const placeholder = document.getElementById('preview-container');
                 preview.src = e.target.result;
-                preview.classList.remove('hidden');
-                placeholder.classList.add('hidden');
+                preview.classList.remove('d-none');
+                placeholder.classList.add('d-none');
             };
             reader.readAsDataURL(file);
         });
 
         // ── Preview Galería individual ──
         for (let i = 0; i < 4; i++) {
-            document.getElementById('galeria_' + i).addEventListener('change', function() {
-                const file = this.files[0];
-                if (!file) return;
-                const preview = document.getElementById('preview-galeria-' + i);
-                const placeholder = document.getElementById('placeholder-' + i);
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                    if (placeholder) placeholder.classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
-            });
+            (function (idx) {
+                document.getElementById('galeria_' + idx).addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById('preview-galeria-' + idx);
+                        const placeholder = document.getElementById('placeholder-' + idx);
+                        preview.src = e.target.result;
+                        preview.classList.remove('d-none');
+                        if (placeholder) placeholder.classList.add('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            })(i);
         }
 
         // ── Departamentos → Municipios ──
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const depSelect  = document.getElementById('departamento_id');
             const muniSelect = document.getElementById('municipio_id');
 
@@ -322,129 +461,55 @@
                     .catch(e => console.error(e));
             }
 
-            depSelect.addEventListener('change', function() { cargarMunicipios(this.value); });
+            depSelect.addEventListener('change', function () { cargarMunicipios(this.value); });
             if (depSelect.value) cargarMunicipios(depSelect.value, muniSelect.dataset.oldMuni);
 
-            // ── Submit ──
-            document.getElementById('form-restaurante').addEventListener('submit', function() {
+            // ── Submit: deshabilitar botón ──
+            document.getElementById('form-restaurante').addEventListener('submit', function () {
                 muniSelect.disabled = false;
                 const btn = document.getElementById('btn-submit-restaurante');
                 if (btn) {
                     btn.disabled = true;
-                    btn.className = "bg-zinc-400 text-white px-8 py-3.5 rounded-xl font-bold text-sm cursor-not-allowed border-0";
-                    btn.innerText = 'Guardando...';
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Guardando...';
                 }
             });
         });
     </script>
 
-    <style>
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    {{-- Leaflet CSS y JS --}}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    (function () {
+        function initMapa() {
+            const defaultLat = 12.8654;
+            const defaultLng = -85.2072;
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+            const savedLat = document.getElementById('latitud').value;
+            const savedLng = document.getElementById('longitud').value;
 
-    // Coordenadas por defecto: centro de Nicaragua
-    const defaultLat = 12.8654;
-    const defaultLng = -85.2072;
+            const initLat  = savedLat ? parseFloat(savedLat) : defaultLat;
+            const initLng  = savedLng ? parseFloat(savedLng) : defaultLng;
+            const initZoom = savedLat ? 16 : 7;
 
-    const savedLat = document.getElementById('latitud').value;
-    const savedLng = document.getElementById('longitud').value;
+            const mapa = L.map('mapa-restaurante').setView([initLat, initLng], initZoom);
 
-    const initLat = savedLat ? parseFloat(savedLat) : defaultLat;
-    const initLng = savedLng ? parseFloat(savedLng) : defaultLng;
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mapa);
 
-    // Inicializar mapa
-    const mapa = L.map('mapa-restaurante').setView([initLat, initLng], savedLat ? 16 : 7);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(mapa);
-
-    // Marker personalizado naranja
-    const iconoNaranja = L.divIcon({
-        html: '<div style="background:#ea580c;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
-        iconSize: [20, 20],
-        iconAnchor: [10, 20],
-        className: ''
-    });
-
-    let marker = null;
-
-    // Si hay coordenadas guardadas, colocar marker
-    if (savedLat && savedLng) {
-        marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
-        actualizarInfo(initLat, initLng);
-        marker.on('dragend', function () {
-            const pos = marker.getLatLng();
-            actualizarCoordenadas(pos.lat, pos.lng);
-            geocodeInverso(pos.lat, pos.lng);
-        });
-    }
-
-    // Clic en el mapa → colocar/mover pin
-    mapa.on('click', function (e) {
-        const { lat, lng } = e.latlng;
-        if (marker) {
-            marker.setLatLng([lat, lng]);
-        } else {
-            marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
-            marker.on('dragend', function () {
-                const pos = marker.getLatLng();
-                actualizarCoordenadas(pos.lat, pos.lng);
-                geocodeInverso(pos.lat, pos.lng);
+            const iconoNaranja = L.divIcon({
+                html: '<div style="background:#ffc107;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 20],
+                className: ''
             });
-        }
-        actualizarCoordenadas(lat, lng);
-        geocodeInverso(lat, lng);
-    });
 
-    // Botón buscar
-    document.getElementById('btn-buscar-mapa').addEventListener('click', buscarDireccion);
-    document.getElementById('direccion-buscar').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
-    });
+            let marker = null;
 
-    function buscarDireccion() {
-        const query = document.getElementById('direccion-buscar').value.trim();
-        if (!query) return;
-
-        const btn = document.getElementById('btn-buscar-mapa');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Buscando...';
-        btn.disabled = true;
-
-        // Si no menciona Nicaragua, agregarlo para mejores resultados
-        const queryFinal = query.toLowerCase().includes('nicaragua') ? query : query + ', Nicaragua';
-
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
-            headers: { 'Accept-Language': 'es' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
-            btn.disabled = false;
-
-            if (data.length === 0) {
-                alert('No se encontró esa dirección. Intenta ser más específico o haz clic en el mapa.');
-                return;
-            }
-
-            const lat = parseFloat(data[0].lat);
-            const lng = parseFloat(data[0].lon);
-            const nombre = data[0].display_name;
-
-            mapa.setView([lat, lng], 17);
-
-            if (marker) {
-                marker.setLatLng([lat, lng]);
-            } else {
-                marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+            if (savedLat && savedLng) {
+                marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                actualizarInfo(initLat, initLng);
                 marker.on('dragend', function () {
                     const pos = marker.getLatLng();
                     actualizarCoordenadas(pos.lat, pos.lng);
@@ -452,40 +517,106 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            actualizarCoordenadas(lat, lng);
-            document.getElementById('direccion').value = nombre;
-        })
-        .catch(() => {
-            btn.innerHTML = '<i class="fas fa-search mr-1"></i> Buscar';
-            btn.disabled = false;
-            alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
-        });
-    }
+            mapa.on('click', function (e) {
+                const { lat, lng } = e.latlng;
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                    marker.on('dragend', function () {
+                        const pos = marker.getLatLng();
+                        actualizarCoordenadas(pos.lat, pos.lng);
+                        geocodeInverso(pos.lat, pos.lng);
+                    });
+                }
+                actualizarCoordenadas(lat, lng);
+                geocodeInverso(lat, lng);
+            });
 
-    function geocodeInverso(lat, lng) {
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
-            headers: { 'Accept-Language': 'es' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data && data.display_name) {
-                document.getElementById('direccion').value = data.display_name;
+            document.getElementById('btn-buscar-mapa').addEventListener('click', buscarDireccion);
+            document.getElementById('direccion-buscar').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
+            });
+
+            function buscarDireccion() {
+                const query = document.getElementById('direccion-buscar').value.trim();
+                if (!query) return;
+
+                const btn = document.getElementById('btn-buscar-mapa');
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
+                btn.disabled = true;
+
+                const queryFinal = query.toLowerCase().includes('nicaragua') ? query : query + ', Nicaragua';
+
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
+                    headers: { 'Accept-Language': 'es' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+                    btn.disabled = false;
+
+                    if (data.length === 0) {
+                        alert('No se encontró esa dirección. Intenta ser más específico o haz clic directamente en el mapa.');
+                        return;
+                    }
+
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    mapa.setView([lat, lng], 17);
+
+                    if (marker) {
+                        marker.setLatLng([lat, lng]);
+                    } else {
+                        marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                        marker.on('dragend', function () {
+                            const pos = marker.getLatLng();
+                            actualizarCoordenadas(pos.lat, pos.lng);
+                            geocodeInverso(pos.lat, pos.lng);
+                        });
+                    }
+
+                    actualizarCoordenadas(lat, lng);
+                    document.getElementById('direccion').value = data[0].display_name;
+                })
+                .catch(() => {
+                    btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+                    btn.disabled = false;
+                    alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
+                });
             }
-        })
-        .catch(() => {});
-    }
 
-    function actualizarCoordenadas(lat, lng) {
-        document.getElementById('latitud').value  = lat.toFixed(7);
-        document.getElementById('longitud').value = lng.toFixed(7);
-        actualizarInfo(lat, lng);
-    }
+            function geocodeInverso(lat, lng) {
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
+                    headers: { 'Accept-Language': 'es' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById('direccion').value = data.display_name;
+                    }
+                })
+                .catch(() => {});
+            }
 
-    function actualizarInfo(lat, lng) {
-        document.getElementById('mapa-coords-info').classList.remove('hidden');
-        document.getElementById('coords-display').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    }
-});
-</script>
+            function actualizarCoordenadas(lat, lng) {
+                document.getElementById('latitud').value  = lat.toFixed(7);
+                document.getElementById('longitud').value = lng.toFixed(7);
+                actualizarInfo(lat, lng);
+            }
+
+            function actualizarInfo(lat, lng) {
+                document.getElementById('mapa-coords-info').classList.remove('d-none');
+                document.getElementById('coords-display').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMapa);
+        } else {
+            initMapa();
+        }
+    })();
+    </script>
 
 </x-app-layout>

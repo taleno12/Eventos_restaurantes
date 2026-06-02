@@ -12,6 +12,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\DepartamentoUsuarioController;
 use App\Http\Controllers\GastrobarController;
+use App\Http\Controllers\TrabajadorController;
 
 
 use App\Models\Restaurante;
@@ -153,13 +154,32 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::delete('/{empleo}',     [EmpleoController::class, 'destroy'])->name('destroy');
     });
 
-    // MÓDULOS DE GESTIÓN INTERNA
-    Route::get('/trabajadores',  function () { return view('admin.trabajadores.form'); })->name('trabajadores.index');
-    Route::get('/contratos',     function () { return view('admin.contratos.form'); })->name('contratos.index');
-    Route::get('/soporte',       function () { return view('admin.soporte.form'); })->name('soporte.index');
-    Route::get('/configuracion', function () { return view('admin.configuracion.form'); })->name('configuracion.index');
+    // ── ADMINISTRACIÓN DE TRABAJADORES ────────────────────────────────────────
+    Route::prefix('trabajadores')->name('trabajadores.')->group(function () {
+        Route::get('/',                    [TrabajadorController::class, 'index'])->name('index');
+        Route::get('/create',              [TrabajadorController::class, 'create'])->name('create');
+        Route::post('/',                   [TrabajadorController::class, 'store'])->name('store');
+        Route::get('/{trabajador}',        [TrabajadorController::class, 'show'])->name('show');
+        Route::get('/{trabajador}/edit',   [TrabajadorController::class, 'edit'])->name('edit');
+        Route::put('/{trabajador}',        [TrabajadorController::class, 'update'])->name('update');
+        Route::delete('/{trabajador}',     [TrabajadorController::class, 'destroy'])->name('destroy');
+        // AJAX: cargar restaurantes al seleccionar departamentos
+        Route::post('/restaurantes-por-departamentos', [TrabajadorController::class, 'getRestaurantesPorDepartamentos'])->name('restaurantes.por.departamentos');
+    });
 
-    // APIs INTERNAS
+    // ── MÓDULOS DE GESTIÓN INTERNA ────────────────────────────────────────────
+    Route::get('/contratos',     function () { return view('contratos.index'); })->name('contratos.index');
+    Route::get('/soporte',       function () { return view('soporte.index'); })->name('soporte.index');
+    Route::get('/configuracion', function () { return view('configuracion.index'); })->name('configuracion.index');
+
+    // ── ADMINISTRACIÓN INTERNA (nuevos módulos) ───────────────────────────────
+    Route::get('/membresias',     function () { return view('membresias.index'); })->name('membresias.index');
+    Route::get('/pagos',          function () { return view('pagos.index'); })->name('pagos.index');
+    Route::get('/usuarios',       function () { return view('usuarios.index'); })->name('usuarios.index');
+    Route::get('/notificaciones', function () { return view('notificaciones.index'); })->name('notificaciones.index');
+    Route::get('/reportes',       function () { return view('reportes.index'); })->name('reportes.index');
+
+    // ── APIs INTERNAS ─────────────────────────────────────────────────────────
     Route::get('/api/departamentos/{id}/municipios', function ($id) {
         return App\Models\Municipio::where('departamento_id', $id)->get(['id', 'nombre']);
     })->name('api.departamentos.municipios');

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $municipios_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Restaurante> $restaurantes
  * @property-read int|null $restaurantes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Trabajador> $trabajadores
+ * @property-read int|null $trabajadores_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Departamento newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Departamento newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Departamento query()
@@ -32,7 +35,7 @@ class Departamento extends Model
 
     /**
      * Los atributos que se pueden asignar masivamente.
-     * * @var array<int, string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'nombre',
@@ -40,16 +43,16 @@ class Departamento extends Model
 
     /**
      * Carga automática del conteo de relaciones para optimizar la vista.
-     * Esto permite acceder a $departamento->restaurantes_count 
+     * Esto permite acceder a $departamento->restaurantes_count
      * y $departamento->municipios_count directamente sin sobrecargar la base de datos.
-     * * @var array<int, string>
+     * @var array<int, string>
      */
-    protected $withCount = ['restaurantes', 'municipios', 'gastrobares'];
+    protected $withCount = ['restaurantes', 'municipios', 'gastrobares', 'trabajadores'];
 
     /**
      * Obtener los municipios asociados al departamento.
      * Relación de Uno a Muchos (Un departamento tiene muchos municipios).
-     * * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function municipios(): HasMany
     {
@@ -59,7 +62,7 @@ class Departamento extends Model
     /**
      * Obtener los restaurantes asociados al departamento.
      * Relación de Uno a Muchos (Un departamento tiene muchos restaurantes).
-     * * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function restaurantes(): HasMany
     {
@@ -69,10 +72,22 @@ class Departamento extends Model
     /**
      * Obtener los gastrobares asociados al departamento.
      * Relación de Uno a Muchos (Un departamento tiene muchos gastrobares).
-     * * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function gastrobares(): HasMany
     {
         return $this->hasMany(Gastrobar::class);
+    }
+
+    /**
+     * Obtener los trabajadores asignados a este departamento.
+     * Relación de Muchos a Muchos (Un departamento tiene muchos trabajadores
+     * y un trabajador puede pertenecer a muchos departamentos).
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function trabajadores(): BelongsToMany
+    {
+        return $this->belongsToMany(Trabajador::class, 'departamento_trabajador')
+                    ->withTimestamps();
     }
 }

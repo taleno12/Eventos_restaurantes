@@ -338,8 +338,11 @@
                     </a>
 
                     {{-- ── Search bar desktop ── --}}
+                    {{-- ORDEN: Destino → Especialidad → Local → Buscar --}}
                     <form action="{{ route('home') }}" method="GET"
                           class="hidden md:flex flex-1 max-w-2xl search-box">
+
+                        {{-- 1. DESTINO --}}
                         <div class="search-segment" style="min-width:130px;">
                             <label for="search-departamento">
                                 <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i> Destino
@@ -354,22 +357,8 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="search-segment" style="min-width:130px;">
-                            <label for="search-restaurante">
-                                <i class="fas fa-store" style="color:#ea580c;"></i> Local
-                            </label>
-                            <select id="search-restaurante" name="restaurante_id"
-                                    {{ request('departamento') ? '' : 'disabled' }}>
-                                <option value="">{{ request('departamento') ? 'Todos los locales' : 'Elige destino...' }}</option>
-                                @if(request('departamento'))
-                                    @foreach($restaurantes->where('departamento_id', request('departamento')) as $rest)
-                                        <option value="{{ $rest->id }}" {{ request('restaurante_id') == $rest->id ? 'selected' : '' }}>
-                                            {{ $rest->nombre }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
+
+                        {{-- 2. ESPECIALIDAD (ahora en segundo lugar) --}}
                         <div class="search-segment" style="min-width:120px;">
                             <label for="search-especialidad">
                                 <i class="fas fa-utensils" style="color:#ea580c;"></i> Especialidad
@@ -378,6 +367,25 @@
                                    value="{{ request('especialidad') }}"
                                    placeholder="Asados, mariscos...">
                         </div>
+
+                        {{-- 3. LOCAL (ahora en tercer lugar, se filtra por destino + especialidad) --}}
+                        <div class="search-segment" style="min-width:130px;">
+                            <label for="search-restaurante">
+                                <i class="fas fa-store" style="color:#ea580c;"></i> Local
+                            </label>
+                            <select id="search-restaurante" name="restaurante_id"
+                                    {{ (request('departamento') || request('especialidad')) ? '' : 'disabled' }}>
+                                <option value="">
+                                    {{ (request('departamento') || request('especialidad')) ? 'Todos los locales' : 'Elige destino...' }}
+                                </option>
+                                @foreach($restaurantes as $rest)
+                                    <option value="{{ $rest->id }}" {{ request('restaurante_id') == $rest->id ? 'selected' : '' }}>
+                                        {{ $rest->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search" style="font-size:12px;"></i>
                             <span>Buscar</span>
@@ -456,8 +464,11 @@
             </div>
 
             {{-- ── Panel búsqueda móvil desplegable ── --}}
+            {{-- ORDEN MÓVIL: Destino → Especialidad → Local --}}
             <div id="mobileSearchPanel">
                 <form action="{{ route('home') }}" method="GET" class="flex flex-col gap-3">
+
+                    {{-- 1. DESTINO --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
@@ -465,31 +476,38 @@
                         <select id="search-departamento-mobile" name="departamento" class="nav-select-mobile">
                             <option value="">Todos los destinos</option>
                             @foreach($departamentos as $depto)
-                                <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
+                                <option value="{{ $depto->id }}" {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
                             @endforeach
                         </select>
                     </div>
+
+                    {{-- 2. ESPECIALIDAD (segundo lugar en móvil también) --}}
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                            <i class="fas fa-utensils text-orange-500"></i> Especialidad
+                        </label>
+                        <input type="text" id="search-especialidad-mobile" name="especialidad"
+                               value="{{ request('especialidad') }}"
+                               class="nav-input-mobile" placeholder="Asados, mariscos...">
+                    </div>
+
+                    {{-- 3. LOCAL (tercer lugar, filtrado por destino + especialidad) --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-store text-orange-500"></i> Local
                         </label>
                         <select id="search-restaurante-mobile" name="restaurante_id"
-                                class="nav-select-mobile" {{ request('departamento') ? '' : 'disabled' }}>
-                            <option value="">{{ request('departamento') ? 'Todos los locales' : 'Primero elige destino...' }}</option>
-                            @if(request('departamento'))
-                                @foreach($restaurantes->where('departamento_id', request('departamento')) as $rest)
-                                    <option value="{{ $rest->id }}" {{ request('restaurante_id') == $rest->id ? 'selected' : '' }}>{{ $rest->nombre }}</option>
-                                @endforeach
-                            @endif
+                                class="nav-select-mobile"
+                                {{ (request('departamento') || request('especialidad')) ? '' : 'disabled' }}>
+                            <option value="">
+                                {{ (request('departamento') || request('especialidad')) ? 'Todos los locales' : 'Primero elige destino...' }}
+                            </option>
+                            @foreach($restaurantes as $rest)
+                                <option value="{{ $rest->id }}" {{ request('restaurante_id') == $rest->id ? 'selected' : '' }}>{{ $rest->nombre }}</option>
+                            @endforeach
                         </select>
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-utensils text-orange-500"></i> Especialidad
-                        </label>
-                        <input type="text" name="especialidad" value="{{ request('especialidad') }}"
-                               class="nav-input-mobile" placeholder="Asados, mariscos...">
-                    </div>
+
                     <button type="submit"
                             class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
                         <i class="fas fa-search text-xs"></i> Filtrar Experiencias
@@ -837,7 +855,6 @@
             AOS.init({ duration: 800, once: true });
 
             // ── INICIALIZAR CARRUSEL BOOTSTRAP MANUALMENTE ──
-            // Se hace así para garantizar que funcione aunque Vite/React cargue en paralelo
             var bannerCarouselEl = document.getElementById('bannerCarousel');
             if (bannerCarouselEl) {
                 var bannerCarousel = new bootstrap.Carousel(bannerCarouselEl, {
@@ -851,33 +868,62 @@
             }
 
             {{-- ── FILTRO CASCADA ── --}}
+            {{-- Incluye especialidad para filtrar locales en tiempo real --}}
             const todosLosRestaurantes = @json($restaurantes->values());
 
-            function configurarFiltroCascada(selectDeptoId, selectRestId) {
+            function configurarFiltroCascada(selectDeptoId, inputEspecialidadId, selectRestId) {
                 const deptoSelect = document.getElementById(selectDeptoId);
+                const especInput  = document.getElementById(inputEspecialidadId);
                 const restSelect  = document.getElementById(selectRestId);
                 if (!deptoSelect || !restSelect) return;
-                deptoSelect.addEventListener('change', function () {
-                    const deptoId = this.value;
+
+                function actualizarLocales() {
+                    const deptoId = deptoSelect.value;
+                    const espec   = especInput ? especInput.value.toLowerCase().trim() : '';
+
                     restSelect.innerHTML = '<option value="">Todos los locales</option>';
-                    if (!deptoId) {
+
+                    if (!deptoId && !espec) {
                         restSelect.disabled = true;
-                        restSelect.options[0].text = 'Elige destino primero...';
+                        restSelect.options[0].text = 'Elige destino...';
                         return;
                     }
-                    const filtrados = todosLosRestaurantes.filter(r => r.departamento_id == deptoId);
+
+                    let filtrados = todosLosRestaurantes;
+
+                    if (deptoId) {
+                        filtrados = filtrados.filter(r => r.departamento_id == deptoId);
+                    }
+                    if (espec) {
+                        filtrados = filtrados.filter(r =>
+                            r.especialidad && r.especialidad.toLowerCase().includes(espec)
+                        );
+                    }
+
                     filtrados.forEach(r => {
                         const opt = document.createElement('option');
                         opt.value = r.id;
                         opt.textContent = r.nombre;
                         restSelect.appendChild(opt);
                     });
+
                     restSelect.disabled = false;
                     restSelect.options[0].text = 'Todos los locales';
-                });
+                }
+
+                deptoSelect.addEventListener('change', actualizarLocales);
+                if (especInput) especInput.addEventListener('input', actualizarLocales);
+
+                // ── PROBLEMA 1 FIX: disparar al cargar si ya hay valores preseleccionados ──
+                if (deptoSelect.value || (especInput && especInput.value)) {
+                    actualizarLocales();
+                }
             }
-            configurarFiltroCascada('search-departamento',        'search-restaurante');
-            configurarFiltroCascada('search-departamento-mobile', 'search-restaurante-mobile');
+
+            // Desktop: pasa los 3 IDs en orden (destino, especialidad, local)
+            configurarFiltroCascada('search-departamento', 'search-especialidad', 'search-restaurante');
+            // Móvil: pasa los 3 IDs en orden (destino, especialidad, local)
+            configurarFiltroCascada('search-departamento-mobile', 'search-especialidad-mobile', 'search-restaurante-mobile');
 
             {{-- ── MOBILE TOGGLE ── --}}
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');

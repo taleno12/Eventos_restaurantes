@@ -29,9 +29,12 @@ class EventoController extends Controller
             ? ($request->filled('departamento') ? $request->departamento : null)
             : $departamentoPredefinido;
 
-        // Restaurantes filtrados por departamento
+        // Restaurantes filtrados por departamento Y especialidad
         $restaurantes = Restaurante::orderBy('nombre')
             ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
+            ->when($request->filled('especialidad'), fn($q) =>
+                $q->where('especialidad', 'LIKE', '%' . $request->especialidad . '%')
+            )
             ->get();
 
         // Eventos destacados filtrados por departamento

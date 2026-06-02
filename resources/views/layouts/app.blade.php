@@ -169,6 +169,21 @@
             color: #60a5fa;
         }
 
+        /* ── Badge "nuevo" en nav ── */
+        .nav-badge {
+            margin-left: auto;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(59,130,246,0.18);
+            color: #60a5fa;
+            border: 1px solid rgba(59,130,246,0.25);
+            border-radius: 4px;
+            padding: 2px 6px;
+            flex-shrink: 0;
+        }
+
         /* ── Divider nav ── */
         .nav-divider {
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -267,12 +282,16 @@
             {{-- Nav --}}
             <nav class="nav-menu">
 
+                {{-- ── Dashboard ── --}}
                 <a href="{{ route('dashboard') }}"
                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart-line"></i>
                     <span>Resumen General</span>
                 </a>
 
+                {{-- ══════════════════════════════════════════ --}}
+                {{-- SECCIÓN: Logística Gastronómica           --}}
+                {{-- ══════════════════════════════════════════ --}}
                 <div class="nav-section-title">Logística Gastronómica</div>
 
                 <a href="{{ route('departamentos.index') }}"
@@ -305,18 +324,51 @@
                     <span>Ofertas de Empleo</span>
                 </a>
 
-                <div class="nav-section-title">Personal y Seguridad</div>
+                {{-- ══════════════════════════════════════════ --}}
+                {{-- SECCIÓN: Administración Interna           --}}
+                {{-- ══════════════════════════════════════════ --}}
+                <div class="nav-section-title">Administración Interna</div>
 
                 <a href="{{ route('trabajadores.index') }}"
                    class="nav-item {{ request()->routeIs('trabajadores.*') ? 'active' : '' }}">
                     <i class="bi bi-person-badge"></i>
-                    <span>Trabajadores</span>
+                    <span>Personal</span>
                 </a>
 
                 <a href="{{ route('contratos.index') }}"
                    class="nav-item {{ request()->routeIs('contratos.*') ? 'active' : '' }}">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Contratos</span>
+                    <span>Contratos de Restaurantes</span>
+                </a>
+
+                <a href="{{ route('membresias.index') }}"
+                   class="nav-item {{ request()->routeIs('membresias.*') ? 'active' : '' }}">
+                    <i class="bi bi-patch-check"></i>
+                    <span>Membresías Activas</span>
+                </a>
+
+                <a href="{{ route('pagos.index') }}"
+                   class="nav-item {{ request()->routeIs('pagos.*') ? 'active' : '' }}">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Pagos</span>
+                </a>
+
+                <a href="{{ route('usuarios.index') }}"
+                   class="nav-item {{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i>
+                    <span>Usuarios del Sistema</span>
+                </a>
+
+                <a href="{{ route('notificaciones.index') }}"
+                   class="nav-item {{ request()->routeIs('notificaciones.*') ? 'active' : '' }}">
+                    <i class="bi bi-bell"></i>
+                    <span>Notificaciones</span>
+                </a>
+
+                <a href="{{ route('reportes.index') }}"
+                   class="nav-item {{ request()->routeIs('reportes.*') ? 'active' : '' }}">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>Reportes y Estadísticas</span>
                 </a>
 
                 <a href="{{ route('soporte.index') }}"

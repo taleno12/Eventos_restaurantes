@@ -13,6 +13,11 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    {{-- ▼ TODOS LOS GASTROBARES PARA EL FILTRO JS ▼ --}}
+    <script>
+        window.__GASTROBARES__ = @json($gastrobares->values());
+    </script>
+
     <style>
         body { font-family: 'Instrument Sans', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
         .premium-title { font-family: 'Playfair Display', serif; }
@@ -102,6 +107,7 @@
             border-radius: 2rem;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
         }
         .rest-card:hover {
             transform: translateY(-8px);
@@ -156,14 +162,21 @@
                 {{-- Search Bar desktop --}}
                 <form action="{{ route('gastrobares.index') }}" method="GET"
                       class="hidden md:flex flex-1 search-box" style="min-width:0;">
+
+                    {{-- ▼ DEPTO PREDEFINIDO: hidden para que se envíe si el usuario no toca el select ▼ --}}
+                    @if(!request('departamento') && $departamentoPredefinido)
+                        <input type="hidden" name="departamento" value="{{ $departamentoPredefinido }}">
+                    @endif
+
                     <div class="search-segment">
                         <label for="nav-departamento">
                             <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:8px;"></i> Destino
                         </label>
+                        {{-- ▼ DEPTO PREDEFINIDO: usa request o predefinido para preseleccionar ▼ --}}
                         <select id="nav-departamento" name="departamento">
                             <option value="">Todos</option>
                             @foreach($departamentos as $depto)
-                                <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>
+                                <option value="{{ $depto->id }}" {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
                                     {{ $depto->nombre }}
                                 </option>
                             @endforeach
@@ -191,12 +204,14 @@
                             @endforeach
                         </select>
                     </div>
+                    {{-- FIX: Select dinámico de Local en lugar de input texto --}}
                     <div class="search-segment">
                         <label for="nav-search">
-                            <i class="fas fa-search" style="color:#ea580c;font-size:8px;"></i> Nombre
+                            <i class="fas fa-store" style="color:#ea580c;font-size:8px;"></i> Local
                         </label>
-                        <input type="text" id="nav-search" name="search"
-                               value="{{ request('search') }}" placeholder="Gastrobar...">
+                        <select id="nav-search" name="search">
+                            <option value="">Todos los locales</option>
+                        </select>
                     </div>
                     <button type="submit" class="search-btn">
                         <i class="fas fa-search" style="font-size:11px;"></i>
@@ -254,14 +269,21 @@
         {{-- Panel búsqueda móvil --}}
         <div id="mobileSearchPanel">
             <form action="{{ route('gastrobares.index') }}" method="GET" class="flex flex-col gap-3">
+
+                {{-- ▼ DEPTO PREDEFINIDO: hidden móvil ▼ --}}
+                @if(!request('departamento') && $departamentoPredefinido)
+                    <input type="hidden" name="departamento" value="{{ $departamentoPredefinido }}">
+                @endif
+
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
                     </label>
-                    <select name="departamento" class="nav-select-mobile">
+                    {{-- ▼ DEPTO PREDEFINIDO: preselecciona en móvil ▼ --}}
+                    <select id="mob-departamento" name="departamento" class="nav-select-mobile">
                         <option value="">Todos los destinos</option>
                         @foreach($departamentos as $depto)
-                            <option value="{{ $depto->id }}" {{ request('departamento') == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
+                            <option value="{{ $depto->id }}" {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>{{ $depto->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -269,7 +291,7 @@
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-cocktail text-orange-500"></i> Tipo de Bar
                     </label>
-                    <select name="tipo_bar" class="nav-select-mobile">
+                    <select id="mob-tipo_bar" name="tipo_bar" class="nav-select-mobile">
                         <option value="">Todos</option>
                         @foreach(['Cocktail Bar','Sports Bar','Rooftop Bar','Lounge Bar','Bar de Tapas','Bar de Vinos','Bar de Cervezas','Otro'] as $tipo)
                             <option value="{{ $tipo }}" {{ request('tipo_bar') == $tipo ? 'selected' : '' }}>{{ $tipo }}</option>
@@ -280,19 +302,21 @@
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-chair text-orange-500"></i> Ambiente
                     </label>
-                    <select name="ambiente" class="nav-select-mobile">
+                    <select id="mob-ambiente" name="ambiente" class="nav-select-mobile">
                         <option value="">Todos</option>
                         @foreach(['Interior','Exterior','Rooftop','Mixto'] as $amb)
                             <option value="{{ $amb }}" {{ request('ambiente') == $amb ? 'selected' : '' }}>{{ $amb }}</option>
                         @endforeach
                     </select>
                 </div>
+                {{-- FIX: Select dinámico de Local en lugar de input texto --}}
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-search text-orange-500"></i> Nombre
+                        <i class="fas fa-store text-orange-500"></i> Local
                     </label>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                           class="nav-input-mobile" placeholder="Gastrobar...">
+                    <select id="mob-search" name="search" class="nav-select-mobile">
+                        <option value="">Todos los locales</option>
+                    </select>
                 </div>
                 <button type="submit"
                         class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
@@ -505,7 +529,9 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             @endif
 
-            <article class="rest-card" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}">
+            {{-- FIX: onclick en article para hacer toda la card clickeable --}}
+            <article class="rest-card" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}"
+                     onclick="window.location='{{ route('gastrobares.show', $gastrobar->id) }}'">
 
                 {{-- Imagen --}}
                 <div class="card-img" style="position:relative;height:240px;overflow:hidden;background:#f5f5f4;">
@@ -583,8 +609,9 @@
                     </div>
 
                     {{-- Redes sociales --}}
+                    {{-- FIX: onclick stopPropagation para que los links de redes no disparen el redirect de la card --}}
                     @if($gastrobar->whatsapp || $gastrobar->instagram || $gastrobar->facebook || $gastrobar->tiktok)
-                        <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation();">
                             @if($gastrobar->whatsapp)
                                 <a href="https://wa.me/{{ preg_replace('/\D/', '', $gastrobar->whatsapp) }}" target="_blank"
                                    style="width:28px;height:28px;border-radius:50%;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;text-decoration:none;">
@@ -622,12 +649,8 @@
                         @else
                             <span></span>
                         @endif
-                        <a href="{{ route('gastrobares.show', $gastrobar->id) }}"
-                           class="btn-ver"
-                           style="background:#1c1917;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;border-radius:999px;text-decoration:none;display:flex;align-items:center;gap:6px;transition:background .2s;">
-                            Ver perfil
-                            <i class="fas fa-arrow-right" style="font-size:9px;"></i>
-                        </a>
+                        {{-- FIX: onclick stopPropagation en el botón "Ver perfil" para evitar doble navegación --}}
+
                     </div>
                 </div>
             </article>
@@ -759,6 +782,59 @@
     <script>
         AOS.init({ duration: 800, once: true });
 
+        const todosLosGastrobares = window.__GASTROBARES__ || [];
+
+        // ── Filtro dinámico: depto → tipo_bar → ambiente → local ──
+        function configurarFiltros(deptoId, tipoId, ambienteId, searchId) {
+            const deptoSel  = document.getElementById(deptoId);
+            const tipoSel   = document.getElementById(tipoId);
+            const ambSel    = document.getElementById(ambienteId);
+            const searchSel = document.getElementById(searchId);
+            if (!searchSel) return;
+
+            const currentSearch = '{{ request("search") }}';
+
+            function actualizarLocales() {
+                const depto = deptoSel  ? deptoSel.value  : '';
+                const tipo  = tipoSel   ? tipoSel.value   : '';
+                const amb   = ambSel    ? ambSel.value    : '';
+
+                searchSel.innerHTML = '';
+
+                const ph = document.createElement('option');
+                ph.value = '';
+                ph.textContent = 'Todos los locales';
+                searchSel.appendChild(ph);
+
+                let filtrados = todosLosGastrobares;
+
+                if (depto) filtrados = filtrados.filter(g => String(g.departamento_id) === String(depto));
+                if (tipo)  filtrados = filtrados.filter(g => g.tipo_bar === tipo);
+                if (amb)   filtrados = filtrados.filter(g => g.ambiente === amb);
+
+                filtrados.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.nombre;
+                    opt.textContent = g.nombre;
+                    if (g.nombre === currentSearch) opt.selected = true;
+                    searchSel.appendChild(opt);
+                });
+            }
+
+            if (deptoSel) deptoSel.addEventListener('change', actualizarLocales);
+            if (tipoSel)  tipoSel.addEventListener('change',  actualizarLocales);
+            if (ambSel)   ambSel.addEventListener('change',   actualizarLocales);
+
+            // Disparar al cargar para preseleccionar si hay filtros activos
+            actualizarLocales();
+        }
+
+        // Desktop
+        configurarFiltros('nav-departamento', 'nav-tipo_bar', 'nav-ambiente', 'nav-search');
+        // Móvil
+        configurarFiltros('mob-departamento', 'mob-tipo_bar', 'mob-ambiente', 'mob-search');
+
+        // ── Toggle búsqueda móvil ──
         const mobileSearchToggle = document.getElementById('mobileSearchToggle');
         const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
         if (mobileSearchToggle && mobileSearchPanel) {

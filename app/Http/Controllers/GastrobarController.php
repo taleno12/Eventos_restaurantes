@@ -74,13 +74,11 @@ class GastrobarController extends Controller
 
         $data = $request->except(['imagen_principal', 'galeria']);
 
-        // Imagen principal
         if ($request->hasFile('imagen_principal')) {
             $data['imagen_principal'] = $request->file('imagen_principal')
                 ->store('gastrobares/portadas', 'public');
         }
 
-        // Galería
         if ($request->hasFile('galeria')) {
             $galeria = [];
             foreach ($request->file('galeria') as $foto) {
@@ -145,7 +143,6 @@ class GastrobarController extends Controller
 
         $data = $request->except(['imagen_principal', 'galeria']);
 
-        // Imagen principal
         if ($request->hasFile('imagen_principal')) {
             if ($gastrobar->imagen_principal) {
                 Storage::disk('public')->delete($gastrobar->imagen_principal);
@@ -154,7 +151,6 @@ class GastrobarController extends Controller
                 ->store('gastrobares/portadas', 'public');
         }
 
-        // Galería
         if ($request->hasFile('galeria')) {
             if ($gastrobar->galeria) {
                 foreach ($gastrobar->galeria as $foto) {
@@ -197,25 +193,42 @@ class GastrobarController extends Controller
     // ── PUBLIC INDEX ─────────────────────────────────────────────
     public function publicIndex(Request $request)
     {
+        // Departamento predefinido según el usuario autenticado (igual que restaurantes)
+        $departamentoPredefinido = null;
+        if (auth()->check() && auth()->user()->departamento_id) {
+            $departamentoPredefinido = auth()->user()->departamento_id;
+        }
+
         $query = Gastrobar::with(['departamento', 'municipio'])->latest();
 
-        if ($request->departamento) {
-            $query->where('departamento_id', $request->departamento);
+        // Filtro departamento: prioriza el request, luego el predefinido por login
+        $deptoActivo = $request->departamento ?? $departamentoPredefinido;
+        if ($deptoActivo) {
+            $query->where('departamento_id', $deptoActivo);
         }
-        if ($request->tipo_bar) {
+        if ($request->filled('municipio')) {
+            $query->where('municipio_id', $request->municipio);
+        }
+        if ($request->filled('tipo_bar')) {
             $query->where('tipo_bar', $request->tipo_bar);
         }
-        if ($request->ambiente) {
+        if ($request->filled('ambiente')) {
             $query->where('ambiente', $request->ambiente);
         }
-        if ($request->search) {
+        if ($request->filled('search')) {
             $query->where('nombre', 'like', '%' . $request->search . '%');
         }
 
         $gastrobares   = $query->paginate(12)->withQueryString();
         $departamentos = Departamento::orderBy('nombre')->get();
+        $municipios    = Municipio::orderBy('nombre')->get();
 
-        return view('gastrobares.public_index', compact('gastrobares', 'departamentos'));
+        return view('gastrobares.public_index', compact(
+            'gastrobares',
+            'departamentos',
+            'municipios',
+            'departamentoPredefinido'
+        ));
     }
 
     // ── PUBLIC SHOW ──────────────────────────────────────────────

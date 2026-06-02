@@ -253,7 +253,7 @@
                         <span class="hidden lg:inline">Inicio</span>
                     </a>
 
-                    
+
 
 
                     <a href="{{ route('contacto') }}"
@@ -935,7 +935,7 @@
                         <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Restaurantes</a></li>
                         <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all no-underline">Gastrobares</a></li>
                         <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="text-orange-400 font-semibold no-underline">Contacto & Planes</a></li>
+                        <li><a href="{{ route('contacto') }}" class="text-orange-400 font-semibold no-underline">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="lg:col-span-3 space-y-4">

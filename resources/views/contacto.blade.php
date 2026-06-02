@@ -504,104 +504,117 @@
     </section>
 
     {{-- ══ PLANES ══ --}}
-    <section id="planes" class="py-20 bg-stone-50" data-aos="fade-up">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <span class="plan-pill mb-4 inline-flex">
-                    <span class="dot"></span> Planes & Precios
-                </span>
-                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-orange-600 not-italic">se adapta a tu negocio</em></h2>
-                <p class="text-stone-500 text-sm mt-4 max-w-md mx-auto leading-relaxed">Sin contratos de largo plazo. Cancela cuando quieras. Empieza hoy mismo.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-
-                {{-- Plan Básico --}}
-                <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="0">
-                    <div class="plan-icon-wrap" style="background:#f5f5f4;">
-                        <i class="fas fa-seedling text-stone-600 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Básico</h3>
-                    <p class="text-stone-400 text-xs mb-6">Ideal para empezar</p>
-                    <div class="mb-6">
-                        <div class="plan-price"><sup>C$</sup>0<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">Gratis para siempre</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Perfil básico del restaurante</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Aparece en búsquedas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>1 foto de portada</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Información de contacto</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Publicar eventos</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Bolsa de empleo</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Estadísticas</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Soporte prioritario</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-outline">Registrarme Gratis</a>
-                </div>
-
-                {{-- Plan Pro (DESTACADO) --}}
-                <div class="plan-card featured p-8" data-aos="fade-up" data-aos-delay="100">
-                    <div class="plan-badge">Más Popular</div>
-                    <div class="plan-icon-wrap" style="background:#fff7ed;">
-                        <i class="fas fa-fire text-orange-600 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Pro</h3>
-                    <p class="text-stone-400 text-xs mb-6">Para negocios en crecimiento</p>
-                    <div class="mb-6">
-                        <div class="plan-price" style="color:#ea580c;"><sup style="color:#ea580c;">C$</sup>599<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">~$16 USD por mes</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Básico</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería hasta 20 fotos</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Publicar eventos ilimitados</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo (3 vacantes)</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas básicas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Destacado en carrusel</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte por WhatsApp</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Badge verificado</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-primary">Empezar Ahora</a>
-                </div>
-
-                {{-- Plan Premium --}}
-                <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="200">
-                    <div class="plan-icon-wrap" style="background:#1c1917;">
-                        <i class="fas fa-crown text-yellow-400 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Premium</h3>
-                    <p class="text-stone-400 text-xs mb-6">Para cadenas y marcas establecidas</p>
-                    <div class="mb-6">
-                        <div class="plan-price"><sup>C$</sup>1,299<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">~$35 USD por mes</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Pro</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería ilimitada + videos</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo ilimitada</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas avanzadas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Badge verificado ✓</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Posición #1 en búsquedas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte 24/7 prioritario</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Gestión de múltiples locales</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-outline">Contactar Ventas</a>
-                </div>
-
-            </div>
-
-            {{-- Nota debajo de planes --}}
-            <div class="mt-10 text-center">
-                <p class="text-stone-400 text-sm">
-                    <i class="fas fa-shield-alt text-orange-600 mr-1"></i>
-                    Sin contratos. Sin tarjeta de crédito para el plan gratuito. Precios en Córdobas nicaragüenses.
-                    <a href="#faq" class="text-orange-600 hover:text-orange-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
-                </p>
-            </div>
+<section id="planes" class="py-20 bg-stone-50" data-aos="fade-up">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <span class="plan-pill mb-4 inline-flex">
+                <span class="dot"></span> Planes & Precios
+            </span>
+            <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-orange-600 not-italic">se adapta a tu negocio</em></h2>
+            <p class="text-stone-500 text-sm mt-4 max-w-md mx-auto leading-relaxed">Sin contratos de largo plazo. Cancela cuando quieras. Empieza hoy mismo.</p>
         </div>
-    </section>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+            {{-- Plan Básico --}}
+            <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="0">
+                <div class="plan-icon-wrap" style="background:#f5f5f4;">
+                    <i class="fas fa-seedling text-stone-600 text-xl"></i>
+                </div>
+                <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Básico</h3>
+                <p class="text-stone-400 text-xs mb-6">Para empezar sin riesgo</p>
+                <div class="mb-6">
+                    <div class="plan-price"><sup>C$</sup>0<small>/mes</small></div>
+                    <p class="text-stone-400 text-xs mt-1">Gratis para siempre</p>
+                </div>
+                <div class="mb-8 space-y-0">
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Perfil básico del restaurante</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Aparece en búsquedas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>1 foto de portada</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Información de contacto</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Publicar eventos</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Bolsa de empleo</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Estadísticas</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Soporte prioritario</div>
+                </div>
+                <a href="#contacto-form" class="plan-btn plan-btn-outline">Registrarme Gratis</a>
+            </div>
+
+            {{-- Plan Pro (DESTACADO) --}}
+            <div class="plan-card featured p-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="plan-badge">Más Popular</div>
+                <div class="plan-icon-wrap" style="background:#fff7ed;">
+                    <i class="fas fa-fire text-orange-600 text-xl"></i>
+                </div>
+                <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Pro</h3>
+                <p class="text-stone-400 text-xs mb-6">Para negocios en crecimiento</p>
+                <div class="mb-6">
+                    <div class="plan-price" style="color:#ea580c;"><sup style="color:#ea580c;">C$</sup>1,199<small>/mes</small></div>
+                    <p class="text-stone-400 text-xs mt-1">~$32 USD por mes</p>
+                </div>
+                <div class="mb-4 p-3 rounded-xl bg-orange-50 border border-orange-100 text-xs text-orange-700 space-y-1">
+                    <p class="font-semibold mb-1">¿Por qué este precio?</p>
+                    <p> Galería de 20 fotos — equivale a una sesión fotográfica mensual</p>
+                    <p> Eventos ilimitados — promos que generan visitas directas</p>
+                    <p> 3 vacantes activas — ahorra C$300–600 en avisos de periódico</p>
+                    <p> Estadísticas — sabrás cuántas personas te ven cada semana</p>
+                </div>
+                <div class="mb-8 space-y-0">
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Básico</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Galería hasta 20 fotos</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Publicar eventos ilimitados</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo (3 vacantes)</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas básicas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Destacado en carrusel</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Soporte por WhatsApp</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Badge verificado</div>
+                </div>
+                <a href="#contacto-form" class="plan-btn plan-btn-primary">Empezar Ahora</a>
+            </div>
+
+            {{-- Plan Premium --}}
+            <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-icon-wrap" style="background:#1c1917;">
+                    <i class="fas fa-crown text-yellow-400 text-xl"></i>
+                </div>
+                <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Premium</h3>
+                <p class="text-stone-400 text-xs mb-6">Para cadenas y marcas establecidas</p>
+                <div class="mb-6">
+                    <div class="plan-price"><sup>C$</sup>1,499<small>/mes</small></div>
+                    <p class="text-stone-400 text-xs mt-1">~$40 USD por mes</p>
+                </div>
+                <div class="mb-4 p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-600 space-y-1">
+                    <p class="font-semibold mb-1">¿Por qué este precio?</p>
+                    <p> Badge verificado — genera confianza frente a competidores</p>
+                    <p> Posición #1 en búsquedas — ventaja competitiva medible</p>
+                    <p> Múltiples locales — una sola suscripción para toda tu cadena</p>
+                    <p> Soporte 24/7 — crítico para operar fines de semana y feriados</p>
+                </div>
+                <div class="mb-8 space-y-0">
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Pro</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Galería ilimitada + videos</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo ilimitada</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas avanzadas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Badge verificado ✓</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Posición #1 en búsquedas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Soporte 24/7 prioritario</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Gestión de múltiples locales</div>
+                </div>
+                <a href="#contacto-form" class="plan-btn plan-btn-outline">Contactar Ventas</a>
+            </div>
+
+        </div>
+
+        {{-- Nota debajo de planes --}}
+        <div class="mt-10 text-center">
+            <p class="text-stone-400 text-sm">
+                <i class="fas fa-shield-alt text-orange-600 mr-1"></i>
+                Sin contratos. Sin tarjeta de crédito para el plan gratuito. Precios en Córdobas nicaragüenses.
+                <a href="#faq" class="text-orange-600 hover:text-orange-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
+            </p>
+        </div>
+    </div>
+</section>
     
     {{-- ══ CONTACTO + INFO ══ --}}
     <section id="contacto-form" class="py-20 bg-stone-50" data-aos="fade-up">
@@ -663,16 +676,15 @@
 <div>
     <div class="text-xs font-black uppercase tracking-widest text-stone-400 mb-3">Síguenos en redes</div>
     <div class="flex gap-3">
-        {{-- Facebook (pendiente de enlace) --}}
-        <a href="#" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
-            <i class="fab fa-facebook-f text-sm"></i>
-        </a>
+        {{-- Facebook --}}
+<a href="https://www.facebook.com/kevin.taleno.98" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+    <i class="fab fa-facebook-f text-sm"></i>
+</a>
 
-        {{-- Instagram (pendiente de enlace) --}}
-        <a href="#" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
-            <i class="fab fa-instagram text-sm"></i>
-        </a>
-
+{{-- Instagram --}}
+<a href="https://www.instagram.com/taleno5196" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+    <i class="fab fa-instagram text-sm"></i>
+</a>
         {{-- TikTok --}}
         <a href="https://www.tiktok.com/@nrg434" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
             <i class="fab fa-tiktok text-sm"></i>

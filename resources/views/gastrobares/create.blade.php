@@ -552,8 +552,25 @@
         depSelect.addEventListener('change', function () { cargarMunicipios(this.value); });
         if (depSelect.value) cargarMunicipios(depSelect.value, muniSelect.dataset.oldMuni);
 
+        // ── FIX: Garantizar que dirección se envíe aunque geocoding no haya terminado ──
         document.getElementById('form-gastrobar').addEventListener('submit', function () {
             muniSelect.disabled = false;
+
+            const dirInput  = document.getElementById('direccion');
+            const dirBuscar = document.getElementById('direccion-buscar');
+            const lat       = document.getElementById('latitud').value;
+            const lng       = document.getElementById('longitud').value;
+
+            // Si el campo dirección está vacío, usar el texto buscado como fallback
+            if (!dirInput.value.trim() && dirBuscar.value.trim()) {
+                dirInput.value = dirBuscar.value.trim();
+            }
+
+            // Si aún está vacío pero hay coordenadas, guardar las coordenadas como dirección
+            if (!dirInput.value.trim() && lat && lng) {
+                dirInput.value = lat + ', ' + lng;
+            }
+
             const btn = document.getElementById('btn-submit');
             if (btn) {
                 btn.disabled = true;

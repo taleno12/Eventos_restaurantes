@@ -125,6 +125,11 @@ class RestauranteController extends Controller
             'direccion'         => 'nullable|string|max:255',
             'latitud'           => 'nullable|numeric|between:-90,90',
             'longitud'          => 'nullable|numeric|between:-180,180',
+            // ← HORARIO
+            'dias_laborales'    => 'nullable|array',
+            'dias_laborales.*'  => 'in:lunes,martes,miercoles,jueves,viernes,sabado,domingo',
+            'hora_apertura'     => 'nullable|date_format:H:i',
+            'hora_cierre'       => 'nullable|date_format:H:i',
             // ← USUARIO PROPIETARIO
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email',
@@ -181,21 +186,18 @@ class RestauranteController extends Controller
     public function edit(Restaurante $restaurante)
     {
         $departamentos = Departamento::all();
-        $restaurante->load('imagenes');
+        $restaurante->load(['imagenes', 'propietario']);
 
-        // Usuarios con rol restaurante (sin asignar o el actual)
-        $usuarios = User::where('role', 'restaurante')
-            ->where(function ($q) use ($restaurante) {
-                $q->whereNull('restaurante_id')
-                  ->orWhere('restaurante_id', $restaurante->id);
-            })
-            ->get();
-
-        return view('restaurantes.edit', compact('restaurante', 'departamentos', 'usuarios'));
+        return view('restaurantes.edit', compact('restaurante', 'departamentos'));
     }
 
     public function update(Request $request, Restaurante $restaurante)
     {
+        // Obtener el propietario actual para la validación del email único
+        $propietario = User::where('restaurante_id', $restaurante->id)
+            ->where('role', 'restaurante')
+            ->first();
+
         $request->validate([
             'nombre'          => 'required|string|max:255',
             'email'           => 'required|email|unique:restaurantes,email,' . $restaurante->id,
@@ -213,11 +215,23 @@ class RestauranteController extends Controller
             'direccion'        => 'nullable|string|max:255',
             'latitud'          => 'nullable|numeric|between:-90,90',
             'longitud'         => 'nullable|numeric|between:-180,180',
-            'user_id'          => 'nullable|exists:users,id',
+            // ← HORARIO
+            'dias_laborales'   => 'nullable|array',
+            'dias_laborales.*' => 'in:lunes,martes,miercoles,jueves,viernes,sabado,domingo',
+            'hora_apertura'    => 'nullable|date_format:H:i',
+            'hora_cierre'      => 'nullable|date_format:H:i',
+            // ← PROPIETARIO
+            'propietario_nombre'   => 'required|string|max:255',
+            'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
+            'propietario_password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        // 1. Asignar los campos básicos
-        $restaurante->fill($request->except(['galeria', 'imagen_principal', 'user_id']));
+        // 1. Asignar los campos básicos del restaurante
+        $restaurante->fill($request->except([
+            'galeria', 'imagen_principal',
+            'propietario_nombre', 'propietario_email',
+            'propietario_password', 'propietario_password_confirmation'
+        ]));
 
         // 2. Si sube una nueva imagen principal, reemplazar la anterior
         if ($request->hasFile('imagen_principal')) {
@@ -242,14 +256,16 @@ class RestauranteController extends Controller
             }
         }
 
-        // 4. Actualizar el usuario vinculado al restaurante
-        if ($request->filled('user_id')) {
-            User::where('restaurante_id', $restaurante->id)
-                ->where('id', '!=', $request->user_id)
-                ->update(['restaurante_id' => null]);
+        // 4. Actualizar nombre, email y contraseña del propietario
+        if ($propietario) {
+            $propietario->name  = $request->propietario_nombre;
+            $propietario->email = $request->propietario_email;
 
-            User::where('id', $request->user_id)
-                ->update(['restaurante_id' => $restaurante->id]);
+            if ($request->filled('propietario_password')) {
+                $propietario->password = Hash::make($request->propietario_password);
+            }
+
+            $propietario->save();
         }
 
         return redirect()->route('admin.restaurantes.index')

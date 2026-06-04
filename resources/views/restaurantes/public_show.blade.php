@@ -34,9 +34,7 @@
 
             .premium-title { font-family: 'Playfair Display', serif; }
 
-            /* ─────────────────────────────────────────────────────
-               HERO  —  altura reducida, sin espacio en blanco
-            ───────────────────────────────────────────────────── */
+            /* HERO DESKTOP: split-screen */
             .hero-wrap {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -44,15 +42,43 @@
                 position: relative;
             }
 
+            /* HERO MOVIL: columna unica */
             @media (max-width: 900px) {
-                .hero-wrap { grid-template-columns: 1fr; }
-
-                /* ✅ FIX: logo/info arriba, imagen abajo en móvil */
-                .hero-info-col { order: 1; }
-                .hero-img-col  { order: 2; height: 52vw; min-height: 220px; max-height: 380px; }
+                .hero-wrap {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .hero-img-col  { order: 1; height: 52vw; min-height: 220px; max-height: 340px; }
+                .hero-info-col {
+                    order: 2;
+                    min-height: 0 !important;
+                    height: auto !important;
+                }
+                .nav-inner {
+                    position: absolute;
+                    top: 0; left: 0; right: 0;
+                    z-index: 20;
+                    background: linear-gradient(to bottom, rgba(12,10,9,0.70) 0%, transparent 100%);
+                    border-bottom: none;
+                    padding: 14px 16px;
+                }
+                /* Nav desktop oculto sin ocupar espacio */
+                .nav-desktop-only {
+                    display: none !important;
+                    height: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    border: none !important;
+                    overflow: hidden !important;
+                }
+                /* hero-center no fuerza altura minima en movil */
+                .hero-center {
+                    flex: 0 0 auto !important;
+                    justify-content: flex-start !important;
+                    padding: 20px 16px !important;
+                }
             }
 
-            /* Columna imagen — altura fija, no 100vh */
             .hero-img-col {
                 position: relative;
                 overflow: hidden;
@@ -60,10 +86,7 @@
             }
 
             @media (min-width: 900px) {
-                .hero-img-col {
-                    height: auto;
-                    min-height: 420px;
-                }
+                .hero-img-col { height: auto; min-height: 420px; }
             }
 
             .hero-bg {
@@ -73,7 +96,6 @@
                 background-position: center;
                 transition: transform 9s ease;
             }
-
             .hero-img-col:hover .hero-bg { transform: scale(1.05); }
 
             .hero-img-overlay {
@@ -82,30 +104,22 @@
                 background: linear-gradient(135deg, rgba(12,10,9,0.35) 0%, transparent 60%);
             }
 
-            /* Botón zoom portada */
             .btn-zoom-portada {
                 position: absolute;
-                bottom: 20px;
-                right: 20px;
-                z-index: 10;
+                bottom: 20px; right: 20px; z-index: 10;
                 background: rgba(255,255,255,0.14);
                 border: 1px solid rgba(255,255,255,0.25);
                 backdrop-filter: blur(14px);
                 color: white;
-                font-size: 12px;
-                font-weight: 700;
-                padding: 8px 16px;
-                border-radius: 999px;
+                font-size: 12px; font-weight: 700;
+                padding: 8px 16px; border-radius: 999px;
                 cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 7px;
+                display: flex; align-items: center; gap: 7px;
                 transition: background 0.2s, transform 0.2s;
                 letter-spacing: 0.04em;
             }
             .btn-zoom-portada:hover { background: rgba(234,88,12,0.75); transform: translateY(-2px); }
 
-            /* Columna info — se ajusta al contenido */
             .hero-info-col {
                 background: var(--dark);
                 display: flex;
@@ -117,30 +131,23 @@
 
             .hero-info-col::before {
                 content: '';
-                position: absolute;
-                inset: 0;
-                background-image: radial-gradient(circle at 80% 20%, rgba(234,88,12,0.12) 0%, transparent 55%),
-                                  radial-gradient(circle at 10% 85%, rgba(234,88,12,0.07) 0%, transparent 45%);
+                position: absolute; inset: 0;
+                background-image:
+                    radial-gradient(circle at 80% 20%, rgba(234,88,12,0.12) 0%, transparent 55%),
+                    radial-gradient(circle at 10% 85%, rgba(234,88,12,0.07) 0%, transparent 45%);
                 pointer-events: none;
             }
 
-            /* NAV dentro del hero-info */
             .nav-inner {
-                position: relative;
-                z-index: 10;
+                position: relative; z-index: 10;
                 padding: 22px 40px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+                display: flex; align-items: center; justify-content: space-between;
                 border-bottom: 1px solid rgba(255,255,255,0.06);
             }
-
-            @media (max-width: 900px) { .nav-inner { padding: 18px 20px; } }
+            @media (max-width: 900px) { .nav-inner { padding: 14px 16px; } }
 
             .logo-link {
-                display: flex;
-                align-items: center;
-                gap: 10px;
+                display: flex; align-items: center; gap: 10px;
                 text-decoration: none;
             }
 
@@ -151,6 +158,10 @@
                 display: flex; align-items: center; justify-content: center;
                 box-shadow: 0 4px 16px rgba(234,88,12,0.4);
                 flex-shrink: 0;
+            }
+
+            .nav-actions {
+                display: flex; align-items: center; gap: 8px;
             }
 
             .btn-back {
@@ -166,18 +177,26 @@
             }
             .btn-back:hover { background: rgba(234,88,12,0.2); color: white; border-color: rgba(234,88,12,0.4); }
 
-            /* Bloque central del hero — padding equilibrado */
+            .btn-panel {
+                display: inline-flex; align-items: center; gap: 7px;
+                background: rgba(232,93,4,0.85);
+                border: 1px solid rgba(232,93,4,0.6);
+                color: white;
+                font-size: 12px; font-weight: 700;
+                padding: 7px 16px; border-radius: 999px;
+                text-decoration: none;
+                transition: all 0.2s;
+                letter-spacing: 0.04em;
+            }
+            .btn-panel:hover { background: var(--orange); }
+
             .hero-center {
-                position: relative;
-                z-index: 10;
+                position: relative; z-index: 10;
                 padding: 32px 40px;
                 flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
+                display: flex; flex-direction: column; justify-content: center;
             }
-
-            @media (max-width: 900px) { .hero-center { padding: 24px 20px; } }
+            @media (max-width: 900px) { .hero-center { padding: 20px 16px; } }
 
             .hero-badge {
                 display: inline-flex; align-items: center; gap: 6px;
@@ -187,15 +206,13 @@
                 font-size: 10px; font-weight: 800;
                 letter-spacing: 0.14em; text-transform: uppercase;
                 padding: 5px 12px; border-radius: 999px;
-                margin-bottom: 16px;
-                width: fit-content;
+                margin-bottom: 16px; width: fit-content;
             }
 
             .hero-title {
                 font-size: clamp(2rem, 3.5vw, 3.2rem);
                 font-weight: 900; line-height: 1.08;
-                color: white;
-                margin-bottom: 14px;
+                color: white; margin-bottom: 14px;
             }
 
             .hero-location {
@@ -207,22 +224,19 @@
             .hero-location i { color: var(--orange); }
             .hero-location strong { color: rgba(255,255,255,0.85); }
 
-            /* Stat row en el hero */
             .hero-stats {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                display: grid; grid-template-columns: repeat(3, 1fr);
                 gap: 1px;
                 background: rgba(255,255,255,0.07);
                 border: 1px solid rgba(255,255,255,0.07);
-                border-radius: 16px;
-                overflow: hidden;
+                border-radius: 16px; overflow: hidden;
             }
 
             .hero-stat {
                 background: rgba(255,255,255,0.04);
-                padding: 16px 18px;
-                transition: background 0.2s;
+                padding: 16px 18px; transition: background 0.2s;
             }
+            @media (max-width: 900px) { .hero-stat { padding: 12px 14px; } }
             .hero-stat:hover { background: rgba(255,255,255,0.08); }
 
             .hero-stat-label {
@@ -231,24 +245,17 @@
                 color: rgba(255,255,255,0.3);
                 display: block; margin-bottom: 5px;
             }
-            .hero-stat-value {
-                font-size: 14px; font-weight: 800;
-                color: white;
-            }
+            .hero-stat-value { font-size: 14px; font-weight: 800; color: white; }
 
-            /* Pie del hero-info */
             .hero-foot {
                 position: relative; z-index: 10;
                 padding: 18px 40px;
                 border-top: 1px solid rgba(255,255,255,0.06);
-                display: flex; align-items: center; gap: 10px;
-                flex-wrap: wrap;
+                display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
             }
-            @media (max-width: 900px) { .hero-foot { padding: 14px 20px; } }
+            @media (max-width: 900px) { .hero-foot { padding: 14px 16px; } }
 
-            /* ─────────────────────────────────────────────────────
-               MAIN LAYOUT
-            ───────────────────────────────────────────────────── */
+            /* MAIN LAYOUT */
             .main-wrap {
                 max-width: 1240px;
                 margin: 0 auto;
@@ -258,17 +265,33 @@
                 gap: 28px;
                 align-items: start;
             }
+            @media (max-width: 1024px) {
+                .main-wrap {
+                    grid-template-columns: 1fr;
+                    padding: 28px 16px 60px;
+                }
+            }
+
+            .col-principal { display: flex; flex-direction: column; gap: 24px; }
+            .col-sidebar   { display: flex; flex-direction: column; gap: 16px; }
 
             @media (max-width: 1024px) {
-                .main-wrap { grid-template-columns: 1fr; }
-            }
-            @media (max-width: 600px) {
-                .main-wrap { padding: 28px 16px 60px; }
+                .main-wrap {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                }
+                .sidebar-redes   { order: 1; }
+                .sidebar-horario { order: 2; }
+                .card-descripcion { order: 3; }
+                .card-galeria { order: 4; }
+                .card-mapa { order: 5; }
+                .card-resenas { order: 6; }
+                .sidebar-cta { order: 7; }
+                .col-principal, .col-sidebar { display: contents; }
             }
 
-            /* ─────────────────────────────────────────────────────
-               CARDS
-            ───────────────────────────────────────────────────── */
+            /* CARDS */
             .card {
                 background: white;
                 border-radius: 20px;
@@ -280,7 +303,7 @@
             .card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); }
 
             .card-body { padding: 28px 32px; }
-            @media (max-width: 600px) { .card-body { padding: 20px 18px; } }
+            @media (max-width: 600px) { .card-body { padding: 18px 16px; } }
 
             .section-label {
                 font-size: 10px; font-weight: 800;
@@ -290,59 +313,71 @@
                 margin-bottom: 20px;
             }
             .section-label i { color: var(--orange); font-size: 11px; }
-            .section-label::after {
-                content: ''; flex: 1; height: 1px; background: var(--border);
+            .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+            .desc-text { color: #57534e; font-size: 15px; line-height: 1.8; }
+
+            /* HORARIO */
+            .dias-grid {
+                display: flex; flex-wrap: wrap; gap: 6px;
+                margin-bottom: 20px;
+            }
+            .dia-pill {
+                font-size: 11px; font-weight: 800;
+                padding: 5px 13px; border-radius: 999px;
+                letter-spacing: 0.06em;
+            }
+            .dia-pill.activo {
+                background: #fff7ed;
+                color: #c2410c;
+                border: 1px solid #fed7aa;
+            }
+            .dia-pill.inactivo {
+                background: #f5f5f4;
+                color: #c4bdb8;
+                border: 1px solid #e7e5e4;
+            }
+            .horario-row {
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 12px 16px;
+                border-radius: 12px;
+                background: #fafaf9;
+                border: 1px solid var(--border);
+            }
+            .horario-label {
+                display: flex; align-items: center; gap: 8px;
+                font-size: 12px; font-weight: 700;
+                color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+            }
+            .horario-value {
+                font-size: 15px; font-weight: 800; color: var(--text-main);
             }
 
-            /* Descripción */
-            .desc-text {
-                color: #57534e;
-                font-size: 15px;
-                line-height: 1.8;
-            }
-
-            /* ─────────────────────────────────────────────────────
-               GALERÍA
-            ───────────────────────────────────────────────────── */
+            /* GALERIA */
             .gallery-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
                 grid-auto-rows: 120px;
                 gap: 8px;
             }
-
             @media (max-width: 700px) {
-                .gallery-grid {
-                    grid-template-columns: repeat(3, 1fr);
-                    grid-auto-rows: 90px;
-                }
+                .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 90px; }
             }
             @media (max-width: 420px) {
                 .gallery-grid { grid-template-columns: repeat(2, 1fr); }
             }
-
-            .gallery-grid .g-item:first-child {
-                grid-column: span 2;
-                grid-row: span 2;
-            }
+            .gallery-grid .g-item:first-child { grid-column: span 2; grid-row: span 2; }
 
             .g-item {
-                border-radius: 12px;
-                overflow: hidden;
-                cursor: zoom-in;
-                position: relative;
+                border-radius: 12px; overflow: hidden;
+                cursor: zoom-in; position: relative;
                 border: 1px solid var(--border);
             }
-
             .g-item img {
-                width: 100%; height: 100%;
-                object-fit: cover;
-                transition: transform 0.5s ease;
-                display: block;
+                width: 100%; height: 100%; object-fit: cover;
+                transition: transform 0.5s ease; display: block;
             }
-
             .g-item:hover img { transform: scale(1.08); }
-
             .g-item::after {
                 content: '\f00e';
                 font-family: 'Font Awesome 6 Free'; font-weight: 900;
@@ -350,19 +385,14 @@
                 display: flex; align-items: center; justify-content: center;
                 font-size: 20px; color: white;
                 background: rgba(12,10,9,0);
-                transition: background 0.3s, opacity 0.3s;
-                opacity: 0;
+                transition: background 0.3s, opacity 0.3s; opacity: 0;
             }
             .g-item:hover::after { background: rgba(12,10,9,0.38); opacity: 1; }
 
-            /* ─────────────────────────────────────────────────────
-               MAPA
-            ───────────────────────────────────────────────────── */
+            /* MAPA */
             #mapa-publico {
-                height: 260px;
-                border-radius: 14px;
-                overflow: hidden;
-                border: 1px solid var(--border);
+                height: 260px; border-radius: 14px;
+                overflow: hidden; border: 1px solid var(--border);
             }
 
             .dir-box {
@@ -370,8 +400,7 @@
                 background: #fff7ed;
                 border: 1px solid var(--orange-light);
                 border-radius: 12px;
-                padding: 12px 16px;
-                margin-bottom: 14px;
+                padding: 12px 16px; margin-bottom: 14px;
                 font-size: 13.5px; color: #57534e; line-height: 1.6;
             }
             .dir-box i { color: var(--orange); margin-top: 2px; flex-shrink: 0; }
@@ -381,35 +410,12 @@
                 background: var(--dark); color: white;
                 text-decoration: none;
                 font-size: 13px; font-weight: 700;
-                padding: 10px 20px; border-radius: 10px;
-                margin-top: 14px;
-                transition: background 0.2s, transform 0.2s;
-                letter-spacing: 0.02em;
+                padding: 10px 20px; border-radius: 10px; margin-top: 14px;
+                transition: background 0.2s, transform 0.2s; letter-spacing: 0.02em;
             }
             .btn-gmaps:hover { background: var(--orange); transform: translateY(-1px); }
 
-            /* ─────────────────────────────────────────────────────
-               SIDEBAR
-            ───────────────────────────────────────────────────── */
-            .sidebar { display: flex; flex-direction: column; gap: 16px; }
-
-            @media (min-width: 1024px) {
-                .sidebar { position: sticky; top: 24px; }
-            }
-
-            /* Contacto */
-            .contact-row {
-                background: #fafaf9;
-                border: 1px solid var(--border);
-                border-radius: 10px;
-                padding: 12px 14px;
-                font-size: 13px; font-weight: 600; color: #292524;
-                word-break: break-all;
-                display: flex; align-items: center; gap: 10px;
-            }
-            .contact-row i { color: var(--orange); }
-
-            /* Social */
+            /* SIDEBAR REDES */
             .social-btn {
                 display: flex; align-items: center; justify-content: center;
                 width: 48px; height: 48px; border-radius: 14px;
@@ -417,16 +423,15 @@
                 transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
             }
             .social-btn:hover { transform: translateY(-4px) scale(1.08); }
-            .social-btn.wa  { background: #dcfce7; color: #16a34a; }
-            .social-btn.wa:hover  { background: #22c55e; color: white; box-shadow: 0 8px 24px rgba(34,197,94,0.4); }
-            .social-btn.ig  { background: #fce7f3; color: #db2777; }
-            .social-btn.ig:hover  { background: linear-gradient(135deg,#f59e0b,#ec4899,#8b5cf6); color: white; box-shadow: 0 8px 24px rgba(236,72,153,0.4); }
-            .social-btn.tt  { background: #f1f5f9; color: #0f172a; }
-            .social-btn.tt:hover  { background: #0f172a; color: white; box-shadow: 0 8px 24px rgba(15,23,42,0.3); }
-            .social-btn.fb  { background: #dbeafe; color: #2563eb; }
-            .social-btn.fb:hover  { background: #2563eb; color: white; box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
+            .social-btn.wa { background: #dcfce7; color: #16a34a; }
+            .social-btn.wa:hover { background: #22c55e; color: white; box-shadow: 0 8px 24px rgba(34,197,94,0.4); }
+            .social-btn.ig { background: #fce7f3; color: #db2777; }
+            .social-btn.ig:hover { background: linear-gradient(135deg,#f59e0b,#ec4899,#8b5cf6); color: white; box-shadow: 0 8px 24px rgba(236,72,153,0.4); }
+            .social-btn.tt { background: #f1f5f9; color: #0f172a; }
+            .social-btn.tt:hover { background: #0f172a; color: white; box-shadow: 0 8px 24px rgba(15,23,42,0.3); }
+            .social-btn.fb { background: #dbeafe; color: #2563eb; }
+            .social-btn.fb:hover { background: #2563eb; color: white; box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
 
-            /* CTA */
             .cta-btn {
                 display: flex; align-items: center; justify-content: center; gap: 9px;
                 width: 100%; background: var(--dark); color: white;
@@ -437,21 +442,17 @@
                 letter-spacing: 0.03em;
             }
             .cta-btn:hover {
-                background: var(--orange);
-                transform: translateY(-2px);
+                background: var(--orange); transform: translateY(-2px);
                 box-shadow: 0 12px 32px rgba(234,88,12,0.35);
             }
 
-            /* ─────────────────────────────────────────────────────
-               LIGHTBOX
-            ───────────────────────────────────────────────────── */
+            /* LIGHTBOX */
             #lightbox {
                 position: fixed; inset: 0; z-index: 9999;
                 background: rgba(12,10,9,0.96);
                 display: flex; align-items: center; justify-content: center;
                 opacity: 0; pointer-events: none;
-                transition: opacity 0.3s ease;
-                padding: 20px;
+                transition: opacity 0.3s ease; padding: 20px;
             }
             #lightbox.active { opacity: 1; pointer-events: all; }
 
@@ -473,8 +474,7 @@
                 backdrop-filter: blur(8px);
                 display: flex; align-items: center; justify-content: center;
                 color: white; font-size: 16px; cursor: pointer;
-                transition: background 0.2s, transform 0.2s;
-                z-index: 10000;
+                transition: background 0.2s, transform 0.2s; z-index: 10000;
             }
             .lb-nav-btn:hover { background: rgba(234,88,12,0.7); transform: translateY(-50%) scale(1.08); }
             #lb-prev { left: 16px; }
@@ -507,9 +507,7 @@
             }
             .lb-dot.active { background: #ea580c; transform: scale(1.35); }
 
-            /* ─────────────────────────────────────────────────────
-               ANIMACIONES
-            ───────────────────────────────────────────────────── */
+            /* ANIMACIONES */
             @keyframes fadeUp {
                 from { opacity: 0; transform: translateY(20px); }
                 to   { opacity: 1; transform: translateY(0); }
@@ -523,9 +521,7 @@
     </head>
     <body>
 
-        {{-- ══════════════════════════════════════════════════════════
-             HERO SPLIT-SCREEN
-        ════════════════════════════════════════════════════════════ --}}
+        {{-- HERO SPLIT-SCREEN --}}
         <section class="hero-wrap">
 
             {{-- Columna imagen --}}
@@ -542,6 +538,30 @@
                 <div class="hero-bg" style="background-image:url('{{ $bgUrl }}');"></div>
                 <div class="hero-img-overlay"></div>
 
+                {{-- Nav superpuesto solo visible en movil --}}
+                <nav class="nav-inner nav-mobile-overlay">
+                    <a href="{{ route('home') }}" class="logo-link">
+                        <div class="logo-icon">
+                            <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+                        </div>
+                        <span class="premium-title" style="font-size:19px;font-weight:700;color:white;font-style:italic;">
+                            Gastro<span style="color:#fb923c;">Nicaragua</span>
+                        </span>
+                    </a>
+                    <div class="nav-actions">
+                        <a href="{{ route('restaurantes.index') }}" class="btn-back">
+                            <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
+                        </a>
+                        @auth
+                            @if(auth()->user()->restaurante && auth()->user()->restaurante->id === $restaurante->id)
+                                <a href="{{ route('restaurante.dashboard') }}" class="btn-panel">
+                                    <i class="fas fa-chart-pie" style="font-size:10px;"></i> Mi Panel
+                                </a>
+                            @endif
+                        @endauth
+                    </div>
+                </nav>
+
                 @if($restaurante->foto_portada)
                     <button class="btn-zoom-portada"
                             onclick="openLightbox('{{ asset('storage/' . $restaurante->foto_portada) }}', -1)">
@@ -553,8 +573,8 @@
             {{-- Columna info --}}
             <div class="hero-info-col">
 
-                {{-- NAV --}}
-                <nav class="nav-inner">
+                {{-- Nav desktop (oculto en movil sin ocupar espacio) --}}
+                <nav class="nav-inner nav-desktop-only">
                     <a href="{{ route('home') }}" class="logo-link">
                         <div class="logo-icon">
                             <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
@@ -563,31 +583,20 @@
                             Gastro<span style="color:#fb923c;">Nicaragua</span>
                         </span>
                     </a>
-                    <a href="{{ route('restaurantes.index') }}" class="btn-back">
-                        <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
-                    </a>
-                </nav>
-                
-                <div style="display:flex;align-items:center;gap:8px;">
+
+                    <div class="nav-actions">
                         <a href="{{ route('restaurantes.index') }}" class="btn-back">
                             <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
                         </a>
                         @auth
                             @if(auth()->user()->restaurante && auth()->user()->restaurante->id === $restaurante->id)
-                                <a href="{{ route('restaurante.dashboard') }}"
-                                   style="display:inline-flex;align-items:center;gap:7px;
-                                          background:rgba(232,93,4,0.85);
-                                          border:1px solid rgba(232,93,4,0.6);
-                                          backdrop-filter:blur(14px);
-                                          color:white;font-size:12px;font-weight:700;
-                                          padding:7px 16px;border-radius:999px;
-                                          text-decoration:none;transition:all 0.2s;
-                                          letter-spacing:0.04em;">
+                                <a href="{{ route('restaurante.dashboard') }}" class="btn-panel">
                                     <i class="fas fa-chart-pie" style="font-size:10px;"></i> Mi Panel
                                 </a>
                             @endif
                         @endauth
                     </div>
+                </nav>
 
                 {{-- Contenido central --}}
                 <div class="hero-center">
@@ -613,7 +622,6 @@
                         @endif
                     </div>
 
-                    {{-- Stats --}}
                     @php
                         $totalReviews = $restaurante->reviews()->count();
                         $avgRating    = $totalReviews > 0 ? round($restaurante->reviews()->avg('rating'),1) : null;
@@ -621,15 +629,15 @@
                     <div class="hero-stats fu d3">
                         <div class="hero-stat">
                             <span class="hero-stat-label">Especialidad</span>
-                            <span class="hero-stat-value" style="color:#fb923c;">{{ $restaurante->especialidad ?? 'General' }}</span>
+                            <span class="hero-stat-value" style="color:#fb923c;font-size:12px;">{{ $restaurante->especialidad ?? 'General' }}</span>
                         </div>
                         <div class="hero-stat">
-                            <span class="hero-stat-label">Calificación</span>
+                            <span class="hero-stat-label">Calificacion</span>
                             <span class="hero-stat-value">
                                 @if($avgRating)
                                     ★ {{ $avgRating }}<span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;"> /5</span>
                                 @else
-                                    <span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;">Sin reseñas</span>
+                                    <span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;">Sin resenas</span>
                                 @endif
                             </span>
                         </div>
@@ -640,32 +648,89 @@
                     </div>
                 </div>
 
-                {{-- Pie: redes + estado --}}
+                {{-- Pie del hero --}}
                 <div class="hero-foot fu d4">
-                    <span style="background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;font-size:11px;font-weight:800;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
-                        <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block;"></span> ABIERTO
-                    </span>
+                    @php
+                        $diasActivos = $restaurante->dias_laborales ?? [];
+                        if (is_string($diasActivos)) $diasActivos = json_decode($diasActivos, true) ?? [];
 
-                    @if(!empty($restaurante->whatsapp))
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$restaurante->whatsapp) }}" target="_blank" class="social-btn wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    @endif
-                    @if(!empty($restaurante->instagram))
-                        <a href="{{ $restaurante->instagram }}" target="_blank" class="social-btn ig" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    @endif
-                    @if(!empty($restaurante->tiktok))
-                        <a href="{{ $restaurante->tiktok }}" target="_blank" class="social-btn tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                    @endif
-                    @if(!empty($restaurante->facebook))
-                        <a href="{{ $restaurante->facebook }}" target="_blank" class="social-btn fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        $diasMap = [
+                            'lunes'=>1,'martes'=>2,'miercoles'=>3,
+                            'jueves'=>4,'viernes'=>5,'sabado'=>6,'domingo'=>0,
+                        ];
+                        $tieneHorario  = !empty($restaurante->hora_apertura) && !empty($restaurante->hora_cierre);
+                        $estaAbiertoHero = false;
+                        $diaHoyNum     = (int) now()->setTimezone('America/Managua')->format('w');
+                        $horaActual    = now()->setTimezone('America/Managua')->format('H:i');
+
+                        if ($tieneHorario) {
+                            $hoyEsLaboral = empty($diasActivos)
+                                ? true
+                                : collect($diasActivos)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
+                            if ($hoyEsLaboral) {
+                                $ap = substr($restaurante->hora_apertura, 0, 5);
+                                $ci = substr($restaurante->hora_cierre,   0, 5);
+                                $estaAbiertoHero = $ci > $ap
+                                    ? ($horaActual >= $ap && $horaActual < $ci)
+                                    : ($horaActual >= $ap || $horaActual < $ci);
+                            }
+                        }
+                    @endphp
+
+                    @if($tieneHorario)
+                        @if($estaAbiertoHero)
+                            <span style="background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;font-size:11px;font-weight:800;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
+                                <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block;animation:pulseDot 2s infinite;"></span>
+                                Abierto ahora
+                            </span>
+                        @else
+                            <span style="background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;font-size:11px;font-weight:800;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
+                                <span style="width:6px;height:6px;background:#ef4444;border-radius:50%;display:inline-block;"></span>
+                                Cerrado ahora
+                            </span>
+                        @endif
+                    @else
+                        <span style="background:#f8fafc;color:#94a3b8;border:1px solid #e2e8f0;font-size:11px;font-weight:700;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
+                            <i class="fas fa-clock" style="font-size:9px;"></i> Horario no configurado
+                        </span>
                     @endif
                 </div>
 
             </div>
         </section>
 
-        {{-- ══════════════════════════════════════════════════════════
-             MAIN CONTENT
-        ════════════════════════════════════════════════════════════ --}}
+        <style>
+            @keyframes pulseDot {
+                0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.25); }
+                50%      { box-shadow: 0 0 0 4px rgba(34,197,94,0.12); }
+            }
+
+            /* Nav mobile overlay: solo visible en movil */
+            .nav-mobile-overlay {
+                display: none;
+            }
+            @media (max-width: 900px) {
+                .nav-mobile-overlay {
+                    display: flex;
+                    position: absolute;
+                    top: 0; left: 0; right: 0;
+                    z-index: 20;
+                    background: linear-gradient(to bottom, rgba(12,10,9,0.70) 0%, transparent 100%);
+                    border-bottom: none;
+                    padding: 14px 16px;
+                }
+                .nav-desktop-only {
+                    display: none !important;
+                    height: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    border: none !important;
+                    overflow: hidden !important;
+                }
+            }
+        </style>
+
+        {{-- MAIN CONTENT --}}
         @php
             $todasLasImagenes = [];
             if($restaurante->imagenes) {
@@ -677,30 +742,56 @@
 
         <main class="main-wrap">
 
-            {{-- ── COLUMNA PRINCIPAL ── --}}
-            <div style="display:flex;flex-direction:column;gap:24px;">
+            {{-- COLUMNA PRINCIPAL --}}
+            <div class="col-principal">
 
-                {{-- Descripción --}}
-                <div class="card">
+                {{-- Descripcion --}}
+                <div class="card card-descripcion">
                     <div class="card-body">
                         <div class="section-label">
                             <i class="fas fa-align-left"></i> Sobre el restaurante
                         </div>
                         <p class="desc-text">
                             Bienvenidos a <strong style="color:var(--text-main);">{{ $restaurante->nombre }}</strong>.
-                            Somos especialistas en ofrecer la mejor experiencia culinaria en la hermosa localidad
-                            de {{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}.
-                            ¡Visítanos y disfruta de una sazón inigualable!
+                            @if($restaurante->descripcion)
+                                {{ $restaurante->descripcion }}
+                            @else
+                                Somos especialistas en ofrecer la mejor experiencia culinaria en la hermosa localidad
+                                de {{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}.
+                                ¡Visitanos y disfruta de una sazon inigualable!
+                            @endif
                         </p>
                     </div>
                 </div>
 
-                {{-- Mapa --}}
-                @if($restaurante->latitud && $restaurante->longitud)
-                    <div class="card">
+                {{-- Galeria --}}
+                @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
+                    <div class="card card-galeria">
                         <div class="card-body">
                             <div class="section-label">
-                                <i class="fas fa-map-marker-alt"></i> Cómo llegar
+                                <i class="fas fa-images"></i>
+                                Galeria de fotos
+                                <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">— clic para ampliar</span>
+                            </div>
+                            <div class="gallery-grid">
+                                @foreach($restaurante->imagenes as $index => $foto)
+                                    <div class="g-item" onclick="openLightbox('{{ asset('storage/' . $foto->ruta_foto) }}', {{ $index }})">
+                                        <img src="{{ asset('storage/' . $foto->ruta_foto) }}"
+                                             alt="Foto {{ $index + 1 }} de {{ $restaurante->nombre }}"
+                                             loading="lazy">
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Mapa --}}
+                @if($restaurante->latitud && $restaurante->longitud)
+                    <div class="card card-mapa">
+                        <div class="card-body">
+                            <div class="section-label">
+                                <i class="fas fa-map-marker-alt"></i> Como llegar
                             </div>
 
                             @if($restaurante->direccion)
@@ -720,244 +811,127 @@
                     </div>
                 @endif
 
-                {{-- Galería --}}
-                @if($restaurante->imagenes && $restaurante->imagenes->count() > 0)
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-label">
-                                <i class="fas fa-images"></i>
-                                Galería de fotos
-                                <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">— clic para ampliar</span>
-                            </div>
-                            <div class="gallery-grid">
-                                @foreach($restaurante->imagenes as $index => $foto)
-                                    <div class="g-item" onclick="openLightbox('{{ asset('storage/' . $foto->ruta_foto) }}', {{ $index }})">
-                                        <img src="{{ asset('storage/' . $foto->ruta_foto) }}"
-                                             alt="Foto {{ $index + 1 }} de {{ $restaurante->nombre }}"
-                                             loading="lazy">
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- ══ RESEÑAS ══ --}}
-                <div class="card" id="resenas">
+                {{-- Resenas --}}
+                <div class="card card-resenas" id="resenas">
                     <div class="card-body">
                         <div class="section-label">
-                            <i class="fas fa-star"></i> Reseñas
-                            <span style="font-size:10px;color:#d6d3d1;font-weight:500;
-                                         text-transform:none;letter-spacing:0;">
-                                — {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
+                            <i class="fas fa-star"></i> Resenas
+                            <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">
+                                — {{ $totalReviews }} {{ $totalReviews === 1 ? 'resena' : 'resenas' }}
                             </span>
                         </div>
 
-                        {{-- Mensajes flash --}}
                         @if(session('success'))
-                            <div style="background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;
-                                        border-radius:12px;padding:12px 16px;margin-bottom:20px;
-                                        font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+                            <div style="background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
                                 <i class="fas fa-check-circle"></i> {{ session('success') }}
                             </div>
                         @endif
                         @if(session('error'))
-                            <div style="background:#fee2e2;border:1px solid #fecaca;color:#dc2626;
-                                        border-radius:12px;padding:12px 16px;margin-bottom:20px;
-                                        font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+                            <div style="background:#fee2e2;border:1px solid #fecaca;color:#dc2626;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
                                 <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
                             </div>
                         @endif
 
-                        {{-- Resumen de calificación --}}
                         @if($totalReviews > 0)
-                            <div style="display:flex;align-items:center;gap:20px;
-                                        background:#fff7ed;border:1px solid #fed7aa;
-                                        border-radius:16px;padding:20px 24px;margin-bottom:24px;">
+                            <div style="display:flex;align-items:center;gap:20px;background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:20px 24px;margin-bottom:24px;">
                                 <div style="text-align:center;min-width:64px;">
-                                    <div style="font-size:3rem;font-weight:900;color:#ea580c;line-height:1;">
-                                        {{ $avgRating }}
-                                    </div>
-                                    <div style="font-size:11px;color:#a8a29e;font-weight:700;
-                                                text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;">
-                                        de 5
-                                    </div>
+                                    <div style="font-size:3rem;font-weight:900;color:#ea580c;line-height:1;">{{ $avgRating }}</div>
+                                    <div style="font-size:11px;color:#a8a29e;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;">de 5</div>
                                 </div>
                                 <div style="flex:1;">
-                                    {{-- Barras por estrella --}}
                                     @for($s = 5; $s >= 1; $s--)
                                         @php $cnt = $restaurante->reviews()->where('rating',$s)->count(); @endphp
                                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                                            <span style="font-size:11px;font-weight:700;color:#78716c;
-                                                         min-width:12px;">{{ $s }}</span>
+                                            <span style="font-size:11px;font-weight:700;color:#78716c;min-width:12px;">{{ $s }}</span>
                                             <i class="fas fa-star" style="font-size:10px;color:#f59e0b;"></i>
                                             <div style="flex:1;height:6px;background:#e7e5e4;border-radius:999px;overflow:hidden;">
-                                                <div style="height:100%;background:#ea580c;border-radius:999px;
-                                                            width:{{ $totalReviews > 0 ? round($cnt/$totalReviews*100) : 0 }}%;
-                                                            transition:width 0.6s ease;"></div>
+                                                <div style="height:100%;background:#ea580c;border-radius:999px;width:{{ $totalReviews > 0 ? round($cnt/$totalReviews*100) : 0 }}%;transition:width 0.6s ease;"></div>
                                             </div>
-                                            <span style="font-size:11px;color:#a8a29e;font-weight:600;min-width:20px;">
-                                                {{ $cnt }}
-                                            </span>
+                                            <span style="font-size:11px;color:#a8a29e;font-weight:600;min-width:20px;">{{ $cnt }}</span>
                                         </div>
                                     @endfor
                                 </div>
                             </div>
                         @endif
 
-                        {{-- Formulario: solo usuarios logueados sin reseña propia --}}
                         @auth
-                            @php
-                                $miResena = $restaurante->reviews()
-                                    ->where('user_id', auth()->id())->first();
-                            @endphp
-
+                            @php $miResena = $restaurante->reviews()->where('user_id', auth()->id())->first(); @endphp
                             @if(!$miResena)
-                                <div style="background:#f9fafb;border:1px solid #e7e5e4;
-                                            border-radius:16px;padding:24px;margin-bottom:28px;">
-                                    <p style="font-size:13px;font-weight:800;color:#1c1917;
-                                               text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">
+                                <div style="background:#f9fafb;border:1px solid #e7e5e4;border-radius:16px;padding:24px;margin-bottom:28px;">
+                                    <p style="font-size:13px;font-weight:800;color:#1c1917;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">
                                         <i class="fas fa-pencil-alt" style="color:#ea580c;margin-right:6px;"></i>
-                                        Deja tu reseña
+                                        Deja tu resena
                                     </p>
-
                                     <form action="{{ route('reviews.store', $restaurante) }}" method="POST">
                                         @csrf
-
-                                        {{-- Estrellas interactivas --}}
                                         <div style="margin-bottom:16px;">
-                                            <label style="font-size:11px;font-weight:700;color:#78716c;
-                                                          text-transform:uppercase;letter-spacing:0.1em;
-                                                          display:block;margin-bottom:8px;">
-                                                Calificación
-                                            </label>
+                                            <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Calificacion</label>
                                             <div style="display:flex;gap:6px;" id="star-selector">
                                                 @for($i = 1; $i <= 5; $i++)
-                                                    <button type="button"
-                                                            onclick="setRating({{ $i }})"
-                                                            data-star="{{ $i }}"
-                                                            style="font-size:28px;background:none;border:none;
-                                                                   cursor:pointer;color:#d6d3d1;
-                                                                   transition:color 0.15s,transform 0.15s;
-                                                                   padding:0 2px;"
-                                                            onmouseover="hoverRating({{ $i }})"
-                                                            onmouseout="resetHover()">
-                                                        ★
-                                                    </button>
+                                                    <button type="button" onclick="setRating({{ $i }})" data-star="{{ $i }}"
+                                                            style="font-size:28px;background:none;border:none;cursor:pointer;color:#d6d3d1;transition:color 0.15s,transform 0.15s;padding:0 2px;"
+                                                            onmouseover="hoverRating({{ $i }})" onmouseout="resetHover()">★</button>
                                                 @endfor
                                             </div>
                                             <input type="hidden" name="rating" id="rating-input" value="">
-                                            @error('rating')
-                                                <p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>
-                                            @enderror
+                                            @error('rating')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
                                         </div>
-
-                                        {{-- Título --}}
                                         <div style="margin-bottom:12px;">
-                                            <label style="font-size:11px;font-weight:700;color:#78716c;
-                                                          text-transform:uppercase;letter-spacing:0.1em;
-                                                          display:block;margin-bottom:6px;">
-                                                Título <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
+                                            <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">
+                                                Titulo <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
                                             </label>
-                                            <input type="text" name="title"
-                                                   value="{{ old('title') }}"
-                                                   placeholder="Ej: Excelente experiencia"
-                                                   maxlength="100"
-                                                   style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;
-                                                          border-radius:10px;font-size:14px;outline:none;
-                                                          font-family:inherit;background:white;
-                                                          transition:border-color 0.2s;"
-                                                   onfocus="this.style.borderColor='#ea580c'"
-                                                   onblur="this.style.borderColor='#e7e5e4'">
-                                            @error('title')
-                                                <p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>
-                                            @enderror
+                                            <input type="text" name="title" value="{{ old('title') }}" placeholder="Ej: Excelente experiencia" maxlength="100"
+                                                   style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;transition:border-color 0.2s;"
+                                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">
+                                            @error('title')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
                                         </div>
-
-                                        {{-- Comentario --}}
                                         <div style="margin-bottom:16px;">
-                                            <label style="font-size:11px;font-weight:700;color:#78716c;
-                                                          text-transform:uppercase;letter-spacing:0.1em;
-                                                          display:block;margin-bottom:6px;">
+                                            <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">
                                                 Comentario <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
                                             </label>
-                                            <textarea name="body" rows="3"
-                                                      placeholder="Cuéntanos tu experiencia..."
-                                                      maxlength="1000"
-                                                      style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;
-                                                             border-radius:10px;font-size:14px;outline:none;
-                                                             font-family:inherit;background:white;resize:vertical;
-                                                             transition:border-color 0.2s;"
-                                                      onfocus="this.style.borderColor='#ea580c'"
-                                                      onblur="this.style.borderColor='#e7e5e4'">{{ old('body') }}</textarea>
-                                            @error('body')
-                                                <p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>
-                                            @enderror
+                                            <textarea name="body" rows="3" placeholder="Cuentanos tu experiencia..." maxlength="1000"
+                                                      style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;resize:vertical;transition:border-color 0.2s;"
+                                                      onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">{{ old('body') }}</textarea>
+                                            @error('body')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
                                         </div>
-
                                         <button type="submit"
-                                                style="display:inline-flex;align-items:center;gap:8px;
-                                                       background:#ea580c;color:white;border:none;
-                                                       padding:12px 24px;border-radius:12px;font-size:14px;
-                                                       font-weight:700;cursor:pointer;font-family:inherit;
-                                                       transition:background 0.2s,transform 0.2s;"
+                                                style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:white;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.2s,transform 0.2s;"
                                                 onmouseover="this.style.background='#c2410c';this.style.transform='translateY(-1px)'"
                                                 onmouseout="this.style.background='#ea580c';this.style.transform='none'">
-                                            <i class="fas fa-paper-plane" style="font-size:12px;"></i>
-                                            Publicar reseña
+                                            <i class="fas fa-paper-plane" style="font-size:12px;"></i> Publicar resena
                                         </button>
                                     </form>
                                 </div>
                             @endif
                         @else
-                            {{-- No logueado --}}
-                            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;
-                                        padding:20px 24px;margin-bottom:28px;text-align:center;">
+                            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:20px 24px;margin-bottom:28px;text-align:center;">
                                 <i class="fas fa-lock" style="color:#ea580c;font-size:20px;margin-bottom:8px;display:block;"></i>
-                                <p style="font-size:14px;color:#57534e;font-weight:600;margin-bottom:12px;">
-                                    Inicia sesión para dejar tu reseña
-                                </p>
+                                <p style="font-size:14px;color:#57534e;font-weight:600;margin-bottom:12px;">Inicia sesion para dejar tu resena</p>
                                 <a href="{{ route('login') }}"
-                                   style="display:inline-flex;align-items:center;gap:7px;
-                                          background:#ea580c;color:white;text-decoration:none;
-                                          padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;">
-                                    <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesión
+                                   style="display:inline-flex;align-items:center;gap:7px;background:#ea580c;color:white;text-decoration:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;">
+                                    <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesion
                                 </a>
                             </div>
                         @endauth
 
-                        {{-- Lista de reseñas --}}
                         @php $reviews = $restaurante->reviews()->with('user')->latest()->get(); @endphp
 
                         @forelse($reviews as $review)
                             <div style="border-bottom:1px solid #f5f5f4;padding-bottom:20px;margin-bottom:20px;">
                                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
-
-                                    {{-- Avatar + nombre --}}
                                     <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-                                        <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;
-                                                    background:#fed7aa;display:flex;align-items:center;justify-content:center;">
+                                        <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fed7aa;display:flex;align-items:center;justify-content:center;">
                                             @if($review->user->avatar)
-                                                <img src="{{ $review->user->avatar }}" alt=""
-                                                     style="width:100%;height:100%;object-fit:cover;">
+                                                <img src="{{ $review->user->avatar }}" alt="" style="width:100%;height:100%;object-fit:cover;">
                                             @else
-                                                <span style="font-size:15px;font-weight:800;color:#ea580c;">
-                                                    {{ strtoupper(substr($review->user->name,0,1)) }}
-                                                </span>
+                                                <span style="font-size:15px;font-weight:800;color:#ea580c;">{{ strtoupper(substr($review->user->name,0,1)) }}</span>
                                             @endif
                                         </div>
                                         <div style="min-width:0;">
-                                            <p style="font-size:14px;font-weight:700;color:#1c1917;margin:0;
-                                                       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                                {{ $review->user->name }}
-                                            </p>
-                                            <p style="font-size:11px;color:#a8a29e;margin:0;">
-                                                {{ $review->created_at->diffForHumans() }}
-                                            </p>
+                                            <p style="font-size:14px;font-weight:700;color:#1c1917;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $review->user->name }}</p>
+                                            <p style="font-size:11px;color:#a8a29e;margin:0;">{{ $review->created_at->diffForHumans() }}</p>
                                         </div>
                                     </div>
-
-                                    {{-- Estrellas --}}
                                     <div style="display:flex;gap:2px;flex-shrink:0;">
                                         @for($i = 1; $i <= 5; $i++)
                                             <span style="color:{{ $i <= $review->rating ? '#f59e0b' : '#e7e5e4' }};font-size:14px;">★</span>
@@ -966,43 +940,25 @@
                                 </div>
 
                                 @if($review->title)
-                                    <p style="font-size:14px;font-weight:700;color:#1c1917;margin-bottom:4px;">
-                                        {{ $review->title }}
-                                    </p>
+                                    <p style="font-size:14px;font-weight:700;color:#1c1917;margin-bottom:4px;">{{ $review->title }}</p>
                                 @endif
-
                                 @if($review->body)
-                                    <p style="font-size:14px;color:#57534e;line-height:1.7;margin:0;">
-                                        {{ $review->body }}
-                                    </p>
+                                    <p style="font-size:14px;color:#57534e;line-height:1.7;margin:0;">{{ $review->body }}</p>
                                 @endif
 
-                                {{-- Acciones: editar/eliminar (solo el autor) --}}
                                 @auth
                                     @if(auth()->id() === $review->user_id || auth()->user()->email === 'admin@turismo.ni')
                                         <div style="display:flex;gap:8px;margin-top:10px;">
-
-                                            {{-- Botón editar (toggle) --}}
                                             <button onclick="toggleEdit({{ $review->id }})"
-                                                    style="font-size:12px;font-weight:600;color:#78716c;background:none;
-                                                           border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;
-                                                           cursor:pointer;font-family:inherit;
-                                                           transition:all 0.2s;"
+                                                    style="font-size:12px;font-weight:600;color:#78716c;background:none;border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all 0.2s;"
                                                     onmouseover="this.style.borderColor='#ea580c';this.style.color='#ea580c'"
                                                     onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
                                                 <i class="fas fa-pencil-alt" style="font-size:10px;"></i> Editar
                                             </button>
-
-                                            {{-- Botón eliminar --}}
-                                            <form action="{{ route('reviews.destroy', $review) }}"
-                                                  method="POST"
-                                                  onsubmit="return confirm('¿Eliminar esta reseña?')">
+                                            <form action="{{ route('reviews.destroy', $review) }}" method="POST" onsubmit="return confirm('Eliminar esta resena?')">
                                                 @csrf @method('DELETE')
                                                 <button type="submit"
-                                                        style="font-size:12px;font-weight:600;color:#78716c;background:none;
-                                                               border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;
-                                                               cursor:pointer;font-family:inherit;
-                                                               transition:all 0.2s;"
+                                                        style="font-size:12px;font-weight:600;color:#78716c;background:none;border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all 0.2s;"
                                                         onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'"
                                                         onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
                                                     <i class="fas fa-trash" style="font-size:10px;"></i> Eliminar
@@ -1010,62 +966,30 @@
                                             </form>
                                         </div>
 
-                                        {{-- Form edición (oculto por defecto) --}}
-                                        <div id="edit-form-{{ $review->id }}"
-                                             style="display:none;margin-top:14px;background:#f9fafb;
-                                                    border:1px solid #e7e5e4;border-radius:12px;padding:16px;">
+                                        <div id="edit-form-{{ $review->id }}" style="display:none;margin-top:14px;background:#f9fafb;border:1px solid #e7e5e4;border-radius:12px;padding:16px;">
                                             <form action="{{ route('reviews.update', $review) }}" method="POST">
                                                 @csrf @method('PUT')
-
-                                                {{-- Estrellas edición --}}
                                                 <div style="margin-bottom:12px;">
-                                                    <label style="font-size:11px;font-weight:700;color:#78716c;
-                                                                  text-transform:uppercase;letter-spacing:0.1em;
-                                                                  display:block;margin-bottom:6px;">Calificación</label>
+                                                    <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">Calificacion</label>
                                                     <div style="display:flex;gap:4px;" id="edit-stars-{{ $review->id }}">
                                                         @for($i = 1; $i <= 5; $i++)
-                                                            <button type="button"
-                                                                    onclick="setEditRating({{ $review->id }},{{ $i }})"
-                                                                    data-star="{{ $i }}"
-                                                                    style="font-size:24px;background:none;border:none;
-                                                                           cursor:pointer;padding:0 2px;
-                                                                           color:{{ $i <= $review->rating ? '#f59e0b' : '#d6d3d1' }};
-                                                                           transition:color 0.15s;">★</button>
+                                                            <button type="button" onclick="setEditRating({{ $review->id }},{{ $i }})" data-star="{{ $i }}"
+                                                                    style="font-size:24px;background:none;border:none;cursor:pointer;padding:0 2px;color:{{ $i <= $review->rating ? '#f59e0b' : '#d6d3d1' }};transition:color 0.15s;">★</button>
                                                         @endfor
                                                     </div>
-                                                    <input type="hidden" name="rating"
-                                                           id="edit-rating-{{ $review->id }}"
-                                                           value="{{ $review->rating }}">
+                                                    <input type="hidden" name="rating" id="edit-rating-{{ $review->id }}" value="{{ $review->rating }}">
                                                 </div>
-
-                                                <input type="text" name="title"
-                                                       value="{{ $review->title }}"
-                                                       placeholder="Título"
-                                                       maxlength="100"
-                                                       style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;
-                                                              border-radius:9px;font-size:13px;font-family:inherit;
-                                                              margin-bottom:10px;outline:none;"
-                                                       onfocus="this.style.borderColor='#ea580c'"
-                                                       onblur="this.style.borderColor='#e7e5e4'">
-
-                                                <textarea name="body" rows="3"
-                                                          maxlength="1000"
-                                                          style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;
-                                                                 border-radius:9px;font-size:13px;font-family:inherit;
-                                                                 resize:vertical;outline:none;margin-bottom:12px;"
-                                                          onfocus="this.style.borderColor='#ea580c'"
-                                                          onblur="this.style.borderColor='#e7e5e4'">{{ $review->body }}</textarea>
-
-                                                <button type="submit"
-                                                        style="background:#ea580c;color:white;border:none;
-                                                               padding:9px 20px;border-radius:9px;font-size:13px;
-                                                               font-weight:700;cursor:pointer;font-family:inherit;">
+                                                <input type="text" name="title" value="{{ $review->title }}" placeholder="Titulo" maxlength="100"
+                                                       style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;border-radius:9px;font-size:13px;font-family:inherit;margin-bottom:10px;outline:none;"
+                                                       onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">
+                                                <textarea name="body" rows="3" maxlength="1000"
+                                                          style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;border-radius:9px;font-size:13px;font-family:inherit;resize:vertical;outline:none;margin-bottom:12px;"
+                                                          onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">{{ $review->body }}</textarea>
+                                                <button type="submit" style="background:#ea580c;color:white;border:none;padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
                                                     Guardar cambios
                                                 </button>
                                                 <button type="button" onclick="toggleEdit({{ $review->id }})"
-                                                        style="background:none;border:1px solid #e7e5e4;color:#78716c;
-                                                               padding:9px 16px;border-radius:9px;font-size:13px;
-                                                               font-weight:600;cursor:pointer;font-family:inherit;margin-left:6px;">
+                                                        style="background:none;border:1px solid #e7e5e4;color:#78716c;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:6px;">
                                                     Cancelar
                                                 </button>
                                             </form>
@@ -1076,44 +1000,31 @@
                         @empty
                             <div style="text-align:center;padding:40px 20px;">
                                 <i class="far fa-comment-dots" style="font-size:36px;color:#d6d3d1;display:block;margin-bottom:12px;"></i>
-                                <p style="color:#a8a29e;font-size:14px;font-weight:600;">Aún no hay reseñas. ¡Sé el primero!</p>
+                                <p style="color:#a8a29e;font-size:14px;font-weight:600;">Aun no hay resenas. Se el primero!</p>
                             </div>
                         @endforelse
 
                     </div>
                 </div>
 
-                {{-- JS para estrellas --}}
                 <script>
-                    // ── Formulario nuevo ──────────────────────────────────────
                     let selectedRating = 0;
-
                     function setRating(val) {
                         selectedRating = val;
                         document.getElementById('rating-input').value = val;
                         updateStars('star-selector', val, '#f59e0b');
                     }
-
-                    function hoverRating(val) {
-                        updateStars('star-selector', val, '#fb923c');
-                    }
-
-                    function resetHover() {
-                        updateStars('star-selector', selectedRating, '#f59e0b');
-                    }
-
+                    function hoverRating(val) { updateStars('star-selector', val, '#fb923c'); }
+                    function resetHover() { updateStars('star-selector', selectedRating, '#f59e0b'); }
                     function updateStars(containerId, val, activeColor) {
                         document.querySelectorAll(`#${containerId} button`).forEach(btn => {
                             btn.style.color = parseInt(btn.dataset.star) <= val ? activeColor : '#d6d3d1';
                         });
                     }
-
-                    // ── Edición ───────────────────────────────────────────────
                     function toggleEdit(id) {
                         const el = document.getElementById(`edit-form-${id}`);
                         el.style.display = el.style.display === 'none' ? 'block' : 'none';
                     }
-
                     function setEditRating(reviewId, val) {
                         document.getElementById(`edit-rating-${reviewId}`).value = val;
                         document.querySelectorAll(`#edit-stars-${reviewId} button`).forEach(btn => {
@@ -1122,37 +1033,15 @@
                     }
                 </script>
 
-            </div>
+            </div>{{-- /col-principal --}}
 
-            {{-- ── SIDEBAR ── --}}
-            <aside class="sidebar">
 
-                {{-- Contacto --}}
-                <div class="card">
-                    <div class="card-body">
-                        <div class="section-label">
-                            <i class="far fa-clock"></i> Información
-                        </div>
+            {{-- SIDEBAR --}}
+            <aside class="col-sidebar">
 
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f5f5f4;">
-                            <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Estado actual</span>
-                            <span style="background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.06em;display:inline-flex;align-items:center;gap:5px;">
-                                <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block;"></span>
-                                ABIERTO
-                            </span>
-                        </div>
-
-                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:10px;">Contacto</span>
-                        <div class="contact-row">
-                            <i class="fas fa-envelope"></i>
-                            {{ $restaurante->email ?? 'No disponible' }}
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Redes --}}
+                {{-- Redes sociales --}}
                 @if(!empty($restaurante->whatsapp) || !empty($restaurante->instagram) || !empty($restaurante->tiktok) || !empty($restaurante->facebook))
-                    <div class="card">
+                    <div class="card sidebar-redes">
                         <div class="card-body">
                             <div class="section-label">
                                 <i class="fas fa-share-alt"></i> Redes sociales
@@ -1175,10 +1064,69 @@
                     </div>
                 @endif
 
-                {{-- CTA --}}
-                <a href="mailto:{{ $restaurante->email ?? 'contacto@gastronicaragua.com' }}" class="cta-btn">
-                    <i class="fas fa-paper-plane" style="font-size:13px;"></i>
-                    Enviar consulta al local
+                {{-- Horario --}}
+                <div class="card sidebar-horario">
+                    <div class="card-body">
+                        <div class="section-label">
+                            <i class="far fa-clock"></i> Horario de atencion
+                        </div>
+
+                        @php
+                            $diasConfig = [
+                                'lunes'     => 'Lun',
+                                'martes'    => 'Mar',
+                                'miercoles' => 'Mie',
+                                'jueves'    => 'Jue',
+                                'viernes'   => 'Vie',
+                                'sabado'    => 'Sab',
+                                'domingo'   => 'Dom',
+                            ];
+                        @endphp
+                        <div class="dias-grid">
+                            @foreach($diasConfig as $valor => $etiqueta)
+                                <span class="dia-pill {{ in_array($valor, $diasActivos) ? 'activo' : 'inactivo' }}">
+                                    {{ $etiqueta }}
+                                </span>
+                            @endforeach
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <div class="horario-row">
+                                <span class="horario-label">
+                                    <i class="fas fa-door-open" style="color:#22c55e;"></i> Apertura
+                                </span>
+                                <span class="horario-value">
+                                    @if($restaurante->hora_apertura)
+                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $restaurante->hora_apertura)->format('h:i A') }}
+                                    @else
+                                        <span style="color:#c4bdb8;font-size:13px;">—</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="horario-row">
+                                <span class="horario-label">
+                                    <i class="fas fa-door-closed" style="color:#ef4444;"></i> Cierre
+                                </span>
+                                <span class="horario-value">
+                                    @if($restaurante->hora_cierre)
+                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $restaurante->hora_cierre)->format('h:i A') }}
+                                    @else
+                                        <span style="color:#c4bdb8;font-size:13px;">—</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- CTA WhatsApp --}}
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $restaurante->whatsapp ?? '') }}"
+                   target="_blank"
+                   class="cta-btn sidebar-cta"
+                   style="{{ empty($restaurante->whatsapp) ? 'pointer-events:none;opacity:0.5;' : '' }}">
+                    <i class="fab fa-whatsapp" style="font-size:16px;"></i>
+                    Contactar por WhatsApp
                 </a>
 
             </aside>
@@ -1196,7 +1144,7 @@
             <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">© 2026 — Experiencias Culinarias de Nicaragua</p>
         </footer>
 
-        {{-- ══ LIGHTBOX HTML ══ --}}
+        {{-- LIGHTBOX --}}
         <div id="lightbox" onclick="handleLightboxClick(event)">
             <button id="lb-close"  onclick="closeLightbox()"><i class="fas fa-times"></i></button>
             <button id="lb-prev"   class="lb-nav-btn" onclick="navigateLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -1208,7 +1156,6 @@
             </div>
         </div>
 
-        {{-- ══ LIGHTBOX JS ══ --}}
         <script>
             const galeriaImages = @json($todasLasImagenes);
             let currentIndex = 0, isPortada = false;
@@ -1228,26 +1175,21 @@
                 document.body.style.overflow = 'hidden';
                 updateControls();
             }
-
             function closeLightbox() {
                 lb.classList.remove('active');
                 document.body.style.overflow = '';
                 setTimeout(() => { lbImg.src = ''; }, 300);
             }
-
             function navigateLightbox(dir) {
                 if (isPortada || galeriaImages.length === 0) return;
                 currentIndex = (currentIndex + dir + galeriaImages.length) % galeriaImages.length;
-                lbImg.style.opacity   = '0';
-                lbImg.style.transform = 'scale(0.94)';
+                lbImg.style.opacity = '0'; lbImg.style.transform = 'scale(0.94)';
                 setTimeout(() => {
-                    lbImg.src             = galeriaImages[currentIndex];
-                    lbImg.style.opacity   = '1';
-                    lbImg.style.transform = 'scale(1)';
+                    lbImg.src = galeriaImages[currentIndex];
+                    lbImg.style.opacity = '1'; lbImg.style.transform = 'scale(1)';
                     updateControls();
                 }, 180);
             }
-
             function updateControls() {
                 const showNav = !isPortada && galeriaImages.length > 1;
                 lbPrev.style.display = showNav ? 'flex' : 'none';
@@ -1259,41 +1201,34 @@
                     ).join('');
                 } else {
                     lbText.textContent = 'Foto de portada';
-                    lbDots.innerHTML   = '';
+                    lbDots.innerHTML = '';
                 }
             }
-
             function jumpTo(i) { currentIndex = i; lbImg.src = galeriaImages[i]; updateControls(); }
             function handleLightboxClick(e) { if (e.target === lb) closeLightbox(); }
-
             document.addEventListener('keydown', e => {
                 if (!lb.classList.contains('active')) return;
-                if (e.key === 'Escape')     closeLightbox();
+                if (e.key === 'Escape') closeLightbox();
                 if (e.key === 'ArrowRight') navigateLightbox(1);
-                if (e.key === 'ArrowLeft')  navigateLightbox(-1);
+                if (e.key === 'ArrowLeft') navigateLightbox(-1);
             });
-
             lbImg.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
         </script>
 
-        {{-- ══ MAPA JS ══ --}}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
             @if($restaurante->latitud && $restaurante->longitud)
             document.addEventListener('DOMContentLoaded', function() {
                 const mapa = L.map('mapa-publico', { scrollWheelZoom: false })
                               .setView([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], 16);
-
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                     maxZoom: 19
                 }).addTo(mapa);
-
                 const icono = L.divIcon({
                     html: `<div style="width:22px;height:22px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.4);"></div>`,
                     iconSize: [22,22], iconAnchor: [11,22], className: ''
                 });
-
                 L.marker([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], { icon: icono })
                     .addTo(mapa)
                     .bindPopup(`

@@ -37,16 +37,30 @@
             }
             .animate-slide-left { animation: slideInLeftCustom 1s ease-out forwards; }
 
+            @keyframes pulse-dot {
+                0%,100% { opacity:1; transform:scale(1); }
+                50%      { opacity:0.5; transform:scale(1.7); }
+            }
+            @keyframes draw-underline {
+                from { stroke-dashoffset: 400; }
+                to   { stroke-dashoffset: 0; }
+            }
+            @keyframes fadeUp {
+                from { opacity:0; transform:translateY(28px); }
+                to   { opacity:1; transform:translateY(0); }
+            }
+
+            /* ── GLASS CARD (eventos) ── */
             .glass-card {
                 background: #ffffff;
                 border: 1px solid #f1f0ee;
-                border-radius: 2rem;
-                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                border-radius: 1.75rem;
+                transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
             }
             .glass-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 30px 60px rgba(28, 25, 23, 0.08);
-                border-color: #ffedd5;
+                transform: translateY(-8px);
+                box-shadow: 0 32px 64px rgba(28, 25, 23, 0.10);
+                border-color: #fed7aa;
             }
 
             .carousel-item { transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; }
@@ -127,16 +141,10 @@
             /* ── HERO RESPONSIVO ── */
             .hero-slide {
                 position: relative; width: 100%;
-                height: 75vw;
-                min-height: 360px;
-                max-height: 650px;
-                overflow: hidden;
-                display: flex;
-                align-items: flex-end;
+                height: 75vw; min-height: 360px; max-height: 650px;
+                overflow: hidden; display: flex; align-items: flex-end;
             }
-            @media (min-width: 640px) {
-                .hero-slide { align-items: center; }
-            }
+            @media (min-width: 640px) { .hero-slide { align-items: center; } }
 
             .hero-badges { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
             .hero-badge {
@@ -164,19 +172,11 @@
             }
             @media (min-width: 640px) { .hero-desc { -webkit-line-clamp: 4; } }
 
-            /* ── SECTION EVENTOS ── */
-            @keyframes pulse-dot {
-                0%,100% { opacity:1; transform:scale(1); }
-                50%      { opacity:0.5; transform:scale(1.7); }
-            }
-            @keyframes draw-underline {
-                from { stroke-dashoffset: 300; }
-                to   { stroke-dashoffset: 0; }
-            }
+            /* ══ SECTION EVENTOS — HEADER ══ */
             .eventos-ghost-text {
                 font-family: 'Playfair Display', serif; font-weight: 900;
                 font-size: clamp(4rem, 15vw, 13rem); line-height: 1; color: transparent;
-                -webkit-text-stroke: 1.5px rgba(234,88,12,0.10); letter-spacing: -0.04em;
+                -webkit-text-stroke: 1.5px rgba(234,88,12,0.07); letter-spacing: -0.04em;
                 position: absolute; top: -1rem; left: -0.5rem;
                 pointer-events: none; user-select: none; white-space: nowrap; z-index: 0;
             }
@@ -185,7 +185,7 @@
                 background: #fff7ed; border: 1.5px solid #fed7aa;
                 color: #c2410c; font-size: 10px; font-weight: 800;
                 letter-spacing: 0.2em; text-transform: uppercase;
-                padding: 6px 18px; border-radius: 999px;
+                padding: 7px 20px; border-radius: 999px;
             }
             .eventos-pill .dot {
                 width: 7px; height: 7px; background: #ea580c; border-radius: 50%;
@@ -193,47 +193,129 @@
             }
             .eventos-heading {
                 font-family: 'Playfair Display', serif; font-weight: 900;
-                font-size: clamp(1.8rem, 6vw, 4.5rem); line-height: 1.05;
-                letter-spacing: -0.03em; color: #1c1917; margin: 0;
+                font-size: clamp(1.8rem, 6vw, 4.5rem); line-height: 1.02;
+                letter-spacing: -0.035em; color: #1c1917; margin: 0;
             }
-            .eventos-heading em { font-style: italic; color: #ea580c; position: relative; }
+            .eventos-heading em { font-style: italic; color: #ea580c; position: relative; display: inline-block; }
             .underline-svg {
                 position: absolute; bottom: -10px; left: 0; width: 100%; overflow: visible;
-                stroke-dasharray: 300; stroke-dashoffset: 300;
-                animation: draw-underline 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s forwards;
+                stroke-dasharray: 400; stroke-dashoffset: 400;
+                animation: draw-underline 1.3s cubic-bezier(0.4,0,0.2,1) 0.4s forwards;
             }
             .eventos-divider-icon {
-                width: 34px; height: 34px; background: #ea580c; border-radius: 50%;
+                width: 38px; height: 38px; background: #ea580c; border-radius: 50%;
                 display: flex; align-items: center; justify-content: center;
-                box-shadow: 0 0 0 7px rgba(234,88,12,0.1); flex-shrink: 0;
+                box-shadow: 0 0 0 8px rgba(234,88,12,0.08); flex-shrink: 0;
             }
 
-            /* ── CARD EVENTO ── */
-            .event-card-img {
-                height: 200px; overflow: hidden; border-radius: 1.8rem 1.8rem 0 0;
-                position: relative; background: #e7e5e4;
+            /* ══ CARD EVENTO — NUEVO DISEÑO PREMIUM ══ */
+            .event-card {
+                border-radius: 1.75rem;
+                overflow: hidden;
+                background: #fff;
+                border: 1px solid #f1f0ee;
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                transition: transform 0.38s cubic-bezier(0.16,1,0.3,1),
+                            box-shadow 0.38s cubic-bezier(0.16,1,0.3,1),
+                            border-color 0.3s;
             }
-            @media (min-width: 768px) {
-                .event-card-img { height: 100%; min-height: 220px; border-radius: 0 2rem 2rem 0; }
-                .event-card-body { border-radius: 2rem 0 0 2rem; }
+            .event-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 32px 64px rgba(28,25,23,0.10);
+                border-color: #fed7aa;
             }
 
-            /* ══ CARRUSEL RESTAURANTES ══ */
+            /* imagen full-width arriba */
+            .event-card-img-top {
+                width: 100%;
+                height: 200px;
+                overflow: hidden;
+                position: relative;
+                background: #e7e5e4;
+                flex-shrink: 0;
+            }
+            @media (min-width: 640px) { .event-card-img-top { height: 220px; } }
+
+            .event-card-img-top img {
+                width: 100%; height: 100%; object-fit: cover;
+                transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+            }
+            .event-card:hover .event-card-img-top img { transform: scale(1.07); }
+
+            /* badges sobre la imagen */
+            .card-region-badge {
+                position: absolute; top: 12px; left: 12px;
+                display: flex; align-items: center; gap: 6px;
+                background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+                color: #1c1917; font-size: 10px; font-weight: 700;
+                padding: 5px 12px; border-radius: 999px;
+            }
+            .card-region-dot { width: 6px; height: 6px; background: #ea580c; border-radius: 50%; flex-shrink: 0; }
+            .card-featured-badge {
+                position: absolute; top: 12px; right: 12px;
+                background: #ea580c; color: #fff;
+                font-size: 9px; font-weight: 800; letter-spacing: 0.18em;
+                text-transform: uppercase; padding: 5px 12px; border-radius: 999px;
+            }
+            .card-price-badge {
+                position: absolute; bottom: 12px; left: 12px;
+                background: rgba(28,25,23,0.88); backdrop-filter: blur(10px);
+                color: #fff; font-size: 12px; font-weight: 800;
+                padding: 6px 14px; border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.1);
+            }
+
+            /* cuerpo card */
+            .event-card-body-new {
+                padding: 20px 22px 18px;
+                display: flex; flex-direction: column; flex: 1; gap: 10px;
+            }
+            .card-specialty-tag {
+                font-size: 9px; font-weight: 800; letter-spacing: 0.2em;
+                text-transform: uppercase; color: #ea580c;
+                padding: 3px 10px; background: #fff7ed; border-radius: 6px;
+                display: inline-block; align-self: flex-start;
+            }
+            .card-title-new {
+                font-family: 'Playfair Display', serif; font-weight: 900;
+                font-size: 1.2rem; line-height: 1.18; color: #1c1917;
+                letter-spacing: -0.02em;
+                transition: color 0.2s;
+            }
+            .event-card:hover .card-title-new { color: #ea580c; }
+            .card-desc-new {
+                font-size: 12.5px; color: #78716c; line-height: 1.65;
+                display: -webkit-box; -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical; overflow: hidden;
+            }
+            .card-footer-new {
+                display: flex; align-items: center; justify-content: space-between;
+                padding-top: 12px; border-top: 1px solid #f4f3f1; margin-top: auto;
+            }
+            .card-date-new {
+                display: flex; align-items: center; gap: 7px;
+                font-size: 11.5px; font-weight: 700; color: #57534e;
+            }
+            .card-countdown-new {
+                background: #fff1f2; border: 1px solid #fecdd3;
+                color: #be123c; font-size: 10px; font-weight: 800;
+                padding: 5px 12px; border-radius: 10px; letter-spacing: 0.05em;
+            }
+
+            /* ══ CARRUSEL RESTAURANTES — NUEVO: RECTANGULARES ══ */
             .rest-carousel-section {
                 background: #fff;
                 border-top: 1px solid #f1f0ee;
                 border-bottom: 1px solid #f1f0ee;
-                padding: 28px 0;
+                padding: 32px 0;
                 overflow: hidden;
             }
             .rest-carousel-header {
-                max-width: 1280px;
-                margin: 0 auto;
-                padding: 0 1rem 20px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
+                max-width: 1280px; margin: 0 auto;
+                padding: 0 1rem 24px;
+                display: flex; align-items: center; justify-content: space-between; gap: 12px;
             }
             .rest-carousel-label {
                 display: inline-flex; align-items: center; gap: 8px;
@@ -252,75 +334,84 @@
 
             /* Pista infinita */
             .rest-track-wrapper {
-                overflow: hidden;
-                position: relative;
-                padding: 8px 0 12px 0;
+                overflow: hidden; position: relative;
+                padding: 8px 0 16px 0;
             }
             .rest-track {
-                display: flex;
-                gap: 36px;
-                width: max-content;
-                padding: 4px 0;
-                margin-left: 24px;
-                will-change: transform;
+                display: flex; gap: 20px;
+                width: max-content; padding: 4px 0;
+                margin-left: 24px; will-change: transform;
             }
 
-            /* Ítem circular */
+            /* ── ÍTEM RECTANGULAR ── */
             .rest-item {
                 flex-shrink: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-                text-decoration: none;
-                cursor: pointer;
+                display: flex; flex-direction: column;
+                text-decoration: none; cursor: pointer;
+                width: 160px;
             }
-            .rest-circle {
-                width: 110px;
-                height: 110px;
-                border-radius: 50%;
+            .rest-rect {
+                width: 160px; height: 110px;
+                border-radius: 16px;
                 overflow: hidden;
-                border: 3px solid #fff;
-                box-shadow: 0 4px 18px rgba(28,25,23,0.10);
-                transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s, border-color 0.3s;
+                border: 2px solid #f1f0ee;
+                box-shadow: 0 2px 12px rgba(28,25,23,0.07);
+                transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+                            box-shadow 0.3s, border-color 0.3s;
                 background: linear-gradient(135deg, #fef3c7, #fed7aa);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                display: flex; align-items: center; justify-content: center;
+                position: relative;
             }
-            .rest-item:hover .rest-circle {
-                transform: scale(1.08) translateY(-4px);
-                box-shadow: 0 12px 32px rgba(234,88,12,0.22);
+            .rest-item:hover .rest-rect {
+                transform: scale(1.05) translateY(-4px);
+                box-shadow: 0 16px 40px rgba(234,88,12,0.18);
                 border-color: #ea580c;
             }
-            .rest-circle img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
+            .rest-rect img {
+                width: 100%; height: 100%; object-fit: cover; display: block;
+                transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
             }
-            .rest-circle-placeholder {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            .rest-item:hover .rest-rect img { transform: scale(1.08); }
+
+            /* overlay degradado en rect */
+            .rest-rect-overlay {
+                position: absolute; inset: 0;
+                background: linear-gradient(to top, rgba(28,25,23,0.55) 0%, transparent 55%);
+                pointer-events: none;
             }
-            .rest-item-name {
-                font-family: 'Instrument Sans', sans-serif;
-                font-weight: 700;
-                font-size: 12px;
-                color: #1c1917;
+            /* nombre dentro del rect */
+            .rest-rect-name {
+                position: absolute; bottom: 8px; left: 0; right: 0;
                 text-align: center;
-                max-width: 110px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                font-family: 'Instrument Sans', sans-serif;
+                font-weight: 700; font-size: 11px; color: #fff;
+                padding: 0 8px;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                text-shadow: 0 1px 6px rgba(0,0,0,0.5);
                 transition: color 0.2s;
             }
-            .rest-item:hover .rest-item-name {
-                color: #ea580c;
+            /* placeholder sin imagen */
+            .rest-rect-placeholder {
+                width: 100%; height: 100%;
+                display: flex; flex-direction: column;
+                align-items: center; justify-content: center; gap: 6px;
             }
+            .rest-rect-placeholder span {
+                font-size: 10px; font-weight: 700; color: #ea580c;
+                opacity: 0.7; text-align: center; padding: 0 8px;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                max-width: 100%;
+            }
+            /* nombre debajo del rect (cuando hay imagen: se oculta el de abajo) */
+            .rest-item-name-below {
+                font-family: 'Instrument Sans', sans-serif;
+                font-weight: 700; font-size: 11.5px; color: #1c1917;
+                text-align: center; margin-top: 8px;
+                max-width: 160px;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                transition: color 0.2s;
+            }
+            .rest-item:hover .rest-item-name-below { color: #ea580c; }
         </style>
     </head>
     <body class="bg-stone-50 text-stone-900">
@@ -338,7 +429,6 @@
                     </a>
 
                     {{-- ── Search bar desktop ── --}}
-                    {{-- ORDEN: Destino → Especialidad → Local → Buscar --}}
                     <form action="{{ route('home') }}" method="GET"
                           class="hidden md:flex flex-1 max-w-2xl search-box">
 
@@ -358,7 +448,7 @@
                             </select>
                         </div>
 
-                        {{-- 2. ESPECIALIDAD (ahora en segundo lugar) --}}
+                        {{-- 2. ESPECIALIDAD --}}
                         <div class="search-segment" style="min-width:120px;">
                             <label for="search-especialidad">
                                 <i class="fas fa-utensils" style="color:#ea580c;"></i> Especialidad
@@ -368,7 +458,7 @@
                                    placeholder="Asados, mariscos...">
                         </div>
 
-                        {{-- 3. LOCAL (ahora en tercer lugar, se filtra por destino + especialidad) --}}
+                        {{-- 3. LOCAL --}}
                         <div class="search-segment" style="min-width:130px;">
                             <label for="search-restaurante">
                                 <i class="fas fa-store" style="color:#ea580c;"></i> Local
@@ -395,7 +485,6 @@
                     {{-- Acciones derecha --}}
                     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
 
-                        {{-- Búsqueda: ícono lupa (solo móvil) --}}
                         <button id="mobileSearchToggle"
                                 class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
@@ -411,7 +500,7 @@
                             @endif
                         </a>
 
-                        {{-- ★ Gastrobares ★ --}}
+                        {{-- Gastrobares --}}
                         <a href="{{ route('gastrobares.index') }}"
                            class="flex items-center gap-1.5 border border-purple-200 text-purple-600 bg-purple-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all shadow-sm group no-underline justify-center">
                             <i class="fas fa-cocktail text-xs"></i>
@@ -464,11 +553,9 @@
             </div>
 
             {{-- ── Panel búsqueda móvil desplegable ── --}}
-            {{-- ORDEN MÓVIL: Destino → Especialidad → Local --}}
             <div id="mobileSearchPanel">
                 <form action="{{ route('home') }}" method="GET" class="flex flex-col gap-3">
 
-                    {{-- 1. DESTINO --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
@@ -481,7 +568,6 @@
                         </select>
                     </div>
 
-                    {{-- 2. ESPECIALIDAD (segundo lugar en móvil también) --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-utensils text-orange-500"></i> Especialidad
@@ -491,7 +577,6 @@
                                class="nav-input-mobile" placeholder="Asados, mariscos...">
                     </div>
 
-                    {{-- 3. LOCAL (tercer lugar, filtrado por destino + especialidad) --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-store text-orange-500"></i> Local
@@ -590,12 +675,11 @@
         </section>
 
         {{-- ══════════════════════════════════════════════════════
-             CARRUSEL ANIMADO DE RESTAURANTES
+             CARRUSEL ANIMADO DE RESTAURANTES — TARJETAS RECTANGULARES
         ══════════════════════════════════════════════════════ --}}
         @if($restaurantes->count() > 0)
         <section class="rest-carousel-section">
 
-            {{-- Encabezado --}}
             <div class="rest-carousel-header">
                 <div>
                     <div class="rest-carousel-label mb-1">
@@ -613,22 +697,29 @@
                 </a>
             </div>
 
-            {{-- Pista — el JS la llena dinámicamente --}}
             <div class="rest-track-wrapper" id="restWrapper">
                 <div class="rest-track" id="restTrack">
                     @foreach($restaurantes as $rest)
                     <a href="{{ route('restaurantes.show', $rest->id) }}" class="rest-item">
-                        <div class="rest-circle">
+                        <div class="rest-rect">
                             @if($rest->foto_portada)
                                 <img src="{{ asset('storage/' . $rest->foto_portada) }}"
                                      alt="{{ $rest->nombre }}" loading="lazy">
+                                <div class="rest-rect-overlay"></div>
+                                <span class="rest-rect-name">{{ $rest->nombre }}</span>
                             @else
-                                <div class="rest-circle-placeholder">
-                                    <i class="fas fa-utensils" style="font-size:1.6rem; color:#ea580c; opacity:0.45;"></i>
+                                <div class="rest-rect-placeholder">
+                                    <i class="fas fa-utensils" style="font-size:1.6rem; color:#ea580c; opacity:0.5;"></i>
+                                    <span>{{ $rest->nombre }}</span>
                                 </div>
                             @endif
                         </div>
-                        <span class="rest-item-name">{{ $rest->nombre }}</span>
+                        {{-- nombre debajo solo si NO tiene imagen --}}
+                        @if(!$rest->foto_portada)
+                            <span class="rest-item-name-below">{{ $rest->nombre }}</span>
+                        @else
+                            <span class="rest-item-name-below">{{ $rest->nombre }}</span>
+                        @endif
                     </a>
                     @endforeach
                 </div>
@@ -672,104 +763,110 @@
                 </div>
             @endif
 
-            {{-- ── SECTION HEADER ── --}}
+            {{-- ── SECTION HEADER PREMIUM ── --}}
             <div class="relative mb-14 sm:mb-20" style="overflow:visible;">
                 <div class="eventos-ghost-text" aria-hidden="true">Eventos</div>
+
                 <div class="relative z-10 mb-4">
                     <span class="eventos-pill">
                         <span class="dot"></span>
                         Descubre · Reserva · Disfruta
                     </span>
                 </div>
+
                 <div class="relative z-10">
                     <h2 class="eventos-heading">
-                        Próximos&nbsp;<em style="position:relative;">
-                            Eventos
-                            <svg class="underline-svg" style="position:absolute;bottom:-10px;left:0;width:100%;" height="12" viewBox="0 0 300 12" preserveAspectRatio="none">
-                                <path d="M2 9 Q75 2 150 8 Q225 14 298 5" stroke="#ea580c" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-dasharray="300" stroke-dashoffset="300" style="animation:draw-underline 1.2s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;"/>
+                        Próximos&nbsp;<em>Eventos
+                            <svg class="underline-svg" style="position:absolute;bottom:-10px;left:0;width:100%;"
+                                 height="14" viewBox="0 0 400 14" preserveAspectRatio="none">
+                                <path d="M2 11 Q100 3 200 9 Q300 15 398 6"
+                                      stroke="#ea580c" stroke-width="4" fill="none"
+                                      stroke-linecap="round"
+                                      stroke-dasharray="400" stroke-dashoffset="400"
+                                      style="animation:draw-underline 1.3s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;"/>
                             </svg>
                         </em>&nbsp;Gastronómicos
                     </h2>
                 </div>
-                <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-7">
-                    <p style="color:#78716c; font-size:0.95rem; max-width:500px; line-height:1.7; margin:0;">
+
+                <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-3 mt-8">
+                    <p style="color:#78716c; font-size:0.92rem; max-width:480px; line-height:1.75; margin:0;">
                         Experiencias culinarias únicas en los mejores restaurantes de Nicaragua.
                         Desde ceviches costeros hasta asados de montaña.
                     </p>
-                    <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
-                        <div style="height:1px; width:40px; background:linear-gradient(to right,#ea580c,transparent);"></div>
-                        <span style="font-size:11px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; color:#a8a29e;">
-                            {{ method_exists($eventos,'total') ? $eventos->total() : $eventos->count() }} experiencias
-                        </span>
+                    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;padding-bottom:2px;">
+                        <div style="text-align:right;">
+                            <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:2rem;color:#ea580c;line-height:1;">
+                                {{ method_exists($eventos,'total') ? $eventos->total() : $eventos->count() }}
+                            </div>
+                            <div style="font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#a8a29e;line-height:1.4;">
+                                Experiencias<br>disponibles
+                            </div>
+                        </div>
+                        <div style="width:2px;height:40px;background:linear-gradient(to bottom,#ea580c,transparent);border-radius:1px;"></div>
                     </div>
                 </div>
+
                 <div class="relative z-10 flex items-center gap-4 mt-8">
-                    <div style="flex:1; height:1px; background:#e7e5e4;"></div>
+                    <div style="flex:1;height:1px;background:linear-gradient(to right,#e7e5e4,transparent);"></div>
                     <div class="eventos-divider-icon">
-                        <i class="fas fa-utensils" style="color:#fff; font-size:12px;"></i>
+                        <i class="fas fa-utensils" style="color:#fff; font-size:13px;"></i>
                     </div>
-                    <div style="flex:1; height:1px; background:#e7e5e4;"></div>
+                    <div style="flex:1;height:1px;background:linear-gradient(to left,#e7e5e4,transparent);"></div>
                 </div>
             </div>
 
-            {{-- ── GRID DE EVENTOS ── --}}
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
+            {{-- ── GRID DE EVENTOS — NUEVO DISEÑO PREMIUM ── --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-5 sm:gap-6">
                 @forelse($eventos as $item)
-                    <article class="glass-card overflow-hidden" data-aos="fade-up">
-                        <div class="flex flex-col md:flex-row md:h-56">
+                    <article class="event-card" data-aos="fade-up">
 
-                            {{-- Texto --}}
-                            <div class="event-card-body flex flex-col justify-between p-5 sm:p-7 md:flex-1 order-2 md:order-1">
-                                <div>
-                                    <div class="flex items-center justify-between mb-2.5 gap-2">
-                                        <span class="bg-stone-100 text-stone-800 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">
-                                            <i class="fas fa-map-marker-alt text-orange-600 mr-1"></i> {{ $item->departamento->nombre }}
-                                        </span>
-                                        @if($item->restaurante->especialidad)
-                                            <span class="bg-orange-50 text-orange-700 text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider whitespace-nowrap">
-                                                {{ $item->restaurante->especialidad }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                    <h3 class="premium-title text-xl sm:text-2xl font-bold text-stone-900 leading-tight mb-2">
-                                        <a href="{{ route('eventos.show', $item->id) }}"
-                                           class="no-underline text-stone-900 hover:text-orange-600 transition-colors">
-                                            {{ $item->titulo }}
-                                        </a>
-                                    </h3>
-                                    <p class="text-stone-500 text-sm leading-relaxed line-clamp-2 font-normal">
-                                        {{ $item->descripcion }}
-                                    </p>
-                                </div>
-                                <div class="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 mt-3">
-                                    <div class="flex items-center gap-2 text-stone-600">
-                                        <i class="far fa-calendar-alt text-stone-400 text-sm"></i>
-                                        <span class="text-xs font-bold">
-                                            {{ \Carbon\Carbon::parse($item->fecha_evento)->translatedFormat('d M, Y') }}
-                                        </span>
-                                    </div>
-                                    {{-- ▼ COUNTDOWN — React lo maneja aquí ▼ --}}
-                                    <div class="bg-red-50 px-3 py-1.5 rounded-xl border border-red-100/50">
-                                        <span data-countdown="{{ $item->fecha_evento }}"></span>
-                                    </div>
-                                </div>
+                        {{-- Imagen arriba full-width --}}
+                        <div class="event-card-img-top">
+                            <a href="{{ route('eventos.show', $item->id) }}" class="block w-full h-full">
+                                <img src="{{ asset('storage/' . $item->imagen) }}"
+                                     alt="{{ $item->titulo }}">
+                            </a>
+                            {{-- Region badge --}}
+                            <div class="card-region-badge">
+                                <span class="card-region-dot"></span>
+                                {{ $item->departamento->nombre }}
                             </div>
-
-                            {{-- Imagen --}}
-                            <div class="event-card-img order-1 md:order-2 md:w-44 md:rounded-none md:rounded-r-[2rem]">
-                                <a href="{{ route('eventos.show', $item->id) }}" class="block w-full h-full">
-                                    <img src="{{ asset('storage/' . $item->imagen) }}"
-                                         class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                                         alt="{{ $item->titulo }}">
-                                </a>
-                                <div class="absolute bottom-3 left-3">
-                                    <div class="bg-stone-900/90 backdrop-blur-md text-white px-3 py-1 rounded-lg shadow-lg border border-white/10 font-bold text-xs">
-                                        C$ {{ number_format($item->precio, 0) }}
-                                    </div>
-                                </div>
-                            </div>
-
+                            {{-- Featured badge --}}
+                            @if(isset($item->destacado) && $item->destacado)
+                                <div class="card-featured-badge">★ Destacado</div>
+                            @endif
+                            {{-- Price badge --}}
+                            <div class="card-price-badge">C$ {{ number_format($item->precio, 0) }}</div>
                         </div>
+
+                        {{-- Cuerpo --}}
+                        <div class="event-card-body-new">
+                            @if($item->restaurante->especialidad)
+                                <span class="card-specialty-tag">{{ $item->restaurante->especialidad }}</span>
+                            @endif
+
+                            <div class="card-title-new">
+                                <a href="{{ route('eventos.show', $item->id) }}"
+                                   class="no-underline" style="color:inherit;">
+                                    {{ $item->titulo }}
+                                </a>
+                            </div>
+
+                            <p class="card-desc-new">{{ $item->descripcion }}</p>
+
+                            <div class="card-footer-new">
+                                <div class="card-date-new">
+                                    <i class="far fa-calendar-alt" style="color:#a8a29e;font-size:13px;"></i>
+                                    {{ \Carbon\Carbon::parse($item->fecha_evento)->translatedFormat('d M, Y') }}
+                                </div>
+                                {{-- COUNTDOWN — React lo maneja --}}
+                                <div class="card-countdown-new">
+                                    <span data-countdown="{{ $item->fecha_evento }}"></span>
+                                </div>
+                            </div>
+                        </div>
+
                     </article>
                 @empty
                     <div class="col-span-full py-16 flex flex-col items-center text-center max-w-lg mx-auto" data-aos="fade-up">
@@ -867,8 +964,7 @@
                 bannerCarousel.cycle();
             }
 
-            {{-- ── FILTRO CASCADA ── --}}
-            {{-- Incluye especialidad para filtrar locales en tiempo real --}}
+            // ── FILTRO CASCADA ──
             const todosLosRestaurantes = @json($restaurantes->values());
 
             function configurarFiltroCascada(selectDeptoId, inputEspecialidadId, selectRestId) {
@@ -890,15 +986,8 @@
                     }
 
                     let filtrados = todosLosRestaurantes;
-
-                    if (deptoId) {
-                        filtrados = filtrados.filter(r => r.departamento_id == deptoId);
-                    }
-                    if (espec) {
-                        filtrados = filtrados.filter(r =>
-                            r.especialidad && r.especialidad.toLowerCase().includes(espec)
-                        );
-                    }
+                    if (deptoId) filtrados = filtrados.filter(r => r.departamento_id == deptoId);
+                    if (espec)   filtrados = filtrados.filter(r => r.especialidad && r.especialidad.toLowerCase().includes(espec));
 
                     filtrados.forEach(r => {
                         const opt = document.createElement('option');
@@ -913,19 +1002,13 @@
 
                 deptoSelect.addEventListener('change', actualizarLocales);
                 if (especInput) especInput.addEventListener('input', actualizarLocales);
-
-                // ── PROBLEMA 1 FIX: disparar al cargar si ya hay valores preseleccionados ──
-                if (deptoSelect.value || (especInput && especInput.value)) {
-                    actualizarLocales();
-                }
+                if (deptoSelect.value || (especInput && especInput.value)) actualizarLocales();
             }
 
-            // Desktop: pasa los 3 IDs en orden (destino, especialidad, local)
             configurarFiltroCascada('search-departamento', 'search-especialidad', 'search-restaurante');
-            // Móvil: pasa los 3 IDs en orden (destino, especialidad, local)
             configurarFiltroCascada('search-departamento-mobile', 'search-especialidad-mobile', 'search-restaurante-mobile');
 
-            {{-- ── MOBILE TOGGLE ── --}}
+            // ── MOBILE TOGGLE ──
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
             const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
             if (mobileSearchToggle && mobileSearchPanel) {
@@ -939,18 +1022,18 @@
                 });
             }
 
-            // ── CARRUSEL RESTAURANTES ──
+            // ── CARRUSEL RESTAURANTES RECTANGULAR ──
             document.addEventListener('DOMContentLoaded', function () {
                 const wrapper = document.getElementById('restWrapper');
                 const track   = document.getElementById('restTrack');
                 if (!track || !wrapper) return;
 
-                const GAP   = 36;
+                const GAP   = 20;
                 const SPEED = 0.6;
 
                 function clonarSiNecesario() {
-                    const wrapperW  = wrapper.offsetWidth;
-                    let   trackW    = track.scrollWidth;
+                    const wrapperW = wrapper.offsetWidth;
+                    let   trackW   = track.scrollWidth;
                     while (trackW < wrapperW * 2.5) {
                         const original = Array.from(track.querySelectorAll('.rest-item'));
                         original.forEach(function (item) {
@@ -967,9 +1050,7 @@
 
                 const itemsOriginales = track.querySelectorAll('.rest-item:not([aria-hidden])');
                 let setW = 0;
-                itemsOriginales.forEach(function (el) {
-                    setW += el.offsetWidth + GAP;
-                });
+                itemsOriginales.forEach(function (el) { setW += el.offsetWidth + GAP; });
 
                 let pos    = 0;
                 let paused = false;

@@ -338,7 +338,7 @@
                 <a href="{{ route('contratos.index') }}"
                    class="nav-item {{ request()->routeIs('contratos.*') ? 'active' : '' }}">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Contratos de Restaurantes</span>
+                    <span>Contratos de Restaurantes-Gastrobares</span>
                 </a>
 
                 <a href="{{ route('membresias.index') }}"

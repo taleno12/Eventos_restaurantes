@@ -13,6 +13,7 @@ use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\DepartamentoUsuarioController;
 use App\Http\Controllers\GastrobarController;
 use App\Http\Controllers\TrabajadorController;
+use App\Http\Controllers\ContratoController;
 
 
 use App\Models\Restaurante;
@@ -168,7 +169,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 
     // ── MÓDULOS DE GESTIÓN INTERNA ────────────────────────────────────────────
-    Route::get('/contratos',     function () { return view('contratos.index'); })->name('contratos.index');
+    Route::resource('contratos', ContratoController::class); // ← CAMBIADO
     Route::get('/soporte',       function () { return view('soporte.index'); })->name('soporte.index');
     Route::get('/configuracion', function () { return view('configuracion.index'); })->name('configuracion.index');
 

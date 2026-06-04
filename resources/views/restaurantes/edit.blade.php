@@ -214,23 +214,31 @@
                         </div>
                     </div>
 
-                    {{-- Nueva Contraseña --}}
+                    {{-- Nueva Contraseña con toggle --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Nueva Contraseña <span class="text-muted fw-normal">(opcional)</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                            <input type="password" name="propietario_password" minlength="8"
-                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Mínimo 8 caracteres">
+                            <input type="password" name="propietario_password" id="edit_password" minlength="8"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;" placeholder="Mínimo 8 caracteres">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('edit_password', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </div>
 
-                    {{-- Confirmar Contraseña --}}
+                    {{-- Confirmar Contraseña con toggle --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-muted fw-normal">(opcional)</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" name="propietario_password_confirmation" minlength="8"
-                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Repite la contraseña">
+                            <input type="password" name="propietario_password_confirmation" id="edit_password_confirm" minlength="8"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;" placeholder="Repite la contraseña">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('edit_password_confirm', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -321,23 +329,31 @@
                     </p>
                 @endif
 
-                {{-- Input para nuevas fotos --}}
-                <label for="input-galeria" class="w-100 cursor-pointer">
-                    <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
-                         style="min-height: 100px; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
-                         onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
-                        <input type="file" name="galeria[]" id="input-galeria" accept="image/*" multiple
-                               class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
-                        <div id="placeholder-galeria" class="text-center py-3">
-                            <i class="bi bi-images fs-2 text-secondary"></i>
-                            <p class="small text-muted mt-1 mb-0">Haz clic para agregar fotos al álbum</p>
-                            <p class="small text-secondary" style="font-size:0.75rem;">Hasta 4 imágenes — JPG, PNG o WEBP</p>
-                        </div>
+                <p class="small fw-semibold text-muted mb-2">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Haz clic en cada casilla para agregar una foto individualmente.
+                </p>
+                <div class="row g-3">
+                    @for($i = 0; $i < 4; $i++)
+                    <div class="col-6 col-sm-3">
+                        <label for="galeria_edit_{{ $i }}" class="w-100 cursor-pointer">
+                            <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
+                                 style="aspect-ratio: 1/1; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
+                                 onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
+                                <input type="file" name="galeria[]" id="galeria_edit_{{ $i }}" accept="image/*"
+                                       class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
+                                <div id="placeholder-edit-{{ $i }}" class="text-center pointer-events-none">
+                                    <i class="bi bi-plus-lg fs-4 text-secondary"></i>
+                                    <p class="small text-muted mb-0 mt-1" style="font-size:0.7rem;">Foto {{ $i + 1 }}</p>
+                                </div>
+                                <img id="preview-galeria-edit-{{ $i }}" src="" alt=""
+                                     class="d-none position-absolute top-0 start-0 w-100 h-100" style="object-fit:cover;">
+                            </div>
+                        </label>
                     </div>
-                </label>
+                    @endfor
+                </div>
 
-                {{-- Preview nuevas fotos --}}
-                <div id="galeria-preview-container" class="row g-3 mt-1 d-none"></div>
             </div>
         </div>
 
@@ -350,7 +366,6 @@
                     <i class="bi bi-geo-alt text-warning"></i> Ubicación del Restaurante
                 </h6>
 
-                {{-- Buscador --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">Buscar Dirección</label>
                     <div class="d-flex gap-2">
@@ -371,7 +386,6 @@
                     </p>
                 </div>
 
-                {{-- Dirección exacta --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
                         Dirección Exacta <span class="text-muted fw-normal">(se actualiza al buscar o hacer clic en el mapa)</span>
@@ -385,11 +399,32 @@
                     </div>
                 </div>
 
-                {{-- Coordenadas ocultas --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Coordenadas <span class="text-muted fw-normal">(latitud, longitud — o haz clic en el mapa)</span>
+                    </label>
+                    <div class="d-flex gap-2 align-items-start">
+                        <div class="input-group flex-1">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-compass"></i></span>
+                            <input type="text" id="edit-coordenadas-input"
+                                   placeholder="Ej: 12.865400, -85.207200"
+                                   value="{{ (old('latitud', $restaurante->latitud) && old('longitud', $restaurante->longitud)) ? old('latitud', $restaurante->latitud) . ', ' . old('longitud', $restaurante->longitud) : '' }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                        <button type="button" id="edit-btn-ir-coordenadas"
+                                class="btn btn-outline-warning fw-semibold text-dark" style="white-space:nowrap;">
+                            <i class="bi bi-crosshair me-1"></i> Ir al mapa
+                        </button>
+                    </div>
+                    <p class="small text-muted mt-1 mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Escribe las coordenadas separadas por coma y presiona "Ir al mapa", o simplemente haz clic en el mapa.
+                    </p>
+                </div>
+
                 <input type="hidden" name="latitud"  id="edit-latitud"  value="{{ old('latitud', $restaurante->latitud) }}">
                 <input type="hidden" name="longitud" id="edit-longitud" value="{{ old('longitud', $restaurante->longitud) }}">
 
-                {{-- Mapa --}}
                 <div id="edit-mapa-restaurante" class="w-100 rounded-3 border shadow-sm" style="height: 340px;"></div>
 
                 <p id="edit-mapa-coords-info" class="small text-muted mt-2 d-none">
@@ -400,7 +435,61 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 6: Descripción                       --}}
+        {{-- CARD 6: Horario de Atención               --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2"
+                    style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-clock text-warning"></i> Horario de Atención
+                </h6>
+
+                {{-- Días laborales --}}
+                <label class="form-label fw-semibold text-dark small mb-2">Días que atiende</label>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    @foreach(['lunes'=>'Lun','martes'=>'Mar','miercoles'=>'Mié','jueves'=>'Jue','viernes'=>'Vie','sabado'=>'Sáb','domingo'=>'Dom'] as $valor => $etiqueta)
+                    <div>
+                        <input type="checkbox" class="btn-check" name="dias_laborales[]"
+                               id="dia_{{ $valor }}" value="{{ $valor }}"
+                               @checked(in_array($valor, old('dias_laborales', $restaurante->dias_laborales ?? [])))>
+                        <label class="btn btn-outline-warning btn-sm fw-semibold text-dark"
+                               for="dia_{{ $valor }}">{{ $etiqueta }}</label>
+                    </div>
+                    @endforeach
+                </div>
+
+                {{-- Horas --}}
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Hora de Apertura</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-door-open"></i>
+                            </span>
+                            <input type="time" name="hora_apertura"
+                                   value="{{ old('hora_apertura', $restaurante->hora_apertura ? \Carbon\Carbon::parse($restaurante->hora_apertura)->format('H:i') : '') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Hora de Cierre</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-door-closed"></i>
+                            </span>
+                            <input type="time" name="hora_cierre"
+                                   value="{{ old('hora_cierre', $restaurante->hora_cierre ? \Carbon\Carbon::parse($restaurante->hora_cierre)->format('H:i') : '') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 7: Descripción                       --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -432,6 +521,18 @@
 </style>
 
 <script>
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon  = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
 
         // ─── Departamento / Municipio ────────────────────────────────────
@@ -505,48 +606,26 @@
             reader.readAsDataURL(file);
         });
 
-        // ─── Preview Galería ─────────────────────────────────────────────
-        document.getElementById('input-galeria').addEventListener('change', function () {
-            const galeriaPreview = document.getElementById('galeria-preview-container');
-            galeriaPreview.innerHTML = '';
-            const files = Array.from(this.files).slice(0, 4);
-
-            if (files.length > 0) {
-                galeriaPreview.classList.remove('d-none');
-                document.getElementById('placeholder-galeria').classList.add('opacity-50');
-
-                files.forEach(file => {
+        // ─── Preview Galería individual (4 slots) ────────────────────────
+        for (let i = 0; i < 4; i++) {
+            (function (idx) {
+                const input = document.getElementById('galeria_edit_' + idx);
+                if (!input) return;
+                input.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (!file) return;
                     const reader = new FileReader();
-                    reader.onload = e => {
-                        const col = document.createElement('div');
-                        col.className = 'col-6 col-sm-3';
-
-                        const div = document.createElement('div');
-                        div.className = 'rounded-3 border-2 overflow-hidden position-relative shadow-sm';
-                        div.style.cssText = 'height:90px;border:2px solid #ffc107 !important;';
-
-                        const badge = document.createElement('span');
-                        badge.className = 'position-absolute top-0 end-0 m-1 badge bg-warning text-dark';
-                        badge.style.fontSize = '0.65rem';
-                        badge.textContent = 'NUEVA';
-
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'w-100 h-100';
-                        img.style.objectFit = 'cover';
-
-                        div.appendChild(badge);
-                        div.appendChild(img);
-                        col.appendChild(div);
-                        galeriaPreview.appendChild(col);
+                    reader.onload = function (e) {
+                        const preview = document.getElementById('preview-galeria-edit-' + idx);
+                        const placeholder = document.getElementById('placeholder-edit-' + idx);
+                        preview.src = e.target.result;
+                        preview.classList.remove('d-none');
+                        if (placeholder) placeholder.classList.add('d-none');
                     };
                     reader.readAsDataURL(file);
                 });
-            } else {
-                galeriaPreview.classList.add('d-none');
-                document.getElementById('placeholder-galeria').classList.remove('opacity-50');
-            }
-        });
+            })(i);
+        }
 
     });
 </script>
@@ -613,6 +692,38 @@
             if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
         });
 
+        document.getElementById('edit-btn-ir-coordenadas').addEventListener('click', function () {
+            const valor = document.getElementById('edit-coordenadas-input').value.trim();
+            const partes = valor.split(',');
+            if (partes.length !== 2) {
+                alert('Ingresa las coordenadas en formato: latitud, longitud\nEj: 12.865400, -85.207200');
+                return;
+            }
+            const lat = parseFloat(partes[0].trim());
+            const lng = parseFloat(partes[1].trim());
+            if (isNaN(lat) || isNaN(lng)) {
+                alert('Coordenadas inválidas. Ejemplo: 12.865400, -85.207200');
+                return;
+            }
+            mapa.setView([lat, lng], 17);
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                marker.on('dragend', function () {
+                    const pos = marker.getLatLng();
+                    actualizarCoordenadas(pos.lat, pos.lng);
+                    geocodeInverso(pos.lat, pos.lng);
+                });
+            }
+            actualizarCoordenadas(lat, lng);
+            geocodeInverso(lat, lng);
+        });
+
+        document.getElementById('edit-coordenadas-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('edit-btn-ir-coordenadas').click(); }
+        });
+
         function buscarDireccion() {
             const query = document.getElementById('edit-direccion-buscar').value.trim();
             if (!query) return;
@@ -677,6 +788,7 @@
         function actualizarCoordenadas(lat, lng) {
             document.getElementById('edit-latitud').value  = lat.toFixed(7);
             document.getElementById('edit-longitud').value = lng.toFixed(7);
+            document.getElementById('edit-coordenadas-input').value = `${lat.toFixed(7)}, ${lng.toFixed(7)}`;
             actualizarInfo(lat, lng);
         }
 

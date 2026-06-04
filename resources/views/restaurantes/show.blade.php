@@ -172,6 +172,84 @@
             </div>
             @endif
 
+            {{-- ── Horario de Atención ── --}}
+            <div class="card border-0 shadow-sm rounded-3 bg-white">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom d-flex align-items-center gap-2"
+                        style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;color:#2d3748;">
+                        <i class="bi bi-clock text-primary"></i> Horario de Atención
+                    </h5>
+
+                    {{-- Días laborales --}}
+                    @php
+                        $diasConfig = [
+                            'lunes'     => 'Lun',
+                            'martes'    => 'Mar',
+                            'miercoles' => 'Mié',
+                            'jueves'    => 'Jue',
+                            'viernes'   => 'Vie',
+                            'sabado'    => 'Sáb',
+                            'domingo'   => 'Dom',
+                        ];
+                        $diasActivos = $restaurante->dias_laborales ?? [];
+                        if (is_string($diasActivos)) {
+                            $diasActivos = json_decode($diasActivos, true) ?? [];
+                        }
+                    @endphp
+
+                    <p class="text-uppercase text-muted fw-bold mb-2" style="font-size:0.7rem;letter-spacing:0.5px;">Días que atiende</p>
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        @foreach($diasConfig as $valor => $etiqueta)
+                            @if(in_array($valor, $diasActivos))
+                                <span class="badge fw-semibold px-3 py-2"
+                                      style="background:#fffbeb;color:#92400e;border:1px solid #fde68a;font-size:0.78rem;">
+                                    {{ $etiqueta }}
+                                </span>
+                            @else
+                                <span class="badge fw-semibold px-3 py-2"
+                                      style="background:#f8fafc;color:#94a3b8;border:1px solid #e2e8f0;font-size:0.78rem;">
+                                    {{ $etiqueta }}
+                                </span>
+                            @endif
+                        @endforeach
+
+                        @if(empty($diasActivos))
+                            <p class="text-muted small mb-0">
+                                <i class="bi bi-info-circle me-1"></i>
+                                No se han registrado días de atención.
+                            </p>
+                        @endif
+                    </div>
+
+                    {{-- Horas --}}
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6">
+                            <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Hora de Apertura</p>
+                                <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                                    <i class="bi bi-door-open text-success"></i>
+                                    {{ $restaurante->hora_apertura
+                                        ? \Carbon\Carbon::createFromFormat('H:i:s', $restaurante->hora_apertura)->format('h:i A')
+                                        : 'No especificada' }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Hora de Cierre</p>
+                                <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                                    <i class="bi bi-door-closed text-danger"></i>
+                                    {{ $restaurante->hora_cierre
+                                        ? \Carbon\Carbon::createFromFormat('H:i:s', $restaurante->hora_cierre)->format('h:i A')
+                                        : 'No especificada' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
             {{-- ── Ubicación y Mapa ── --}}
             @if($restaurante->latitud && $restaurante->longitud)
             <div class="card border-0 shadow-sm rounded-3 bg-white">
@@ -417,6 +495,21 @@
                                 </span>
                             @else
                                 <span class="badge bg-light text-muted border" style="font-size:0.7rem;">Sin asignar</span>
+                            @endif
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+                             style="background:#f8fafc;border:1px solid #e2e8f0;">
+                            <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">
+                                <i class="bi bi-clock text-warning"></i> Horario
+                            </span>
+                            @if($restaurante->hora_apertura && $restaurante->hora_cierre)
+                                <span class="badge fw-semibold"
+                                      style="background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;font-size:0.7rem;">
+                                    <i class="bi bi-check-lg me-1"></i>Registrado
+                                </span>
+                            @else
+                                <span class="badge bg-light text-muted border" style="font-size:0.7rem;">Sin horario</span>
                             @endif
                         </div>
 

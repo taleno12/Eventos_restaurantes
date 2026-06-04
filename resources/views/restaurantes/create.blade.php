@@ -216,25 +216,33 @@
                         </div>
                     </div>
 
-                    {{-- Contraseña --}}
+                    {{-- Contraseña con toggle --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Contraseña <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                            <input type="password" name="propietario_password" required minlength="8"
+                            <input type="password" name="propietario_password" id="create_password" required minlength="8"
                                    placeholder="Mínimo 8 caracteres"
-                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('create_password', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </div>
 
-                    {{-- Confirmar Contraseña --}}
+                    {{-- Confirmar Contraseña con toggle --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" name="propietario_password_confirmation" required minlength="8"
+                            <input type="password" name="propietario_password_confirmation" id="create_password_confirm" required minlength="8"
                                    placeholder="Repite la contraseña"
-                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('create_password_confirm', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -374,7 +382,7 @@
                     </p>
                 </div>
 
-                {{-- Campos ocultos que se envían al servidor --}}
+                {{-- Campos ocultos --}}
                 <input type="hidden" id="latitud"  name="latitud"  value="{{ old('latitud') }}">
                 <input type="hidden" id="longitud" name="longitud" value="{{ old('longitud') }}">
 
@@ -389,7 +397,61 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 6: Descripción                       --}}
+        {{-- CARD 6: Horario de Atención               --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2"
+                    style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-clock text-warning"></i> Horario de Atención
+                </h6>
+
+                {{-- Días laborales --}}
+                <label class="form-label fw-semibold text-dark small mb-2">Días que atiende</label>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    @foreach(['lunes'=>'Lun','martes'=>'Mar','miercoles'=>'Mié','jueves'=>'Jue','viernes'=>'Vie','sabado'=>'Sáb','domingo'=>'Dom'] as $valor => $etiqueta)
+                    <div>
+                        <input type="checkbox" class="btn-check" name="dias_laborales[]"
+                               id="dia_{{ $valor }}" value="{{ $valor }}"
+                               @checked(in_array($valor, old('dias_laborales', [])))>
+                        <label class="btn btn-outline-warning btn-sm fw-semibold text-dark"
+                               for="dia_{{ $valor }}">{{ $etiqueta }}</label>
+                    </div>
+                    @endforeach
+                </div>
+
+                {{-- Horas --}}
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Hora de Apertura</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-door-open"></i>
+                            </span>
+                            <input type="time" name="hora_apertura"
+                                   value="{{ old('hora_apertura') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Hora de Cierre</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="bi bi-door-closed"></i>
+                            </span>
+                            <input type="time" name="hora_cierre"
+                                   value="{{ old('hora_cierre') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 7: Descripción                       --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -422,6 +484,18 @@
 </style>
 
 <script>
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon  = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+
     // ── Preview Portada ──
     document.getElementById('imagen').addEventListener('change', function () {
         const file = this.files[0];
@@ -558,7 +632,6 @@
             if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
         });
 
-        // ── Botón "Ir a coordenadas" ──
         document.getElementById('btn-ir-coordenadas').addEventListener('click', function () {
             const valor = document.getElementById('coordenadas-input').value.trim();
             const partes = valor.split(',');
@@ -587,7 +660,6 @@
             geocodeInverso(lat, lng);
         });
 
-        // También permitir Enter en el campo de coordenadas
         document.getElementById('coordenadas-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-ir-coordenadas').click(); }
         });
@@ -656,7 +728,6 @@
         function actualizarCoordenadas(lat, lng) {
             document.getElementById('latitud').value  = lat.toFixed(7);
             document.getElementById('longitud').value = lng.toFixed(7);
-            // Actualizar también el campo visible de coordenadas
             document.getElementById('coordenadas-input').value = `${lat.toFixed(7)}, ${lng.toFixed(7)}`;
             actualizarInfo(lat, lng);
         }

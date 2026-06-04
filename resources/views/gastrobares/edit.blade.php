@@ -423,6 +423,7 @@
                     <i class="bi bi-geo-alt text-warning"></i> Ubicación en el Mapa
                 </h6>
 
+                {{-- Buscador --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">Buscar Dirección</label>
                     <div class="d-flex gap-2">
@@ -443,6 +444,7 @@
                     </p>
                 </div>
 
+                {{-- Dirección Exacta --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
                         Dirección Exacta <span class="text-muted fw-normal">(se actualiza al buscar o hacer clic en el mapa)</span>
@@ -456,6 +458,32 @@
                     </div>
                 </div>
 
+                {{-- ▼ NUEVO: Campo de coordenadas visible (igual que en create) ▼ --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark small">
+                        Coordenadas <span class="text-muted fw-normal">(latitud, longitud — o haz clic en el mapa)</span>
+                    </label>
+                    <div class="d-flex gap-2 align-items-start">
+                        <div class="input-group flex-1">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-compass"></i></span>
+                            <input type="text" id="coordenadas-input"
+                                   placeholder="Ej: 12.865400, -85.207200"
+                                   value="{{ old('latitud', $gastrobar->latitud) && old('longitud', $gastrobar->longitud) ? old('latitud', $gastrobar->latitud) . ', ' . old('longitud', $gastrobar->longitud) : ($gastrobar->latitud && $gastrobar->longitud ? $gastrobar->latitud . ', ' . $gastrobar->longitud : '') }}"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                        <button type="button" id="btn-ir-coordenadas"
+                                class="btn btn-outline-warning fw-semibold text-dark" style="white-space:nowrap;">
+                            <i class="bi bi-crosshair me-1"></i> Ir al mapa
+                        </button>
+                    </div>
+                    <p class="small text-muted mt-1 mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Escribe las coordenadas separadas por coma y presiona "Ir al mapa", o simplemente haz clic en el mapa.
+                    </p>
+                </div>
+                {{-- ▲ FIN campo coordenadas ▲ --}}
+
+                {{-- Campos ocultos --}}
                 <input type="hidden" name="latitud"  id="latitud"  value="{{ old('latitud', $gastrobar->latitud) }}">
                 <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $gastrobar->longitud) }}">
 
@@ -649,6 +677,40 @@
             if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
         });
 
+        // ── Botón "Ir al mapa" desde coordenadas ──
+        document.getElementById('btn-ir-coordenadas').addEventListener('click', function () {
+            const valor  = document.getElementById('coordenadas-input').value.trim();
+            const partes = valor.split(',');
+            if (partes.length !== 2) {
+                alert('Ingresa las coordenadas en formato: latitud, longitud\nEj: 12.865400, -85.207200');
+                return;
+            }
+            const lat = parseFloat(partes[0].trim());
+            const lng = parseFloat(partes[1].trim());
+            if (isNaN(lat) || isNaN(lng)) {
+                alert('Coordenadas inválidas. Ejemplo: 12.865400, -85.207200');
+                return;
+            }
+            mapa.setView([lat, lng], 17);
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                marker.on('dragend', function () {
+                    const pos = marker.getLatLng();
+                    actualizarCoordenadas(pos.lat, pos.lng);
+                    geocodeInverso(pos.lat, pos.lng);
+                });
+            }
+            actualizarCoordenadas(lat, lng);
+            geocodeInverso(lat, lng);
+        });
+
+        // Permitir Enter en el campo de coordenadas
+        document.getElementById('coordenadas-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-ir-coordenadas').click(); }
+        });
+
         function buscarDireccion() {
             const query = document.getElementById('direccion-buscar').value.trim();
             if (!query) return;
@@ -713,6 +775,8 @@
         function actualizarCoordenadas(lat, lng) {
             document.getElementById('latitud').value  = lat.toFixed(7);
             document.getElementById('longitud').value = lng.toFixed(7);
+            // ▼ Sincronizar el campo visible de coordenadas ▼
+            document.getElementById('coordenadas-input').value = `${lat.toFixed(7)}, ${lng.toFixed(7)}`;
             actualizarInfo(lat, lng);
         }
 

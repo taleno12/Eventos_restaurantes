@@ -161,6 +161,45 @@
             position: relative; z-index: 2;
         }
         .social-btn:hover { transform: scale(1.15); }
+
+        /* ══ BADGE ABIERTO / CERRADO ══ */
+        .badge-abierto {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #f0fdf4; border: 1.5px solid #bbf7d0;
+            color: #15803d; font-size: 10px; font-weight: 800;
+            padding: 3px 8px; border-radius: 999px;
+            letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .badge-cerrado {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #fef2f2; border: 1.5px solid #fecaca;
+            color: #b91c1c; font-size: 10px; font-weight: 800;
+            padding: 3px 8px; border-radius: 999px;
+            letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .badge-sin-horario {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            color: #94a3b8; font-size: 10px; font-weight: 700;
+            padding: 3px 8px; border-radius: 999px;
+            letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .dot-abierto {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+            animation: pulseDot 2s infinite;
+            display: inline-block; flex-shrink: 0;
+        }
+        .dot-cerrado {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #ef4444;
+            display: inline-block; flex-shrink: 0;
+        }
+        @keyframes pulseDot {
+            0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.25); }
+            50%      { box-shadow: 0 0 0 4px rgba(34,197,94,0.12); }
+        }
     </style>
 </head>
 <body class="bg-stone-50/50 text-stone-900">
@@ -552,16 +591,81 @@
             </div>
         </div>
 
-        {{-- ══ GRID DE RESTAURANTES (mismo estilo que eventos) ══ --}}
+        {{-- ══ GRID DE RESTAURANTES ══ --}}
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
             @forelse($restaurantes as $restaurante)
+
+                {{-- ── Calcular si está abierto ahora ── --}}
+                @php
+                    $diasMap = [
+                        'lunes'     => 1,
+                        'martes'    => 2,
+                        'miercoles' => 3,
+                        'jueves'    => 4,
+                        'viernes'   => 5,
+                        'sabado'    => 6,
+                        'domingo'   => 0,
+                    ];
+                    $diasLabels = [
+                        'lunes'     => 'Lun',
+                        'martes'    => 'Mar',
+                        'miercoles' => 'Mié',
+                        'jueves'    => 'Jue',
+                        'viernes'   => 'Vie',
+                        'sabado'    => 'Sáb',
+                        'domingo'   => 'Dom',
+                    ];
+
+                    $tieneHorario = $restaurante->hora_apertura && $restaurante->hora_cierre;
+                    $estaAbierto  = false;
+                    $diaHoyNum    = (int) now()->setTimezone('America/Managua')->format('w'); // 0=dom…6=sab
+                    $horaActual   = now()->setTimezone('America/Managua')->format('H:i');
+
+                    if ($tieneHorario) {
+                        // ¿Hoy es día laboral?
+                        $diasLaborales = $restaurante->dias_laborales ?? [];
+                        $hoyEsLaboral  = empty($diasLaborales)
+                            ? true // sin días configurados = todos los días
+                            : collect($diasLaborales)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
+
+                        if ($hoyEsLaboral) {
+                            $apertura = $restaurante->hora_apertura; // "HH:MM"
+                            $cierre   = $restaurante->hora_cierre;   // "HH:MM"
+
+                            if ($cierre > $apertura) {
+                                // Horario normal: ej. 08:00 – 22:00
+                                $estaAbierto = $horaActual >= $apertura && $horaActual < $cierre;
+                            } else {
+                                // Horario que cruza medianoche: ej. 20:00 – 02:00
+                                $estaAbierto = $horaActual >= $apertura || $horaActual < $cierre;
+                            }
+                        }
+                    }
+
+                    // Formatear horas para mostrar (H:i → h:i a)
+                    $aperturaFmt = $tieneHorario
+                        ? \Carbon\Carbon::createFromFormat('H:i', substr($restaurante->hora_apertura, 0, 5))->format('g:i a')
+                        : null;
+                    $cierreFmt = $tieneHorario
+                        ? \Carbon\Carbon::createFromFormat('H:i', substr($restaurante->hora_cierre, 0, 5))->format('g:i a')
+                        : null;
+
+                    // Días laborales en etiquetas cortas
+                    $diasLaboralesStr = '';
+                    if (!empty($restaurante->dias_laborales)) {
+                        $diasLaboralesStr = collect($restaurante->dias_laborales)
+                            ->map(fn($d) => $diasLabels[$d] ?? ucfirst($d))
+                            ->implode(' · ');
+                    }
+                @endphp
+
                 <article class="glass-card overflow-hidden" data-aos="fade-up"
                          data-aos-delay="{{ ($loop->index % 2) * 80 }}">
                     <a href="{{ route('restaurantes.show', $restaurante->id) }}"
                        class="no-underline text-inherit block">
                         <div class="flex flex-col md:flex-row md:h-56">
 
-                            {{-- Texto --}}
+                            {{-- ── Texto ── --}}
                             <div class="rest-card-body flex flex-col justify-between p-5 sm:p-7 md:flex-1 order-2 md:order-1">
                                 <div>
                                     <div class="flex items-center justify-between mb-2.5 gap-2">
@@ -592,20 +696,48 @@
                                     @endif
                                 </div>
 
+                                {{-- ── Footer de la card: horario + redes ── --}}
                                 <div class="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 mt-3">
-                                    <div class="flex flex-col gap-1">
-                                        @if($restaurante->telefono)
-                                            <span class="text-xs text-stone-500 flex items-center gap-1.5">
-                                                <i class="fas fa-phone text-stone-400" style="font-size:10px;"></i>
-                                                {{ $restaurante->telefono }}
-                                            </span>
-                                        @endif
-                                        @if($restaurante->horario)
+
+                                    {{-- Horario + badge --}}
+                                    <div class="flex flex-col gap-1.5">
+
+                                        @if($tieneHorario)
+                                            {{-- Badge abierto / cerrado --}}
+                                            @if($estaAbierto)
+                                                <span class="badge-abierto">
+                                                    <span class="dot-abierto"></span>
+                                                    Abierto ahora
+                                                </span>
+                                            @else
+                                                <span class="badge-cerrado">
+                                                    <span class="dot-cerrado"></span>
+                                                    Cerrado ahora
+                                                </span>
+                                            @endif
+
+                                            {{-- Rango horario --}}
                                             <span class="text-xs text-stone-500 flex items-center gap-1.5">
                                                 <i class="fas fa-clock text-stone-400" style="font-size:10px;"></i>
-                                                {{ $restaurante->horario }}
+                                                {{ $aperturaFmt }} – {{ $cierreFmt }}
+                                            </span>
+
+                                            {{-- Días laborales --}}
+                                            @if($diasLaboralesStr)
+                                                <span class="text-xs text-stone-400 flex items-center gap-1.5">
+                                                    <i class="fas fa-calendar-week text-stone-300" style="font-size:10px;"></i>
+                                                    {{ $diasLaboralesStr }}
+                                                </span>
+                                            @endif
+
+                                        @else
+                                            {{-- Sin horario configurado --}}
+                                            <span class="badge-sin-horario">
+                                                <i class="fas fa-clock" style="font-size:9px;"></i>
+                                                Horario no disponible
                                             </span>
                                         @endif
+
                                     </div>
 
                                     {{-- Redes sociales --}}
@@ -653,7 +785,7 @@
                                 </div>
                             </div>
 
-                            {{-- Imagen --}}
+                            {{-- ── Imagen ── --}}
                             <div class="rest-card-img order-1 md:order-2 md:w-44 md:rounded-none md:rounded-r-[2rem]">
                                 @if($restaurante->foto_portada)
                                     <img src="{{ asset('storage/' . $restaurante->foto_portada) }}"

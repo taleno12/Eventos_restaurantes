@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -21,6 +22,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $tiktok
  * @property string|null $facebook
  * @property string|null $whatsapp
+ * @property array|null $dias_laborales
+ * @property string|null $hora_apertura
+ * @property string|null $hora_cierre
  * @property int $departamento_id
  * @property int|null $municipio_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -36,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int|null $imagenes_count
  * @property-read \App\Models\Municipio|null $municipio
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $reviews
+ * @property-read \App\Models\User|null $propietario
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante query()
@@ -62,21 +67,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Restaurante extends Model
 {
     protected $fillable = [
-        'nombre', 
-        'email', 
+        'nombre',
+        'email',
         'especialidad',
-        'descripcion', 
-        'departamento_id', 
+        'descripcion',
+        'departamento_id',
         'municipio_id',
         'instagram',
         'tiktok',
         'facebook',
         'whatsapp',
-        'foto_portada', // IMPORTANTE: Agregado para permitir la asignación masiva de la imagen principal
-        'activo',      // Agregado por si manejas estados de activación en el panel
-        'direccion', 
-        'latitud', 
-        'longitud'
+        'foto_portada',
+        'activo',
+        'direccion',
+        'latitud',
+        'longitud',
+        'dias_laborales',
+        'hora_apertura',
+        'hora_cierre',
+    ];
+
+    protected $casts = [
+        'dias_laborales' => 'array',
     ];
 
     /**
@@ -93,6 +105,14 @@ class Restaurante extends Model
     public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class);
+    }
+
+    /**
+     * Un restaurante TIENE UN propietario (usuario con rol 'restaurante')
+     */
+    public function propietario(): HasOne
+    {
+        return $this->hasOne(User::class, 'restaurante_id')->where('role', 'restaurante');
     }
 
     /**
@@ -121,7 +141,6 @@ class Restaurante extends Model
 
     /**
      * ALIAS DE COMPATIBILIDAD: Mapea 'imagenes' a 'fotos' de forma transparente.
-     * Esto evita que el controlador o la vista rompan el sistema si llaman a "imagenes".
      */
     public function imagenes(): HasMany
     {

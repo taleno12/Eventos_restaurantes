@@ -3,6 +3,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css"/>
 
 @section('content')
 <div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
@@ -22,7 +23,7 @@
         </div>
     </div>
 
-    <form action="{{ route('admin.restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
+    <form id="form-edit-restaurante" action="{{ route('admin.restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -133,14 +134,16 @@
                         </h6>
                     </div>
 
-                    {{-- WhatsApp --}}
+                    {{-- WhatsApp con selector de país --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">WhatsApp Comercial <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0" style="color:#25d366;"><i class="bi bi-whatsapp"></i></span>
-                            <input type="text" name="whatsapp" value="{{ old('whatsapp', $restaurante->whatsapp) }}" required
-                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="+505 8888-8888">
-                        </div>
+                        {{-- Campo visible con intl-tel-input --}}
+                        <input type="tel" id="whatsapp_input"
+                               class="form-control bg-light" style="box-shadow:none;"
+                               placeholder="8888-8888">
+                        {{-- Campo oculto que se envía al servidor con el número completo --}}
+                        <input type="hidden" id="whatsapp_full" name="whatsapp" value="{{ old('whatsapp', $restaurante->whatsapp) }}">
+                        <small class="text-muted">Selecciona tu país y escribe el número sin código.</small>
                     </div>
 
                     {{-- Instagram --}}
@@ -580,6 +583,29 @@
         const muniInicial  = "{{ old('municipio_id', $restaurante->municipio_id) }}";
         if (deptoInicial) cargarMunicipios(deptoInicial, muniInicial);
 
+        // ─── intl-tel-input para WhatsApp ────────────────────────────────
+        const inputTel = document.getElementById('whatsapp_input');
+        const iti = window.intlTelInput(inputTel, {
+            initialCountry: "ni",
+            preferredCountries: ["ni", "cr", "hn", "gt", "sv", "mx", "us"],
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+        });
+
+        // Precargar el número existente del restaurante
+        const numeroActual = document.getElementById('whatsapp_full').value;
+        if (numeroActual) {
+            iti.setNumber('+' + numeroActual);
+        }
+
+        // Al enviar el form, guardar número completo en el campo oculto
+        document.getElementById('form-edit-restaurante').addEventListener('submit', function () {
+            const numeroCompleto = iti.getNumber(); // ej: +50588887777
+            if (numeroCompleto) {
+                document.getElementById('whatsapp_full').value = numeroCompleto.replace('+', '').replace(/\s/g, '');
+            }
+        });
+
         // ─── Preview Foto de Portada ─────────────────────────────────────
         document.getElementById('input-portada').addEventListener('change', function () {
             const file = this.files[0];
@@ -632,6 +658,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
 
 <script>
 (function () {

@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Models;
- 
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
- 
+
 /**
  * @property int $id
  * @property int $restaurante_id
@@ -55,13 +55,13 @@ class Empleo extends Model
         'fecha_limite',
         'activo',
     ];
- 
+
     protected $casts = [
         'activo'       => 'boolean',
         'fecha_limite' => 'date',
         'salario'      => 'decimal:2',
     ];
- 
+
     public function restaurante(): BelongsTo
     {
         return $this->belongsTo(Restaurante::class);
@@ -78,7 +78,7 @@ class Empleo extends Model
     {
         return $this->belongsTo(Municipio::class);
     }
- 
+
     // Scope para ofertas activas (útil en la vista pública)
     public function scopeActivas($query)
     {

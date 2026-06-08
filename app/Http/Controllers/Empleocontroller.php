@@ -9,63 +9,118 @@ use App\Models\Restaurante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use App\Mail\AplicacionEmpleo;
 
 class EmpleoController extends Controller
 {
     // ─────────────────────────────────────────────────────────────────────────
+    // HELPER FCM
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
+    {
+        try {
+            $credencialesPath = storage_path('app/firebase-credentials.json');
+            $credenciales     = json_decode(file_get_contents($credencialesPath), true);
+
+            $ahora   = time();
+            $expira  = $ahora + 3600;
+
+            $header  = $this->base64UrlEncode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+            $payload = $this->base64UrlEncode(json_encode([
+                'iss'   => $credenciales['client_email'],
+                'sub'   => $credenciales['client_email'],
+                'aud'   => 'https://oauth2.googleapis.com/token',
+                'iat'   => $ahora,
+                'exp'   => $expira,
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+            ]));
+
+            $firma = '';
+            openssl_sign("$header.$payload", $firma, $credenciales['private_key'], 'SHA256');
+            $jwt = "$header.$payload." . $this->base64UrlEncode($firma);
+
+            $tokenResponse = Http::post('https://oauth2.googleapis.com/token', [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'  => $jwt,
+            ]);
+
+            $accessToken = $tokenResponse->json('access_token');
+            $projectId   = $credenciales['project_id'];
+
+            Http::withToken($accessToken)
+                ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+                    'message' => [
+                        'topic'        => 'gastronic_todos',
+                        'notification' => [
+                            'title' => $titulo,
+                            'body'  => $cuerpo,
+                        ],
+                    ],
+                ]);
+        } catch (\Exception $e) {
+            \Log::error('FCM error: ' . $e->getMessage());
+        }
+    }
+
+    private function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // VISTAS PÚBLICAS
     // ─────────────────────────────────────────────────────────────────────────
 
     public function publicIndex(Request $request)
-{
-    $departamentoPredefinido = auth()->check()
-        ? auth()->user()->departamento_id
-        : null;
+    {
+        $departamentoPredefinido = auth()->check()
+            ? auth()->user()->departamento_id
+            : null;
 
-    $hayFiltroActivo = $request->hasAny(['departamento', 'search']);
+        $hayFiltroActivo = $request->hasAny(['departamento', 'search']);
 
-    $deptoFiltro = $hayFiltroActivo
-        ? ($request->filled('departamento') ? $request->input('departamento') : null)
-        : $departamentoPredefinido;
+        $deptoFiltro = $hayFiltroActivo
+            ? ($request->filled('departamento') ? $request->input('departamento') : null)
+            : $departamentoPredefinido;
 
-    $query = Empleo::with(['restaurante', 'departamento', 'municipio'])
-        ->where('activo', true)
-        ->orderByDesc('created_at');
+        $query = Empleo::with(['restaurante', 'departamento', 'municipio'])
+            ->where('activo', true)
+            ->orderByDesc('created_at');
 
-    if ($search = $request->input('search')) {
-        $query->where(function ($q) use ($search) {
-            $q->where('titulo', 'like', "%{$search}%")
-              ->orWhere('descripcion', 'like', "%{$search}%")
-              ->orWhereHas('restaurante', fn($r) => $r->where('nombre', 'like', "%{$search}%"));
-        });
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('titulo', 'like', "%{$search}%")
+                  ->orWhere('descripcion', 'like', "%{$search}%")
+                  ->orWhereHas('restaurante', fn($r) => $r->where('nombre', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($deptoFiltro) {
+            $query->where('departamento_id', $deptoFiltro);
+        }
+
+        $empleos            = $query->paginate(9)->withQueryString();
+        $departamentos      = Departamento::orderBy('nombre')->get();
+        $totalRestaurantes  = Restaurante::count();
+        $totalDepartamentos = Departamento::count();
+        $totalActivos       = Empleo::where('activo', true)->count();
+
+        return view('empleos', compact(
+            'empleos',
+            'departamentos',
+            'totalRestaurantes',
+            'totalDepartamentos',
+            'totalActivos',
+            'departamentoPredefinido'
+        ));
     }
-
-    if ($deptoFiltro) {
-        $query->where('departamento_id', $deptoFiltro);
-    }
-
-    $empleos            = $query->paginate(9)->withQueryString();
-    $departamentos      = Departamento::orderBy('nombre')->get();
-    $totalRestaurantes  = Restaurante::count();
-    $totalDepartamentos = Departamento::count();
-    $totalActivos       = Empleo::where('activo', true)->count();
-
-    return view('empleos', compact(
-        'empleos',
-        'departamentos',
-        'totalRestaurantes',
-        'totalDepartamentos',
-        'totalActivos',
-        'departamentoPredefinido'
-    ));
-}
 
     public function show(Empleo $empleo)
     {
         abort_unless($empleo->activo, 404);
         $empleo->load(['restaurante', 'departamento', 'municipio']);
-
         return view('empleos-show', compact('empleo'));
     }
 
@@ -137,12 +192,6 @@ class EmpleoController extends Controller
             $curriculumMime   = $mimeTypes[$extension] ?? 'application/octet-stream';
 
             $archivo->store('curriculos', 'local');
-
-            Log::info('CV leído en memoria:', [
-                'nombre' => $curriculumNombre,
-                'mime'   => $curriculumMime,
-                'bytes'  => strlen($curriculumData),
-            ]);
         }
 
         $emailRestaurante = $empleo->restaurante->email ?? config('mail.from.address');
@@ -167,16 +216,8 @@ class EmpleoController extends Controller
                 ));
 
         } catch (\Exception $e) {
-            Log::error('Error enviando correo de aplicación: ' . $e->getMessage(), [
-                'empleo_id'         => $empleo->id,
-                'email_restaurante' => $emailRestaurante,
-                'email_candidato'   => $validated['email'],
-                'trace'             => $e->getTraceAsString(),
-            ]);
-
-            return back()
-                ->withInput()
-                ->with('error', 'Hubo un problema al enviar tu aplicación. Por favor intenta de nuevo.');
+            Log::error('Error enviando correo de aplicación: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Hubo un problema al enviar tu aplicación. Por favor intenta de nuevo.');
         }
 
         return back()->with('success', '¡Tu aplicación fue enviada con éxito! Revisa tu correo para la confirmación.');
@@ -199,7 +240,6 @@ class EmpleoController extends Controller
     {
         $restaurantes  = Restaurante::orderBy('nombre')->get();
         $departamentos = Departamento::orderBy('nombre')->get();
-
         return view('empleos.create', compact('restaurantes', 'departamentos'));
     }
 
@@ -220,7 +260,13 @@ class EmpleoController extends Controller
 
         $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
 
-        Empleo::create($validated);
+        $empleo = Empleo::create($validated);
+
+        // ── Notificar a todos los usuarios de la app ──
+        $this->enviarNotificacionFCM(
+            '💼 Nueva oferta de empleo',
+            "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+        );
 
         return redirect()->route('admin.empleos.index')
             ->with('success', '✅ Oferta publicada exitosamente.');
@@ -229,7 +275,6 @@ class EmpleoController extends Controller
     public function adminShow(Empleo $empleo)
     {
         $empleo->load(['restaurante', 'departamento', 'municipio']);
-
         return view('empleos.show', compact('empleo'));
     }
 
@@ -237,10 +282,7 @@ class EmpleoController extends Controller
     {
         $restaurantes  = Restaurante::orderBy('nombre')->get();
         $departamentos = Departamento::orderBy('nombre')->get();
-        $municipios    = Municipio::where('departamento_id', $empleo->departamento_id) // ← AÑADIDO
-                            ->orderBy('nombre')
-                            ->get();
-
+        $municipios    = Municipio::where('departamento_id', $empleo->departamento_id)->orderBy('nombre')->get();
         return view('empleos.edit', compact('empleo', 'restaurantes', 'departamentos', 'municipios'));
     }
 
@@ -270,7 +312,6 @@ class EmpleoController extends Controller
     public function destroy(Empleo $empleo)
     {
         $empleo->delete();
-
         return redirect()->route('admin.empleos.index')
             ->with('success', '🗑️ Oferta eliminada.');
     }

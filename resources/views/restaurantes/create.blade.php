@@ -3,6 +3,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css"/>
 
 @section('content')
 <div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
@@ -135,14 +136,16 @@
                         </h6>
                     </div>
 
-                    {{-- WhatsApp --}}
+                    {{-- WhatsApp con selector de país --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">WhatsApp</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0" style="color:#25d366;"><i class="bi bi-whatsapp"></i></span>
-                            <input type="text" name="whatsapp" value="{{ old('whatsapp') }}"
-                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="+505 8888-8888">
-                        </div>
+                        {{-- Campo visible con intl-tel-input --}}
+                        <input type="tel" id="whatsapp_input"
+                               class="form-control bg-light" style="box-shadow:none;"
+                               placeholder="8888-8888">
+                        {{-- Campo oculto que se envía al servidor con el número completo --}}
+                        <input type="hidden" id="whatsapp_full" name="whatsapp" value="{{ old('whatsapp') }}">
+                        <small class="text-muted">Selecciona tu país y escribe el número sin código.</small>
                     </div>
 
                     {{-- Instagram --}}
@@ -558,9 +561,31 @@
         depSelect.addEventListener('change', function () { cargarMunicipios(this.value); });
         if (depSelect.value) cargarMunicipios(depSelect.value, muniSelect.dataset.oldMuni);
 
-        // ── Submit: deshabilitar botón ──
+        // ── intl-tel-input para WhatsApp ──
+        const inputTel = document.getElementById('whatsapp_input');
+        const iti = window.intlTelInput(inputTel, {
+            initialCountry: "ni",
+            preferredCountries: ["ni", "cr", "hn", "gt", "sv", "mx", "us"],
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+        });
+
+        // Si hay un valor old() precargado, mostrarlo en el campo visible
+        const oldWhatsapp = document.getElementById('whatsapp_full').value;
+        if (oldWhatsapp) {
+            iti.setNumber('+' + oldWhatsapp);
+        }
+
+        // ── Submit: guardar número completo + deshabilitar botón ──
         document.getElementById('form-restaurante').addEventListener('submit', function () {
             muniSelect.disabled = false;
+
+            // Guardar número completo en el campo oculto (sin + ni espacios)
+            const numeroCompleto = iti.getNumber(); // ej: +50588887777
+            if (numeroCompleto) {
+                document.getElementById('whatsapp_full').value = numeroCompleto.replace('+', '').replace(/\s/g, '');
+            }
+
             const btn = document.getElementById('btn-submit-restaurante');
             if (btn) {
                 btn.disabled = true;
@@ -572,6 +597,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
 
 <script>
 (function () {

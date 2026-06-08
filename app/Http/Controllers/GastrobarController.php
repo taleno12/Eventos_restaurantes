@@ -7,9 +7,65 @@ use App\Models\Departamento;
 use App\Models\Municipio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class GastrobarController extends Controller
 {
+    // ─────────────────────────────────────────────────────────────────────────
+    // HELPER FCM
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
+    {
+        try {
+            $credencialesPath = storage_path('app/firebase-credentials.json');
+            $credenciales     = json_decode(file_get_contents($credencialesPath), true);
+
+            $ahora   = time();
+            $expira  = $ahora + 3600;
+
+            $header  = $this->base64UrlEncode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+            $payload = $this->base64UrlEncode(json_encode([
+                'iss'   => $credenciales['client_email'],
+                'sub'   => $credenciales['client_email'],
+                'aud'   => 'https://oauth2.googleapis.com/token',
+                'iat'   => $ahora,
+                'exp'   => $expira,
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+            ]));
+
+            $firma = '';
+            openssl_sign("$header.$payload", $firma, $credenciales['private_key'], 'SHA256');
+            $jwt = "$header.$payload." . $this->base64UrlEncode($firma);
+
+            $tokenResponse = Http::post('https://oauth2.googleapis.com/token', [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'  => $jwt,
+            ]);
+
+            $accessToken = $tokenResponse->json('access_token');
+            $projectId   = $credenciales['project_id'];
+
+            Http::withToken($accessToken)
+                ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+                    'message' => [
+                        'topic'        => 'gastronic_todos',
+                        'notification' => [
+                            'title' => $titulo,
+                            'body'  => $cuerpo,
+                        ],
+                    ],
+                ]);
+        } catch (\Exception $e) {
+            \Log::error('FCM error: ' . $e->getMessage());
+        }
+    }
+
+    private function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
     // ── INDEX ────────────────────────────────────────────────────
     public function index(Request $request)
     {
@@ -89,7 +145,13 @@ class GastrobarController extends Controller
             $data['galeria'] = $galeria;
         }
 
-        Gastrobar::create($data);
+        $gastrobar = Gastrobar::create($data);
+
+        // ── Notificar a todos los usuarios de la app ──
+        $this->enviarNotificacionFCM(
+            '🍹 Nuevo gastrobar',
+            "¡{$gastrobar->nombre} ya está en GastroNicaragua!"
+        );
 
         return redirect()->route('admin.gastrobares.index')
             ->with('success', 'Gastrobar registrado correctamente.');
@@ -193,7 +255,6 @@ class GastrobarController extends Controller
     // ── PUBLIC INDEX ─────────────────────────────────────────────
     public function publicIndex(Request $request)
     {
-        // Departamento predefinido según el usuario autenticado (igual que restaurantes)
         $departamentoPredefinido = null;
         if (auth()->check() && auth()->user()->departamento_id) {
             $departamentoPredefinido = auth()->user()->departamento_id;
@@ -201,7 +262,6 @@ class GastrobarController extends Controller
 
         $query = Gastrobar::with(['departamento', 'municipio'])->latest();
 
-        // Filtro departamento: prioriza el request, luego el predefinido por login
         $deptoActivo = $request->departamento ?? $departamentoPredefinido;
         if ($deptoActivo) {
             $query->where('departamento_id', $deptoActivo);

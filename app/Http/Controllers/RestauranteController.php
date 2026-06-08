@@ -10,10 +10,66 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class RestauranteController extends Controller
 {
+    // ─────────────────────────────────────────────────────────────────────────
+    // HELPER: Enviar notificación push a todos los usuarios
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
+    {
+        try {
+            $credencialesPath = storage_path('app/firebase-credentials.json');
+            $credenciales     = json_decode(file_get_contents($credencialesPath), true);
+
+            $ahora   = time();
+            $expira  = $ahora + 3600;
+
+            $header  = $this->base64UrlEncode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+            $payload = $this->base64UrlEncode(json_encode([
+                'iss'   => $credenciales['client_email'],
+                'sub'   => $credenciales['client_email'],
+                'aud'   => 'https://oauth2.googleapis.com/token',
+                'iat'   => $ahora,
+                'exp'   => $expira,
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+            ]));
+
+            $firma = '';
+            openssl_sign("$header.$payload", $firma, $credenciales['private_key'], 'SHA256');
+            $jwt = "$header.$payload." . $this->base64UrlEncode($firma);
+
+            $tokenResponse = Http::post('https://oauth2.googleapis.com/token', [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'  => $jwt,
+            ]);
+
+            $accessToken = $tokenResponse->json('access_token');
+            $projectId   = $credenciales['project_id'];
+
+            Http::withToken($accessToken)
+                ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+                    'message' => [
+                        'topic'        => 'gastronic_todos',
+                        'notification' => [
+                            'title' => $titulo,
+                            'body'  => $cuerpo,
+                        ],
+                    ],
+                ]);
+        } catch (\Exception $e) {
+            \Log::error('FCM error: ' . $e->getMessage());
+        }
+    }
+
+    private function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // MÉTODOS PÚBLICOS (Sin autenticación — para visitantes del sitio)
     // ─────────────────────────────────────────────────────────────────────────
@@ -74,7 +130,6 @@ class RestauranteController extends Controller
     // MÉTODOS DE ADMINISTRACIÓN (Requieren autenticación)
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Panel admin — apunta a indexadmin.blade.php
     public function index(Request $request)
     {
         $query = Restaurante::with(['departamento', 'municipio']);
@@ -125,25 +180,21 @@ class RestauranteController extends Controller
             'direccion'         => 'nullable|string|max:255',
             'latitud'           => 'nullable|numeric|between:-90,90',
             'longitud'          => 'nullable|numeric|between:-180,180',
-            // ← HORARIO
             'dias_laborales'    => 'nullable|array',
             'dias_laborales.*'  => 'in:lunes,martes,miercoles,jueves,viernes,sabado,domingo',
             'hora_apertura'     => 'nullable|date_format:H:i',
             'hora_cierre'       => 'nullable|date_format:H:i',
-            // ← USUARIO PROPIETARIO
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email',
             'propietario_password' => 'required|string|min:8|confirmed',
         ]);
 
-        // 1. Crear el restaurante
         $restaurante = new Restaurante($request->except([
             'galeria', 'imagen_principal',
             'propietario_nombre', 'propietario_email',
             'propietario_password', 'propietario_password_confirmation'
         ]));
 
-        // 2. Guardar imagen principal si se sube una
         if ($request->hasFile('imagen_principal')) {
             $pathPrincipal = $request->file('imagen_principal')->store('restaurantes/principales', 'public');
             $restaurante->foto_portada = $pathPrincipal;
@@ -151,11 +202,9 @@ class RestauranteController extends Controller
 
         $restaurante->save();
 
-        // 3. Guardar las fotos opcionales de la galería (Hasta 4 fotos)
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $foto) {
                 $pathFoto = $foto->store('restaurantes/galerias', 'public');
-
                 RestauranteFoto::create([
                     'restaurante_id' => $restaurante->id,
                     'ruta_foto'      => $pathFoto
@@ -163,7 +212,6 @@ class RestauranteController extends Controller
             }
         }
 
-        // 4. Crear el usuario propietario y vincularlo al restaurante
         User::create([
             'name'           => $request->propietario_nombre,
             'email'          => $request->propietario_email,
@@ -172,6 +220,12 @@ class RestauranteController extends Controller
             'restaurante_id' => $restaurante->id,
         ]);
 
+        // ── Notificar a todos los usuarios de la app ──
+        $this->enviarNotificacionFCM(
+            '🍽️ Nuevo restaurante',
+            "¡{$restaurante->nombre} ya está en GastroNicaragua!"
+        );
+
         return redirect()->route('admin.restaurantes.index')
             ->with('success', 'Restaurante y usuario propietario creados correctamente.');
     }
@@ -179,7 +233,6 @@ class RestauranteController extends Controller
     public function adminShow(Restaurante $restaurante)
     {
         $restaurante->load(['departamento', 'municipio', 'imagenes']);
-
         return view('restaurantes.show', compact('restaurante'));
     }
 
@@ -187,13 +240,11 @@ class RestauranteController extends Controller
     {
         $departamentos = Departamento::all();
         $restaurante->load(['imagenes', 'propietario']);
-
         return view('restaurantes.edit', compact('restaurante', 'departamentos'));
     }
 
     public function update(Request $request, Restaurante $restaurante)
     {
-        // Obtener el propietario actual para la validación del email único
         $propietario = User::where('restaurante_id', $restaurante->id)
             ->where('role', 'restaurante')
             ->first();
@@ -215,25 +266,21 @@ class RestauranteController extends Controller
             'direccion'        => 'nullable|string|max:255',
             'latitud'          => 'nullable|numeric|between:-90,90',
             'longitud'         => 'nullable|numeric|between:-180,180',
-            // ← HORARIO
             'dias_laborales'   => 'nullable|array',
             'dias_laborales.*' => 'in:lunes,martes,miercoles,jueves,viernes,sabado,domingo',
             'hora_apertura'    => 'nullable|date_format:H:i',
             'hora_cierre'      => 'nullable|date_format:H:i',
-            // ← PROPIETARIO
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
             'propietario_password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        // 1. Asignar los campos básicos del restaurante
         $restaurante->fill($request->except([
             'galeria', 'imagen_principal',
             'propietario_nombre', 'propietario_email',
             'propietario_password', 'propietario_password_confirmation'
         ]));
 
-        // 2. Si sube una nueva imagen principal, reemplazar la anterior
         if ($request->hasFile('imagen_principal')) {
             if ($restaurante->foto_portada) {
                 Storage::disk('public')->delete($restaurante->foto_portada);
@@ -244,11 +291,9 @@ class RestauranteController extends Controller
 
         $restaurante->save();
 
-        // 3. Agregar nuevas fotos a la galería
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $foto) {
                 $pathFoto = $foto->store('restaurantes/galerias', 'public');
-
                 RestauranteFoto::create([
                     'restaurante_id' => $restaurante->id,
                     'ruta_foto'      => $pathFoto
@@ -256,15 +301,12 @@ class RestauranteController extends Controller
             }
         }
 
-        // 4. Actualizar nombre, email y contraseña del propietario
         if ($propietario) {
             $propietario->name  = $request->propietario_nombre;
             $propietario->email = $request->propietario_email;
-
             if ($request->filled('propietario_password')) {
                 $propietario->password = Hash::make($request->propietario_password);
             }
-
             $propietario->save();
         }
 
@@ -278,9 +320,7 @@ class RestauranteController extends Controller
             Storage::disk('public')->delete($restaurante->foto_portada);
         }
 
-        // ✅ Eliminar el usuario propietario al borrar el restaurante
         User::where('restaurante_id', $restaurante->id)->delete();
-
         $restaurante->delete();
 
         return redirect()->route('admin.restaurantes.index')

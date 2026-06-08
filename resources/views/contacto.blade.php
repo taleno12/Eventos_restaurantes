@@ -351,19 +351,7 @@
                         </a>
                     </div>
 
-                    {{-- Trust badges --}}
-                    <div class="fade-in-up" style="display:flex;align-items:center;gap:20px;margin-top:44px;animation-delay:0.45s;opacity:0;">
-                        <div style="display:flex;align-items:center;gap:-6px;">
-                            <div style="width:32px;height:32px;border-radius:50%;background:#ea580c;border:2px solid rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;margin-right:-8px;">MR</div>
-                            <div style="width:32px;height:32px;border-radius:50%;background:#78350f;border:2px solid rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fed7aa;margin-right:-8px;">JC</div>
-                            <div style="width:32px;height:32px;border-radius:50%;background:#431407;border:2px solid rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fdba74;">AL</div>
-                        </div>
-                        <div style="width:1px;height:30px;background:rgba(255,255,255,0.15);"></div>
-                        <p style="font-size:12px;color:rgba(214,211,208,0.7);margin:0;line-height:1.4;">
-                            <span style="color:#fb923c;font-weight:800;">+120 negocios</span><br>ya confían en nosotros
-                        </p>
-                    </div>
-                </div>
+
 
                 {{-- Columna derecha: tarjetas flotantes --}}
                 <div style="position:relative;display:flex;flex-direction:column;gap:16px;" class="hero-cards">
@@ -516,150 +504,117 @@
     </section>
 
     {{-- ══ PLANES ══ --}}
-    <section id="planes" class="py-20 bg-stone-50" data-aos="fade-up">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <span class="plan-pill mb-4 inline-flex">
-                    <span class="dot"></span> Planes & Precios
-                </span>
-                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-orange-600 not-italic">se adapta a tu negocio</em></h2>
-                <p class="text-stone-500 text-sm mt-4 max-w-md mx-auto leading-relaxed">Sin contratos de largo plazo. Cancela cuando quieras. Empieza hoy mismo.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-
-                {{-- Plan Básico --}}
-                <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="0">
-                    <div class="plan-icon-wrap" style="background:#f5f5f4;">
-                        <i class="fas fa-seedling text-stone-600 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Básico</h3>
-                    <p class="text-stone-400 text-xs mb-6">Ideal para empezar</p>
-                    <div class="mb-6">
-                        <div class="plan-price"><sup>C$</sup>0<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">Gratis para siempre</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Perfil básico del restaurante</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Aparece en búsquedas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>1 foto de portada</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Información de contacto</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Publicar eventos</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Bolsa de empleo</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Estadísticas</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Soporte prioritario</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-outline">Registrarme Gratis</a>
-                </div>
-
-                {{-- Plan Pro (DESTACADO) --}}
-                <div class="plan-card featured p-8" data-aos="fade-up" data-aos-delay="100">
-                    <div class="plan-badge">Más Popular</div>
-                    <div class="plan-icon-wrap" style="background:#fff7ed;">
-                        <i class="fas fa-fire text-orange-600 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Pro</h3>
-                    <p class="text-stone-400 text-xs mb-6">Para negocios en crecimiento</p>
-                    <div class="mb-6">
-                        <div class="plan-price" style="color:#ea580c;"><sup style="color:#ea580c;">C$</sup>599<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">~$16 USD por mes</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Básico</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería hasta 20 fotos</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Publicar eventos ilimitados</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo (3 vacantes)</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas básicas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Destacado en carrusel</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte por WhatsApp</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Badge verificado</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-primary">Empezar Ahora</a>
-                </div>
-
-                {{-- Plan Premium --}}
-                <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="200">
-                    <div class="plan-icon-wrap" style="background:#1c1917;">
-                        <i class="fas fa-crown text-yellow-400 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Premium</h3>
-                    <p class="text-stone-400 text-xs mb-6">Para cadenas y marcas establecidas</p>
-                    <div class="mb-6">
-                        <div class="plan-price"><sup>C$</sup>1,299<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">~$35 USD por mes</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Pro</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería ilimitada + videos</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo ilimitada</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas avanzadas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Badge verificado ✓</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Posición #1 en búsquedas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte 24/7 prioritario</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Gestión de múltiples locales</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-outline">Contactar Ventas</a>
-                </div>
-
-            </div>
-
-            {{-- Nota debajo de planes --}}
-            <div class="mt-10 text-center">
-                <p class="text-stone-400 text-sm">
-                    <i class="fas fa-shield-alt text-orange-600 mr-1"></i>
-                    Sin contratos. Sin tarjeta de crédito para el plan gratuito. Precios en Córdobas nicaragüenses.
-                    <a href="#faq" class="text-orange-600 hover:text-orange-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
-                </p>
-            </div>
+<section id="planes" class="py-20 bg-stone-50" data-aos="fade-up">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <span class="plan-pill mb-4 inline-flex">
+                <span class="dot"></span> Planes & Precios
+            </span>
+            <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-orange-600 not-italic">se adapta a tu negocio</em></h2>
+            <p class="text-stone-500 text-sm mt-4 max-w-md mx-auto leading-relaxed">Sin contratos de largo plazo. Cancela cuando quieras. Empieza hoy mismo.</p>
         </div>
-    </section>
 
-    {{-- ══ TESTIMONIOS ══ --}}
-    <section class="py-20 bg-white" data-aos="fade-up">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-14">
-                <span class="plan-pill mb-4 inline-flex">
-                    <span class="dot"></span> Lo que dicen nuestros socios
-                </span>
-                <h2 class="premium-title text-3xl font-black text-stone-900 mt-4">Restaurantes que ya<br><em class="text-orange-600 not-italic">confían en nosotros</em></h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+            {{-- Plan Básico --}}
+            <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="0">
+                <div class="plan-icon-wrap" style="background:#f5f5f4;">
+                    <i class="fas fa-seedling text-stone-600 text-xl"></i>
+                </div>
+                <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Básico</h3>
+                <p class="text-stone-400 text-xs mb-6">Para empezar sin riesgo</p>
+                <div class="mb-6">
+                    <div class="plan-price"><sup>C$</sup>0<small>/mes</small></div>
+                    <p class="text-stone-400 text-xs mt-1">Gratis para siempre</p>
+                </div>
+                <div class="mb-8 space-y-0">
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Perfil básico del restaurante</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Aparece en búsquedas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>1 foto de portada</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Información de contacto</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Publicar eventos</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Bolsa de empleo</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Estadísticas</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Soporte prioritario</div>
+                </div>
+                <a href="#contacto-form" class="plan-btn plan-btn-outline">Registrarme Gratis</a>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="stars mb-3">★★★★★</div>
-                    <p class="text-stone-600 text-sm leading-relaxed mb-5 italic">"Desde que nos unimos a Gastro Nicaragua, nuestras reservas para eventos aumentaron un 40%. La visibilidad que nos da la plataforma es increíble."</p>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm">MR</div>
-                        <div>
-                            <div class="font-bold text-sm text-stone-900">María Rugama</div>
-                            <div class="text-xs text-stone-400">La Cueva del Sabor · Masaya</div>
-                        </div>
-                    </div>
+
+            {{-- Plan Pro (DESTACADO) --}}
+            <div class="plan-card featured p-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="plan-badge">Más Popular</div>
+                <div class="plan-icon-wrap" style="background:#fff7ed;">
+                    <i class="fas fa-fire text-orange-600 text-xl"></i>
                 </div>
-                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="stars mb-3">★★★★★</div>
-                    <p class="text-stone-600 text-sm leading-relaxed mb-5 italic">"El plan Pro vale cada córdoba. Publico mis eventos y en cuestión de horas ya tengo personas preguntando. El soporte por WhatsApp es muy ágil."</p>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm">JC</div>
-                        <div>
-                            <div class="font-bold text-sm text-stone-900">José Chavarría</div>
-                            <div class="text-xs text-stone-400">El Fogón Nica · Granada</div>
-                        </div>
-                    </div>
+                <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Pro</h3>
+                <p class="text-stone-400 text-xs mb-6">Para negocios en crecimiento</p>
+                <div class="mb-6">
+                    <div class="plan-price" style="color:#ea580c;"><sup style="color:#ea580c;">C$</sup>1,199<small>/mes</small></div>
+                    <p class="text-stone-400 text-xs mt-1">~$32 USD por mes</p>
                 </div>
-                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="stars mb-3">★★★★★</div>
-                    <p class="text-stone-600 text-sm leading-relaxed mb-5 italic">"Manejamos 3 locales y el plan Premium nos permite gestionarlos todos desde un solo panel. El badge verificado le da mucha credibilidad a nuestra marca."</p>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm">AL</div>
-                        <div>
-                            <div class="font-bold text-sm text-stone-900">Ana Lacayo</div>
-                            <div class="text-xs text-stone-400">Mariscos del Pacífico · León</div>
-                        </div>
-                    </div>
+                <div class="mb-4 p-3 rounded-xl bg-orange-50 border border-orange-100 text-xs text-orange-700 space-y-1">
+                    <p class="font-semibold mb-1">¿Por qué este precio?</p>
+                    <p> Galería de 20 fotos — equivale a una sesión fotográfica mensual</p>
+                    <p> Eventos ilimitados — promos que generan visitas directas</p>
+                    <p> 3 vacantes activas — ahorra C$300–600 en avisos de periódico</p>
+                    <p> Estadísticas — sabrás cuántas personas te ven cada semana</p>
                 </div>
+                <div class="mb-8 space-y-0">
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Básico</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Galería hasta 20 fotos</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Publicar eventos ilimitados</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo (3 vacantes)</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas básicas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Destacado en carrusel</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Soporte por WhatsApp</div>
+                    <div class="plan-feature"><i class="fas fa-times x"></i>Badge verificado</div>
+                </div>
+                <a href="#contacto-form" class="plan-btn plan-btn-primary">Empezar Ahora</a>
             </div>
+
+            {{-- Plan Premium --}}
+            <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-icon-wrap" style="background:#1c1917;">
+                    <i class="fas fa-crown text-yellow-400 text-xl"></i>
+                </div>
+                <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Premium</h3>
+                <p class="text-stone-400 text-xs mb-6">Para cadenas y marcas establecidas</p>
+                <div class="mb-6">
+                    <div class="plan-price"><sup>C$</sup>1,499<small>/mes</small></div>
+                    <p class="text-stone-400 text-xs mt-1">~$40 USD por mes</p>
+                </div>
+                <div class="mb-4 p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-600 space-y-1">
+                    <p class="font-semibold mb-1">¿Por qué este precio?</p>
+                    <p> Badge verificado — genera confianza frente a competidores</p>
+                    <p> Posición #1 en búsquedas — ventaja competitiva medible</p>
+                    <p> Múltiples locales — una sola suscripción para toda tu cadena</p>
+                    <p> Soporte 24/7 — crítico para operar fines de semana y feriados</p>
+                </div>
+                <div class="mb-8 space-y-0">
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Pro</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Galería ilimitada + videos</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo ilimitada</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas avanzadas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Badge verificado ✓</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Posición #1 en búsquedas</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Soporte 24/7 prioritario</div>
+                    <div class="plan-feature"><i class="fas fa-check check"></i>Gestión de múltiples locales</div>
+                </div>
+                <a href="#contacto-form" class="plan-btn plan-btn-outline">Contactar Ventas</a>
+            </div>
+
         </div>
-    </section>
+
+        {{-- Nota debajo de planes --}}
+        <div class="mt-10 text-center">
+            <p class="text-stone-400 text-sm">
+                <i class="fas fa-shield-alt text-orange-600 mr-1"></i>
+                Sin contratos. Sin tarjeta de crédito para el plan gratuito. Precios en Córdobas nicaragüenses.
+                <a href="#faq" class="text-orange-600 hover:text-orange-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
+            </p>
+        </div>
+    </div>
+</section>
 
     {{-- ══ CONTACTO + INFO ══ --}}
     <section id="contacto-form" class="py-20 bg-stone-50" data-aos="fade-up">
@@ -718,25 +673,29 @@
                     </div>
 
                     {{-- Redes sociales --}}
-                    <div>
-                        <div class="text-xs font-black uppercase tracking-widest text-stone-400 mb-3">Síguenos en redes</div>
-                        <div class="flex gap-3">
-                            <a href="#" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
-                                <i class="fab fa-facebook-f text-sm"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
-                                <i class="fab fa-instagram text-sm"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
-                                <i class="fab fa-tiktok text-sm"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
-                                <i class="fab fa-whatsapp text-sm"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<div>
+    <div class="text-xs font-black uppercase tracking-widest text-stone-400 mb-3">Síguenos en redes</div>
+    <div class="flex gap-3">
+        {{-- Facebook --}}
+<a href="https://www.facebook.com/kevin.taleno.98" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+    <i class="fab fa-facebook-f text-sm"></i>
+</a>
 
+{{-- Instagram --}}
+<a href="https://www.instagram.com/taleno5196" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+    <i class="fab fa-instagram text-sm"></i>
+</a>
+        {{-- TikTok --}}
+        <a href="https://www.tiktok.com/@nrg434" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+            <i class="fab fa-tiktok text-sm"></i>
+        </a>
+
+        {{-- WhatsApp --}}
+        <a href="https://wa.me/50575159753" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+            <i class="fab fa-whatsapp text-sm"></i>
+        </a>
+    </div>
+</div>
                 {{-- Formulario derecha --}}
                 <div class="bg-white border border-stone-200 rounded-[2rem] p-8 md:p-10 shadow-sm">
                     <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Envíanos un mensaje</h3>
@@ -804,74 +763,341 @@
         </div>
     </section>
 
-    {{-- ══ FAQ ══ --}}
-    <section id="faq" class="py-20 bg-white" data-aos="fade-up">
-        <div class="max-w-3xl mx-auto px-6">
-            <div class="text-center mb-14">
-                <span class="plan-pill mb-4 inline-flex">
-                    <span class="dot"></span> Preguntas Frecuentes
-                </span>
-                <h2 class="premium-title text-3xl font-black text-stone-900 mt-4">Todo lo que necesitas<br><em class="text-orange-600 not-italic">saber antes de unirte</em></h2>
+   {{-- ══ FAQ ══ --}}
+<section id="faq" class="py-20 bg-white" data-aos="fade-up">
+    <div class="max-w-3xl mx-auto px-6">
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500&display=swap');
+
+            .faq-wrap {
+                max-width: 700px;
+                margin: 0 auto;
+                padding: 2rem 0 1rem;
+                font-family: 'DM Sans', sans-serif;
+            }
+
+            .faq-header {
+                text-align: center;
+                margin-bottom: 2.5rem;
+            }
+
+            .faq-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                font-weight: 500;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #854F0B;
+                background: #FAEEDA;
+                padding: 5px 14px;
+                border-radius: 99px;
+                border: 0.5px solid #EF9F27;
+                margin-bottom: 1rem;
+            }
+
+            .faq-pill-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #EF9F27;
+            }
+
+            .faq-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 32px;
+                font-weight: 700;
+                line-height: 1.2;
+                color: #1c1917;
+                margin: 0;
+            }
+
+            .faq-title em {
+                font-style: italic;
+                color: #D85A30;
+            }
+
+            .faq-divider {
+                width: 40px;
+                height: 2px;
+                background: #EF9F27;
+                margin: 1.25rem auto 0;
+                border-radius: 2px;
+            }
+
+            .faq-list {
+                border-top: 0.5px solid #e7e5e4;
+            }
+
+            .faq-item {
+                border-bottom: 0.5px solid #e7e5e4;
+                transition: background 0.2s;
+            }
+
+            .faq-item.open {
+                background: #fafaf9;
+                border-radius: 12px;
+                border: 0.5px solid #d6d3d1;
+                margin: 6px 0;
+            }
+
+            .faq-btn {
+                width: 100%;
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1.2rem 1rem;
+                text-align: left;
+                gap: 12px;
+                color: #1c1917;
+            }
+
+            .faq-q {
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 1.4;
+                font-family: 'DM Sans', sans-serif;
+            }
+
+            .faq-num {
+                font-family: 'Playfair Display', serif;
+                font-size: 13px;
+                font-style: italic;
+                color: #78716c;
+                min-width: 22px;
+                flex-shrink: 0;
+            }
+
+            .faq-icon-wrap {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 0.5px solid #d6d3d1;
+                background: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 14px;
+                color: #78716c;
+                transition: transform 0.3s, background 0.2s, border-color 0.2s;
+            }
+
+            .faq-item.open .faq-icon-wrap {
+                transform: rotate(45deg);
+                background: #FAEEDA;
+                border-color: #EF9F27;
+                color: #854F0B;
+            }
+
+            .faq-answer {
+                font-size: 14px;
+                color: #57534e;
+                line-height: 1.75;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.35s ease, padding 0.3s ease;
+                padding: 0 1rem;
+            }
+
+            .faq-item.open .faq-answer {
+                max-height: 400px;
+                padding: 0 1rem 1.25rem;
+            }
+
+            .plan-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 7px 10px;
+                border-radius: 8px;
+                margin-bottom: 4px;
+                background: #fff;
+                border: 0.5px solid #e7e5e4;
+            }
+
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                font-size: 11px;
+                font-weight: 500;
+                padding: 3px 10px;
+                border-radius: 99px;
+                white-space: nowrap;
+                flex-shrink: 0;
+                letter-spacing: 0.03em;
+            }
+
+            .badge-premium {
+                background: #FAEEDA;
+                color: #854F0B;
+                border: 0.5px solid #EF9F27;
+            }
+
+            .badge-pro {
+                background: #E6F1FB;
+                color: #185FA5;
+                border: 0.5px solid #85B7EB;
+            }
+
+            .badge-free {
+                background: #F1EFE8;
+                color: #5F5E5A;
+                border: 0.5px solid #B4B2A9;
+            }
+
+            .faq-highlight-box {
+                background: #FAEEDA;
+                border: 0.5px solid #EF9F27;
+                border-left: 3px solid #D85A30;
+                border-radius: 8px;
+                padding: 10px 14px;
+                margin-top: 10px;
+                font-size: 13px;
+                color: #633806;
+                line-height: 1.6;
+                display: flex;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        </style>
+
+        <div class="faq-wrap">
+            <div class="faq-header">
+                <div class="faq-pill">
+                    <span class="faq-pill-dot"></span> Preguntas frecuentes
+                </div>
+                <h2 class="faq-title">
+                    Todo lo que necesitas<br><em>saber antes de unirte</em>
+                </h2>
+                <div class="faq-divider"></div>
             </div>
 
             <div class="faq-list">
+
                 <div class="faq-item">
-                    <button class="faq-question">
-                        ¿Cómo registro mi restaurante en la plataforma?
-                        <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">01</span>
+                        <span class="faq-q">¿Cómo registro mi restaurante en la plataforma?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                     </button>
                     <div class="faq-answer">
-                        Llena el formulario de contacto con los datos de tu negocio y nuestro equipo te contactará para guiarte en el proceso de registro. En menos de 48 horas tu perfil puede estar publicado y visible para todos los usuarios.
+                        Llena el formulario de contacto con el nombre de tu negocio, dirección, teléfono y correo. Nuestro equipo te contactará en menos de 24 horas para confirmar los datos y activar tu perfil. En un máximo de 48 horas tu restaurante ya estará visible para todos los usuarios — sin costo de activación.
                     </div>
                 </div>
+
                 <div class="faq-item">
-                    <button class="faq-question">
-                        ¿Puedo cambiar de plan después de registrarme?
-                        <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">02</span>
+                        <span class="faq-q">¿Cómo funciona la sección de eventos destacados?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                     </button>
                     <div class="faq-answer">
-                        Sí, puedes actualizar o bajar de plan en cualquier momento. Los cambios se aplican al inicio del siguiente mes de facturación. No hay penalizaciones por cambiar de plan.
+                        <p style="margin: 0 0 12px;">Los eventos destacados aparecen en el <strong style="color: #1c1917;">hero principal</strong> de la plataforma — lo primero que ven todos los visitantes al entrar. La visibilidad según tu plan:</p>
+                        <div class="plan-row">
+                            <span class="badge badge-free">Básico</span>
+                            <span>No puedes publicar eventos. Tu perfil aparece únicamente en el directorio general.</span>
+                        </div>
+                        <div class="plan-row">
+                            <span class="badge badge-pro">Pro</span>
+                            <span>Eventos ilimitados visibles en la sección de eventos, sin prioridad de posicionamiento.</span>
+                        </div>
+                        <div class="plan-row">
+                            <span class="badge badge-premium">Premium</span>
+                            <span>Tus eventos aparecen en los <strong style="color: #854F0B;">destacados del hero</strong> — la posición con mayor tráfico de toda la plataforma. Prioridad garantizada.</span>
+                        </div>
+                        <div class="faq-highlight-box">
+                            <i class="fas fa-fire" style="font-size: 14px; flex-shrink: 0; margin-top: 2px;"></i>
+                            El hero recibe el 100% de las visitas. Los restaurantes Premium en eventos destacados tienen hasta 4× más clics que los listados regulares.
+                        </div>
                     </div>
                 </div>
+
                 <div class="faq-item">
-                    <button class="faq-question">
-                        ¿Cuántos eventos puedo publicar?
-                        <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">03</span>
+                        <span class="faq-q">¿Cuántos eventos puedo publicar?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                     </button>
                     <div class="faq-answer">
-                        Con el plan Básico no puedes publicar eventos. Con el plan Pro puedes publicar eventos ilimitados. Con el plan Premium además tienes prioridad de aparición en la sección de eventos destacados del hero.
+                        <div class="plan-row">
+                            <span class="badge badge-free">Básico</span>
+                            <span>Sin publicación de eventos.</span>
+                        </div>
+                        <div class="plan-row">
+                            <span class="badge badge-pro">Pro</span>
+                            <span>Eventos ilimitados en la sección de eventos de la plataforma.</span>
+                        </div>
+                        <div class="plan-row">
+                            <span class="badge badge-premium">Premium</span>
+                            <span>Eventos ilimitados + posición destacada en el hero de la página principal.</span>
+                        </div>
                     </div>
                 </div>
+
                 <div class="faq-item">
-                    <button class="faq-question">
-                        ¿La plataforma acepta pagos con tarjeta?
-                        <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">04</span>
+                        <span class="faq-q">¿Puedo cambiar de plan después de registrarme?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                     </button>
                     <div class="faq-answer">
-                        Actualmente aceptamos pagos por transferencia bancaria, depósito en cuenta y pago móvil (SINPE/BAC). Estamos trabajando para integrar pago con tarjeta próximamente.
+                        Sí. Puedes subir o bajar de plan en cualquier momento desde tu panel de administración. Los cambios se aplican al inicio del siguiente período de facturación y no hay penalizaciones ni costos adicionales por cambiar de plan.
                     </div>
                 </div>
+
                 <div class="faq-item">
-                    <button class="faq-question">
-                        ¿Qué pasa si quiero cancelar mi suscripción?
-                        <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">05</span>
+                        <span class="faq-q">¿La plataforma acepta pagos con tarjeta?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                     </button>
                     <div class="faq-answer">
-                        Puedes cancelar en cualquier momento sin penalizaciones. Tu perfil permanecerá activo hasta el final del período pagado. Al cancelar, tu cuenta pasará automáticamente al plan Básico gratuito.
+                        Actualmente aceptamos transferencia bancaria, depósito en cuenta y pago móvil (SINPE/BAC). El pago con tarjeta de crédito y débito está en desarrollo y estará disponible próximamente. Si necesitas una forma de pago diferente, contáctanos y buscamos una solución.
                     </div>
                 </div>
+
                 <div class="faq-item">
-                    <button class="faq-question">
-                        ¿Puedo gestionar múltiples sucursales?
-                        <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">06</span>
+                        <span class="faq-q">¿Qué pasa si cancelo mi suscripción?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                     </button>
                     <div class="faq-answer">
-                        La gestión de múltiples locales desde un solo panel está disponible en el plan Premium. Con los planes Básico y Pro cada negocio tiene su propio perfil independiente.
+                        Puedes cancelar en cualquier momento sin penalizaciones. Tu perfil permanecerá activo con todas las ventajas de tu plan hasta el último día del período pagado. Al vencer, tu cuenta pasa automáticamente al plan <span class="badge badge-free" style="vertical-align: middle;">Básico</span> gratuito — tu perfil sigue visible en el directorio, pero sin acceso a eventos ni funciones avanzadas.
                     </div>
                 </div>
+
+                <div class="faq-item">
+                    <button class="faq-btn" onclick="faqToggle(this)">
+                        <span class="faq-num">07</span>
+                        <span class="faq-q">¿Puedo gestionar múltiples sucursales desde una sola cuenta?</span>
+                        <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
+                    </button>
+                    <div class="faq-answer">
+                        La gestión centralizada de múltiples locales desde un solo panel está disponible exclusivamente en el plan <span class="badge badge-premium" style="vertical-align: middle;">Premium</span>. Con los planes Básico y Pro, cada sucursal requiere su propio perfil independiente. Si tienes más de 3 locales, contáctanos para conocer condiciones especiales.
+                    </div>
+                </div>
+
             </div>
         </div>
-    </section>
+
+    </div>
+</section>
+
+<script>
+    function faqToggle(btn) {
+        const item = btn.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+    }
+</script>
 
     {{-- ══ CTA FINAL ══ --}}
     <section style="position:relative;overflow:hidden;padding:100px 0;" data-aos="fade-up">
@@ -935,7 +1161,7 @@
                         <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Restaurantes</a></li>
                         <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all no-underline">Gastrobares</a></li>
                         <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="text-orange-400 font-semibold no-underline">Contacto</a></li>
+                        <li><a href="{{ route('contacto') }}" class="text-orange-400 font-semibold no-underline">Contacto & Planes</a></li>
                     </ul>
                 </div>
                 <div class="lg:col-span-3 space-y-4">

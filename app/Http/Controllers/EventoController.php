@@ -9,27 +9,83 @@ use App\Models\Restaurante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class EventoController extends Controller
 {
+    // ─────────────────────────────────────────────────────────────────────────
+    // HELPER FCM
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
+    {
+        try {
+            $credencialesPath = storage_path('app/firebase-credentials.json');
+            $credenciales     = json_decode(file_get_contents($credencialesPath), true);
+
+            $ahora   = time();
+            $expira  = $ahora + 3600;
+
+            $header  = $this->base64UrlEncode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+            $payload = $this->base64UrlEncode(json_encode([
+                'iss'   => $credenciales['client_email'],
+                'sub'   => $credenciales['client_email'],
+                'aud'   => 'https://oauth2.googleapis.com/token',
+                'iat'   => $ahora,
+                'exp'   => $expira,
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+            ]));
+
+            $firma = '';
+            openssl_sign("$header.$payload", $firma, $credenciales['private_key'], 'SHA256');
+            $jwt = "$header.$payload." . $this->base64UrlEncode($firma);
+
+            $tokenResponse = Http::post('https://oauth2.googleapis.com/token', [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'  => $jwt,
+            ]);
+
+            $accessToken = $tokenResponse->json('access_token');
+            $projectId   = $credenciales['project_id'];
+
+            Http::withToken($accessToken)
+                ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+                    'message' => [
+                        'topic'        => 'gastronic_todos',
+                        'notification' => [
+                            'title' => $titulo,
+                            'body'  => $cuerpo,
+                        ],
+                    ],
+                ]);
+        } catch (\Exception $e) {
+            \Log::error('FCM error: ' . $e->getMessage());
+        }
+    }
+
+    private function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MÉTODOS PÚBLICOS
+    // ─────────────────────────────────────────────────────────────────────────
+
     public function welcome(Request $request)
     {
         $departamentos = Departamento::all();
 
-        // Departamento predefinido del usuario autenticado
         $departamentoPredefinido = auth()->check()
             ? auth()->user()->departamento_id
             : null;
 
-        // Si el usuario usó el filtro respetamos su elección,
-        // si no, usamos su departamento predefinido
         $hayFiltroActivo = $request->hasAny(['departamento', 'restaurante_id', 'especialidad']);
 
         $deptoFiltro = $hayFiltroActivo
             ? ($request->filled('departamento') ? $request->departamento : null)
             : $departamentoPredefinido;
 
-        // Restaurantes filtrados por departamento Y especialidad
         $restaurantes = Restaurante::orderBy('nombre')
             ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
             ->when($request->filled('especialidad'), fn($q) =>
@@ -37,14 +93,12 @@ class EventoController extends Controller
             )
             ->get();
 
-        // Eventos destacados filtrados por departamento
         $eventosDestacados = Evento::with(['restaurante', 'departamento'])
             ->where('is_destacado', true)
             ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
             ->latest()
             ->get();
 
-        // Query principal de eventos
         $query = Evento::with(['restaurante', 'departamento']);
 
         if ($deptoFiltro) {
@@ -63,7 +117,6 @@ class EventoController extends Controller
 
         $eventos = $query->latest()->get();
 
-        // Si no hay eventos y no hay filtro activo ni departamento predefinido, mostrar los últimos 6
         if ($eventos->isEmpty() && !$hayFiltroActivo && !$departamentoPredefinido) {
             $eventos = Evento::with(['restaurante', 'departamento'])->latest()->take(6)->get();
         }
@@ -133,6 +186,12 @@ class EventoController extends Controller
             }
         }
 
+        // ── Notificar a todos los usuarios de la app ──
+        $this->enviarNotificacionFCM(
+            '📅 Nuevo evento',
+            "¡{$evento->titulo} ya está disponible en GastroNicaragua!"
+        );
+
         return redirect()->route('eventos.index')
             ->with('success', 'Evento publicado con éxito.');
     }
@@ -140,19 +199,10 @@ class EventoController extends Controller
     public function edit(Evento $evento)
     {
         $this->soloAdmin();
-
         $evento->load('imagenes');
-
         $departamentos = Departamento::orderBy('nombre')->get();
-
-        $municipios = Municipio::where('departamento_id', $evento->departamento_id)
-                        ->orderBy('nombre')
-                        ->get();
-
-        $restaurantes = Restaurante::where('departamento_id', $evento->departamento_id)
-                        ->orderBy('nombre')
-                        ->get();
-
+        $municipios    = Municipio::where('departamento_id', $evento->departamento_id)->orderBy('nombre')->get();
+        $restaurantes  = Restaurante::where('departamento_id', $evento->departamento_id)->orderBy('nombre')->get();
         return view('eventos.edit', compact('evento', 'departamentos', 'municipios', 'restaurantes'));
     }
 

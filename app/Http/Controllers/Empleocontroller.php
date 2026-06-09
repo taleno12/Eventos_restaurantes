@@ -6,6 +6,7 @@ use App\Models\Empleo;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Models\Restaurante;
+use App\Models\Gastrobar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -75,17 +76,20 @@ class EmpleoController extends Controller
 
     public function publicIndex(Request $request)
     {
-        $departamentoPredefinido = auth()->check()
-            ? auth()->user()->departamento_id
-            : null;
+        $departamentoPredefinido = auth()->check() ? auth()->user()->departamento_id : null;
+        $municipioPredefinido    = auth()->check() ? auth()->user()->municipio_id    : null;
 
-        $hayFiltroActivo = $request->hasAny(['departamento', 'search']);
+        $hayFiltroActivo = $request->hasAny(['departamento', 'municipio', 'search']);
 
         $deptoFiltro = $hayFiltroActivo
             ? ($request->filled('departamento') ? $request->input('departamento') : null)
             : $departamentoPredefinido;
 
-        $query = Empleo::with(['restaurante', 'departamento', 'municipio'])
+        $munFiltro = $hayFiltroActivo
+            ? ($request->filled('municipio') ? $request->input('municipio') : null)
+            : $municipioPredefinido;
+
+        $query = Empleo::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
             ->where('activo', true)
             ->orderByDesc('created_at');
 
@@ -93,7 +97,8 @@ class EmpleoController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('titulo', 'like', "%{$search}%")
                   ->orWhere('descripcion', 'like', "%{$search}%")
-                  ->orWhereHas('restaurante', fn($r) => $r->where('nombre', 'like', "%{$search}%"));
+                  ->orWhereHas('restaurante', fn($r) => $r->where('nombre', 'like', "%{$search}%"))
+                  ->orWhereHas('gastrobar',   fn($r) => $r->where('nombre', 'like', "%{$search}%"));
             });
         }
 
@@ -101,8 +106,13 @@ class EmpleoController extends Controller
             $query->where('departamento_id', $deptoFiltro);
         }
 
+        if ($munFiltro) {
+            $query->where('municipio_id', $munFiltro);
+        }
+
         $empleos            = $query->paginate(9)->withQueryString();
         $departamentos      = Departamento::orderBy('nombre')->get();
+        $municipios         = Municipio::orderBy('nombre')->get();
         $totalRestaurantes  = Restaurante::count();
         $totalDepartamentos = Departamento::count();
         $totalActivos       = Empleo::where('activo', true)->count();
@@ -110,17 +120,19 @@ class EmpleoController extends Controller
         return view('empleos', compact(
             'empleos',
             'departamentos',
+            'municipios',
             'totalRestaurantes',
             'totalDepartamentos',
             'totalActivos',
-            'departamentoPredefinido'
+            'departamentoPredefinido',
+            'municipioPredefinido'
         ));
     }
 
     public function show(Empleo $empleo)
     {
         abort_unless($empleo->activo, 404);
-        $empleo->load(['restaurante', 'departamento', 'municipio']);
+        $empleo->load(['restaurante', 'gastrobar', 'departamento', 'municipio']);
         return view('empleos-show', compact('empleo'));
     }
 
@@ -157,7 +169,11 @@ class EmpleoController extends Controller
             'curriculum.max'     => 'El archivo no puede superar los 5MB.',
         ]);
 
-        $empleo->loadMissing('restaurante');
+        $empleo->loadMissing(['restaurante', 'gastrobar']);
+
+        $nombreEstablecimiento = $empleo->gastrobar->nombre
+            ?? $empleo->restaurante->nombre
+            ?? 'Establecimiento';
 
         $aplicacion = [
             'nombre'         => $validated['nombre'],
@@ -170,7 +186,7 @@ class EmpleoController extends Controller
             'disponibilidad' => $validated['disponibilidad'] ?? [],
             'mensaje'        => $validated['mensaje'] ?? '',
             'empleo_titulo'  => $empleo->titulo,
-            'restaurante'    => $empleo->restaurante->nombre ?? 'Restaurante',
+            'restaurante'    => $nombreEstablecimiento,
         ];
 
         $curriculumData   = null;
@@ -194,10 +210,12 @@ class EmpleoController extends Controller
             $archivo->store('curriculos', 'local');
         }
 
-        $emailRestaurante = $empleo->restaurante->email ?? config('mail.from.address');
+        $emailEstablecimiento = $empleo->gastrobar->email
+            ?? $empleo->restaurante->email
+            ?? config('mail.from.address');
 
         try {
-            Mail::to($emailRestaurante)
+            Mail::to($emailEstablecimiento)
                 ->send(new AplicacionEmpleo(
                     $aplicacion,
                     $curriculumData,
@@ -227,26 +245,39 @@ class EmpleoController extends Controller
     // PANEL DE ADMINISTRACIÓN
     // ─────────────────────────────────────────────────────────────────────────
 
-    public function index()
+    public function index(Request $request)
     {
-        $empleos                = Empleo::with(['restaurante', 'departamento', 'municipio'])->latest()->paginate(15);
-        $activas                = Empleo::where('activo', true)->count();
-        $restaurantesConOfertas = Empleo::distinct('restaurante_id')->count('restaurante_id');
+        $tipo   = $request->get('tipo');
+        $search = $request->get('search');
 
-        return view('empleos.index', compact('empleos', 'activas', 'restaurantesConOfertas'));
+        $empleos = Empleo::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
+            ->when($search, fn($q) => $q->where('titulo', 'like', "%$search%"))
+            ->when($tipo === 'restaurante', fn($q) => $q->whereNotNull('restaurante_id')->whereNull('gastrobar_id'))
+            ->when($tipo === 'gastrobar',   fn($q) => $q->whereNotNull('gastrobar_id'))
+            ->latest()
+            ->paginate(15);
+
+        $activas                = Empleo::where('activo', true)->count();
+        $restaurantesConOfertas = Empleo::distinct('restaurante_id')
+                                        ->whereNotNull('restaurante_id')
+                                        ->count('restaurante_id');
+
+        return view('Empleos.index', compact('empleos', 'activas', 'restaurantesConOfertas'));
     }
 
     public function create()
     {
         $restaurantes  = Restaurante::orderBy('nombre')->get();
+        $gastrobares   = Gastrobar::orderBy('nombre')->get();
         $departamentos = Departamento::orderBy('nombre')->get();
-        return view('empleos.create', compact('restaurantes', 'departamentos'));
+        return view('Empleos.create', compact('restaurantes', 'gastrobares', 'departamentos'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'restaurante_id'  => 'required|exists:restaurantes,id',
+            'restaurante_id'  => 'nullable|exists:restaurantes,id',
+            'gastrobar_id'    => 'nullable|exists:gastrobares,id',
             'departamento_id' => 'required|exists:departamentos,id',
             'municipio_id'    => 'required|exists:municipios,id',
             'titulo'          => 'required|string|max:200',
@@ -260,9 +291,14 @@ class EmpleoController extends Controller
 
         $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
 
+        if (!empty($validated['gastrobar_id'])) {
+            $validated['restaurante_id'] = null;
+        } elseif (!empty($validated['restaurante_id'])) {
+            $validated['gastrobar_id'] = null;
+        }
+
         $empleo = Empleo::create($validated);
 
-        // ── Notificar a todos los usuarios de la app ──
         $this->enviarNotificacionFCM(
             '💼 Nueva oferta de empleo',
             "¡{$empleo->titulo} está disponible en GastroNicaragua!"
@@ -274,22 +310,24 @@ class EmpleoController extends Controller
 
     public function adminShow(Empleo $empleo)
     {
-        $empleo->load(['restaurante', 'departamento', 'municipio']);
-        return view('empleos.show', compact('empleo'));
+        $empleo->load(['restaurante', 'gastrobar', 'departamento', 'municipio']);
+        return view('Empleos.show', compact('empleo'));
     }
 
     public function edit(Empleo $empleo)
     {
         $restaurantes  = Restaurante::orderBy('nombre')->get();
+        $gastrobares   = Gastrobar::orderBy('nombre')->get();
         $departamentos = Departamento::orderBy('nombre')->get();
         $municipios    = Municipio::where('departamento_id', $empleo->departamento_id)->orderBy('nombre')->get();
-        return view('empleos.edit', compact('empleo', 'restaurantes', 'departamentos', 'municipios'));
+        return view('Empleos.edit', compact('empleo', 'restaurantes', 'gastrobares', 'departamentos', 'municipios'));
     }
 
     public function update(Request $request, Empleo $empleo)
     {
         $validated = $request->validate([
-            'restaurante_id'  => 'required|exists:restaurantes,id',
+            'restaurante_id'  => 'nullable|exists:restaurantes,id',
+            'gastrobar_id'    => 'nullable|exists:gastrobares,id',
             'departamento_id' => 'required|exists:departamentos,id',
             'municipio_id'    => 'required|exists:municipios,id',
             'titulo'          => 'required|string|max:200',
@@ -302,6 +340,12 @@ class EmpleoController extends Controller
         ]);
 
         $validated['activo'] = $request->input('activo', 0) == 1 ? 1 : 0;
+
+        if (!empty($validated['gastrobar_id'])) {
+            $validated['restaurante_id'] = null;
+        } elseif (!empty($validated['restaurante_id'])) {
+            $validated['gastrobar_id'] = null;
+        }
 
         $empleo->update($validated);
 

@@ -64,6 +64,12 @@
                 @csrf
                 @method('PUT')
 
+                {{-- Tipo actual guardado (para JS) --}}
+                @php
+                    $tipoActual = $evento->gastrobar_id ? 'gastrobar' : 'restaurante';
+                @endphp
+                <input type="hidden" id="tipo_establecimiento" value="{{ old('tipo_establecimiento', $tipoActual) }}">
+
                 <div class="row g-4">
 
                     {{-- ── Columna Izquierda ── --}}
@@ -147,18 +153,57 @@
                             </div>
                         </div>
 
-                        {{-- Restaurante --}}
+                        {{-- ── TIPO DE ESTABLECIMIENTO ── --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark small">
-                                Restaurante / Local <span class="text-danger">*</span>
+                                Tipo de Establecimiento <span class="text-danger">*</span>
+                            </label>
+                            <div class="d-flex gap-2">
+                                <button type="button" id="btn-tipo-restaurante"
+                                        class="btn btn-sm rounded-pill fw-semibold px-3 flex-fill tipo-btn"
+                                        onclick="setTipo('restaurante')">
+                                    <i class="bi bi-shop me-1"></i> Restaurante
+                                </button>
+                                <button type="button" id="btn-tipo-gastrobar"
+                                        class="btn btn-sm rounded-pill fw-semibold px-3 flex-fill tipo-btn"
+                                        onclick="setTipo('gastrobar')">
+                                    <i class="bi bi-cup-straw me-1"></i> Gastrobar
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Restaurante --}}
+                        <div class="mb-3" id="wrapper-restaurante">
+                            <label class="form-label fw-semibold text-dark small">
+                                Restaurante <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
-                                <select id="restaurante_id" name="restaurante_id" required
+                                <select id="restaurante_id" name="restaurante_id"
                                         class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="" disabled selected>Seleccionar restaurante...</option>
                                     @foreach($restaurantes as $rest)
                                         <option value="{{ $rest->id }}" {{ $evento->restaurante_id == $rest->id ? 'selected' : '' }}>
                                             {{ $rest->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Gastrobar --}}
+                        <div class="mb-3 d-none" id="wrapper-gastrobar">
+                            <label class="form-label fw-semibold text-dark small">
+                                Gastrobar <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="color:#f59e0b;"><i class="bi bi-cup-straw"></i></span>
+                                <select id="gastrobar_id" name="gastrobar_id"
+                                        class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;">
+                                    <option value="" disabled selected>Seleccionar gastrobar...</option>
+                                    @foreach($gastrobares as $gb)
+                                        <option value="{{ $gb->id }}" {{ $evento->gastrobar_id == $gb->id ? 'selected' : '' }}>
+                                            {{ $gb->nombre }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -186,8 +231,6 @@
                         {{-- Imagen Principal --}}
                         <div class="mb-4">
                             <label class="form-label fw-semibold text-dark small">Imagen Principal</label>
-
-                            {{-- Preview actual --}}
                             <div class="mb-2">
                                 <p class="small fw-semibold text-muted mb-2">Imagen actual:</p>
                                 @if($evento->imagen)
@@ -204,8 +247,6 @@
                                     </div>
                                 @endif
                             </div>
-
-                            {{-- Input nueva imagen --}}
                             <p class="small fw-semibold text-muted mb-2">Reemplazar imagen <span class="fw-normal">(opcional)</span></p>
                             <label for="imagen" class="w-100" style="cursor:pointer;">
                                 <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
@@ -257,7 +298,6 @@
     <div class="card border-0 shadow-sm rounded-3 mb-4">
         <div class="card-body p-4">
 
-            {{-- Header galería --}}
             <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
                 <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                      style="width:44px;height:44px;background:#fff7ed;border:1px solid #fed7aa;">
@@ -269,7 +309,6 @@
                 </div>
             </div>
 
-            {{-- Fotos existentes --}}
             @if($evento->imagenes && $evento->imagenes->count() > 0)
                 <p class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.5px;">Fotos actuales</p>
                 <div class="row g-3 mb-4">
@@ -292,8 +331,6 @@
                             </div>
                         </div>
                     @endforeach
-
-                    {{-- Botón agregar más --}}
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                         <label style="cursor:pointer;" class="w-100 h-100">
                             <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative"
@@ -313,14 +350,11 @@
                     <i class="bi bi-info-circle text-secondary me-1"></i>
                     Este evento aún no tiene fotos adicionales.
                 </p>
-
-                {{-- Zona de carga vacía --}}
                 <label id="upload-zone-label" class="w-100 mb-3" style="cursor:pointer;">
                     <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center text-center p-5"
                          style="border:2px dashed #dee2e6;transition:border-color 0.2s;"
                          onmouseover="this.style.borderColor='#ea580c'" onmouseout="this.style.borderColor='#dee2e6'">
-                        <input type="file" id="add-more-photos" accept="image/*" multiple
-                               class="d-none">
+                        <input type="file" id="add-more-photos" accept="image/*" multiple class="d-none">
                         <i class="bi bi-cloud-upload fs-1 text-secondary mb-2"></i>
                         <p class="fw-bold text-secondary mb-1">Arrastra o haz clic para subir fotos</p>
                         <p class="text-muted mb-0" style="font-size:0.78rem;">JPG, PNG o WEBP — Puedes subir varias a la vez</p>
@@ -328,10 +362,8 @@
                 </label>
             @endif
 
-            {{-- Preview fotos nuevas seleccionadas --}}
             <div id="new-photos-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
 
-            {{-- Formulario subida fotos adicionales --}}
             <form action="{{ route('evento.imagenes.store', $evento->id) }}" method="POST"
                   enctype="multipart/form-data" id="photos-form" class="mt-3">
                 @csrf
@@ -359,11 +391,97 @@
 
 <style>
     .foto-thumb:hover .delete-foto-btn { opacity: 1 !important; }
+    .tipo-btn { transition: all 0.2s; }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
+    // ── Referencias DOM ──
+    const tipoInput      = document.getElementById('tipo_establecimiento');
+    const btnRestaurante = document.getElementById('btn-tipo-restaurante');
+    const btnGastrobar   = document.getElementById('btn-tipo-gastrobar');
+    const wrapRest       = document.getElementById('wrapper-restaurante');
+    const wrapGastro     = document.getElementById('wrapper-gastrobar');
+    const restSelect     = document.getElementById('restaurante_id');
+    const gastroSelect   = document.getElementById('gastrobar_id');
+    const depSelect      = document.getElementById('departamento_id');
+    const munSelect      = document.getElementById('municipio_id');
+
+    // ── Cambio de tipo ──
+    window.setTipo = function (tipo) {
+        tipoInput.value = tipo;
+
+        if (tipo === 'restaurante') {
+            btnRestaurante.className = 'btn btn-sm rounded-pill fw-semibold px-3 flex-fill tipo-btn btn-primary';
+            btnGastrobar.className   = 'btn btn-sm rounded-pill fw-semibold px-3 flex-fill tipo-btn btn-outline-warning';
+            wrapRest.classList.remove('d-none');
+            wrapGastro.classList.add('d-none');
+            restSelect.name   = 'restaurante_id';
+            gastroSelect.name = '';
+        } else {
+            btnGastrobar.className   = 'btn btn-sm rounded-pill fw-semibold px-3 flex-fill tipo-btn btn-warning text-dark';
+            btnRestaurante.className = 'btn btn-sm rounded-pill fw-semibold px-3 flex-fill tipo-btn btn-outline-primary';
+            wrapGastro.classList.remove('d-none');
+            wrapRest.classList.add('d-none');
+            gastroSelect.name = 'gastrobar_id';
+            restSelect.name   = '';
+        }
+    };
+
+    // Inicializar con el tipo actual del evento
+    setTipo(tipoInput.value || 'restaurante');
+
+    // ── Encadenamiento departamento → municipio → establecimientos ──
+    depSelect.addEventListener('change', function () {
+        const depId = this.value;
+        munSelect.innerHTML = '<option>Cargando municipios...</option>';
+        restSelect.innerHTML = '<option value="" disabled selected>Primero elige municipio...</option>';
+        gastroSelect.innerHTML = '<option value="" disabled selected>Primero elige municipio...</option>';
+
+        if (!depId) return;
+        fetch(`/api/departamentos/${depId}/municipios`)
+            .then(r => r.json())
+            .then(data => {
+                munSelect.innerHTML = '<option value="" disabled selected>Seleccionar municipio...</option>';
+                data.forEach(mun => {
+                    const opt = document.createElement('option');
+                    opt.value = mun.id;
+                    opt.textContent = mun.nombre;
+                    munSelect.appendChild(opt);
+                });
+            });
+    });
+
+    munSelect.addEventListener('change', function () {
+        const munId = this.value;
+        if (!munId) return;
+
+        fetch(`/api/municipios/${munId}/restaurantes`)
+            .then(r => r.json())
+            .then(data => {
+                restSelect.innerHTML = '<option value="" disabled selected>Seleccionar restaurante...</option>';
+                data.forEach(rest => {
+                    const opt = document.createElement('option');
+                    opt.value = rest.id;
+                    opt.textContent = rest.nombre;
+                    restSelect.appendChild(opt);
+                });
+            });
+
+        fetch(`/api/municipios/${munId}/gastrobares`)
+            .then(r => r.json())
+            .then(data => {
+                gastroSelect.innerHTML = '<option value="" disabled selected>Seleccionar gastrobar...</option>';
+                data.forEach(gb => {
+                    const opt = document.createElement('option');
+                    opt.value = gb.id;
+                    opt.textContent = gb.nombre;
+                    gastroSelect.appendChild(opt);
+                });
+            });
+    });
 
     // ── Preview imagen principal ──
     const imgInput     = document.getElementById('imagen');
@@ -377,18 +495,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = e => {
-                // Actualizar imagen actual
                 if (imgActual && imgActual.tagName === 'IMG') {
                     imgActual.src = e.target.result;
-                } else if (imgActual) {
-                    const img = document.createElement('img');
-                    img.id = 'img-portada-actual';
-                    img.src = e.target.result;
-                    img.className = 'w-100 rounded-3 border shadow-sm';
-                    img.style.cssText = 'height:180px;object-fit:cover;';
-                    imgActual.replaceWith(img);
                 }
-                // Mostrar preview en zona de carga
                 if (nuevaPreview) {
                     nuevaPreview.src = e.target.result;
                     nuevaPreview.classList.remove('d-none');
@@ -399,59 +508,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Encadenamiento departamento → municipio → restaurante ──
-    const depSelect  = document.getElementById('departamento_id');
-    const munSelect  = document.getElementById('municipio_id');
-    const restSelect = document.getElementById('restaurante_id');
-
-    if (depSelect) {
-        depSelect.addEventListener('change', function () {
-            const depId = this.value;
-            munSelect.disabled = true;
-            munSelect.innerHTML = '<option>Cargando municipios...</option>';
-            restSelect.disabled = true;
-            restSelect.innerHTML = '<option>Seleccionar municipio primero...</option>';
-
-            if (!depId) return;
-            fetch(`/api/departamentos/${depId}/municipios`)
-                .then(r => r.json())
-                .then(data => {
-                    munSelect.innerHTML = '<option value="" disabled selected>Seleccionar municipio...</option>';
-                    data.forEach(mun => {
-                        const opt = document.createElement('option');
-                        opt.value = mun.id;
-                        opt.textContent = mun.nombre;
-                        munSelect.appendChild(opt);
-                    });
-                    munSelect.disabled = false;
-                })
-                .catch(() => { munSelect.innerHTML = '<option>Error de carga</option>'; });
-        });
-    }
-
-    if (munSelect) {
-        munSelect.addEventListener('change', function () {
-            const munId = this.value;
-            restSelect.disabled = true;
-            restSelect.innerHTML = '<option>Cargando locales...</option>';
-
-            if (!munId) return;
-            fetch(`/api/municipios/${munId}/restaurantes`)
-                .then(r => r.json())
-                .then(data => {
-                    restSelect.innerHTML = '<option value="" disabled selected>Seleccionar local...</option>';
-                    data.forEach(rest => {
-                        const opt = document.createElement('option');
-                        opt.value = rest.id;
-                        opt.textContent = rest.nombre;
-                        restSelect.appendChild(opt);
-                    });
-                    restSelect.disabled = false;
-                })
-                .catch(() => { restSelect.innerHTML = '<option>Error de carga</option>'; });
-        });
-    }
-
     // ── Galería: preview fotos adicionales ──
     const addPhotosInput = document.getElementById('add-more-photos');
     const fotosHidden    = document.getElementById('fotos-hidden');
@@ -459,8 +515,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadActions  = document.getElementById('upload-actions');
     const filesCount     = document.getElementById('files-count');
     const cancelUpload   = document.getElementById('cancel-upload');
-
-    let selectedFiles = [];
+    let selectedFiles    = [];
 
     function syncFilesToHidden() {
         if (!fotosHidden) return;
@@ -529,12 +584,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Spinner en submit ──
     document.getElementById('edit-form').addEventListener('submit', function () {
+        // Habilitar el select activo para que se envíe
+        const tipo = tipoInput.value;
+        if (tipo === 'restaurante') {
+            restSelect.disabled = false;
+            restSelect.name = 'restaurante_id';
+        } else {
+            gastroSelect.disabled = false;
+            gastroSelect.name = 'gastrobar_id';
+        }
         const btn = document.getElementById('btn-submit');
         if (btn) {
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Guardando...';
         }
     });
+
 });
 </script>
 

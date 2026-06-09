@@ -147,7 +147,6 @@ class GastrobarController extends Controller
 
         $gastrobar = Gastrobar::create($data);
 
-        // ── Notificar a todos los usuarios de la app ──
         $this->enviarNotificacionFCM(
             '🍹 Nuevo gastrobar',
             "¡{$gastrobar->nombre} ya está en GastroNicaragua!"
@@ -255,29 +254,26 @@ class GastrobarController extends Controller
     // ── PUBLIC INDEX ─────────────────────────────────────────────
     public function publicIndex(Request $request)
     {
-        $departamentoPredefinido = null;
-        if (auth()->check() && auth()->user()->departamento_id) {
-            $departamentoPredefinido = auth()->user()->departamento_id;
-        }
+        $departamentoPredefinido = auth()->check() ? auth()->user()->departamento_id : null;
+        $municipioPredefinido    = auth()->check() ? auth()->user()->municipio_id    : null;
+
+        $hayFiltroActivo = $request->hasAny(['departamento', 'municipio', 'tipo_bar', 'ambiente', 'search']);
+
+        $deptoFiltro = $hayFiltroActivo
+            ? ($request->filled('departamento') ? $request->departamento : null)
+            : $departamentoPredefinido;
+
+        $munFiltro = $hayFiltroActivo
+            ? ($request->filled('municipio') ? $request->municipio : null)
+            : $municipioPredefinido;
 
         $query = Gastrobar::with(['departamento', 'municipio'])->latest();
 
-        $deptoActivo = $request->departamento ?? $departamentoPredefinido;
-        if ($deptoActivo) {
-            $query->where('departamento_id', $deptoActivo);
-        }
-        if ($request->filled('municipio')) {
-            $query->where('municipio_id', $request->municipio);
-        }
-        if ($request->filled('tipo_bar')) {
-            $query->where('tipo_bar', $request->tipo_bar);
-        }
-        if ($request->filled('ambiente')) {
-            $query->where('ambiente', $request->ambiente);
-        }
-        if ($request->filled('search')) {
-            $query->where('nombre', 'like', '%' . $request->search . '%');
-        }
+        if ($deptoFiltro)             $query->where('departamento_id', $deptoFiltro);
+        if ($munFiltro)               $query->where('municipio_id', $munFiltro);
+        if ($request->filled('tipo_bar')) $query->where('tipo_bar', $request->tipo_bar);
+        if ($request->filled('ambiente')) $query->where('ambiente', $request->ambiente);
+        if ($request->filled('search'))   $query->where('nombre', 'like', '%' . $request->search . '%');
 
         $gastrobares   = $query->paginate(12)->withQueryString();
         $departamentos = Departamento::orderBy('nombre')->get();
@@ -287,7 +283,8 @@ class GastrobarController extends Controller
             'gastrobares',
             'departamentos',
             'municipios',
-            'departamentoPredefinido'
+            'departamentoPredefinido',
+            'municipioPredefinido'
         ));
     }
 

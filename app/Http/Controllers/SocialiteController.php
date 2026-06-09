@@ -18,8 +18,7 @@ class SocialiteController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            // Si falla, redirigir al login de React con error
-            return redirect('http://localhost:5173/login?error=google_failed');
+            return redirect()->route('login')->withErrors(['google' => 'Error al iniciar sesión con Google.']);
         }
 
         // Buscar por google_id primero
@@ -61,26 +60,13 @@ class SocialiteController extends Controller
 
         Auth::login($user, true);
 
-        // Generar token para React
-        $token = $user->createToken('react-app')->plainTextToken;
-
-        // Datos del usuario para pasar a React
-        $userData = urlencode(json_encode([
-            'id'              => $user->id,
-            'name'            => $user->name,
-            'email'           => $user->email,
-            'role'            => $user->role,
-            'departamento_id' => $user->departamento_id,
-            'avatar'          => $user->avatar,
-        ]));
-
-        // Redirigir a React según rol — todo se queda en React
+        // Redirigir según rol y estado del usuario (todo en Blade/Laravel)
         return match($user->role) {
-            'admin'       => redirect("http://localhost:5173/dashboard?token={$token}&user={$userData}"),
-            'restaurante' => redirect("http://localhost:5173/restaurante/dashboard?token={$token}&user={$userData}"),
+            'admin'       => redirect()->route('dashboard'),
+            'restaurante' => redirect()->route('restaurante.dashboard'),
             default       => $user->departamento_id
-                                ? redirect("http://localhost:5173/?token={$token}&user={$userData}")
-                                : redirect("http://localhost:5173/seleccionar-departamento?token={$token}&user={$userData}"),
+                                ? redirect()->route('home')
+                                : redirect()->route('usuario.departamento.show'),
         };
     }
 }

@@ -30,7 +30,7 @@
 
         .premium-title { font-family: 'Playfair Display', serif; }
 
-        /* ── ANIMACIONES DE ENTRADA ── */
+        /* ── ANIMACIONES ── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(32px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -79,66 +79,13 @@
         .anim-slide-l   { animation: slideLeft 0.7s cubic-bezier(0.16,1,0.3,1) both; }
         .anim-scale-in  { animation: scaleIn 0.6s cubic-bezier(0.16,1,0.3,1) both; }
 
-        .delay-1  { animation-delay: 0.1s; }
-        .delay-2  { animation-delay: 0.2s; }
-        .delay-3  { animation-delay: 0.3s; }
-        .delay-4  { animation-delay: 0.4s; }
-        .delay-5  { animation-delay: 0.5s; }
-        .delay-6  { animation-delay: 0.6s; }
-        .delay-7  { animation-delay: 0.7s; }
-
-        /* ── NAV ── */
-        .nav-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 50;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(24px);
-            border-bottom: 1px solid rgba(231,229,228,0.5);
-            animation: fadeIn 0.5s ease both;
-        }
-
-        .nav-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 72px;
-        }
-
-        .nav-logo {
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none;
-        }
-
-        .nav-logo-icon {
-            width: 38px; height: 38px;
-            background: linear-gradient(135deg, #ea580c, #c2410c);
-            border-radius: 11px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 16px rgba(234,88,12,0.35);
-            transition: transform 0.3s ease;
-        }
-        .nav-logo-icon:hover { transform: rotate(-8deg) scale(1.05); }
-
-        .nav-back {
-            display: flex; align-items: center; gap: 8px;
-            text-decoration: none;
-            font-size: 13px; font-weight: 700;
-            color: #57534e;
-            padding: 8px 18px;
-            border: 1.5px solid #e7e5e4;
-            border-radius: 999px;
-            transition: all 0.25s ease;
-        }
-        .nav-back:hover {
-            background: #1c1917;
-            color: white;
-            border-color: #1c1917;
-            transform: translateX(-3px);
-        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+        .delay-7 { animation-delay: 0.7s; }
 
         /* ── HERO ── */
         .hero-section {
@@ -150,14 +97,11 @@
             overflow: hidden;
             min-height: 380px;
         }
-
         .hero-noise {
-            position: absolute; inset: 0;
-            opacity: 0.04;
+            position: absolute; inset: 0; opacity: 0.04;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
             pointer-events: none;
         }
-
         .hero-grid {
             position: absolute; inset: 0;
             background-image:
@@ -166,294 +110,140 @@
             background-size: 40px 40px;
             pointer-events: none;
         }
-
         .hero-glow-1 {
-            position: absolute;
-            top: -100px; right: -100px;
+            position: absolute; top: -100px; right: -100px;
             width: 500px; height: 500px;
             background: radial-gradient(circle, rgba(234,88,12,0.25) 0%, transparent 65%);
-            pointer-events: none;
-            animation: float 6s ease-in-out infinite;
+            pointer-events: none; animation: float 6s ease-in-out infinite;
         }
-
         .hero-glow-2 {
-            position: absolute;
-            bottom: -80px; left: 10%;
+            position: absolute; bottom: -80px; left: 10%;
             width: 350px; height: 350px;
             background: radial-gradient(circle, rgba(251,146,60,0.12) 0%, transparent 65%);
-            pointer-events: none;
-            animation: float 8s ease-in-out infinite reverse;
+            pointer-events: none; animation: float 8s ease-in-out infinite reverse;
         }
-
-        .hero-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 10;
-        }
-
-        .hero-badge-row {
-            display: flex; flex-wrap: wrap; gap: 10px;
-            margin-bottom: 24px;
-        }
-
+        .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
+        .hero-badge-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
         .hero-badge-resto {
             display: inline-flex; align-items: center; gap: 6px;
-            background: var(--orange);
-            color: white;
-            font-size: 10px; font-weight: 800;
-            letter-spacing: 0.18em; text-transform: uppercase;
+            background: var(--orange); color: white;
+            font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
             padding: 8px 18px; border-radius: 999px;
             box-shadow: 0 4px 20px rgba(234,88,12,0.4);
         }
-
         .hero-badge-contrato {
             display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
             color: rgba(255,255,255,0.9);
-            font-size: 10px; font-weight: 700;
-            letter-spacing: 0.15em; text-transform: uppercase;
-            padding: 8px 18px; border-radius: 999px;
-            backdrop-filter: blur(8px);
+            font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+            padding: 8px 18px; border-radius: 999px; backdrop-filter: blur(8px);
         }
-
         .hero-title {
-            font-size: clamp(2.8rem, 6vw, 5rem);
-            font-weight: 900;
-            color: white;
-            line-height: 1.05;
-            margin-bottom: 20px;
-            letter-spacing: -0.02em;
+            font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900;
+            color: white; line-height: 1.05; margin-bottom: 20px; letter-spacing: -0.02em;
         }
-
         .hero-location {
             display: inline-flex; align-items: center; gap: 8px;
-            color: rgba(255,255,255,0.6);
-            font-size: 14px; font-weight: 500;
+            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;
         }
-
         .hero-location strong { color: white; }
-
-        /* Línea decorativa animada */
         .hero-line {
             width: 60px; height: 3px;
             background: linear-gradient(90deg, var(--orange), var(--orange-light));
-            border-radius: 2px;
-            margin: 24px 0;
-            transform-origin: left;
+            border-radius: 2px; margin: 24px 0; transform-origin: left;
             animation: lineGrow 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both;
         }
 
         /* ── MAIN LAYOUT ── */
         .main-wrap {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 56px 2rem 80px;
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 32px;
-            align-items: start;
+            max-width: 1100px; margin: 0 auto; padding: 56px 2rem 80px;
+            display: grid; grid-template-columns: 1fr 360px;
+            gap: 32px; align-items: start;
         }
 
-        /* ── CARDS IZQUIERDA ── */
+        /* ── CARDS ── */
         .content-card {
-            background: white;
-            border: 1px solid #f0eeec;
-            border-radius: 24px;
-            padding: 32px;
-            position: relative;
-            overflow: hidden;
+            background: white; border: 1px solid #f0eeec; border-radius: 24px;
+            padding: 32px; position: relative; overflow: hidden;
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
-
-        .content-card:hover {
-            box-shadow: 0 12px 40px rgba(28,25,23,0.08);
-            transform: translateY(-2px);
-        }
-
+        .content-card:hover { box-shadow: 0 12px 40px rgba(28,25,23,0.08); transform: translateY(-2px); }
         .content-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
             background: linear-gradient(90deg, var(--orange), var(--orange-light), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-
         .content-card:hover::before { opacity: 1; }
-
         .card-header {
             display: flex; align-items: center; gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #f5f4f2;
+            margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f5f4f2;
         }
-
         .card-icon-wrap {
-            width: 38px; height: 38px;
-            background: #fff7ed;
-            border: 1px solid #fed7aa;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
+            width: 38px; height: 38px; background: #fff7ed; border: 1px solid #fed7aa;
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.3s ease;
         }
-
-        .content-card:hover .card-icon-wrap {
-            background: var(--orange);
-            border-color: var(--orange);
-        }
-
+        .content-card:hover .card-icon-wrap { background: var(--orange); border-color: var(--orange); }
         .content-card:hover .card-icon-wrap i { color: white !important; }
+        .card-title-text { font-size: 15px; font-weight: 800; color: #1c1917; }
+        .card-body-text { color: #6b6560; font-size: 14px; line-height: 1.85; white-space: pre-line; }
+        .empty-text { color: #b5b0ab; font-size: 13px; font-style: italic; display: flex; align-items: center; gap: 8px; }
 
-        .card-title-text {
-            font-size: 15px; font-weight: 800;
-            color: #1c1917;
-        }
-
-        .card-body-text {
-            color: #6b6560;
-            font-size: 14px;
-            line-height: 1.85;
-            white-space: pre-line;
-        }
-
-        .empty-text {
-            color: #b5b0ab;
-            font-size: 13px;
-            font-style: italic;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        /* ── SIDEBAR DERECHA ── */
-        .sidebar-sticky {
-            position: sticky;
-            top: 96px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Tarjeta resumen */
+        /* ── SIDEBAR ── */
+        .sidebar-sticky { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 20px; }
         .summary-card {
-            background: white;
-            border: 1px solid #f0eeec;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 4px 24px rgba(28,25,23,0.06);
-            transition: box-shadow 0.3s ease;
+            background: white; border: 1px solid #f0eeec; border-radius: 24px;
+            overflow: hidden; box-shadow: 0 4px 24px rgba(28,25,23,0.06); transition: box-shadow 0.3s ease;
         }
         .summary-card:hover { box-shadow: 0 8px 40px rgba(28,25,23,0.1); }
-
         .summary-card-header {
             background: linear-gradient(135deg, #1c1917, #292524);
-            padding: 20px 24px;
-            position: relative;
-            overflow: hidden;
+            padding: 20px 24px; position: relative; overflow: hidden;
         }
-
         .summary-card-header::after {
-            content: '';
-            position: absolute;
-            top: -40px; right: -40px;
+            content: ''; position: absolute; top: -40px; right: -40px;
             width: 120px; height: 120px;
             background: radial-gradient(circle, rgba(234,88,12,0.3) 0%, transparent 70%);
             pointer-events: none;
         }
-
         .summary-card-header-label {
-            font-size: 9px; font-weight: 900;
-            letter-spacing: 0.22em; text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 4px;
+            font-size: 9px; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase;
+            color: rgba(255,255,255,0.4); margin-bottom: 4px;
         }
-
-        .summary-card-header-title {
-            font-size: 16px; font-weight: 800;
-            color: white;
-        }
-
+        .summary-card-header-title { font-size: 16px; font-weight: 800; color: white; }
         .summary-body { padding: 20px 24px; }
-
-        /* Stat row */
         .stat-row {
             display: flex; flex-direction: column; gap: 4px;
-            padding: 16px 0;
-            border-bottom: 1px solid #f5f4f2;
-            position: relative;
+            padding: 16px 0; border-bottom: 1px solid #f5f4f2; position: relative;
         }
-
         .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-        .stat-label {
-            font-size: 9px; font-weight: 800;
-            letter-spacing: 0.18em; text-transform: uppercase;
-            color: #a8a29e;
-        }
-
+        .stat-label { font-size: 9px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #a8a29e; }
         .stat-value-salary {
-            font-size: 22px; font-weight: 900;
-            color: #16a34a;
-            letter-spacing: -0.02em;
-            display: flex; align-items: center; gap: 6px;
+            font-size: 22px; font-weight: 900; color: #16a34a;
+            letter-spacing: -0.02em; display: flex; align-items: center; gap: 6px;
         }
-
         .stat-value-salary.negociar {
             font-size: 18px;
             background: linear-gradient(90deg, var(--orange), var(--orange-light));
             background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
             animation: shimmer 3s linear infinite;
         }
-
-        .stat-value {
-            font-size: 14px; font-weight: 700;
-            color: #1c1917;
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .stat-value-sm {
-            font-size: 12px; font-weight: 600;
-            color: #78716c;
-        }
-
-        /* Redes */
+        .stat-value { font-size: 14px; font-weight: 700; color: #1c1917; display: flex; align-items: center; gap: 6px; }
+        .stat-value-sm { font-size: 12px; font-weight: 600; color: #78716c; }
         .social-section { padding: 20px 24px; border-top: 1px solid #f5f4f2; }
-
         .social-label {
-            font-size: 9px; font-weight: 900;
-            letter-spacing: 0.18em; text-transform: uppercase;
-            color: #a8a29e;
-            margin-bottom: 12px;
-            display: block;
+            font-size: 9px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
+            color: #a8a29e; margin-bottom: 12px; display: block;
         }
-
         .social-icons { display: flex; flex-wrap: wrap; gap: 10px; }
-
         .social-btn {
-            width: 40px; height: 40px;
-            border-radius: 12px;
+            width: 40px; height: 40px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            text-decoration: none;
-            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
-            position: relative;
-            overflow: hidden;
+            text-decoration: none; transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+            position: relative; overflow: hidden;
         }
-
-        .social-btn::before {
-            content: '';
-            position: absolute; inset: 0;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
         .social-btn:hover { transform: translateY(-3px) scale(1.08); }
-        .social-btn:hover::before { opacity: 1; }
-
         .social-wa  { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
         .social-wa:hover  { background: #16a34a; color: white; border-color: #16a34a; box-shadow: 0 6px 20px rgba(22,163,74,0.35); }
         .social-ig  { background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; }
@@ -462,101 +252,36 @@
         .social-tt:hover  { background: #1c1917; color: white; border-color: #1c1917; box-shadow: 0 6px 20px rgba(28,25,23,0.35); }
         .social-fb  { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
         .social-fb:hover  { background: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
-
-        /* Botón aplicar */
         .apply-section { padding: 20px 24px; border-top: 1px solid #f5f4f2; }
-
         .btn-apply {
-            width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: linear-gradient(135deg, #ea580c, #c2410c);
-            color: white;
-            font-weight: 800; font-size: 14px;
-            padding: 14px 24px;
-            border-radius: 14px;
-            border: none; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-            position: relative; overflow: hidden;
-            letter-spacing: 0.02em;
+            width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: linear-gradient(135deg, #ea580c, #c2410c); color: white;
+            font-weight: 800; font-size: 14px; padding: 14px 24px; border-radius: 14px;
+            border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            position: relative; overflow: hidden; letter-spacing: 0.02em;
             animation: pulse-glow 3s ease-in-out infinite;
         }
-
         .btn-apply::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
+            content: ''; position: absolute; top: 0; left: -100%;
             width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
             transition: left 0.5s ease;
         }
-
-        .btn-apply:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 32px rgba(234,88,12,0.45);
-            animation: none;
-        }
-
+        .btn-apply:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 32px rgba(234,88,12,0.45); animation: none; }
         .btn-apply:hover::before { left: 100%; }
-
         .btn-apply:active { transform: scale(0.98); }
 
-        /* Alertas */
         .alert-success {
             display: flex; align-items: center; gap: 10px;
             background: #f0fdf4; border: 1px solid #bbf7d0;
             color: #15803d; font-size: 13px; font-weight: 600;
-            padding: 12px 16px; border-radius: 14px;
-            animation: fadeUp 0.5s ease both;
+            padding: 12px 16px; border-radius: 14px; animation: fadeUp 0.5s ease both;
         }
-
         .alert-error {
             display: flex; align-items: center; gap: 10px;
             background: #fef2f2; border: 1px solid #fecaca;
             color: #dc2626; font-size: 13px; font-weight: 600;
-            padding: 12px 16px; border-radius: 14px;
-            animation: fadeUp 0.5s ease both;
-        }
-
-        /* ── FOOTER ── */
-        .site-footer {
-            background: #0c0a09;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding: 64px 2rem 32px;
-            margin-top: 80px;
-        }
-
-        .footer-grid {
-            max-width: 1280px; margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 48px;
-            padding-bottom: 48px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-        }
-
-        .footer-bottom {
-            max-width: 1280px; margin: 0 auto;
-            padding-top: 32px;
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 12px;
-        }
-
-        .footer-social-link {
-            width: 34px; height: 34px;
-            background: rgba(255,255,255,0.06); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: #78716c; text-decoration: none; transition: all 0.2s;
-        }
-        .footer-social-link:hover { background: rgba(234,88,12,0.2); color: #fb923c; }
-
-        .footer-link { color: #78716c; font-size: 13px; text-decoration: none; transition: color 0.2s; }
-        .footer-link:hover { color: #fb923c; }
-
-        @media (max-width: 900px) {
-            .main-wrap { grid-template-columns: 1fr; }
-            .sidebar-sticky { position: static; }
-            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-            .footer-bottom { flex-direction: column; align-items: flex-start; }
+            padding: 12px 16px; border-radius: 14px; animation: fadeUp 0.5s ease both;
         }
 
         /* ── MODAL ── */
@@ -564,79 +289,74 @@
             from { opacity:0; transform:translateY(24px) scale(0.97); }
             to   { opacity:1; transform:translateY(0) scale(1); }
         }
-
         #applyModal {
-            display: none;
-            position: fixed; inset: 0; z-index: 9999;
-            align-items: center; justify-content: center;
-            padding: 1rem;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            align-items: center; justify-content: center; padding: 1rem;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
         }
-
         .modal-inner {
             position: relative; width: 100%; max-width: 680px;
-            max-height: 90vh; overflow-y: auto;
-            border-radius: 20px;
-            background: #1a1a1a;
-            border: 1px solid #2e2e2e;
+            max-height: 90vh; overflow-y: auto; border-radius: 20px;
+            background: #1a1a1a; border: 1px solid #2e2e2e;
             animation: gastroSlideUp 0.35s cubic-bezier(0.16,1,0.3,1);
         }
-
         .modal-header {
             position: sticky; top: 0; z-index: 10;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 1.5rem 1.75rem;
-            border-bottom: 1px solid #2e2e2e;
+            padding: 1.5rem 1.75rem; border-bottom: 1px solid #2e2e2e;
             background: linear-gradient(135deg, #1a1a1a, #222);
         }
-
         .modal-close {
             background: rgba(255,255,255,0.05); border: 1px solid #333;
             color: #9ca3af; cursor: pointer; padding: 8px;
             border-radius: 10px; transition: all 0.2s; display: flex;
         }
         .modal-close:hover { background: #333; color: white; transform: rotate(90deg); }
-
         .modal-input {
-            width: 100%; padding: 12px 14px;
-            border-radius: 10px;
+            width: 100%; padding: 12px 14px; border-radius: 10px;
             background: #252525; border: 1.5px solid #333; color: #fff;
             font-size: 14px; outline: none; box-sizing: border-box;
-            font-family: 'Instrument Sans', sans-serif;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'Instrument Sans', sans-serif; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .modal-input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.12); }
         .modal-input::placeholder { color: #4b5563; }
-
         .modal-label {
             display: block; font-size: 11px; font-weight: 700;
             color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
         }
 
+        @media (max-width: 900px) {
+            .main-wrap { grid-template-columns: 1fr; }
+            .sidebar-sticky { position: static; }
+        }
         @media (max-width: 580px) {
             .modal-grid-2 { grid-template-columns: 1fr !important; }
             .modal-grid-4 { grid-template-columns: 1fr 1fr !important; }
         }
     </style>
 </head>
-<body>
+<body class="bg-stone-50 text-stone-900">
 
-    {{-- ── NAV ── --}}
-    <nav class="nav-bar">
-        <div class="nav-inner">
-            <a href="{{ route('home') }}" class="nav-logo">
-                <div class="nav-logo-icon">
-                    <i class="fas fa-utensils" style="color:white;font-size:13px;"></i>
-                </div>
-                <span class="premium-title" style="font-size:22px;font-weight:700;color:#1c1917;font-style:italic;">
-                    Gastro<span style="color:#ea580c;">Nicaragua</span>
-                </span>
-            </a>
-            <a href="{{ route('empleos.index') }}" class="nav-back">
-                <i class="fas fa-chevron-left" style="font-size:11px;"></i>
-                Volver a empleos
-            </a>
+    {{-- ══ NAVBAR ══ --}}
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 sm:h-20 items-center">
+
+                {{-- Logo --}}
+                <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
+                    <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
+                        Gastro<span class="text-orange-600">Nicaragua</span>
+                    </span>
+                </a>
+
+                {{-- Volver --}}
+                <a href="{{ route('empleos.index') }}"
+                   class="flex items-center gap-2 border border-stone-200 text-stone-600 bg-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                    <span>Volver a empleos</span>
+                </a>
+
+            </div>
         </div>
     </nav>
 
@@ -650,8 +370,13 @@
         <div class="hero-inner">
             <div class="hero-badge-row anim-fade-up">
                 <span class="hero-badge-resto">
-                    <i class="fas fa-store" style="font-size:9px;"></i>
-                    {{ $empleo->restaurante->nombre }}
+                    @if($empleo->gastrobar_id)
+                        <i class="fas fa-glass-martini-alt" style="font-size:9px;"></i>
+                        {{ $empleo->gastrobar?->nombre }}
+                    @else
+                        <i class="fas fa-store" style="font-size:9px;"></i>
+                        {{ $empleo->restaurante?->nombre }}
+                    @endif
                 </span>
                 @if($empleo->tipo_contrato)
                     <span class="hero-badge-contrato">
@@ -699,10 +424,8 @@
     {{-- ── MAIN ── --}}
     <main class="main-wrap">
 
-        {{-- Columna Izquierda --}}
         <div style="display:flex;flex-direction:column;gap:20px;">
 
-            {{-- Descripción --}}
             <div class="content-card anim-slide-r delay-2">
                 <div class="card-header">
                     <div class="card-icon-wrap">
@@ -713,7 +436,6 @@
                 <p class="card-body-text">{{ $empleo->descripcion }}</p>
             </div>
 
-            {{-- Requisitos --}}
             <div class="content-card anim-slide-r delay-3">
                 <div class="card-header">
                     <div class="card-icon-wrap">
@@ -726,17 +448,14 @@
                 @else
                     <p class="empty-text">
                         <i class="fas fa-info-circle" style="color:#d6d3d1;font-size:14px;"></i>
-                        El restaurante no especificó requisitos adicionales para esta posición.
+                        El establecimiento no especificó requisitos adicionales para esta posición.
                     </p>
                 @endif
             </div>
 
         </div>
 
-        {{-- Columna Derecha (sidebar) --}}
         <div class="sidebar-sticky">
-
-            {{-- Tarjeta resumen --}}
             <div class="summary-card anim-slide-l delay-2">
 
                 <div class="summary-card-header">
@@ -745,8 +464,6 @@
                 </div>
 
                 <div class="summary-body">
-
-                    {{-- Salario --}}
                     <div class="stat-row">
                         <span class="stat-label">Remuneración mensual</span>
                         @if($empleo->salario)
@@ -762,7 +479,6 @@
                         @endif
                     </div>
 
-                    {{-- Fecha límite --}}
                     @if($empleo->fecha_limite)
                         <div class="stat-row">
                             <span class="stat-label">Fecha límite para aplicar</span>
@@ -773,7 +489,6 @@
                         </div>
                     @endif
 
-                    {{-- Publicación --}}
                     <div class="stat-row">
                         <span class="stat-label">Publicado</span>
                         <span class="stat-value-sm">
@@ -781,41 +496,41 @@
                             {{ $empleo->created_at->diffForHumans() }}
                         </span>
                     </div>
-
                 </div>
 
-                {{-- Redes --}}
+                @php
+                    $establecimiento = $empleo->gastrobar_id ? $empleo->gastrobar : $empleo->restaurante;
+                @endphp
                 <div class="social-section">
                     <span class="social-label">Conoce el establecimiento</span>
                     <div class="social-icons">
-                        @if(!empty($empleo->restaurante->whatsapp))
-                            @php $phoneClean = preg_replace('/[^0-9]/', '', $empleo->restaurante->whatsapp); @endphp
+                        @if(!empty($establecimiento?->whatsapp))
+                            @php $phoneClean = preg_replace('/[^0-9]/', '', $establecimiento->whatsapp); @endphp
                             <a href="https://wa.me/{{ $phoneClean }}" target="_blank" class="social-btn social-wa" title="WhatsApp">
                                 <i class="fab fa-whatsapp" style="font-size:17px;"></i>
                             </a>
                         @endif
-                        @if(!empty($empleo->restaurante->instagram))
-                            <a href="{{ $empleo->restaurante->instagram }}" target="_blank" class="social-btn social-ig" title="Instagram">
+                        @if(!empty($establecimiento?->instagram))
+                            <a href="{{ $establecimiento->instagram }}" target="_blank" class="social-btn social-ig" title="Instagram">
                                 <i class="fab fa-instagram" style="font-size:17px;"></i>
                             </a>
                         @endif
-                        @if(!empty($empleo->restaurante->tiktok))
-                            <a href="{{ $empleo->restaurante->tiktok }}" target="_blank" class="social-btn social-tt" title="TikTok">
+                        @if(!empty($establecimiento?->tiktok))
+                            <a href="{{ $establecimiento->tiktok }}" target="_blank" class="social-btn social-tt" title="TikTok">
                                 <i class="fab fa-tiktok" style="font-size:15px;"></i>
                             </a>
                         @endif
-                        @if(!empty($empleo->restaurante->facebook))
-                            <a href="{{ $empleo->restaurante->facebook }}" target="_blank" class="social-btn social-fb" title="Facebook">
+                        @if(!empty($establecimiento?->facebook))
+                            <a href="{{ $establecimiento->facebook }}" target="_blank" class="social-btn social-fb" title="Facebook">
                                 <i class="fab fa-facebook-f" style="font-size:15px;"></i>
                             </a>
                         @endif
-                        @if(empty($empleo->restaurante->whatsapp) && empty($empleo->restaurante->instagram) && empty($empleo->restaurante->tiktok) && empty($empleo->restaurante->facebook))
+                        @if(empty($establecimiento?->whatsapp) && empty($establecimiento?->instagram) && empty($establecimiento?->tiktok) && empty($establecimiento?->facebook))
                             <span style="font-size:12px;color:#b5b0ab;font-style:italic;">Sin redes configuradas.</span>
                         @endif
                     </div>
                 </div>
 
-                {{-- Botón aplicar --}}
                 <div class="apply-section">
                     <button type="button" onclick="abrirModalAplicar()" class="btn-apply">
                         <i class="fas fa-paper-plane" style="font-size:13px;"></i>
@@ -824,59 +539,59 @@
                 </div>
 
             </div>
-
         </div>
     </main>
 
-    {{-- ── FOOTER ── --}}
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <div>
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                    <div style="width:36px;height:36px;background:#ea580c;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                        <i class="fas fa-utensils" style="color:white;font-size:12px;"></i>
+    {{-- ══ FOOTER ══ --}}
+    <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
+
+                <div class="sm:col-span-2 lg:col-span-4 space-y-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
                     </div>
-                    <span class="premium-title" style="color:white;font-size:20px;font-style:italic;">
-                        Gastro<span style="color:#fb923c;">Nicaragua</span>
-                    </span>
+                    <p class="text-stone-400 text-sm leading-relaxed font-light">
+                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                        Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                    </p>
+                    <div class="flex items-center gap-3 pt-1">
+                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                    </div>
                 </div>
-                <p style="color:#78716c;font-size:13px;line-height:1.75;max-width:280px;margin:0 0 24px;">
-                    La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                </p>
-                <div style="display:flex;gap:12px;">
-                    <a href="#" class="footer-social-link"><i class="fab fa-facebook-f" style="font-size:12px;"></i></a>
-                    <a href="#" class="footer-social-link"><i class="fab fa-instagram" style="font-size:12px;"></i></a>
-                    <a href="#" class="footer-social-link"><i class="fab fa-tiktok" style="font-size:12px;"></i></a>
+
+                <div class="lg:col-span-2 space-y-4">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
+                    <ul class="space-y-2.5 text-sm p-0 list-none m-0">
+                        <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
+                        <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Restaurantes</a></li>
+                        <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                        <li><a href="{{ route('empleos.index') }}" class="text-orange-500 font-semibold hover:text-orange-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                        <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
+                    </ul>
                 </div>
+
+                <div class="lg:col-span-3 space-y-4">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Masaya</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Granada</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>León</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>San Juan del Sur</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Estelí</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Matagalpa</span>
+                    </div>
+                </div>
+
             </div>
-            <div>
-                <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Portal</h4>
-                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;">
-                    <li><a href="{{ route('home') }}" class="footer-link">Inicio</a></li>
-                    <li><a href="{{ route('restaurantes.index') }}" class="footer-link">Restaurantes</a></li>
-                    <li><a href="{{ route('empleos.index') }}" style="color:#ea580c;font-size:13px;font-weight:600;text-decoration:none;">Bolsa de Empleos</a></li>
-                    <li><a href="{{ route('contacto') }}" class="footer-link">Contacto</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Destinos Destacados</h4>
-                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
-                    <li><a href="#" class="footer-link">› Masaya</a></li>
-                    <li><a href="#" class="footer-link">› Granada</a></li>
-                    <li><a href="#" class="footer-link">› León</a></li>
-                    <li><a href="#" class="footer-link">› San Juan del Sur</a></li>
-                    <li><a href="#" class="footer-link">› Estelí</a></li>
-                    <li><a href="#" class="footer-link">› Matagalpa</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">
-                © 2026 Gastro Nicaragua. Todos los derechos reservados.
-            </p>
-            <div style="display:flex;gap:24px;">
-                <a href="#" class="footer-link" style="font-size:11px;">Política de Privacidad</a>
-                <a href="#" class="footer-link" style="font-size:11px;">Términos de Servicio</a>
+            <div class="border-t border-stone-800 pt-6 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
+                <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Política de Privacidad</a>
+                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Términos de Servicio</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -886,11 +601,14 @@
     {{-- ── MODAL ── --}}
     <div id="applyModal">
         <div class="modal-inner">
-
             <div class="modal-header">
                 <div>
                     <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fb923c;margin:0 0 4px;">
-                        {{ $empleo->restaurante->nombre ?? 'Restaurante' }}
+                        @if($empleo->gastrobar_id)
+                            {{ $empleo->gastrobar?->nombre ?? 'Gastrobar' }}
+                        @else
+                            {{ $empleo->restaurante?->nombre ?? 'Restaurante' }}
+                        @endif
                     </p>
                     <h2 style="font-size:20px;font-weight:800;color:#fff;margin:0;">
                         Aplicar: {{ $empleo->titulo }}
@@ -911,7 +629,7 @@
                 @csrf
                 <input type="hidden" name="empleo_id"         value="{{ $empleo->id }}">
                 <input type="hidden" name="empleo_titulo"     value="{{ $empleo->titulo }}">
-                <input type="hidden" name="restaurante_email" value="{{ $empleo->restaurante->email ?? '' }}">
+                <input type="hidden" name="restaurante_email" value="{{ $establecimiento?->email ?? '' }}">
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="modal-grid-2">
                     <div>
@@ -1014,20 +732,16 @@
             document.getElementById('applyModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
-
         function cerrarModalAplicar() {
             document.getElementById('applyModal').style.display = 'none';
             document.body.style.overflow = '';
         }
-
         document.getElementById('applyModal').addEventListener('click', function(e) {
             if (e.target === this) cerrarModalAplicar();
         });
-
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') cerrarModalAplicar();
         });
-
         function handleCvChange(input) {
             if (input.files && input.files[0]) {
                 cvTieneArchivo = true;
@@ -1038,7 +752,6 @@
                 document.getElementById('cvDropzone').style.background  = '#1a2e1a';
             }
         }
-
         document.getElementById('applyForm').addEventListener('submit', function() {
             var btn  = document.getElementById('submitBtn');
             var text = document.getElementById('submitText');
@@ -1048,12 +761,9 @@
             btn.style.cursor  = 'not-allowed';
         });
 
-        // Intersection Observer para animar elementos al hacer scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                }
+                if (entry.isIntersecting) entry.target.style.animationPlayState = 'running';
             });
         }, { threshold: 0.1 });
 

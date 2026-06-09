@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $fecha_evento
  * @property int $departamento_id
  * @property int|null $municipio_id
- * @property int $restaurante_id
+ * @property int|null $restaurante_id
+ * @property int|null $gastrobar_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $is_destacado
@@ -24,7 +25,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventoImagen> $imagenes
  * @property-read int|null $imagenes_count
  * @property-read \App\Models\Municipio|null $municipio
- * @property-read \App\Models\Restaurante $restaurante
+ * @property-read \App\Models\Restaurante|null $restaurante
+ * @property-read \App\Models\Gastrobar|null $gastrobar
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento query()
@@ -33,6 +35,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereDescripcion($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereEsDestacado($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereFechaEvento($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereGastrobarId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereImagen($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento whereIsDestacado($value)
@@ -56,12 +59,18 @@ class Evento extends Model
         'departamento_id',
         'municipio_id',
         'restaurante_id',
+        'gastrobar_id',   // ← nuevo
         'is_destacado',
     ];
 
     public function restaurante()
     {
         return $this->belongsTo(Restaurante::class);
+    }
+
+    public function gastrobar()
+    {
+        return $this->belongsTo(Gastrobar::class);  // ← nuevo
     }
 
     public function departamento()
@@ -74,7 +83,6 @@ class Evento extends Model
         return $this->belongsTo(Municipio::class);
     }
 
-    // ← RELACIÓN AGREGADA
     public function imagenes()
     {
         return $this->hasMany(EventoImagen::class);

@@ -15,10 +15,6 @@ use Illuminate\Support\Facades\Storage;
 
 class RestauranteController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // HELPER: Enviar notificación push a todos los usuarios
-    // ─────────────────────────────────────────────────────────────────────────
-
     private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
     {
         try {
@@ -71,20 +67,23 @@ class RestauranteController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // MÉTODOS PÚBLICOS (Sin autenticación — para visitantes del sitio)
+    // MÉTODOS PÚBLICOS
     // ─────────────────────────────────────────────────────────────────────────
 
     public function publicIndex(Request $request)
     {
-        $departamentoPredefinido = Auth::check()
-            ? Auth::user()->departamento_id
-            : null;
+        $departamentoPredefinido = Auth::check() ? Auth::user()->departamento_id : null;
+        $municipioPredefinido    = Auth::check() ? Auth::user()->municipio_id    : null;
 
         $hayFiltroActivo = $request->hasAny(['departamento', 'municipio', 'especialidad', 'search']);
 
         $deptoFiltro = $hayFiltroActivo
             ? ($request->filled('departamento') ? $request->departamento : null)
             : $departamentoPredefinido;
+
+        $munFiltro = $hayFiltroActivo
+            ? ($request->filled('municipio') ? $request->municipio : null)
+            : $municipioPredefinido;
 
         $query = Restaurante::with(['departamento', 'municipio'])
             ->withCount(['eventos' => function ($q) {
@@ -99,8 +98,8 @@ class RestauranteController extends Controller
             $query->where('departamento_id', $deptoFiltro);
         }
 
-        if ($request->filled('municipio')) {
-            $query->where('municipio_id', $request->municipio);
+        if ($munFiltro) {
+            $query->where('municipio_id', $munFiltro);
         }
 
         if ($request->filled('especialidad')) {
@@ -115,7 +114,8 @@ class RestauranteController extends Controller
             'restaurantes',
             'departamentos',
             'municipios',
-            'departamentoPredefinido'
+            'departamentoPredefinido',
+            'municipioPredefinido'
         ));
     }
 
@@ -127,7 +127,7 @@ class RestauranteController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // MÉTODOS DE ADMINISTRACIÓN (Requieren autenticación)
+    // MÉTODOS DE ADMINISTRACIÓN
     // ─────────────────────────────────────────────────────────────────────────
 
     public function index(Request $request)
@@ -220,7 +220,6 @@ class RestauranteController extends Controller
             'restaurante_id' => $restaurante->id,
         ]);
 
-        // ── Notificar a todos los usuarios de la app ──
         $this->enviarNotificacionFCM(
             '🍽️ Nuevo restaurante',
             "¡{$restaurante->nombre} ya está en GastroNicaragua!"

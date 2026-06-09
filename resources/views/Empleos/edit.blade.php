@@ -53,9 +53,6 @@
             </div>
         @endif
 
-        {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD: Información de la Vacante           --}}
-        {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
 
@@ -63,6 +60,30 @@
                     style="font-size: 0.75rem; letter-spacing: 0.5px;">
                     <i class="bi bi-briefcase text-primary"></i> Información de la Vacante
                 </h6>
+
+                {{-- ── Tipo de establecimiento ── --}}
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-dark small">
+                        Tipo de establecimiento <span class="text-danger">*</span>
+                    </label>
+                    <div class="d-flex gap-2">
+                        @php $tipoActual = old('tipo_establecimiento', $empleo->gastrobar_id ? 'gastrobar' : 'restaurante'); @endphp
+
+                        <input type="radio" class="btn-check" name="tipo_establecimiento"
+                               id="tipo-restaurante" value="restaurante"
+                               {{ $tipoActual === 'restaurante' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-primary rounded-pill px-4 fw-semibold" for="tipo-restaurante">
+                            <i class="bi bi-shop me-1"></i> Restaurante
+                        </label>
+
+                        <input type="radio" class="btn-check" name="tipo_establecimiento"
+                               id="tipo-gastrobar" value="gastrobar"
+                               {{ $tipoActual === 'gastrobar' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-warning rounded-pill px-4 fw-semibold" for="tipo-gastrobar">
+                            <i class="bi bi-cup-straw me-1"></i> Gastrobar
+                        </label>
+                    </div>
+                </div>
 
                 {{-- Departamento --}}
                 <div class="mb-3">
@@ -87,7 +108,7 @@
                     </div>
                 </div>
 
-                {{-- Municipio + Restaurante --}}
+                {{-- Municipio + Establecimiento --}}
                 <div class="row g-3 mb-3">
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">
@@ -110,25 +131,52 @@
                             @enderror
                         </div>
                     </div>
+
                     <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">
-                            Restaurante <span class="text-danger">*</span>
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
-                            <select id="select-restaurante" name="restaurante_id" required
-                                    class="form-select bg-light border-start-0 ps-0 @error('restaurante_id') is-invalid @enderror"
-                                    style="box-shadow:none;">
-                                <option value="">— Selecciona un restaurante —</option>
-                                @foreach($restaurantes as $r)
-                                    <option value="{{ $r->id }}" {{ old('restaurante_id', $empleo->restaurante_id) == $r->id ? 'selected' : '' }}>
-                                        {{ $r->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('restaurante_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        {{-- Campo Restaurante --}}
+                        <div id="campo-restaurante">
+                            <label class="form-label fw-semibold text-dark small">
+                                Restaurante <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                                <select id="select-restaurante" name="restaurante_id"
+                                        class="form-select bg-light border-start-0 ps-0 @error('restaurante_id') is-invalid @enderror"
+                                        style="box-shadow:none;">
+                                    <option value="">— Selecciona un restaurante —</option>
+                                    @foreach($restaurantes as $r)
+                                        <option value="{{ $r->id }}" {{ old('restaurante_id', $empleo->restaurante_id) == $r->id ? 'selected' : '' }}>
+                                            {{ $r->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('restaurante_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Campo Gastrobar --}}
+                        <div id="campo-gastrobar" style="display:none;">
+                            <label class="form-label fw-semibold text-dark small">
+                                Gastrobar <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-cup-straw"></i></span>
+                                <select id="select-gastrobar" name="gastrobar_id"
+                                        class="form-select bg-light border-start-0 ps-0 @error('gastrobar_id') is-invalid @enderror"
+                                        style="box-shadow:none;">
+                                    <option value="">— Selecciona un gastrobar —</option>
+                                    @foreach($gastrobares as $g)
+                                        <option value="{{ $g->id }}" {{ old('gastrobar_id', $empleo->gastrobar_id) == $g->id ? 'selected' : '' }}>
+                                            {{ $g->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('gastrobar_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -293,6 +341,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Valores actuales del empleo para precargar
+    const empleoActual = {
+        tipo:          '{{ $empleo->gastrobar_id ? "gastrobar" : "restaurante" }}',
+        departamento:  '{{ $empleo->departamento_id }}',
+        municipio:     '{{ $empleo->municipio_id }}',
+        restaurante:   '{{ $empleo->restaurante_id }}',
+        gastrobar:     '{{ $empleo->gastrobar_id }}',
+    };
+
     // ── Toggle visual ──
     function actualizarToggle(checkbox) {
         const label    = document.getElementById('toggle-label');
@@ -329,66 +386,87 @@
 
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Inicializar toggle con el estado actual del empleo
         actualizarToggle(document.getElementById('activo'));
 
-        // ── Encadenamiento departamento → municipio → restaurante ──
-        const deptoSelect = document.getElementById('select-departamento');
-        const muniSelect  = document.getElementById('select-municipio');
-        const restSelect  = document.getElementById('select-restaurante');
+        const deptoSelect  = document.getElementById('select-departamento');
+        const muniSelect   = document.getElementById('select-municipio');
+        const restSelect   = document.getElementById('select-restaurante');
+        const gastroSelect = document.getElementById('select-gastrobar');
 
+        // ── Mostrar campo correcto según tipo actual ──
+        function mostrarCampoEstablecimiento(tipo) {
+            const esGastrobar = tipo === 'gastrobar';
+            document.getElementById('campo-restaurante').style.display = esGastrobar ? 'none' : 'block';
+            document.getElementById('campo-gastrobar').style.display   = esGastrobar ? 'block' : 'none';
+        }
+
+        // Inicializar visibilidad
+        mostrarCampoEstablecimiento(empleoActual.tipo);
+
+        // ── Cambio de tipo ──
+        document.querySelectorAll('input[name="tipo_establecimiento"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                mostrarCampoEstablecimiento(this.value);
+            });
+        });
+
+        // ── Departamento → Municipios ──
         deptoSelect.addEventListener('change', function () {
             const deptoId = this.value;
             muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
             restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
+            gastroSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
 
             if (!deptoId) {
                 muniSelect.innerHTML = '<option value="">— Primero elige departamento —</option>';
                 return;
             }
+
             fetch(`/api/departamentos/${deptoId}/municipios`)
                 .then(r => r.json())
                 .then(data => {
                     muniSelect.innerHTML = '<option value="">— Seleccionar municipio —</option>';
-                    if (data.length > 0) {
-                        data.forEach(mun => {
-                            const opt = document.createElement('option');
-                            opt.value = mun.id;
-                            opt.textContent = mun.nombre;
-                            muniSelect.appendChild(opt);
-                        });
-                    } else {
-                        muniSelect.innerHTML = '<option value="">Sin municipios registrados</option>';
-                    }
+                    data.forEach(mun => {
+                        const opt = document.createElement('option');
+                        opt.value = mun.id;
+                        opt.textContent = mun.nombre;
+                        muniSelect.appendChild(opt);
+                    });
                 })
                 .catch(() => { muniSelect.innerHTML = '<option value="">Error de servidor</option>'; });
         });
 
+        // ── Municipio → Restaurantes o Gastrobares ──
         muniSelect.addEventListener('change', function () {
             const muniId = this.value;
-            restSelect.innerHTML = '<option value="">Cargando restaurantes...</option>';
+            const esGastrobar = document.querySelector('input[name="tipo_establecimiento"]:checked').value === 'gastrobar';
 
-            if (!muniId) {
-                restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
-                return;
-            }
-            fetch(`/api/municipios/${muniId}/restaurantes`)
+            if (!muniId) return;
+
+            cargarEstablecimientos(muniId, esGastrobar);
+        });
+
+        function cargarEstablecimientos(muniId, esGastrobar, preselect = null) {
+            const url          = esGastrobar ? `/api/municipios/${muniId}/gastrobares` : `/api/municipios/${muniId}/restaurantes`;
+            const targetSelect = esGastrobar ? gastroSelect : restSelect;
+            const placeholder  = esGastrobar ? 'gastrobar' : 'restaurante';
+
+            targetSelect.innerHTML = `<option value="">Cargando...</option>`;
+
+            fetch(url)
                 .then(r => r.json())
                 .then(data => {
-                    restSelect.innerHTML = '<option value="">— Selecciona un restaurante —</option>';
-                    if (data.length > 0) {
-                        data.forEach(rest => {
-                            const opt = document.createElement('option');
-                            opt.value = rest.id;
-                            opt.textContent = rest.nombre;
-                            restSelect.appendChild(opt);
-                        });
-                    } else {
-                        restSelect.innerHTML = '<option value="">No hay restaurantes en este municipio</option>';
-                    }
+                    targetSelect.innerHTML = `<option value="">— Selecciona un ${placeholder} —</option>`;
+                    data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = item.nombre;
+                        if (preselect && item.id == preselect) opt.selected = true;
+                        targetSelect.appendChild(opt);
+                    });
                 })
-                .catch(() => { restSelect.innerHTML = '<option value="">Error de servidor</option>'; });
-        });
+                .catch(() => { targetSelect.innerHTML = '<option value="">Error de servidor</option>'; });
+        }
 
         // ── Spinner al guardar ──
         document.getElementById('form-empleo').addEventListener('submit', function () {

@@ -53,6 +53,28 @@
                     <i class="bi bi-briefcase text-primary"></i> Información de la Vacante
                 </h6>
 
+                {{-- ── Tipo de establecimiento ── --}}
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-dark small">
+                        Tipo de establecimiento <span class="text-danger">*</span>
+                    </label>
+                    <div class="d-flex gap-2">
+                        <input type="radio" class="btn-check" name="tipo_establecimiento"
+                               id="tipo-restaurante" value="restaurante"
+                               {{ old('tipo_establecimiento', 'restaurante') === 'restaurante' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-primary rounded-pill px-4 fw-semibold" for="tipo-restaurante">
+                            <i class="bi bi-shop me-1"></i> Restaurante
+                        </label>
+
+                        <input type="radio" class="btn-check" name="tipo_establecimiento"
+                               id="tipo-gastrobar" value="gastrobar"
+                               {{ old('tipo_establecimiento') === 'gastrobar' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-warning rounded-pill px-4 fw-semibold" for="tipo-gastrobar">
+                            <i class="bi bi-cup-straw me-1"></i> Gastrobar
+                        </label>
+                    </div>
+                </div>
+
                 {{-- Departamento --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
@@ -76,7 +98,7 @@
                     </div>
                 </div>
 
-                {{-- Municipio + Restaurante --}}
+                {{-- Municipio + Establecimiento --}}
                 <div class="row g-3 mb-3">
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">
@@ -95,19 +117,40 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">
-                            Restaurante <span class="text-danger">*</span>
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
-                            <select id="select-restaurante" name="restaurante_id" required disabled
-                                    class="form-select bg-light border-start-0 ps-0 @error('restaurante_id') is-invalid @enderror"
-                                    style="box-shadow:none;">
-                                <option value="">— Primero elige municipio —</option>
-                            </select>
-                            @error('restaurante_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        {{-- Restaurante --}}
+                        <div id="campo-restaurante">
+                            <label class="form-label fw-semibold text-dark small">
+                                Restaurante <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                                <select id="select-restaurante" name="restaurante_id" disabled
+                                        class="form-select bg-light border-start-0 ps-0 @error('restaurante_id') is-invalid @enderror"
+                                        style="box-shadow:none;">
+                                    <option value="">— Primero elige municipio —</option>
+                                </select>
+                                @error('restaurante_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Gastrobar --}}
+                        <div id="campo-gastrobar" style="display:none;">
+                            <label class="form-label fw-semibold text-dark small">
+                                Gastrobar <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-cup-straw"></i></span>
+                                <select id="select-gastrobar" name="gastrobar_id" disabled
+                                        class="form-select bg-light border-start-0 ps-0 @error('gastrobar_id') is-invalid @enderror"
+                                        style="box-shadow:none;">
+                                    <option value="">— Primero elige municipio —</option>
+                                </select>
+                                @error('gastrobar_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -179,7 +222,7 @@
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-cash-coin"></i></span>
                             <input type="number" name="salario" value="{{ old('salario') }}"
-                                   placeholder="Ej: 8000  (vacío = En entrevista)"
+                                   placeholder="Ej: 8000  (vacío = A convenir)"
                                    min="0" step="0.01"
                                    class="form-control bg-light border-start-0 ps-0 @error('salario') is-invalid @enderror"
                                    style="box-shadow:none;">
@@ -218,7 +261,6 @@
                         <label for="activo" id="toggle-label"
                                class="d-inline-flex align-items-center gap-3 rounded-3 px-3 py-2 w-100"
                                style="cursor:pointer;user-select:none;border:2px solid;transition:all 0.2s;">
-                            {{-- Track --}}
                             <div id="toggle-track"
                                  class="position-relative flex-shrink-0"
                                  style="width:48px;height:26px;border-radius:999px;transition:background 0.2s;">
@@ -226,7 +268,6 @@
                                      class="position-absolute"
                                      style="top:3px;width:20px;height:20px;background:white;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:left 0.2s;"></div>
                             </div>
-                            {{-- Texto --}}
                             <div class="d-flex align-items-center gap-2">
                                 <i id="toggle-icon" class="bi" style="font-size:1rem;"></i>
                                 <div>
@@ -297,22 +338,47 @@
         // Inicializar toggle
         actualizarToggle(document.getElementById('activo'));
 
-        // ── Encadenamiento departamento → municipio → restaurante ──
-        const deptoSelect = document.getElementById('select-departamento');
-        const muniSelect  = document.getElementById('select-municipio');
-        const restSelect  = document.getElementById('select-restaurante');
+        const deptoSelect  = document.getElementById('select-departamento');
+        const muniSelect   = document.getElementById('select-municipio');
+        const restSelect   = document.getElementById('select-restaurante');
+        const gastroSelect = document.getElementById('select-gastrobar');
 
+        // ── Cambio de tipo de establecimiento ──
+        document.querySelectorAll('input[name="tipo_establecimiento"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                const esGastrobar = this.value === 'gastrobar';
+
+                document.getElementById('campo-restaurante').style.display = esGastrobar ? 'none' : 'block';
+                document.getElementById('campo-gastrobar').style.display   = esGastrobar ? 'block' : 'none';
+
+                // Limpiar ambos selects al cambiar tipo
+                restSelect.innerHTML   = '<option value="">— Primero elige municipio —</option>';
+                gastroSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
+                restSelect.disabled   = true;
+                gastroSelect.disabled = true;
+
+                // Volver a cargar si ya hay municipio seleccionado
+                if (muniSelect.value) {
+                    cargarEstablecimientos(muniSelect.value, esGastrobar);
+                }
+            });
+        });
+
+        // ── Departamento → Municipios ──
         deptoSelect.addEventListener('change', function () {
             const deptoId = this.value;
             muniSelect.disabled = true;
             muniSelect.innerHTML = '<option value="">Cargando municipios...</option>';
             restSelect.disabled = true;
             restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
+            gastroSelect.disabled = true;
+            gastroSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
 
             if (!deptoId) {
                 muniSelect.innerHTML = '<option value="">— Primero elige departamento —</option>';
                 return;
             }
+
             fetch(`/api/departamentos/${deptoId}/municipios`)
                 .then(r => r.json())
                 .then(data => {
@@ -332,38 +398,71 @@
                 .catch(() => { muniSelect.innerHTML = '<option value="">Error de servidor</option>'; });
         });
 
+        // ── Municipio → Restaurantes o Gastrobares ──
         muniSelect.addEventListener('change', function () {
             const muniId = this.value;
+            const esGastrobar = document.querySelector('input[name="tipo_establecimiento"]:checked').value === 'gastrobar';
+
             restSelect.disabled = true;
-            restSelect.innerHTML = '<option value="">Cargando establecimientos...</option>';
+            gastroSelect.disabled = true;
+            restSelect.innerHTML   = '<option value="">Cargando...</option>';
+            gastroSelect.innerHTML = '<option value="">Cargando...</option>';
 
             if (!muniId) {
-                restSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
+                restSelect.innerHTML   = '<option value="">— Primero elige municipio —</option>';
+                gastroSelect.innerHTML = '<option value="">— Primero elige municipio —</option>';
                 return;
             }
-            fetch(`/api/municipios/${muniId}/restaurantes`)
+
+            cargarEstablecimientos(muniId, esGastrobar);
+        });
+
+        function cargarEstablecimientos(muniId, esGastrobar) {
+            const url = esGastrobar
+                ? `/api/municipios/${muniId}/gastrobares`
+                : `/api/municipios/${muniId}/restaurantes`;
+
+            const targetSelect = esGastrobar ? gastroSelect : restSelect;
+            const placeholder  = esGastrobar ? 'gastrobares' : 'restaurantes';
+
+            targetSelect.innerHTML = `<option value="">Cargando ${placeholder}...</option>`;
+
+            fetch(url)
                 .then(r => r.json())
                 .then(data => {
-                    restSelect.innerHTML = '<option value="">— Selecciona un restaurante —</option>';
+                    targetSelect.innerHTML = `<option value="">— Selecciona un ${placeholder.slice(0,-1)} —</option>`;
                     if (data.length > 0) {
-                        data.forEach(rest => {
+                        data.forEach(item => {
                             const opt = document.createElement('option');
-                            opt.value = rest.id;
-                            opt.textContent = rest.nombre;
-                            restSelect.appendChild(opt);
+                            opt.value = item.id;
+                            opt.textContent = item.nombre;
+                            targetSelect.appendChild(opt);
                         });
-                        restSelect.disabled = false;
+                        targetSelect.disabled = false;
                     } else {
-                        restSelect.innerHTML = '<option value="">No hay restaurantes en este municipio</option>';
+                        targetSelect.innerHTML = `<option value="">No hay ${placeholder} en este municipio</option>`;
                     }
                 })
-                .catch(() => { restSelect.innerHTML = '<option value="">Error de servidor</option>'; });
-        });
+                .catch(() => { targetSelect.innerHTML = '<option value="">Error de servidor</option>'; });
+        }
 
         // ── Spinner submit ──
         document.getElementById('form-empleo').addEventListener('submit', function () {
+            // Habilitar municipio siempre para que se envíe
             muniSelect.disabled = false;
-            restSelect.disabled = false;
+
+            const esGastrobar = document.querySelector('input[name="tipo_establecimiento"]:checked').value === 'gastrobar';
+
+            // ── FIX: deshabilitar el campo que NO corresponde para que no
+            //         se envíe un ID vacío que pisa al que sí tiene valor ──
+            if (esGastrobar) {
+                restSelect.disabled   = true;   // no enviar restaurante_id
+                gastroSelect.disabled = false;  // enviar gastrobar_id
+            } else {
+                gastroSelect.disabled = true;   // no enviar gastrobar_id
+                restSelect.disabled   = false;  // enviar restaurante_id
+            }
+
             const btn = document.getElementById('btn-submit');
             if (btn) {
                 btn.disabled = true;

@@ -16,6 +16,7 @@ class RegisteredUserController extends Controller
 {
     public function create(): View
     {
+        // Ya no cargamos departamentos ni municipios
         return view('auth.register');
     }
 
@@ -38,7 +39,6 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // No iniciamos sesión automáticamente, mandamos al login con mensaje
         return redirect()->route('login')->with('status', '¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
     }
 }

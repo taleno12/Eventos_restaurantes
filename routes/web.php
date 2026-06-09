@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\EventoImagenController;
 use App\Http\Controllers\RestauranteController;
@@ -15,7 +16,6 @@ use App\Http\Controllers\GastrobarController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\ContratoController;
 
-
 use App\Models\Restaurante;
 use App\Models\Evento;
 use App\Models\Departamento;
@@ -26,13 +26,15 @@ use App\Models\User;
 Route::middleware('auth')->group(function () {
     Route::get('/seleccionar-departamento',  [DepartamentoUsuarioController::class, 'show'])->name('usuario.departamento.show');
     Route::post('/seleccionar-departamento', [DepartamentoUsuarioController::class, 'save'])->name('usuario.departamento.save');
+    Route::get('/seleccionar-municipio',     [DepartamentoUsuarioController::class, 'showMunicipio'])->name('usuario.municipio.show');
+    Route::post('/seleccionar-municipio',    [DepartamentoUsuarioController::class, 'saveMunicipio'])->name('usuario.municipio.save');
     Route::get('/saltar-departamento',       [DepartamentoUsuarioController::class, 'skip'])->name('usuario.departamento.skip');
 });
 
 // ── PÁGINA PRINCIPAL (PÚBLICA) ────────────────────────────────────────────────
 Route::get('/', function () {
     return Auth::check()
-        ? app(App\Http\Controllers\EventoController::class)->welcome(request())
+        ? app(HomeController::class)->index(request())
         : redirect()->route('login');
 })->name('home');
 
@@ -51,16 +53,16 @@ Route::post('/contacto', function (\Illuminate\Http\Request $request) {
 })->name('contacto.store');
 
 // ── RESTAURANTES PÚBLICOS ────────────────────────────────────────────────────
-Route::get('/restaurantes', [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
+Route::get('/restaurantes',           [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
 Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'publicShow'])->name('restaurantes.show');
 
 // ── GASTROBARES PÚBLICOS ─────────────────────────────────────────────────────
-Route::get('/gastrobares', [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
+Route::get('/gastrobares',            [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
 Route::get('/gastrobares/{gastrobar}', [GastrobarController::class, 'publicShow'])->name('gastrobares.show');
 
 // ── EMPLEOS PÚBLICOS ─────────────────────────────────────────────────────────
-Route::get('/empleos', [EmpleoController::class, 'publicIndex'])->name('empleos.index');
-Route::get('/empleos/{empleo}', [EmpleoController::class, 'show'])->name('empleos.show');
+Route::get('/empleos',                [EmpleoController::class, 'publicIndex'])->name('empleos.index');
+Route::get('/empleos/{empleo}',       [EmpleoController::class, 'show'])->name('empleos.show');
 Route::post('/empleos/{empleo}/aplicar', [EmpleoController::class, 'aplicar'])->name('empleos.aplicar');
 
 // ── EVENTOS PÚBLICOS ─────────────────────────────────────────────────────────
@@ -72,7 +74,6 @@ Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
     return App\Models\Restaurante::where('departamento_id', $id)->get(['id', 'nombre']);
 })->name('api.public.departamentos.restaurantes');
 
-// Agrega esta línea nueva, separada:
 Route::middleware('auth')->get('/mi-restaurante/api/municipios/{id}', function ($id) {
     return response()->json(
         App\Models\Municipio::where('departamento_id', $id)->get(['id', 'nombre'])
@@ -164,12 +165,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/{trabajador}/edit',   [TrabajadorController::class, 'edit'])->name('edit');
         Route::put('/{trabajador}',        [TrabajadorController::class, 'update'])->name('update');
         Route::delete('/{trabajador}',     [TrabajadorController::class, 'destroy'])->name('destroy');
-        // AJAX: cargar restaurantes al seleccionar departamentos
         Route::post('/restaurantes-por-departamentos', [TrabajadorController::class, 'getRestaurantesPorDepartamentos'])->name('restaurantes.por.departamentos');
     });
 
     // ── MÓDULOS DE GESTIÓN INTERNA ────────────────────────────────────────────
-    Route::resource('contratos', ContratoController::class); // ← CAMBIADO
+    Route::resource('contratos', ContratoController::class);
     Route::get('/soporte',       function () { return view('soporte.index'); })->name('soporte.index');
     Route::get('/configuracion', function () { return view('configuracion.index'); })->name('configuracion.index');
 
@@ -189,6 +189,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return App\Models\Restaurante::where('municipio_id', $id)->get(['id', 'nombre', 'especialidad']);
     })->name('api.municipios.restaurantes');
 
+    Route::get('/api/municipios/{id}/gastrobares', function ($id) {
+        return App\Models\Gastrobar::where('municipio_id', $id)->get(['id', 'nombre', 'tipo_bar']);
+    })->name('api.municipios.gastrobares');
+
     Route::get('/api/departamentos/{id}/restaurantes', function ($id) {
         return App\Models\Restaurante::where('departamento_id', $id)->get(['id', 'nombre', 'especialidad']);
     })->name('api.departamentos.restaurantes');
@@ -199,19 +203,14 @@ Route::middleware(['auth', 'role:restaurante,admin'])
     ->prefix('mi-restaurante')
     ->name('restaurante.')
     ->group(function () {
-        // Dashboard del restaurante
         Route::get('/dashboard', [\App\Http\Controllers\Restaurante\RestauranteDashboardController::class, 'index'])
             ->name('dashboard');
-        // Perfil
         Route::get('/perfil', [\App\Http\Controllers\Restaurante\RestaurantePerfilController::class, 'edit'])
             ->name('perfil.edit');
         Route::put('/perfil', [\App\Http\Controllers\Restaurante\RestaurantePerfilController::class, 'update'])
             ->name('perfil.update');
-        // Eventos
         Route::resource('eventos', \App\Http\Controllers\Restaurante\RestauranteEventoController::class);
-        // Empleos
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
-        // Galería
         Route::get('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])
             ->name('galeria.index');
         Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])

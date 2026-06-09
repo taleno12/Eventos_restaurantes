@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property int $restaurante_id
+ * @property int|null $restaurante_id
+ * @property int|null $gastrobar_id
  * @property int $departamento_id
  * @property int $municipio_id
  * @property string $titulo
@@ -21,7 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Departamento $departamento
  * @property-read \App\Models\Municipio $municipio
- * @property-read \App\Models\Restaurante $restaurante
+ * @property-read \App\Models\Restaurante|null $restaurante
+ * @property-read \App\Models\Gastrobar|null $gastrobar
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo activas()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newQuery()
@@ -31,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereDepartamentoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereDescripcion($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereFechaLimite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereGastrobarId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereMunicipioId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereRequisitos($value)
@@ -45,8 +48,9 @@ class Empleo extends Model
 {
     protected $fillable = [
         'restaurante_id',
-        'departamento_id', // Añadido para la ubicación de la vacante
-        'municipio_id',    // Añadido para la ubicación de la vacante
+        'gastrobar_id',    // ← nuevo
+        'departamento_id',
+        'municipio_id',
         'titulo',
         'descripcion',
         'requisitos',
@@ -67,13 +71,17 @@ class Empleo extends Model
         return $this->belongsTo(Restaurante::class);
     }
 
-    // NUEVA RELACIÓN: Un empleo pertenece a un departamento específico
+    // ← nueva relación
+    public function gastrobar(): BelongsTo
+    {
+        return $this->belongsTo(Gastrobar::class);
+    }
+
     public function departamento(): BelongsTo
     {
         return $this->belongsTo(Departamento::class);
     }
 
-    // NUEVA RELACIÓN: Un empleo pertenece a un municipio específico
     public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class);

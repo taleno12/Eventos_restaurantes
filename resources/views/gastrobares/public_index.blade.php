@@ -90,6 +90,7 @@
             font-family: 'Instrument Sans', sans-serif; font-weight: 600;
         }
         .nav-select-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+        .nav-select-mobile:disabled { opacity: 0.45; cursor: not-allowed; }
 
         .nav-input-mobile {
             background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
@@ -116,7 +117,6 @@
         }
         .rest-card:hover .card-img img { transform: scale(1.05); }
         .card-img img { transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); }
-        .rest-card:hover .btn-ver { background: #ea580c !important; }
 
         /* ══ FILTROS PILL ══ */
         .filter-pill {
@@ -163,16 +163,11 @@
                 <form action="{{ route('gastrobares.index') }}" method="GET"
                       class="hidden md:flex flex-1 search-box" style="min-width:0;">
 
-                    {{-- ▼ DEPTO PREDEFINIDO: hidden para que se envíe si el usuario no toca el select ▼ --}}
-                    @if(!request('departamento') && $departamentoPredefinido)
-                        <input type="hidden" name="departamento" value="{{ $departamentoPredefinido }}">
-                    @endif
-
+                    {{-- 1. DESTINO --}}
                     <div class="search-segment">
                         <label for="nav-departamento">
                             <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:8px;"></i> Destino
                         </label>
-                        {{-- ▼ DEPTO PREDEFINIDO: usa request o predefinido para preseleccionar ▼ --}}
                         <select id="nav-departamento" name="departamento">
                             <option value="">Todos</option>
                             @foreach($departamentos as $depto)
@@ -182,6 +177,27 @@
                             @endforeach
                         </select>
                     </div>
+
+                    {{-- 2. MUNICIPIO --}}
+                    <div class="search-segment">
+                        <label for="nav-municipio">
+                            <i class="fas fa-city" style="color:#ea580c;font-size:8px;"></i> Municipio
+                        </label>
+                        <select id="nav-municipio" name="municipio"
+                                {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
+                            <option value="">{{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}</option>
+                            @foreach($municipios as $mun)
+                                <option value="{{ $mun->id }}"
+                                        data-departamento="{{ $mun->departamento_id }}"
+                                        {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
+                                        style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
+                                    {{ $mun->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- 3. TIPO DE BAR --}}
                     <div class="search-segment">
                         <label for="nav-tipo_bar">
                             <i class="fas fa-cocktail" style="color:#ea580c;font-size:8px;"></i> Tipo de Bar
@@ -193,6 +209,8 @@
                             @endforeach
                         </select>
                     </div>
+
+                    {{-- 4. AMBIENTE --}}
                     <div class="search-segment">
                         <label for="nav-ambiente">
                             <i class="fas fa-chair" style="color:#ea580c;font-size:8px;"></i> Ambiente
@@ -204,7 +222,8 @@
                             @endforeach
                         </select>
                     </div>
-                    {{-- FIX: Select dinámico de Local en lugar de input texto --}}
+
+                    {{-- 5. LOCAL --}}
                     <div class="search-segment">
                         <label for="nav-search">
                             <i class="fas fa-store" style="color:#ea580c;font-size:8px;"></i> Local
@@ -213,6 +232,7 @@
                             <option value="">Todos los locales</option>
                         </select>
                     </div>
+
                     <button type="submit" class="search-btn">
                         <i class="fas fa-search" style="font-size:11px;"></i>
                         <span>Buscar</span>
@@ -270,16 +290,11 @@
         <div id="mobileSearchPanel">
             <form action="{{ route('gastrobares.index') }}" method="GET" class="flex flex-col gap-3">
 
-                {{-- ▼ DEPTO PREDEFINIDO: hidden móvil ▼ --}}
-                @if(!request('departamento') && $departamentoPredefinido)
-                    <input type="hidden" name="departamento" value="{{ $departamentoPredefinido }}">
-                @endif
-
+                {{-- 1. DESTINO --}}
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
                     </label>
-                    {{-- ▼ DEPTO PREDEFINIDO: preselecciona en móvil ▼ --}}
                     <select id="mob-departamento" name="departamento" class="nav-select-mobile">
                         <option value="">Todos los destinos</option>
                         @foreach($departamentos as $depto)
@@ -287,6 +302,27 @@
                         @endforeach
                     </select>
                 </div>
+
+                {{-- 2. MUNICIPIO --}}
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                        <i class="fas fa-city text-orange-500"></i> Municipio
+                    </label>
+                    <select id="mob-municipio" name="municipio" class="nav-select-mobile"
+                            {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
+                        <option value="">{{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}</option>
+                        @foreach($municipios as $mun)
+                            <option value="{{ $mun->id }}"
+                                    data-departamento="{{ $mun->departamento_id }}"
+                                    {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
+                                    style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
+                                {{ $mun->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- 3. TIPO DE BAR --}}
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-cocktail text-orange-500"></i> Tipo de Bar
@@ -298,6 +334,8 @@
                         @endforeach
                     </select>
                 </div>
+
+                {{-- 4. AMBIENTE --}}
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-chair text-orange-500"></i> Ambiente
@@ -309,7 +347,8 @@
                         @endforeach
                     </select>
                 </div>
-                {{-- FIX: Select dinámico de Local en lugar de input texto --}}
+
+                {{-- 5. LOCAL --}}
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                         <i class="fas fa-store text-orange-500"></i> Local
@@ -318,6 +357,7 @@
                         <option value="">Todos los locales</option>
                     </select>
                 </div>
+
                 <button type="submit"
                         class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
                     <i class="fas fa-search text-xs"></i> Buscar Gastrobares
@@ -330,38 +370,26 @@
     <section class="pt-20">
         <div class="relative overflow-hidden" style="min-height:520px;">
 
-            {{-- Imagen de fondo --}}
             <div class="absolute inset-0"
                  style="background-image:url('{{ asset('img/coctel.jpeg') }}');
                         background-size:cover;background-position:center;
                         transform:scale(1.04);transition:transform 8s ease;">
             </div>
 
-            {{-- Overlay multicapa: oscuro + degradado naranja --}}
             <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(12,10,9,0.88) 0%, rgba(12,10,9,0.72) 50%, rgba(180,60,0,0.45) 100%);"></div>
-
-            {{-- Patrón de puntos sutil --}}
             <div class="absolute inset-0 opacity-[0.04]"
                  style="background-image:radial-gradient(circle, #fff 1px, transparent 1px);background-size:28px 28px;"></div>
-
-            {{-- Brillo naranja decorativo --}}
             <div class="absolute top-0 right-0 w-[600px] h-[600px] opacity-20 pointer-events-none"
                  style="background:radial-gradient(circle at 70% 30%, #ea580c 0%, transparent 65%);"></div>
             <div class="absolute bottom-0 left-0 w-[400px] h-[400px] opacity-10 pointer-events-none"
                  style="background:radial-gradient(circle at 20% 80%, #f97316 0%, transparent 60%);"></div>
 
-            {{-- Contenido --}}
             <div class="relative max-w-7xl mx-auto px-4 py-24 sm:py-28 flex flex-col md:flex-row items-center justify-between gap-12">
 
-                {{-- Texto principal --}}
                 <div class="flex-1 max-w-2xl" data-aos="fade-right">
-
-                    {{-- Badge --}}
                     <div class="inline-flex items-center gap-2 mb-6"
-                         style="background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.4);
-                                padding:6px 16px;border-radius:999px;">
-                        <span style="width:7px;height:7px;background:#ea580c;border-radius:50%;display:inline-block;
-                                     box-shadow:0 0 8px rgba(234,88,12,0.8);animation:pulse 2s infinite;"></span>
+                         style="background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.4);padding:6px 16px;border-radius:999px;">
+                        <span style="width:7px;height:7px;background:#ea580c;border-radius:50%;display:inline-block;box-shadow:0 0 8px rgba(234,88,12,0.8);animation:pulse 2s infinite;"></span>
                         <span style="color:#fb923c;font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">
                             <i class="fas fa-map-marker-alt mr-1" style="font-size:9px;"></i> Toda Nicaragua
                         </span>
@@ -377,68 +405,34 @@
                         Desde cocktail bars íntimos hasta rooftops con vistas — descubre los mejores espacios para tomar y disfrutar en Nicaragua.
                     </p>
 
-                    {{-- Pills de stats --}}
                     <div class="flex flex-wrap gap-3 mb-8">
-                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
-                                     color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;
-                                     padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;
-                                     backdrop-filter:blur(8px);">
+                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;backdrop-filter:blur(8px);">
                             <i class="fas fa-check-circle" style="color:#22c55e;font-size:11px;"></i> Información verificada
                         </span>
-                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
-                                     color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;
-                                     padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;
-                                     backdrop-filter:blur(8px);">
+                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;backdrop-filter:blur(8px);">
                             <i class="fas fa-clock" style="color:#f59e0b;font-size:11px;"></i> Horarios actualizados
                         </span>
-                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
-                                     color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;
-                                     padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;
-                                     backdrop-filter:blur(8px);">
+                        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;backdrop-filter:blur(8px);">
                             <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:11px;"></i> Ubicación en mapa
                         </span>
                     </div>
 
-                    {{-- Línea decorativa --}}
                     <div style="display:flex;align-items:center;gap:12px;">
                         <div style="height:1px;width:48px;background:linear-gradient(to right,#ea580c,transparent);"></div>
-                        <span style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);">
-                            Gastro Nicaragua
-                        </span>
+                        <span style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Gastro Nicaragua</span>
                     </div>
                 </div>
 
-                {{-- Panel derecho: tarjeta premium flotante --}}
                 <div class="shrink-0 hidden md:flex flex-col items-center gap-5" data-aos="fade-left">
-
-                    {{-- Tarjeta glassmorphism --}}
-                    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);
-                                backdrop-filter:blur(20px);border-radius:28px;padding:36px 40px;
-                                display:flex;flex-direction:column;align-items:center;gap:16px;
-                                box-shadow:0 24px 64px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1);
-                                min-width:220px;">
-
-                        {{-- Ícono principal --}}
-                        <div style="width:80px;height:80px;background:linear-gradient(135deg,#ea580c,#f97316);
-                                    border-radius:24px;display:flex;align-items:center;justify-content:center;
-                                    box-shadow:0 12px 32px rgba(234,88,12,0.5);
-                                    animation:heroFloat 4s ease-in-out infinite;">
+                    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);backdrop-filter:blur(20px);border-radius:28px;padding:36px 40px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 24px 64px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1);min-width:220px;">
+                        <div style="width:80px;height:80px;background:linear-gradient(135deg,#ea580c,#f97316);border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(234,88,12,0.5);animation:heroFloat 4s ease-in-out infinite;">
                             <i class="fas fa-cocktail" style="color:white;font-size:32px;"></i>
                         </div>
-
                         <div style="text-align:center;">
-                            <p style="color:white;font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;">
-                                {{ $gastrobares->total() }}
-                            </p>
-                            <p style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;
-                                      text-transform:uppercase;letter-spacing:0.15em;">
-                                Gastrobares
-                            </p>
+                            <p style="color:white;font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;">{{ $gastrobares->total() }}</p>
+                            <p style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;">Gastrobares</p>
                         </div>
-
                         <div style="width:100%;height:1px;background:rgba(255,255,255,0.08);"></div>
-
-                        {{-- Mini stats --}}
                         <div style="display:flex;gap:20px;">
                             <div style="text-align:center;">
                                 <p style="color:#fb923c;font-size:18px;font-weight:900;line-height:1;">17</p>
@@ -451,16 +445,10 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- Texto debajo de la tarjeta --}}
-                    <p style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
-                        Vida nocturna auténtica 🇳🇮
-                    </p>
+                    <p style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Vida nocturna auténtica 🇳🇮</p>
                 </div>
-
             </div>
 
-            {{-- Borde inferior degradado --}}
             <div class="absolute bottom-0 left-0 right-0" style="height:80px;background:linear-gradient(to bottom,transparent,#fafaf9);"></div>
         </div>
     </section>
@@ -477,14 +465,21 @@
 
         {{-- Filtros activos + contador --}}
         <div class="mb-8 flex flex-wrap items-center gap-2">
-            @if(request('departamento') || request('tipo_bar') || request('ambiente') || request('search'))
+            @if(request('departamento') || request('municipio') || request('tipo_bar') || request('ambiente') || request('search'))
                 <span class="text-stone-500 font-medium text-sm pl-1">Filtros:</span>
 
                 @if(request('departamento'))
                     <span class="filter-pill">
                         <i class="fas fa-map-marker-alt" style="font-size:9px;opacity:0.7;"></i>
                         {{ $departamentos->find(request('departamento'))?->nombre }}
-                        <a href="{{ request()->fullUrlWithoutQuery(['departamento']) }}">×</a>
+                        <a href="{{ request()->fullUrlWithoutQuery(['departamento', 'municipio']) }}">×</a>
+                    </span>
+                @endif
+                @if(request('municipio'))
+                    <span class="filter-pill">
+                        <i class="fas fa-city" style="font-size:9px;opacity:0.7;"></i>
+                        {{ $municipios->find(request('municipio'))?->nombre }}
+                        <a href="{{ request()->fullUrlWithoutQuery(['municipio']) }}">×</a>
                     </span>
                 @endif
                 @if(request('tipo_bar'))
@@ -529,7 +524,6 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             @endif
 
-            {{-- FIX: onclick en article para hacer toda la card clickeable --}}
             <article class="rest-card" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}"
                      onclick="window.location='{{ route('gastrobares.show', $gastrobar->id) }}'">
 
@@ -543,7 +537,6 @@
                         <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;">🍹</div>
                     @endif
 
-                    {{-- Badge ubicación --}}
                     @if($gastrobar->departamento)
                         <div style="position:absolute;top:14px;left:14px;">
                             <span style="background:rgba(28,25,23,0.75);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:500;padding:5px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
@@ -556,7 +549,6 @@
                         </div>
                     @endif
 
-                    {{-- Badge tipo de bar --}}
                     @if($gastrobar->tipo_bar)
                         <div style="position:absolute;top:14px;right:14px;">
                             <span style="background:rgba(255,255,255,0.9);color:#c2410c;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid rgba(234,88,12,0.1);">
@@ -579,7 +571,6 @@
                         @endif
                     </div>
 
-                    {{-- Info --}}
                     <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#78716c;border-top:1px solid #f5f5f4;padding-top:12px;">
                         @if($gastrobar->direccion)
                             <span style="display:flex;align-items:flex-start;gap:8px;">
@@ -608,8 +599,6 @@
                         @endif
                     </div>
 
-                    {{-- Redes sociales --}}
-                    {{-- FIX: onclick stopPropagation para que los links de redes no disparen el redirect de la card --}}
                     @if($gastrobar->whatsapp || $gastrobar->instagram || $gastrobar->facebook || $gastrobar->tiktok)
                         <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation();">
                             @if($gastrobar->whatsapp)
@@ -639,7 +628,6 @@
                         </div>
                     @endif
 
-                    {{-- Footer card --}}
                     <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f5f5f4;padding-top:12px;">
                         @if($gastrobar->ambiente)
                             <span style="font-size:11px;font-weight:600;color:#a8a29e;">
@@ -649,8 +637,6 @@
                         @else
                             <span></span>
                         @endif
-                        {{-- FIX: onclick stopPropagation en el botón "Ver perfil" para evitar doble navegación --}}
-
                     </div>
                 </div>
             </article>
@@ -660,8 +646,7 @@
             @endif
 
         @empty
-            <div style="padding:80px 0;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:380px;margin:0 auto;"
-                 data-aos="fade-up">
+            <div style="padding:80px 0;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:380px;margin:0 auto;" data-aos="fade-up">
                 <div style="width:72px;height:72px;background:#fafaf9;border:1px solid #e7e5e4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;position:relative;">
                     <i class="fas fa-cocktail" style="color:#a8a29e;"></i>
                     <div style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;background:#ea580c;border-radius:50%;display:flex;align-items:center;justify-content:center;">
@@ -672,7 +657,7 @@
                 <p style="font-size:14px;color:#78716c;line-height:1.6;margin-bottom:24px;">
                     No encontramos gastrobares con esos filtros.
                 </p>
-                @if(request('departamento') || request('tipo_bar') || request('ambiente') || request('search'))
+                @if(request('departamento') || request('municipio') || request('tipo_bar') || request('ambiente') || request('search'))
                     <a href="{{ route('gastrobares.index') }}"
                        style="background:#1c1917;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:10px 22px;border-radius:999px;text-decoration:none;display:flex;align-items:center;gap:8px;">
                         <i class="fas fa-undo" style="font-size:10px;"></i> Limpiar filtros
@@ -784,31 +769,49 @@
 
         const todosLosGastrobares = window.__GASTROBARES__ || [];
 
-        // ── Filtro dinámico: depto → tipo_bar → ambiente → local ──
-        function configurarFiltros(deptoId, tipoId, ambienteId, searchId) {
+        function configurarFiltros(deptoId, munId, tipoId, ambienteId, searchId) {
             const deptoSel  = document.getElementById(deptoId);
+            const munSel    = document.getElementById(munId);
             const tipoSel   = document.getElementById(tipoId);
             const ambSel    = document.getElementById(ambienteId);
             const searchSel = document.getElementById(searchId);
-            if (!searchSel) return;
+            if (!deptoSel || !munSel || !searchSel) return;
 
+            const munOpts = Array.from(munSel.querySelectorAll('option[data-departamento]'));
             const currentSearch = '{{ request("search") }}';
 
+            function actualizarMunicipios() {
+                const depto = deptoSel.value;
+                munOpts.forEach(opt => {
+                    opt.style.display = (!depto || opt.dataset.departamento === depto) ? '' : 'none';
+                    if (opt.style.display === 'none') opt.selected = false;
+                });
+                const ph = munSel.querySelector('option:not([data-departamento])');
+                if (depto) {
+                    munSel.disabled = false;
+                    if (ph) ph.textContent = 'Todos';
+                } else {
+                    munSel.disabled = true;
+                    munSel.value = '';
+                    if (ph) ph.textContent = 'Elige destino...';
+                }
+            }
+
             function actualizarLocales() {
-                const depto = deptoSel  ? deptoSel.value  : '';
-                const tipo  = tipoSel   ? tipoSel.value   : '';
-                const amb   = ambSel    ? ambSel.value    : '';
+                const depto = deptoSel.value;
+                const mun   = munSel.value;
+                const tipo  = tipoSel  ? tipoSel.value  : '';
+                const amb   = ambSel   ? ambSel.value   : '';
 
                 searchSel.innerHTML = '';
-
                 const ph = document.createElement('option');
                 ph.value = '';
                 ph.textContent = 'Todos los locales';
                 searchSel.appendChild(ph);
 
                 let filtrados = todosLosGastrobares;
-
                 if (depto) filtrados = filtrados.filter(g => String(g.departamento_id) === String(depto));
+                if (mun)   filtrados = filtrados.filter(g => String(g.municipio_id) === String(mun));
                 if (tipo)  filtrados = filtrados.filter(g => g.tipo_bar === tipo);
                 if (amb)   filtrados = filtrados.filter(g => g.ambiente === amb);
 
@@ -821,18 +824,19 @@
                 });
             }
 
-            if (deptoSel) deptoSel.addEventListener('change', actualizarLocales);
-            if (tipoSel)  tipoSel.addEventListener('change',  actualizarLocales);
-            if (ambSel)   ambSel.addEventListener('change',   actualizarLocales);
+            deptoSel.addEventListener('change', () => { actualizarMunicipios(); actualizarLocales(); });
+            munSel.addEventListener('change', actualizarLocales);
+            if (tipoSel) tipoSel.addEventListener('change', actualizarLocales);
+            if (ambSel)  ambSel.addEventListener('change',  actualizarLocales);
 
-            // Disparar al cargar para preseleccionar si hay filtros activos
+            actualizarMunicipios();
             actualizarLocales();
         }
 
         // Desktop
-        configurarFiltros('nav-departamento', 'nav-tipo_bar', 'nav-ambiente', 'nav-search');
+        configurarFiltros('nav-departamento', 'nav-municipio', 'nav-tipo_bar', 'nav-ambiente', 'nav-search');
         // Móvil
-        configurarFiltros('mob-departamento', 'mob-tipo_bar', 'mob-ambiente', 'mob-search');
+        configurarFiltros('mob-departamento', 'mob-municipio', 'mob-tipo_bar', 'mob-ambiente', 'mob-search');
 
         // ── Toggle búsqueda móvil ──
         const mobileSearchToggle = document.getElementById('mobileSearchToggle');

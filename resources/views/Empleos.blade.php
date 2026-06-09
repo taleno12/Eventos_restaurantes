@@ -59,6 +59,7 @@
             }
             .search-segment select option { font-weight: 500; }
             .search-segment input::placeholder { color: #c4bfbb; font-weight: 500; }
+            .search-segment select:disabled { opacity: 0.45; cursor: not-allowed; }
 
             .search-btn {
                 display: flex; align-items: center; gap: 7px;
@@ -86,6 +87,7 @@
                 font-family: 'Instrument Sans', sans-serif; font-weight: 600;
             }
             .nav-select-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+            .nav-select-mobile:disabled { opacity: 0.45; cursor: not-allowed; }
 
             .nav-input-mobile {
                 background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
@@ -96,7 +98,7 @@
             .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
             .nav-input-mobile::placeholder { color: #c4bfbb; }
 
-            /* ══ HERO NUEVO ══ */
+            /* ══ HERO ══ */
             .hero-section {
                 position: relative;
                 overflow: hidden;
@@ -129,7 +131,6 @@
             }
             .hero-left { max-width: 620px; }
 
-            /* Badge animado */
             .hero-badge {
                 display: inline-flex; align-items: center; gap: 8px;
                 background: rgba(234,88,12,0.18); border: 1px solid rgba(234,88,12,0.4);
@@ -160,7 +161,6 @@
                 margin: 0 0 32px; max-width: 500px;
             }
 
-            /* Pills de confianza */
             .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0; }
             .hero-pill {
                 display: inline-flex; align-items: center; gap: 7px;
@@ -170,7 +170,6 @@
             }
             .hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-            /* Tarjeta flotante de stats */
             .hero-stats-card {
                 background: rgba(255,255,255,0.07);
                 backdrop-filter: blur(20px);
@@ -215,7 +214,6 @@
                 margin-top: 4px; display: block;
             }
 
-            /* Tag marca */
             .hero-brand-tag {
                 position: absolute; bottom: 28px; right: 2rem;
                 font-size: 10px; font-weight: 800; letter-spacing: 0.22em;
@@ -245,6 +243,7 @@
                 padding: 28px; display: flex; flex-direction: column; gap: 20px;
                 transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
                 position: relative; overflow: hidden;
+                cursor: pointer;
             }
             .job-card::before {
                 content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -257,7 +256,6 @@
             .job-card:hover .card-icon { background: #fff7ed; border-color: #fed7aa; }
             .job-card:hover .card-icon i { color: #ea580c; }
             .job-card:hover .card-title { color: #ea580c; }
-            .job-card:hover .btn-oferta { background: #ea580c; box-shadow: 0 6px 20px rgba(234,88,12,0.3); }
 
             .card-icon {
                 width: 48px; height: 48px; background: #f5f5f4;
@@ -269,11 +267,19 @@
                 font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800;
                 color: #1c1917; line-height: 1.25; transition: color 0.2s; margin: 0;
             }
-            .btn-oferta {
-                display: inline-flex; align-items: center; gap: 6px;
-                background: #0c0a09; color: white; text-decoration: none;
-                font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 999px;
-                transition: all 0.25s ease;
+
+            /* ── BADGE TIPO ESTABLECIMIENTO ── */
+            .badge-restaurante {
+                display: inline-flex; align-items: center; gap: 5px;
+                font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+                text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+                background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+            }
+            .badge-gastrobar {
+                display: inline-flex; align-items: center; gap: 5px;
+                font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+                text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+                background: #fff8e1; color: #b45309; border: 1px solid #fde68a;
             }
 
             /* ── PAGINACIÓN ── */
@@ -340,19 +346,14 @@
                     {{-- Search bar desktop --}}
                     <form action="{{ route('empleos.index') }}" method="GET"
                           class="hidden md:flex flex-1 max-w-2xl search-box">
-                        <div class="search-segment" style="min-width:130px;">
-                            <label for="search-puesto">
-                                <i class="fas fa-search" style="color:#ea580c;"></i> Puesto
-                            </label>
-                            <input type="text" id="search-puesto" name="search"
-                                   value="{{ request('search') }}" placeholder="Mesero, cocinero...">
-                        </div>
-                        <div class="search-segment" style="min-width:130px;">
+
+                        {{-- 1. DESTINO --}}
+                        <div class="search-segment" style="min-width:120px;">
                             <label for="search-departamento">
                                 <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i> Destino
                             </label>
                             <select id="search-departamento" name="departamento">
-                                <option value="">Todos los destinos</option>
+                                <option value="">Todos</option>
                                 @foreach($departamentos as $depto)
                                     <option value="{{ $depto->id }}"
                                         {{ (request('departamento') ?? $departamentoPredefinido) == $depto->id ? 'selected' : '' }}>
@@ -361,6 +362,37 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        {{-- 2. MUNICIPIO --}}
+                        <div class="search-segment" style="min-width:120px;">
+                            <label for="search-municipio">
+                                <i class="fas fa-city" style="color:#ea580c;"></i> Municipio
+                            </label>
+                            <select id="search-municipio" name="municipio"
+                                    {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
+                                <option value="">
+                                    {{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}
+                                </option>
+                                @foreach($municipios as $mun)
+                                    <option value="{{ $mun->id }}"
+                                            data-departamento="{{ $mun->departamento_id }}"
+                                            {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
+                                            style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
+                                        {{ $mun->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- 3. PUESTO --}}
+                        <div class="search-segment" style="min-width:120px;">
+                            <label for="search-puesto">
+                                <i class="fas fa-search" style="color:#ea580c;"></i> Puesto
+                            </label>
+                            <input type="text" id="search-puesto" name="search"
+                                   value="{{ request('search') }}" placeholder="Mesero, cocinero...">
+                        </div>
+
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search" style="font-size:12px;"></i>
                             <span>Buscar</span>
@@ -370,27 +402,23 @@
                     {{-- Acciones derecha --}}
                     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
 
-                        {{-- Lupa móvil --}}
                         <button id="mobileSearchToggle"
                                 class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
                         </button>
 
-                        {{-- Inicio --}}
                         <a href="{{ route('home') }}"
                            class="flex items-center gap-1.5 border border-stone-200 text-stone-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
                             <i class="fas fa-home text-xs"></i>
                             <span class="hidden lg:inline">Inicio</span>
                         </a>
 
-                        {{-- Empleos (activo) --}}
                         <a href="{{ route('empleos.index') }}"
                            class="flex items-center gap-1.5 border border-orange-600 text-white bg-orange-600 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold shadow-sm no-underline justify-center">
                             <i class="fas fa-briefcase text-xs"></i>
                             <span class="hidden lg:inline">Empleos</span>
                         </a>
 
-                        {{-- Contacto --}}
                         <a href="{{ route('contacto') }}"
                            class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-stone-100 sm:bg-transparent text-stone-600 hover:text-orange-600 transition-colors no-underline"
                            title="Contacto">
@@ -425,18 +453,12 @@
             {{-- Panel búsqueda móvil --}}
             <div id="mobileSearchPanel">
                 <form action="{{ route('empleos.index') }}" method="GET" class="flex flex-col gap-3">
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-search text-orange-500"></i> Puesto
-                        </label>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                               class="nav-input-mobile" placeholder="Mesero, cocinero...">
-                    </div>
+
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
                         </label>
-                        <select name="departamento" class="nav-select-mobile">
+                        <select id="mob-departamento" name="departamento" class="nav-select-mobile">
                             <option value="">Todos los destinos</option>
                             @foreach($departamentos as $depto)
                                 <option value="{{ $depto->id }}"
@@ -446,6 +468,35 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                            <i class="fas fa-city text-orange-500"></i> Municipio
+                        </label>
+                        <select id="mob-municipio" name="municipio" class="nav-select-mobile"
+                                {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
+                            <option value="">
+                                {{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}
+                            </option>
+                            @foreach($municipios as $mun)
+                                <option value="{{ $mun->id }}"
+                                        data-departamento="{{ $mun->departamento_id }}"
+                                        {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
+                                        style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
+                                    {{ $mun->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
+                            <i class="fas fa-search text-orange-500"></i> Puesto
+                        </label>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               class="nav-input-mobile" placeholder="Mesero, cocinero...">
+                    </div>
+
                     <button type="submit"
                             class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
                         <i class="fas fa-search text-xs"></i> Buscar empleos
@@ -454,34 +505,25 @@
             </div>
         </nav>
 
-        {{-- ══ HERO CON FOTO DE FONDO ══ --}}
+        {{-- ══ HERO ══ --}}
         <section class="hero-section" style="padding-top: 80px; padding-bottom: 80px;">
-
-            {{-- Foto de fondo --}}
             <div class="hero-bg-img" style="background-image: url('{{ asset('img/hero-empleos.jpg') }}');"></div>
-            {{-- Overlay oscuro --}}
             <div class="hero-bg-overlay"></div>
 
             <div class="hero-inner">
-
-                {{-- Columna izquierda: texto --}}
                 <div class="hero-left" data-aos="fade-right">
-
                     <div class="hero-badge">
                         <span class="hero-badge-dot"></span>
                         Oportunidades Laborales
                     </div>
-
                     <h1 class="premium-title hero-title">
                         Nuestros<br>
                         <span>Empleos</span>
                     </h1>
-
                     <p class="hero-sub">
                         Desde el corazón de la cocina hasta la excelencia en el servicio —
                         encuentra tu lugar en la gastronomía nicaragüense.
                     </p>
-
                     <div class="hero-pills">
                         <span class="hero-pill">
                             <span class="hero-pill-dot" style="background:#22c55e;"></span>
@@ -498,7 +540,6 @@
                     </div>
                 </div>
 
-                {{-- Columna derecha: tarjeta de stats --}}
                 <div class="hero-stats-card" data-aos="fade-left">
                     <div class="hero-stats-icon">
                         <i class="fas fa-briefcase"></i>
@@ -517,37 +558,39 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            {{-- Tag de marca --}}
             <span class="hero-brand-tag">Gastro Nicaragua</span>
-
-            {{-- Borde inferior degradado igual que en restaurantes --}}
             <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#faf9f6);pointer-events:none;z-index:20;"></div>
-
         </section>
 
         {{-- ── MAIN ── --}}
         <main class="main-wrap">
 
             {{-- Filtros activos --}}
-            @if(request('search') || request('departamento'))
+            @if(request('search') || request('departamento') || request('municipio'))
                 <div style="margin-bottom:32px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 20px;background:white;border:1px solid #e7e5e4;border-radius:16px;">
                     <span style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#a8a29e;">Filtros:</span>
 
+                    @if(request('departamento'))
+                        <span class="filter-pill">
+                            <i class="fas fa-map-marker-alt" style="font-size:9px;opacity:0.7;"></i>
+                            {{ $departamentos->find(request('departamento'))?->nombre }}
+                            <a href="{{ request()->fullUrlWithoutQuery(['departamento','municipio']) }}">×</a>
+                        </span>
+                    @endif
+                    @if(request('municipio'))
+                        <span class="filter-pill">
+                            <i class="fas fa-city" style="font-size:9px;opacity:0.7;"></i>
+                            {{ $municipios->find(request('municipio'))?->nombre }}
+                            <a href="{{ request()->fullUrlWithoutQuery(['municipio']) }}">×</a>
+                        </span>
+                    @endif
                     @if(request('search'))
                         <span class="filter-pill">
                             <i class="fas fa-search" style="font-size:9px;opacity:0.7;"></i>
                             "{{ request('search') }}"
                             <a href="{{ request()->fullUrlWithoutQuery(['search']) }}">×</a>
-                        </span>
-                    @endif
-                    @if(request('departamento'))
-                        <span class="filter-pill">
-                            <i class="fas fa-map-marker-alt" style="font-size:9px;opacity:0.7;"></i>
-                            {{ $departamentos->find(request('departamento'))?->nombre }}
-                            <a href="{{ request()->fullUrlWithoutQuery(['departamento']) }}">×</a>
                         </span>
                     @endif
 
@@ -581,27 +624,49 @@
                     <div class="jobs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;">
                 @endif
 
-                <article class="job-card" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}">
+                <article class="job-card"
+                         data-aos="fade-up"
+                         data-aos-delay="{{ ($loop->index % 3) * 80 }}"
+                         onclick="window.location='{{ route('empleos.show', $empleo->id) }}'">
 
                     {{-- Encabezado --}}
                     <div style="display:flex;align-items:flex-start;gap:14px;">
-                        <div class="card-icon">
-                            <i class="fas fa-store" style="color:#a8a29e;font-size:18px;"></i>
+
+                        <div class="card-icon" style="{{ $empleo->gastrobar_id ? 'background:#fff8e1;border-color:#fde68a;' : '' }}">
+                            @if($empleo->gastrobar_id)
+                                <i class="fas fa-glass-martini-alt" style="color:#b45309;font-size:18px;"></i>
+                            @else
+                                <i class="fas fa-store" style="color:#a8a29e;font-size:18px;"></i>
+                            @endif
                         </div>
+
                         <div style="flex:1;min-width:0;">
-                            <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#ea580c;display:block;margin-bottom:5px;">
-                                {{ $empleo->restaurante?->nombre }}
-                            </span>
+                            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px;">
+                                <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#ea580c;">
+                                    @if($empleo->gastrobar_id)
+                                        {{ $empleo->gastrobar?->nombre }}
+                                    @else
+                                        {{ $empleo->restaurante?->nombre }}
+                                    @endif
+                                </span>
+                                @if($empleo->gastrobar_id)
+                                    <span class="badge-gastrobar">
+                                        <i class="fas fa-glass-martini-alt" style="font-size:9px;"></i> Gastrobar
+                                    </span>
+                                @else
+                                    <span class="badge-restaurante">
+                                        <i class="fas fa-store" style="font-size:9px;"></i> Restaurante
+                                    </span>
+                                @endif
+                            </div>
                             <h3 class="card-title">{{ $empleo->titulo }}</h3>
                         </div>
                     </div>
 
-                    {{-- Descripción --}}
                     <p style="color:#78716c;font-size:13px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;">
                         {{ $empleo->descripcion }}
                     </p>
 
-                    {{-- Badges --}}
                     <div style="display:flex;flex-wrap:wrap;gap:8px;">
                         @if($empleo->tipo_contrato)
                             <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:#f5f5f4;color:#57534e;">
@@ -630,17 +695,13 @@
                         @endif
                     </div>
 
-                    {{-- Footer card --}}
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:18px;border-top:1px solid #f5f5f4;margin-top:auto;">
+                    <div style="padding-top:18px;border-top:1px solid #f5f5f4;margin-top:auto;">
                         <div style="display:flex;align-items:center;gap:6px;color:#a8a29e;font-size:11px;font-weight:500;">
                             <i class="far fa-calendar-alt"></i>
                             {{ $empleo->created_at->diffForHumans() }}
                         </div>
-                        <a href="{{ route('empleos.show', $empleo->id) }}" class="btn-oferta">
-                            Ver oferta
-                            <i class="fas fa-arrow-right" style="font-size:10px;"></i>
-                        </a>
                     </div>
+
                 </article>
 
                 @if($loop->last)
@@ -656,13 +717,13 @@
                         No hay ofertas disponibles
                     </h3>
                     <p style="color:#78716c;font-size:14px;line-height:1.7;margin:0 0 24px;">
-                        @if(request('search') || request('departamento'))
+                        @if(request('search') || request('departamento') || request('municipio'))
                             No encontramos vacantes que coincidan con tus filtros. Intenta con otros términos.
                         @else
                             Los establecimientos aún no han publicado vacantes activas. ¡Vuelve pronto!
                         @endif
                     </p>
-                    @if(request('search') || request('departamento'))
+                    @if(request('search') || request('departamento') || request('municipio'))
                         <a href="{{ route('empleos.index') }}"
                            style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:white;padding:11px 24px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">
                             <i class="fas fa-times" style="font-size:11px;"></i> Limpiar filtros
@@ -773,7 +834,37 @@
         <script>
             AOS.init({ duration: 800, once: true });
 
-            // ── Toggle búsqueda móvil ──
+            function configurarMunicipios(deptoId, munId) {
+                const deptoSel = document.getElementById(deptoId);
+                const munSel   = document.getElementById(munId);
+                if (!deptoSel || !munSel) return;
+
+                const munOpts = Array.from(munSel.querySelectorAll('option[data-departamento]'));
+
+                function actualizar() {
+                    const depto = deptoSel.value;
+                    munOpts.forEach(opt => {
+                        opt.style.display = (!depto || opt.dataset.departamento === depto) ? '' : 'none';
+                        if (opt.style.display === 'none') opt.selected = false;
+                    });
+                    const ph = munSel.querySelector('option:not([data-departamento])');
+                    if (depto) {
+                        munSel.disabled = false;
+                        if (ph) ph.textContent = 'Todos';
+                    } else {
+                        munSel.disabled = true;
+                        munSel.value = '';
+                        if (ph) ph.textContent = 'Elige destino...';
+                    }
+                }
+
+                deptoSel.addEventListener('change', actualizar);
+                actualizar();
+            }
+
+            configurarMunicipios('search-departamento', 'search-municipio');
+            configurarMunicipios('mob-departamento', 'mob-municipio');
+
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');
             const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
             if (mobileSearchToggle && mobileSearchPanel) {

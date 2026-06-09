@@ -104,7 +104,7 @@
         .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
         .nav-input-mobile::placeholder { color: #c4bfbb; }
 
-        /* ══ GLASS CARD (igual que eventos) ══ */
+        /* ══ GLASS CARD ══ */
         .glass-card {
             background: #ffffff;
             border: 1px solid #f1f0ee;
@@ -117,7 +117,6 @@
             border-color: #ffedd5;
         }
 
-        /* ── CARD RESTAURANTE (igual que event-card-img) ── */
         .rest-card-img {
             height: 200px; overflow: hidden; border-radius: 1.8rem 1.8rem 0 0;
             position: relative; background: #e7e5e4;
@@ -127,7 +126,6 @@
             .rest-card-body { border-radius: 2rem 0 0 2rem; }
         }
 
-        /* ══ FILTROS PILL ══ */
         .filter-pill {
             display: inline-flex; align-items: center; gap: 6px;
             background: #fff7ed; border: 1.5px solid #fed7aa;
@@ -141,7 +139,6 @@
             text-decoration: none; line-height: 1; flex-shrink: 0;
         }
 
-        /* ══ PAGINACIÓN ══ */
         .pag-btn {
             width: 36px; height: 36px; border-radius: 50%;
             border: 1.5px solid #e7e5e4; background: #fff;
@@ -153,7 +150,6 @@
         .pag-btn.active { background: #ea580c; border-color: #ea580c; color: #fff; }
         .pag-btn.disabled { color: #d4cfc9; pointer-events: none; }
 
-        /* ══ REDES SOCIALES ══ */
         .social-btn {
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -162,7 +158,6 @@
         }
         .social-btn:hover { transform: scale(1.15); }
 
-        /* ══ BADGE ABIERTO / CERRADO ══ */
         .badge-abierto {
             display: inline-flex; align-items: center; gap: 5px;
             background: #f0fdf4; border: 1.5px solid #bbf7d0;
@@ -247,7 +242,7 @@
                             @foreach($municipios as $mun)
                                 <option value="{{ $mun->id }}"
                                         data-departamento="{{ $mun->departamento_id }}"
-                                        {{ request('municipio') == $mun->id ? 'selected' : '' }}
+                                        {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
                                         style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
                                     {{ $mun->nombre }}
                                 </option>
@@ -283,7 +278,6 @@
                 {{-- Botones de acción --}}
                 <div class="flex items-center gap-2 shrink-0">
 
-                    {{-- Lupa móvil --}}
                     <button id="mobileSearchToggle"
                             class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
                         <i class="fas fa-search text-sm"></i>
@@ -358,7 +352,7 @@
                         @foreach($municipios as $mun)
                             <option value="{{ $mun->id }}"
                                     data-departamento="{{ $mun->departamento_id }}"
-                                    {{ request('municipio') == $mun->id ? 'selected' : '' }}
+                                    {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
                                     style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
                                 {{ $mun->nombre }}
                             </option>
@@ -397,33 +391,26 @@
     <section class="pt-20">
         <div class="relative overflow-hidden" style="min-height:520px;">
 
-            {{-- Imagen de fondo --}}
             <div class="absolute inset-0"
                  style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1800&q=80');
                         background-size:cover;background-position:center;
                         transform:scale(1.04);transition:transform 8s ease;">
             </div>
 
-            {{-- Overlay multicapa: oscuro + degradado naranja --}}
             <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(12,10,9,0.88) 0%, rgba(12,10,9,0.72) 50%, rgba(180,60,0,0.45) 100%);"></div>
 
-            {{-- Patrón de puntos sutil --}}
             <div class="absolute inset-0 opacity-[0.04]"
                  style="background-image:radial-gradient(circle, #fff 1px, transparent 1px);background-size:28px 28px;"></div>
 
-            {{-- Brillo naranja decorativo --}}
             <div class="absolute top-0 right-0 w-[600px] h-[600px] opacity-20 pointer-events-none"
                  style="background:radial-gradient(circle at 70% 30%, #ea580c 0%, transparent 65%);"></div>
             <div class="absolute bottom-0 left-0 w-[400px] h-[400px] opacity-10 pointer-events-none"
                  style="background:radial-gradient(circle at 20% 80%, #f97316 0%, transparent 60%);"></div>
 
-            {{-- Contenido --}}
             <div class="relative max-w-7xl mx-auto px-4 py-24 sm:py-28 flex flex-col md:flex-row items-center justify-between gap-12">
 
-                {{-- Texto principal --}}
                 <div class="flex-1 max-w-2xl" data-aos="fade-right">
 
-                    {{-- Badge --}}
                     <div class="inline-flex items-center gap-2 mb-6"
                          style="background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.4);
                                 padding:6px 16px;border-radius:999px;">
@@ -444,7 +431,6 @@
                         Desde fritangas familiares hasta cocina gourmet — descubre cada sabor auténtico de Nicaragua en un solo lugar.
                     </p>
 
-                    {{-- Pills de stats --}}
                     <div class="flex flex-wrap gap-3 mb-8">
                         <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
                                      color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;
@@ -466,7 +452,6 @@
                         </span>
                     </div>
 
-                    {{-- Línea decorativa --}}
                     <div style="display:flex;align-items:center;gap:12px;">
                         <div style="height:1px;width:48px;background:linear-gradient(to right,#ea580c,transparent);"></div>
                         <span style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);">
@@ -475,17 +460,14 @@
                     </div>
                 </div>
 
-                {{-- Panel derecho: tarjeta premium flotante --}}
                 <div class="shrink-0 hidden md:flex flex-col items-center gap-5" data-aos="fade-left">
 
-                    {{-- Tarjeta glassmorphism --}}
                     <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);
                                 backdrop-filter:blur(20px);border-radius:28px;padding:36px 40px;
                                 display:flex;flex-direction:column;align-items:center;gap:16px;
                                 box-shadow:0 24px 64px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1);
                                 min-width:220px;">
 
-                        {{-- Ícono principal --}}
                         <div style="width:80px;height:80px;background:linear-gradient(135deg,#ea580c,#f97316);
                                     border-radius:24px;display:flex;align-items:center;justify-content:center;
                                     box-shadow:0 12px 32px rgba(234,88,12,0.5);
@@ -505,7 +487,6 @@
 
                         <div style="width:100%;height:1px;background:rgba(255,255,255,0.08);"></div>
 
-                        {{-- Mini stats --}}
                         <div style="display:flex;gap:20px;">
                             <div style="text-align:center;">
                                 <p style="color:#fb923c;font-size:18px;font-weight:900;line-height:1;">17</p>
@@ -519,7 +500,6 @@
                         </div>
                     </div>
 
-                    {{-- Texto debajo de la tarjeta --}}
                     <p style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
                         Gastronomía auténtica 🇳🇮
                     </p>
@@ -527,7 +507,6 @@
 
             </div>
 
-            {{-- Borde inferior degradado --}}
             <div class="absolute bottom-0 left-0 right-0" style="height:80px;background:linear-gradient(to bottom,transparent,#fafaf9);"></div>
         </div>
     </section>
@@ -582,7 +561,6 @@
                 </a>
             @endif
 
-            {{-- Contador --}}
             <div class="ml-auto flex items-center gap-2">
                 <div style="height:1px;width:32px;background:linear-gradient(to right,#ea580c,transparent);"></div>
                 <span style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;">
@@ -595,7 +573,6 @@
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
             @forelse($restaurantes as $restaurante)
 
-                {{-- ── Calcular si está abierto ahora ── --}}
                 @php
                     $diasMap = [
                         'lunes'     => 1,
@@ -618,31 +595,27 @@
 
                     $tieneHorario = $restaurante->hora_apertura && $restaurante->hora_cierre;
                     $estaAbierto  = false;
-                    $diaHoyNum    = (int) now()->setTimezone('America/Managua')->format('w'); // 0=dom…6=sab
+                    $diaHoyNum    = (int) now()->setTimezone('America/Managua')->format('w');
                     $horaActual   = now()->setTimezone('America/Managua')->format('H:i');
 
                     if ($tieneHorario) {
-                        // ¿Hoy es día laboral?
                         $diasLaborales = $restaurante->dias_laborales ?? [];
                         $hoyEsLaboral  = empty($diasLaborales)
-                            ? true // sin días configurados = todos los días
+                            ? true
                             : collect($diasLaborales)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
 
                         if ($hoyEsLaboral) {
-                            $apertura = $restaurante->hora_apertura; // "HH:MM"
-                            $cierre   = $restaurante->hora_cierre;   // "HH:MM"
+                            $apertura = $restaurante->hora_apertura;
+                            $cierre   = $restaurante->hora_cierre;
 
                             if ($cierre > $apertura) {
-                                // Horario normal: ej. 08:00 – 22:00
                                 $estaAbierto = $horaActual >= $apertura && $horaActual < $cierre;
                             } else {
-                                // Horario que cruza medianoche: ej. 20:00 – 02:00
                                 $estaAbierto = $horaActual >= $apertura || $horaActual < $cierre;
                             }
                         }
                     }
 
-                    // Formatear horas para mostrar (H:i → h:i a)
                     $aperturaFmt = $tieneHorario
                         ? \Carbon\Carbon::createFromFormat('H:i', substr($restaurante->hora_apertura, 0, 5))->format('g:i a')
                         : null;
@@ -650,7 +623,6 @@
                         ? \Carbon\Carbon::createFromFormat('H:i', substr($restaurante->hora_cierre, 0, 5))->format('g:i a')
                         : null;
 
-                    // Días laborales en etiquetas cortas
                     $diasLaboralesStr = '';
                     if (!empty($restaurante->dias_laborales)) {
                         $diasLaboralesStr = collect($restaurante->dias_laborales)
@@ -665,7 +637,6 @@
                        class="no-underline text-inherit block">
                         <div class="flex flex-col md:flex-row md:h-56">
 
-                            {{-- ── Texto ── --}}
                             <div class="rest-card-body flex flex-col justify-between p-5 sm:p-7 md:flex-1 order-2 md:order-1">
                                 <div>
                                     <div class="flex items-center justify-between mb-2.5 gap-2">
@@ -696,14 +667,11 @@
                                     @endif
                                 </div>
 
-                                {{-- ── Footer de la card: horario + redes ── --}}
                                 <div class="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 mt-3">
 
-                                    {{-- Horario + badge --}}
                                     <div class="flex flex-col gap-1.5">
 
                                         @if($tieneHorario)
-                                            {{-- Badge abierto / cerrado --}}
                                             @if($estaAbierto)
                                                 <span class="badge-abierto">
                                                     <span class="dot-abierto"></span>
@@ -716,13 +684,11 @@
                                                 </span>
                                             @endif
 
-                                            {{-- Rango horario --}}
                                             <span class="text-xs text-stone-500 flex items-center gap-1.5">
                                                 <i class="fas fa-clock text-stone-400" style="font-size:10px;"></i>
                                                 {{ $aperturaFmt }} – {{ $cierreFmt }}
                                             </span>
 
-                                            {{-- Días laborales --}}
                                             @if($diasLaboralesStr)
                                                 <span class="text-xs text-stone-400 flex items-center gap-1.5">
                                                     <i class="fas fa-calendar-week text-stone-300" style="font-size:10px;"></i>
@@ -731,7 +697,6 @@
                                             @endif
 
                                         @else
-                                            {{-- Sin horario configurado --}}
                                             <span class="badge-sin-horario">
                                                 <i class="fas fa-clock" style="font-size:9px;"></i>
                                                 Horario no disponible
@@ -740,7 +705,6 @@
 
                                     </div>
 
-                                    {{-- Redes sociales --}}
                                     @if($restaurante->whatsapp || $restaurante->instagram || $restaurante->tiktok || $restaurante->facebook)
                                         <div class="flex items-center gap-2"
                                              onclick="event.preventDefault(); event.stopPropagation();">
@@ -785,7 +749,6 @@
                                 </div>
                             </div>
 
-                            {{-- ── Imagen ── --}}
                             <div class="rest-card-img order-1 md:order-2 md:w-44 md:rounded-none md:rounded-r-[2rem]">
                                 @if($restaurante->foto_portada)
                                     <img src="{{ asset('storage/' . $restaurante->foto_portada) }}"
@@ -837,7 +800,6 @@
         @if($restaurantes->hasPages())
             <div style="margin-top:56px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">
 
-                {{-- Anterior --}}
                 @if($restaurantes->onFirstPage())
                     <span class="pag-btn disabled">
                         <i class="fas fa-chevron-left" style="font-size:10px;"></i>
@@ -848,7 +810,6 @@
                     </a>
                 @endif
 
-                {{-- Números --}}
                 @php
                     $current  = $restaurantes->currentPage();
                     $last     = $restaurantes->lastPage();
@@ -873,7 +834,6 @@
                     @endif
                 @endforeach
 
-                {{-- Siguiente --}}
                 @if($restaurantes->hasMorePages())
                     <a href="{{ $restaurantes->nextPageUrl() }}" class="pag-btn">
                         <i class="fas fa-chevron-right" style="font-size:10px;"></i>
@@ -943,7 +903,6 @@
 
         const todosLosRestaurantes = window.__RESTAURANTES__ || [];
 
-        // ── Filtro completo: depto → municipio → especialidad → local ──
         function configurarFiltros(deptoId, munId, especId, searchId) {
             const deptoSel   = document.getElementById(deptoId);
             const munSel     = document.getElementById(munId);
@@ -953,7 +912,6 @@
 
             const munOpts = Array.from(munSel.querySelectorAll('option[data-departamento]'));
 
-            // ── Actualiza municipios visibles según departamento ──
             function actualizarMunicipios() {
                 const depto = deptoSel.value;
                 munOpts.forEach(opt => {
@@ -971,7 +929,6 @@
                 }
             }
 
-            // ── Actualiza el select de locales según depto + municipio + especialidad ──
             function actualizarLocales() {
                 const depto = deptoSel.value;
                 const mun   = munSel.value;
@@ -987,17 +944,11 @@
 
                 let filtrados = todosLosRestaurantes;
 
-                if (depto) {
-                    filtrados = filtrados.filter(r => String(r.departamento_id) === String(depto));
-                }
-                if (mun) {
-                    filtrados = filtrados.filter(r => String(r.municipio_id) === String(mun));
-                }
-                if (espec) {
-                    filtrados = filtrados.filter(r =>
-                        r.especialidad && r.especialidad.toLowerCase().includes(espec)
-                    );
-                }
+                if (depto) filtrados = filtrados.filter(r => String(r.departamento_id) === String(depto));
+                if (mun)   filtrados = filtrados.filter(r => String(r.municipio_id) === String(mun));
+                if (espec) filtrados = filtrados.filter(r =>
+                    r.especialidad && r.especialidad.toLowerCase().includes(espec)
+                );
 
                 filtrados.forEach(r => {
                     const opt = document.createElement('option');
@@ -1008,7 +959,6 @@
                 });
             }
 
-            // ── Eventos ──
             deptoSel.addEventListener('change', function () {
                 actualizarMunicipios();
                 actualizarLocales();
@@ -1016,17 +966,13 @@
             munSel.addEventListener('change', actualizarLocales);
             if (especInput) especInput.addEventListener('input', actualizarLocales);
 
-            // ── Disparar al cargar (depto puede venir predefinido por login) ──
             actualizarMunicipios();
             actualizarLocales();
         }
 
-        // Desktop
         configurarFiltros('nav-departamento', 'nav-municipio', 'nav-especialidad', 'nav-search');
-        // Móvil
         configurarFiltros('mob-departamento', 'mob-municipio', 'mob-especialidad', 'mob-search');
 
-        // ── Toggle búsqueda móvil ──
         const mobileSearchToggle = document.getElementById('mobileSearchToggle');
         const mobileSearchPanel  = document.getElementById('mobileSearchPanel');
         if (mobileSearchToggle && mobileSearchPanel) {

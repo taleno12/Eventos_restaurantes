@@ -21,16 +21,14 @@ function enviarNotificacionFCM(string $titulo, string $cuerpo): void
         $credencialesPath = storage_path('app/firebase-credentials.json');
         $credenciales = json_decode(file_get_contents($credencialesPath), true);
 
-        // Obtener Access Token de Google
         $tokenResponse = Http::post('https://oauth2.googleapis.com/token', [
-            'grant_type'            => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-            'assertion'             => generarJwtFirebase($credenciales),
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion'  => generarJwtFirebase($credenciales),
         ]);
 
         $accessToken = $tokenResponse->json('access_token');
         $projectId   = $credenciales['project_id'];
 
-        // Enviar notificación a todos los usuarios (topic)
         Http::withToken($accessToken)
             ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
                 'message' => [
@@ -42,15 +40,14 @@ function enviarNotificacionFCM(string $titulo, string $cuerpo): void
                 ],
             ]);
     } catch (\Exception $e) {
-        // No interrumpir la respuesta si falla la notificación
         \Log::error('FCM error: ' . $e->getMessage());
     }
 }
 
 function generarJwtFirebase(array $credenciales): string
 {
-    $ahora    = time();
-    $expira   = $ahora + 3600;
+    $ahora  = time();
+    $expira = $ahora + 3600;
 
     $header  = base64UrlEncode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
     $payload = base64UrlEncode(json_encode([
@@ -63,12 +60,7 @@ function generarJwtFirebase(array $credenciales): string
     ]));
 
     $firma = '';
-    openssl_sign(
-        "$header.$payload",
-        $firma,
-        $credenciales['private_key'],
-        'SHA256'
-    );
+    openssl_sign("$header.$payload", $firma, $credenciales['private_key'], 'SHA256');
 
     return "$header.$payload." . base64UrlEncode($firma);
 }
@@ -82,31 +74,38 @@ Route::get('/mensaje-prueba', function () {
     return response()->json(['texto' => '¡Hola desde mi base de datos de Laravel!']);
 });
 
-// Departamentos
+// ── DEPARTAMENTOS ──
 Route::get('/departamentos', function () {
     return Departamento::orderBy('nombre')->get();
 });
 
-// Municipios por departamento
+// ── MUNICIPIOS POR DEPARTAMENTO ──
 Route::get('/municipios/{departamento_id}', function ($departamento_id) {
     return Municipio::where('departamento_id', $departamento_id)
         ->orderBy('nombre')
         ->get(['id', 'nombre']);
 });
 
-// Restaurantes por municipio
+// ── RESTAURANTES POR MUNICIPIO ──
 Route::get('/restaurantes/por-municipio/{municipio_id}', function ($municipio_id) {
     return Restaurante::where('municipio_id', $municipio_id)
         ->orderBy('nombre')
         ->get(['id', 'nombre']);
 });
 
-// Restaurantes (todos)
-Route::get('/restaurantes', function () {
-    return Restaurante::with('departamento')->get();
+// ── RESTAURANTES (todos) ──
+Route::get('/restaurantes', function (Request $request) {
+    $query = Restaurante::with('departamento');
+
+    $user = $request->user('sanctum');
+    if ($user && $user->departamento_id) {
+        $query->where('departamento_id', $user->departamento_id);
+    }
+
+    return $query->get();
 });
 
-// Restaurantes con filtros
+// ── RESTAURANTES CON FILTROS MANUALES ──
 Route::get('/restaurantes/buscar', function (Request $request) {
     $query = Restaurante::with('departamento');
 
@@ -126,7 +125,7 @@ Route::get('/restaurantes/buscar', function (Request $request) {
     return $query->orderBy('nombre')->paginate(12);
 });
 
-// Detalle de un restaurante
+// ── DETALLE DE UN RESTAURANTE ──
 Route::get('/restaurantes/{id}', function ($id) {
     return Restaurante::with([
         'departamento',
@@ -163,12 +162,19 @@ Route::post('/restaurantes/{id}/reviews', function (Request $request, $id) {
     return response()->json(['message' => '¡Reseña publicada!']);
 })->middleware('auth:sanctum');
 
-// Gastrobares (todos)
-Route::get('/gastrobares', function () {
-    return Gastrobar::with('departamento')->get();
+// ── GASTROBARES (todos) ──
+Route::get('/gastrobares', function (Request $request) {
+    $query = Gastrobar::with('departamento');
+
+    $user = $request->user('sanctum');
+    if ($user && $user->departamento_id) {
+        $query->where('departamento_id', $user->departamento_id);
+    }
+
+    return $query->get();
 });
 
-// Gastrobares con filtros
+// ── GASTROBARES CON FILTROS MANUALES ──
 Route::get('/gastrobares/buscar', function (Request $request) {
     $query = Gastrobar::with(['departamento']);
 
@@ -199,21 +205,37 @@ Route::get('/gastrobares/{id}', function ($id) {
     ])->findOrFail($id);
 });
 
-// Eventos destacados
-Route::get('/eventos/destacados', function () {
-    return Evento::with(['restaurante', 'departamento'])
-        ->where('is_destacado', true)
-        ->limit(5)
-        ->get();
+// ── EVENTOS DESTACADOS ──
+Route::get('/eventos/destacados', function (Request $request) {
+    $query = Evento::with(['restaurante', 'gastrobar', 'departamento'])
+        ->where('is_destacado', true);
+
+    $user = $request->user('sanctum');
+    if ($user && $user->departamento_id) {
+        $query->where('departamento_id', $user->departamento_id);
+    }
+
+    return $query->limit(5)->get();
 });
 
-// Eventos con filtros
+// ── EVENTOS CON FILTROS MANUALES ──
 Route::get('/eventos', function (Request $request) {
-    $query = Evento::with(['restaurante', 'departamento']);
+    $query = Evento::with(['restaurante', 'gastrobar', 'departamento']);
 
     if ($request->filled('departamento')) {
         $query->where('departamento_id', $request->departamento);
+    } else {
+        $user = $request->user('sanctum');
+        if ($user && $user->departamento_id) {
+            $query->where('departamento_id', $user->departamento_id);
+        }
     }
+
+    // ✅ FILTRO MUNICIPIO
+    if ($request->filled('municipio')) {
+        $query->where('municipio_id', $request->municipio);
+    }
+
     if ($request->filled('especialidad')) {
         $query->whereHas('restaurante', fn($q) =>
             $q->where('especialidad', 'like', '%' . $request->especialidad . '%')
@@ -230,12 +252,13 @@ Route::get('/eventos', function (Request $request) {
 Route::get('/eventos/{id}', function ($id) {
     return Evento::with([
         'restaurante',
+        'gastrobar',
         'departamento',
         'municipio',
     ])->findOrFail($id);
 });
 
-// Empleos con filtros
+// ── EMPLEOS CON FILTROS ──
 Route::get('/empleos', function (Request $request) {
     $query = Empleo::with(['restaurante', 'departamento'])
         ->where('activo', true);
@@ -246,8 +269,23 @@ Route::get('/empleos', function (Request $request) {
               ->orWhere('descripcion', 'like', '%' . $request->search . '%');
         });
     }
+
     if ($request->filled('departamento')) {
         $query->where('departamento_id', $request->departamento);
+    } else {
+        $user = $request->user('sanctum');
+        if ($user && $user->departamento_id) {
+            $query->where('departamento_id', $user->departamento_id);
+        }
+    }
+
+    // ✅ FILTRO MUNICIPIO AGREGADO
+    if ($request->filled('municipio')) {
+        $query->where('municipio_id', $request->municipio);
+    }
+
+    if ($request->filled('tipo_contrato')) {
+        $query->where('tipo_contrato', $request->tipo_contrato);
     }
 
     return $query->orderByDesc('created_at')->paginate(9);
@@ -282,6 +320,7 @@ Route::post('/login', function (Request $request) {
             'email'           => $user->email,
             'role'            => $user->role,
             'departamento_id' => $user->departamento_id,
+            'municipio_id'    => $user->municipio_id,
         ],
         'token' => $user->createToken('react-app')->plainTextToken,
     ]);
@@ -309,12 +348,13 @@ Route::post('/register', function (Request $request) {
             'email'           => $user->email,
             'role'            => $user->role,
             'departamento_id' => $user->departamento_id,
+            'municipio_id'    => $user->municipio_id,
         ],
         'token' => $user->createToken('react-app')->plainTextToken,
     ], 201);
 });
 
-// ── LOGIN CON GOOGLE (sin librería extra) ──
+// ── LOGIN CON GOOGLE ──
 Route::post('/auth/google', function (Request $request) {
     $request->validate([
         'idToken' => 'required|string',
@@ -346,6 +386,7 @@ Route::post('/auth/google', function (Request $request) {
             'email'           => $user->email,
             'role'            => $user->role,
             'departamento_id' => $user->departamento_id,
+            'municipio_id'    => $user->municipio_id,
         ],
         'token' => $user->createToken('android-app')->plainTextToken,
     ]);
@@ -410,6 +451,7 @@ Route::post('/usuario/departamento', function (Request $request) {
 
     $request->user()->update([
         'departamento_id' => $request->departamento_id,
+        'municipio_id'    => null,
     ]);
 
     return response()->json([
@@ -420,6 +462,30 @@ Route::post('/usuario/departamento', function (Request $request) {
             'email'           => $request->user()->email,
             'role'            => $request->user()->role,
             'departamento_id' => $request->user()->departamento_id,
+            'municipio_id'    => null,
+        ],
+    ]);
+})->middleware('auth:sanctum');
+
+// ── GUARDAR MUNICIPIO DEL USUARIO ──
+Route::post('/usuario/municipio', function (Request $request) {
+    $request->validate([
+        'municipio_id' => 'required|exists:municipios,id',
+    ]);
+
+    $request->user()->update([
+        'municipio_id' => $request->municipio_id,
+    ]);
+
+    return response()->json([
+        'message' => 'Municipio guardado correctamente.',
+        'user' => [
+            'id'              => $request->user()->id,
+            'name'            => $request->user()->name,
+            'email'           => $request->user()->email,
+            'role'            => $request->user()->role,
+            'departamento_id' => $request->user()->departamento_id,
+            'municipio_id'    => $request->user()->municipio_id,
         ],
     ]);
 })->middleware('auth:sanctum');

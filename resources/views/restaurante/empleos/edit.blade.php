@@ -130,21 +130,39 @@
                 </div>
             </div>
 
-            {{-- Zona de peligro --}}
-            <div class="panel-card" style="border-color:#fecaca;">
-                <div class="card-header" style="color:#dc2626;border-color:#fecaca;">Zona de peligro</div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('restaurante.empleos.destroy', $empleo) }}"
-                          onsubmit="return confirm('¿Eliminar esta oferta de empleo?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn-danger-panel" style="width:100%;justify-content:center;">
-                            <i class="bi bi-trash"></i> Eliminar Oferta
-                        </button>
-                    </form>
-                </div>
-            </div>
+        </div>{{-- fin columna derecha --}}
+    </div>{{-- fin grid --}}
+</form>{{-- fin form PUT — zona de peligro va FUERA --}}
 
+{{-- Zona de peligro FUERA del form principal --}}
+<div style="display:flex;justify-content:flex-end;margin-top:16px;">
+    <div class="panel-card" style="border-color:#fecaca;width:300px;">
+        <div class="card-header" style="color:#dc2626;border-color:#fecaca;">Zona de peligro</div>
+        <div class="card-body">
+            <button type="button"
+                    onclick="eliminarEmpleo('{{ route('restaurante.empleos.destroy', $empleo) }}')"
+                    class="btn-danger-panel" style="width:100%;justify-content:center;">
+                <i class="bi bi-trash"></i> Eliminar Oferta
+            </button>
         </div>
     </div>
-</form>
+</div>
+
+@endsection
+
+@section('scripts')
+<script>
+function eliminarEmpleo(url) {
+    if (!confirm('¿Eliminar esta oferta de empleo? Esta acción no se puede deshacer.')) return;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.innerHTML = `
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="_method" value="DELETE">
+    `;
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
 @endsection

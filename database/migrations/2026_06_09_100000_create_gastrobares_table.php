@@ -29,8 +29,8 @@ return new class extends Migration
             $table->string('ambiente', 50)->nullable(); // Interior, Exterior, Rooftop, Mixto
 
             // Ubicación
-            $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->nullOnDelete();
-            $table->foreignId('municipio_id')->nullable()->constrained('municipios')->nullOnDelete();
+            $table->unsignedBigInteger('departamento_id')->nullable();
+            $table->unsignedBigInteger('municipio_id')->nullable();
             $table->string('direccion')->nullable();
             $table->decimal('latitud', 10, 7)->nullable();
             $table->decimal('longitud', 10, 7)->nullable();

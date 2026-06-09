@@ -97,29 +97,25 @@
             </div>
 
             {{-- Galería existente --}}
-            @if($evento->imagenes->count() > 0)
-            <div class="panel-card">
-                <div class="card-header">Galería actual</div>
-                <div class="card-body">
-                    <div style="display:flex;flex-wrap:wrap;gap:10px;">
-                        @foreach($evento->imagenes as $img)
-                        <div style="position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);">
-                            <img src="{{ asset('storage/'.$img->ruta) }}" style="width:100%;height:100%;object-fit:cover;">
-                            <form method="POST" action="{{ route('evento.imagenes.destroy', $img) }}"
-                                  style="position:absolute;top:4px;right:4px;">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                        onclick="return confirm('¿Eliminar esta foto?')"
-                                        style="background:rgba(220,38,38,0.85);border:none;color:white;width:22px;height:22px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </form>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
+@if($evento->imagenes->count() > 0)
+<div class="panel-card">
+    <div class="card-header">Galería actual</div>
+    <div class="card-body">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            @foreach($evento->imagenes as $img)
+            <div style="position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);">
+                <img src="{{ asset('storage/'.$img->ruta) }}" style="width:100%;height:100%;object-fit:cover;">
+                <button type="button"
+                        onclick="eliminarImagen({{ $img->id }}, '{{ route('evento.imagenes.destroy', $img) }}', this)"
+                        style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.85);border:none;color:white;width:22px;height:22px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;">
+                    <i class="bi bi-x"></i>
+                </button>
             </div>
-            @endif
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
 
             {{-- Agregar más fotos --}}
             <div class="panel-card">
@@ -182,23 +178,26 @@
                 </div>
             </div>
 
-            {{-- Zona de peligro --}}
-            <div class="panel-card" style="border-color:#fecaca;">
-                <div class="card-header" style="color:#dc2626;border-color:#fecaca;">Zona de peligro</div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('restaurante.eventos.destroy', $evento) }}"
-                          onsubmit="return confirm('¿Estás seguro de eliminar este evento? Esta acción no se puede deshacer.')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn-danger-panel" style="width:100%;justify-content:center;">
-                            <i class="bi bi-trash"></i> Eliminar Evento
-                        </button>
-                    </form>
-                </div>
-            </div>
+        </div>{{-- fin columna derecha --}}
+    </div>{{-- fin grid --}}
+</form>{{-- fin form PUT --}}
 
+{{-- Zona de peligro FUERA del form principal --}}
+<div style="display:flex;justify-content:flex-end;margin-top:0;">
+    <div class="panel-card" style="border-color:#fecaca;width:340px;">
+        <div class="card-header" style="color:#dc2626;border-color:#fecaca;">Zona de peligro</div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('restaurante.eventos.destroy', $evento) }}"
+                  onsubmit="return confirm('¿Estás seguro de eliminar este evento? Esta acción no se puede deshacer.')">
+                @csrf @method('DELETE')
+                <button type="submit" class="btn-danger-panel" style="width:100%;justify-content:center;">
+                    <i class="bi bi-trash"></i> Eliminar Evento
+                </button>
+            </form>
         </div>
     </div>
-</form>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -252,4 +251,23 @@ selectDep.addEventListener('change', function () {
         });
 });
 </script>
+
+function eliminarImagen(id, url, btn) {
+    if (!confirm('¿Eliminar esta foto?')) return;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.innerHTML = `
+        @csrf
+        <input type="hidden" name="_method" value="DELETE">
+    `;
+    // El @csrf no funciona en JS así, usa el token directamente:
+    form.innerHTML = `
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="_method" value="DELETE">
+    `;
+    document.body.appendChild(form);
+    form.submit();
+}
+
 @endsection

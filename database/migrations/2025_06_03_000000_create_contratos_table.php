@@ -13,15 +13,11 @@ return new class extends Migration
             $table->string('numero_contrato')->unique();
 
             // Relaciones opcionales (solo una estará activa por contrato)
-            $table->foreignId('gastrobar_id')
-                  ->nullable()
-                  ->constrained('gastrobares')
-                  ->nullOnDelete();
 
-            $table->foreignId('restaurante_id')
-                  ->nullable()
-                  ->constrained('restaurantes')
-                  ->nullOnDelete();
+            $table->unsignedBigInteger('gastrobar_id')->nullable();        
+
+            $table->unsignedBigInteger('restaurante_id')->nullable();
+
 
             $table->string('representante');
             $table->string('direccion')->nullable();

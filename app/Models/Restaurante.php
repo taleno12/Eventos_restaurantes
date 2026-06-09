@@ -163,4 +163,16 @@ class Restaurante extends Model
     {
         return $this->reviews()->count();
     }
+
+    //nuevo
+
+    public function platos(): HasMany
+{
+    return $this->hasMany(Plato::class);
+}
+
+public function pedidos(): HasMany
+{
+    return $this->hasMany(Pedido::class);
+}
 }

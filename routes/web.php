@@ -217,7 +217,25 @@ Route::middleware(['auth', 'role:restaurante,admin'])
             ->name('galeria.store');
         Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
             ->name('galeria.destroy');
+        
+        // Menú - Platos
+        Route::resource('platos', \App\Http\Controllers\Restaurante\RestaurantePlatoController::class);
+        Route::patch('platos/{plato}/toggle', [\App\Http\Controllers\Restaurante\RestaurantePlatoController::class, 'toggleActivo'])
+         ->name('platos.toggle');
+
+        // Pedidos del restaurante
+        Route::get('/pedidos', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'index'])->name('pedidos.index');
+        Route::get('/pedidos/{pedido}', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'show'])->name('pedidos.show');
+        Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'cambiarEstado'])->name('pedidos.estado');
+        Route::get('/pedidos-polling', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
     });
+
+    //ruta de los pepedidos
+    Route::middleware('auth')->group(function () {
+    Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
+    Route::get('/mis-pedidos', [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
+    Route::get('/mis-pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
+});
 
 // ── EVENTOS PÚBLICOS (al final, con whereNumber para evitar capturar "create") ─
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])

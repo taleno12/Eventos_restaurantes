@@ -397,11 +397,24 @@
                 <i class="bi bi-briefcase-fill"></i>
                 Mis Empleos
             </a>
+
+            <a href="{{ route('restaurante.platos.index') }}" 
+             class="nav-link {{ request()->routeIs('restaurante.platos.*') ? 'active' : '' }}">
+              <i class="fas fa-utensils"></i>
+              Menú
+            </a>
+
             <a href="{{ route('restaurante.galeria.index') }}"
                class="nav-link {{ request()->routeIs('restaurante.galeria.*') ? 'active' : '' }}">
                 <i class="bi bi-images"></i>
                 Galería
             </a>
+
+            <a href="{{ route('restaurante.pedidos.index') }}" 
+             class="nav-link {{ request()->routeIs('restaurante.pedidos.*') ? 'active' : '' }}">
+              <i class="fas fa-shopping-bag"></i> Pedidos
+            </a>
+            
             <a href="{{ route('restaurante.perfil.edit') }}"
                class="nav-link {{ request()->routeIs('restaurante.perfil.*') ? 'active' : '' }}">
                 <i class="bi bi-shop-window"></i>

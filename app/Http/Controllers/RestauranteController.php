@@ -120,11 +120,18 @@ class RestauranteController extends Controller
     }
 
     public function publicShow(Restaurante $restaurante)
-    {
-        $restaurante->load(['departamento', 'municipio', 'imagenes']);
+{
+    $restaurante->load(['departamento', 'municipio', 'imagenes']);
 
-        return view('restaurantes.public_show', compact('restaurante'));
-    }
+    $platos = \App\Models\Plato::where('restaurante_id', $restaurante->id)
+        ->where('activo', true)
+        ->orderBy('categoria')
+        ->orderBy('orden')
+        ->get()
+        ->groupBy('categoria');
+
+    return view('restaurantes.public_show', compact('restaurante', 'platos'));
+}
 
     // ─────────────────────────────────────────────────────────────────────────
     // MÉTODOS DE ADMINISTRACIÓN

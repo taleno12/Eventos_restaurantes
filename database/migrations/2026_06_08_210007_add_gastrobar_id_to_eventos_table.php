@@ -13,11 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('restaurante_id')->nullable()->change();
 
             // Agregar gastrobar_id
-            $table->foreignId('gastrobar_id')
-                  ->nullable()
-                  ->after('restaurante_id')
-                  ->constrained('gastrobares')
-                  ->nullOnDelete();
+            $table->unsignedBigInteger('gastrobar_id')->nullable();
         });
     }
 

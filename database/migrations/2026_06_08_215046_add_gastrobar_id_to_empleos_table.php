@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::table('empleos', function (Blueprint $table) {
             // Agregar gastrobar_id nullable después de restaurante_id
-            $table->foreignId('gastrobar_id')
-                  ->nullable()
-                  ->after('restaurante_id')
-                  ->constrained('gastrobares')
-                  ->nullOnDelete();
+            $table->unsignedBigInteger('gastrobar_id')->nullable();
 
             // Hacer restaurante_id nullable porque ahora puede pertenecer a un gastrobar
             $table->unsignedBigInteger('restaurante_id')->nullable()->change();

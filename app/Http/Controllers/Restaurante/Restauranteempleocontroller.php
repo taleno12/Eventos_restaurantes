@@ -68,28 +68,28 @@ class RestauranteEmpleoController extends Controller
     }
 
     public function update(Request $request, Empleo $empleo)
-    {
-        $restaurante = $this->restaurante();
-        abort_unless($empleo->restaurante_id === $restaurante->id, 403);
+{
+    $restaurante = $this->restaurante();
+    abort_unless($empleo->restaurante_id === $restaurante->id, 403);
 
-        $request->validate([
-            'titulo'        => 'required|string|max:200',
-            'descripcion'   => 'required|string',
-            'requisitos'    => 'nullable|string',
-            'tipo_contrato' => 'nullable|string|max:50',
-            'salario'       => 'nullable|numeric|min:0',
-            'fecha_limite'  => 'nullable|date',
-            'municipio_id'  => 'required|exists:municipios,id',
-        ]);
+    $validated = $request->validate([
+        'titulo'        => 'required|string|max:200',
+        'descripcion'   => 'required|string',
+        'requisitos'    => 'nullable|string',
+        'tipo_contrato' => 'nullable|string|max:50',
+        'salario'       => 'nullable|numeric|min:0',
+        'fecha_limite'  => 'nullable|date',
+        'municipio_id'  => 'required|exists:municipios,id',
+    ]);
 
-        $empleo->update([
-            ...$request->except('activo'),
-            'activo' => $request->boolean('activo', false),
-        ]);
+    // Manejar activo por separado (checkbox)
+    $validated['activo'] = $request->boolean('activo', false);
 
-        return redirect()->route('restaurante.empleos.index')
-            ->with('success', 'Oferta actualizada correctamente.');
-    }
+    $empleo->update($validated);
+
+    return redirect()->route('restaurante.empleos.index')
+        ->with('success', 'Oferta actualizada correctamente.');
+}
 
     public function destroy(Empleo $empleo)
     {

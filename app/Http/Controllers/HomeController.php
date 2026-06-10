@@ -29,19 +29,12 @@ class HomeController extends Controller
 
         // ── Eventos destacados para el hero ──
         $eventosDestacados = Evento::with(['restaurante', 'departamento'])
-            ->where('is_destacado', true)
-            ->where('fecha_evento', '>=', now())
-            ->latest()
-            ->take(5)
-            ->get();
+        ->where('is_destacado', true)
+        ->where('fecha_evento', '>=', now())
+        ->latest()
+        ->take(5)
+        ->get();
 
-        if ($eventosDestacados->isEmpty()) {
-            $eventosDestacados = Evento::with(['restaurante', 'departamento'])
-                ->where('fecha_evento', '>=', now())
-                ->orderBy('fecha_evento', 'asc')
-                ->take(3)
-                ->get();
-        }
 
         // ── Query principal de eventos con filtros ──
         $idsDestacados = $eventosDestacados->pluck('id');

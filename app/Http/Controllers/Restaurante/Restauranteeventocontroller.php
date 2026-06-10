@@ -107,6 +107,8 @@ class RestauranteEventoController extends Controller
 
     // Galería adicional
     unset($validated['galeria']);
+    unset($validated['is_destacado']); // bloquear que restaurantes cambien esto
+    $validated['is_destacado'] = false; // forzar siempre normal
     $evento->update($validated);
 
     if ($request->hasFile('galeria')) {

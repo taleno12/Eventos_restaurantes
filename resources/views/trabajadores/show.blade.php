@@ -33,7 +33,6 @@
     <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden position-relative"
          style="min-height: 220px; background-color: #18181b;">
 
-        {{-- Imagen de fondo --}}
         @if($trabajador->foto)
             <img src="{{ asset('storage/' . $trabajador->foto) }}"
                  alt="{{ $trabajador->nombre_completo }}"
@@ -41,14 +40,11 @@
                  style="object-fit: cover; opacity: 0.25;">
         @endif
 
-        {{-- Degradado inferior --}}
         <div class="position-absolute bottom-0 start-0 w-100 h-100"
              style="background: linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(24,24,27,0.55) 60%, transparent 100%);"></div>
 
-        {{-- Contenido sobre la imagen --}}
         <div class="position-relative p-4 p-md-5 d-flex align-items-end gap-4" style="min-height: 220px; z-index: 2;">
 
-            {{-- Avatar --}}
             <div class="rounded-3 border border-warning overflow-hidden flex-shrink-0 shadow"
                  style="width: 80px; height: 80px; background:#27272a;">
                 @if($trabajador->foto)
@@ -63,7 +59,6 @@
             </div>
 
             <div>
-                {{-- Badges --}}
                 <div class="d-flex flex-wrap gap-2 mb-2">
                     @if($trabajador->cargo)
                         <span class="badge rounded-pill fw-bold px-3 py-2"
@@ -98,7 +93,7 @@
     </div>
 
     {{-- ══════════════════════════════════════════ --}}
-    {{-- GRID: Columna info + Columna departamentos --}}
+    {{-- GRID: Columna info + Columna derecha      --}}
     {{-- ══════════════════════════════════════════ --}}
     <div class="row g-4">
 
@@ -113,7 +108,6 @@
                         <i class="bi bi-person text-warning"></i> Datos Personales
                     </h6>
 
-                    {{-- Email --}}
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 bg-light flex-shrink-0"
                               style="width:34px;height:34px;">
@@ -125,7 +119,6 @@
                         </div>
                     </div>
 
-                    {{-- Teléfono --}}
                     @if($trabajador->telefono)
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
@@ -139,7 +132,6 @@
                     </div>
                     @endif
 
-                    {{-- Cédula --}}
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                               style="width:34px;height:34px;background:#eff6ff;">
@@ -151,7 +143,6 @@
                         </div>
                     </div>
 
-                    {{-- Fecha de Ingreso --}}
                     @if($trabajador->fecha_ingreso)
                     <div class="d-flex align-items-center gap-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
@@ -176,7 +167,6 @@
                         <i class="bi bi-briefcase text-warning"></i> Datos Laborales
                     </h6>
 
-                    {{-- Cargo --}}
                     @if($trabajador->cargo)
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
@@ -190,7 +180,6 @@
                     </div>
                     @endif
 
-                    {{-- Salario --}}
                     @if($trabajador->salario)
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
@@ -204,7 +193,6 @@
                     </div>
                     @endif
 
-                    {{-- Estado --}}
                     <div class="d-flex align-items-center gap-3">
                         <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                               style="width:34px;height:34px;background:#f3f4f6;">
@@ -313,6 +301,56 @@
                         <p class="text-muted small fst-italic mb-0">
                             <i class="bi bi-info-circle me-1"></i>
                             No hay restaurantes registrados en los departamentos asignados.
+                        </p>
+                    @endif
+
+                </div>
+            </div>
+
+            {{-- Gastrobares Disponibles --}}
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2"
+                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-cup-straw text-warning"></i> Gastrobares en sus Departamentos
+                    </h6>
+
+                    @if(count($gastrobares) > 0)
+                        <div class="row g-3">
+                            @foreach($gastrobares as $gastro)
+                            <div class="col-12 col-sm-6">
+                                <div class="d-flex align-items-center gap-3 p-3 rounded-3 border"
+                                     style="background:#f8fafc; border-color:#edf2f7 !important;">
+                                    <div class="rounded-3 border overflow-hidden bg-light d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm"
+                                         style="width:42px;height:42px;">
+                                        @if($gastro->foto_portada)
+                                            <img src="{{ asset('storage/' . $gastro->foto_portada) }}"
+                                                 alt="{{ $gastro->nombre }}"
+                                                 class="w-100 h-100" style="object-fit:cover;">
+                                        @else
+                                            <i class="bi bi-cup-straw text-warning fs-5"></i>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <span class="fw-semibold text-dark small d-block text-uppercase">{{ $gastro->nombre }}</span>
+                                        @if($gastro->tipo_bar)
+                                            <span class="text-muted" style="font-size:0.72rem;">{{ $gastro->tipo_bar }}</span>
+                                        @endif
+                                        @if($gastro->departamento)
+                                            <span class="d-block text-muted" style="font-size:0.7rem;">
+                                                <i class="bi bi-geo-alt-fill text-danger" style="font-size:0.65rem;"></i>
+                                                {{ $gastro->departamento->nombre }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted small fst-italic mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            No hay gastrobares registrados en los departamentos asignados.
                         </p>
                     @endif
 

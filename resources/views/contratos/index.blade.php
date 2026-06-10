@@ -97,7 +97,7 @@
                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
                     <input type="text" name="search" value="{{ request('search') }}"
                            class="form-control bg-light border-start-0 ps-0"
-                           placeholder="Buscar por gastrobar o número de contrato..."
+                           placeholder="Buscar por establecimiento o número de contrato..."
                            style="box-shadow:none;">
                 </div>
             </div>
@@ -118,9 +118,8 @@
                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-credit-card"></i></span>
                     <select name="plan" class="form-select bg-light border-start-0 ps-0" style="box-shadow:none;cursor:pointer;">
                         <option value="">Todos los planes</option>
-                        <option value="gratuito" {{ request('plan') == 'gratuito' ? 'selected' : '' }}>Gratuito</option>
-                        <option value="basico"   {{ request('plan') == 'basico'   ? 'selected' : '' }}>Básico</option>
-                        <option value="premium"  {{ request('plan') == 'premium'  ? 'selected' : '' }}>Premium</option>
+                        <option value="basico"  {{ request('plan') == 'basico'  ? 'selected' : '' }}>Básico</option>
+                        <option value="premium" {{ request('plan') == 'premium' ? 'selected' : '' }}>Premium</option>
                     </select>
                 </div>
             </div>
@@ -171,9 +170,9 @@
                             <td class="py-3">
                                 @php
                                     $planColor = match($contrato->plan) {
-                                        'premium'  => ['bg' => '#fff8e1', 'color' => '#b45309'],
-                                        'basico'   => ['bg' => '#eff6ff', 'color' => '#1d4ed8'],
-                                        default    => ['bg' => '#f3f4f6', 'color' => '#6b7280'],
+                                        'premium' => ['bg' => '#fff8e1', 'color' => '#b45309'],
+                                        'basico'  => ['bg' => '#eff6ff', 'color' => '#1d4ed8'],
+                                        default   => ['bg' => '#f3f4f6', 'color' => '#6b7280'],
                                     };
                                 @endphp
                                 <span class="badge px-2 py-1 text-uppercase fw-bold"
@@ -276,109 +275,157 @@
                 <form id="formNuevoContrato" action="{{ route('contratos.store') }}" method="POST">
                     @csrf
 
+                    {{-- ── Alerta de error: establecimiento duplicado ── --}}
+                    @if($errors->has('establecimiento'))
+                        <div class="alert alert-danger border-0 rounded-3 d-flex align-items-center gap-2 mb-3" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                            <div>{{ $errors->first('establecimiento') }}</div>
+                        </div>
+                    @endif
+
+                    {{-- ── Sección: Datos del Establecimiento ── --}}
                     <p class="text-uppercase fw-bold text-muted mb-2 mt-1" style="font-size:0.7rem;letter-spacing:0.8px;">
                         <i class="bi bi-building me-1"></i> Datos del Establecimiento
                     </p>
                     <div class="row g-3 mb-3">
 
+                        {{-- Tipo de establecimiento --}}
                         <div class="col-md-12">
                             <label class="form-label small fw-semibold text-dark">Tipo de Establecimiento <span class="text-danger">*</span></label>
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="tipo_establecimiento"
-                                           id="tipoGastrobar" value="gastrobar" checked>
+                                           id="tipoGastrobar" value="gastrobar"
+                                           {{ old('tipo_establecimiento', 'gastrobar') === 'gastrobar' ? 'checked' : '' }}>
                                     <label class="form-check-label small" for="tipoGastrobar">Gastrobar</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="tipo_establecimiento"
-                                           id="tipoRestaurante" value="restaurante">
+                                           id="tipoRestaurante" value="restaurante"
+                                           {{ old('tipo_establecimiento') === 'restaurante' ? 'checked' : '' }}>
                                     <label class="form-check-label small" for="tipoRestaurante">Restaurante</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-6" id="selectGastrobarWrap">
-                            <label class="form-label small fw-semibold text-dark">Gastrobar <span class="text-danger">*</span></label>
-                            <select name="gastrobar_id" id="gastrobar_id" class="form-select bg-light" style="box-shadow:none;cursor:pointer;">
-                                <option value="">Seleccionar gastrobar</option>
-                                @foreach($gastrobares as $g)
-                                    <option value="{{ $g->id }}">{{ $g->nombre }}</option>
+                        {{-- Paso 1: Departamento --}}
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-dark">
+                                <i class="bi bi-geo-alt text-warning me-1"></i>Departamento <span class="text-danger">*</span>
+                            </label>
+                            <select id="modal_departamento_id" class="form-select bg-light" style="box-shadow:none;cursor:pointer;">
+                                <option value="">Seleccionar departamento</option>
+                                @foreach($departamentos as $d)
+                                    <option value="{{ $d->id }}">{{ $d->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div class="col-md-6 d-none" id="selectRestauranteWrap">
-                            <label class="form-label small fw-semibold text-dark">Restaurante <span class="text-danger">*</span></label>
-                            <select name="restaurante_id" id="restaurante_id" class="form-select bg-light" style="box-shadow:none;cursor:pointer;">
-                                <option value="">Seleccionar restaurante</option>
-                                @foreach($restaurantes as $r)
-                                    <option value="{{ $r->id }}">{{ $r->nombre }}</option>
-                                @endforeach
+                        {{-- Paso 2: Municipio --}}
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-dark">
+                                <i class="bi bi-pin-map text-warning me-1"></i>Municipio <span class="text-danger">*</span>
+                            </label>
+                            <select id="modal_municipio_id" class="form-select bg-light" style="box-shadow:none;cursor:pointer;" disabled>
+                                <option value="">Primero selecciona departamento</option>
                             </select>
                         </div>
 
+                        {{-- Paso 3: Establecimiento (dinámico según tipo) --}}
+                        <div class="col-md-4" id="selectEstablecimientoWrap">
+                            <label class="form-label small fw-semibold text-dark" id="labelEstablecimiento">
+                                <i class="bi bi-shop text-warning me-1"></i>Gastrobar <span class="text-danger">*</span>
+                            </label>
+                            <select id="modal_establecimiento_id" class="form-select bg-light" style="box-shadow:none;cursor:pointer;" disabled>
+                                <option value="">Primero selecciona municipio</option>
+                            </select>
+                            {{-- inputs hidden que se envían al form --}}
+                            <input type="hidden" name="gastrobar_id"   id="hidden_gastrobar_id"   value="{{ old('gastrobar_id') }}">
+                            <input type="hidden" name="restaurante_id" id="hidden_restaurante_id" value="{{ old('restaurante_id') }}">
+                        </div>
+
+                        {{-- Representante y dirección --}}
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold text-dark">Representante Legal <span class="text-danger">*</span></label>
-                            <input type="text" name="representante" class="form-control bg-light" placeholder="Nombre completo" style="box-shadow:none;">
+                            <input type="text" name="representante" value="{{ old('representante') }}"
+                                   class="form-control bg-light @error('representante') is-invalid @enderror"
+                                   placeholder="Nombre completo" style="box-shadow:none;">
+                            @error('representante')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold text-dark">Dirección Física</label>
-                            <input type="text" name="direccion" class="form-control bg-light" placeholder="Dirección del local" style="box-shadow:none;">
+                            <input type="text" name="direccion" value="{{ old('direccion') }}"
+                                   class="form-control bg-light" placeholder="Dirección del local" style="box-shadow:none;">
                         </div>
                     </div>
 
                     <hr class="my-3" style="border-color:#edf2f7;">
 
+                    {{-- ── Sección: Plan y Condiciones ── --}}
                     <p class="text-uppercase fw-bold text-muted mb-2" style="font-size:0.7rem;letter-spacing:0.8px;">
                         <i class="bi bi-credit-card me-1"></i> Plan y Condiciones Comerciales
                     </p>
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">Plan <span class="text-danger">*</span></label>
-                            <select name="plan" class="form-select bg-light" style="box-shadow:none;cursor:pointer;">
+                            <select name="plan" class="form-select bg-light @error('plan') is-invalid @enderror" style="box-shadow:none;cursor:pointer;">
                                 <option value="">Seleccionar plan</option>
-                                <option value="gratuito">Gratuito</option>
-                                <option value="basico">Básico</option>
-                                <option value="premium">Premium</option>
+                                <option value="basico"   {{ old('plan') == 'basico'   ? 'selected' : '' }}>Básico</option>
+                                <option value="premium"  {{ old('plan') == 'premium'  ? 'selected' : '' }}>Premium</option>
                             </select>
+                            @error('plan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">Fecha de Inicio <span class="text-danger">*</span></label>
-                            <input type="date" name="fecha_inicio" class="form-control bg-light" style="box-shadow:none;">
+                            <input type="date" name="fecha_inicio" value="{{ old('fecha_inicio') }}"
+                                   class="form-control bg-light @error('fecha_inicio') is-invalid @enderror" style="box-shadow:none;">
+                            @error('fecha_inicio')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">Fecha de Vencimiento <span class="text-danger">*</span></label>
-                            <input type="date" name="fecha_fin" class="form-control bg-light" style="box-shadow:none;">
+                            <input type="date" name="fecha_fin" value="{{ old('fecha_fin') }}"
+                                   class="form-control bg-light @error('fecha_fin') is-invalid @enderror" style="box-shadow:none;">
+                            @error('fecha_fin')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">Estado <span class="text-danger">*</span></label>
                             <select name="estado" class="form-select bg-light" style="box-shadow:none;cursor:pointer;">
-                                <option value="pendiente" selected>Pendiente</option>
-                                <option value="activo">Activo</option>
-                                <option value="vencido">Vencido</option>
-                                <option value="cancelado">Cancelado</option>
+                                <option value="pendiente" {{ old('estado', 'pendiente') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                <option value="activo"    {{ old('estado') == 'activo'    ? 'selected' : '' }}>Activo</option>
+                                <option value="vencido"   {{ old('estado') == 'vencido'   ? 'selected' : '' }}>Vencido</option>
+                                <option value="cancelado" {{ old('estado') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">Monto (C$)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted small">C$</span>
-                                <input type="number" name="monto" class="form-control bg-light" placeholder="0.00" min="0" step="0.01" style="box-shadow:none;">
+                                <input type="number" name="monto" value="{{ old('monto') }}"
+                                       class="form-control bg-light" placeholder="0.00" min="0" step="0.01" style="box-shadow:none;">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">Forma de Pago</label>
                             <select name="forma_pago" class="form-select bg-light" style="box-shadow:none;cursor:pointer;">
                                 <option value="">Seleccionar</option>
-                                <option value="mensual">Mensual</option>
-                                <option value="trimestral">Trimestral</option>
-                                <option value="anual">Anual</option>
+                                <option value="mensual"     {{ old('forma_pago') == 'mensual'     ? 'selected' : '' }}>Mensual</option>
+                                <option value="trimestral"  {{ old('forma_pago') == 'trimestral'  ? 'selected' : '' }}>Trimestral</option>
+                                <option value="anual"       {{ old('forma_pago') == 'anual'       ? 'selected' : '' }}>Anual</option>
                             </select>
                         </div>
                     </div>
 
                     <hr class="my-3" style="border-color:#edf2f7;">
 
+                    {{-- ── Sección: Términos ── --}}
                     <p class="text-uppercase fw-bold text-muted mb-2" style="font-size:0.7rem;letter-spacing:0.8px;">
                         <i class="bi bi-shield-check me-1"></i> Términos y Condiciones
                     </p>
@@ -392,16 +439,26 @@
                         de estos términos podrá resultar en la suspensión o eliminación de la cuenta.
                     </div>
                     <div class="form-check mb-1">
-                        <input class="form-check-input" type="checkbox" id="acepta_terminos" name="acepta_terminos">
+                        <input class="form-check-input @error('acepta_terminos') is-invalid @enderror"
+                               type="checkbox" id="acepta_terminos" name="acepta_terminos"
+                               {{ old('acepta_terminos') ? 'checked' : '' }}>
                         <label class="form-check-label small text-dark" for="acepta_terminos">
                             El representante legal acepta los <a href="#" class="text-warning fw-semibold">Términos y Condiciones</a>. <span class="text-danger">*</span>
                         </label>
+                        @error('acepta_terminos')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="acepta_privacidad" name="acepta_privacidad">
+                        <input class="form-check-input @error('acepta_privacidad') is-invalid @enderror"
+                               type="checkbox" id="acepta_privacidad" name="acepta_privacidad"
+                               {{ old('acepta_privacidad') ? 'checked' : '' }}>
                         <label class="form-check-label small text-dark" for="acepta_privacidad">
                             Acepta la <a href="#" class="text-warning fw-semibold">Política de Privacidad</a> y el tratamiento de datos. <span class="text-danger">*</span>
                         </label>
+                        @error('acepta_privacidad')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                 </form>
@@ -421,15 +478,122 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const urlMunicipios        = '{{ route("contratos.ajax.municipios") }}';
+    const urlEstablecimientos  = '{{ route("contratos.ajax.establecimientos") }}';
+
+    const selectDepto           = document.getElementById('modal_departamento_id');
+    const selectMunicipio       = document.getElementById('modal_municipio_id');
+    const selectEstablecimiento = document.getElementById('modal_establecimiento_id');
+    const labelEstablecimiento  = document.getElementById('labelEstablecimiento');
+    const hiddenGastrobar       = document.getElementById('hidden_gastrobar_id');
+    const hiddenRestaurante     = document.getElementById('hidden_restaurante_id');
+
+    // ── Abrir modal automáticamente si hay errores de validación ──
+    @if($errors->any())
+        var modal = new bootstrap.Modal(document.getElementById('modalNuevoContrato'));
+        modal.show();
+    @endif
+
+    function getTipo() {
+        return document.querySelector('input[name="tipo_establecimiento"]:checked').value;
+    }
+
+    function resetSelect(sel, placeholder) {
+        sel.innerHTML = `<option value="">${placeholder}</option>`;
+        sel.disabled = true;
+    }
+
+    // ── Cambio de tipo (gastrobar / restaurante) ──
     document.querySelectorAll('input[name="tipo_establecimiento"]').forEach(radio => {
         radio.addEventListener('change', function () {
             const esGastrobar = this.value === 'gastrobar';
-            document.getElementById('selectGastrobarWrap').classList.toggle('d-none', !esGastrobar);
-            document.getElementById('selectRestauranteWrap').classList.toggle('d-none', esGastrobar);
+            labelEstablecimiento.innerHTML = `<i class="bi bi-${esGastrobar ? 'cup-straw' : 'shop'} text-warning me-1"></i>${esGastrobar ? 'Gastrobar' : 'Restaurante'} <span class="text-danger">*</span>`;
+            hiddenGastrobar.value   = '';
+            hiddenRestaurante.value = '';
+
+            if (selectMunicipio.value) {
+                cargarEstablecimientos(selectMunicipio.value, this.value);
+            } else {
+                resetSelect(selectEstablecimiento, 'Primero selecciona municipio');
+            }
         });
     });
+
+    // ── Cambio de departamento → cargar municipios ──
+    selectDepto.addEventListener('change', function () {
+        resetSelect(selectMunicipio, 'Cargando...');
+        resetSelect(selectEstablecimiento, 'Primero selecciona municipio');
+        hiddenGastrobar.value   = '';
+        hiddenRestaurante.value = '';
+
+        if (!this.value) {
+            resetSelect(selectMunicipio, 'Primero selecciona departamento');
+            return;
+        }
+
+        fetch(`${urlMunicipios}?departamento_id=${this.value}`)
+            .then(r => r.json())
+            .then(municipios => {
+                selectMunicipio.innerHTML = '<option value="">Seleccionar municipio</option>';
+                municipios.forEach(m => {
+                    selectMunicipio.innerHTML += `<option value="${m.id}">${m.nombre}</option>`;
+                });
+                selectMunicipio.disabled = false;
+            });
+    });
+
+    // ── Cambio de municipio → cargar establecimientos ──
+    selectMunicipio.addEventListener('change', function () {
+        resetSelect(selectEstablecimiento, 'Cargando...');
+        hiddenGastrobar.value   = '';
+        hiddenRestaurante.value = '';
+
+        if (!this.value) {
+            resetSelect(selectEstablecimiento, 'Primero selecciona municipio');
+            return;
+        }
+
+        cargarEstablecimientos(this.value, getTipo());
+    });
+
+    function cargarEstablecimientos(municipioId, tipo) {
+        fetch(`${urlEstablecimientos}?municipio_id=${municipioId}&tipo=${tipo}`)
+            .then(r => r.json())
+            .then(items => {
+                const label = tipo === 'gastrobar' ? 'gastrobar' : 'restaurante';
+                selectEstablecimiento.innerHTML = `<option value="">Seleccionar ${label}</option>`;
+                if (items.length === 0) {
+                    selectEstablecimiento.innerHTML = `<option value="">No hay ${label}es en este municipio</option>`;
+                } else {
+                    items.forEach(item => {
+                        const sub = item.especialidad ? ` — ${item.especialidad}` : (item.tipo_bar ? ` — ${item.tipo_bar}` : '');
+                        selectEstablecimiento.innerHTML += `<option value="${item.id}">${item.nombre}${sub}</option>`;
+                    });
+                }
+                selectEstablecimiento.disabled = false;
+            });
+    }
+
+    // ── Al seleccionar establecimiento → actualizar hidden inputs ──
+    selectEstablecimiento.addEventListener('change', function () {
+        const tipo = getTipo();
+        hiddenGastrobar.value   = tipo === 'gastrobar'   ? this.value : '';
+        hiddenRestaurante.value = tipo === 'restaurante' ? this.value : '';
+    });
+
+    // ── Limpiar al cerrar el modal ──
+    document.getElementById('modalNuevoContrato').addEventListener('hidden.bs.modal', function () {
+        selectDepto.value = '';
+        resetSelect(selectMunicipio, 'Primero selecciona departamento');
+        resetSelect(selectEstablecimiento, 'Primero selecciona municipio');
+        hiddenGastrobar.value   = '';
+        hiddenRestaurante.value = '';
+    });
+
+});
 </script>
 
 @endsection

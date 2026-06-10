@@ -44,7 +44,6 @@ class Trabajador extends Model
 
     /**
      * Restaurantes disponibles en los departamentos asignados al trabajador
-     * (útil para mostrarlos en vistas)
      */
     public function restaurantesDisponibles()
     {
@@ -53,6 +52,18 @@ class Trabajador extends Model
         return Restaurante::whereIn('departamento_id', $departamentoIds)
                           ->orderBy('nombre')
                           ->get();
+    }
+
+    /**
+     * Gastrobares disponibles en los departamentos asignados al trabajador
+     */
+    public function gastrobaresDisponibles()
+    {
+        $departamentoIds = $this->departamentos->pluck('id');
+
+        return Gastrobar::whereIn('departamento_id', $departamentoIds)
+                        ->orderBy('nombre')
+                        ->get();
     }
 
     // ── ACCESSORS ───────────────────────────────────────────────

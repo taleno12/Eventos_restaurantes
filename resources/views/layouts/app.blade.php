@@ -35,7 +35,6 @@
             margin: 0;
         }
 
-        /* ── Sidebar ── */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -61,7 +60,6 @@
             .sidebar.open { transform: translateX(0); }
         }
 
-        /* ── Overlay ── */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -72,7 +70,6 @@
         }
         .sidebar-overlay.open { display: block; }
 
-        /* ── Topbar móvil ── */
         .topbar-mobile {
             display: none;
             position: fixed;
@@ -90,7 +87,6 @@
             .topbar-mobile { display: flex; }
         }
 
-        /* ── Brand ── */
         .sidebar-brand {
             padding: 20px 20px;
             display: flex;
@@ -110,7 +106,6 @@
             box-shadow: 0 4px 12px rgba(59,130,246,0.35);
         }
 
-        /* ── Nav ── */
         .nav-menu {
             padding: 12px 0 32px;
             flex: 1;
@@ -169,7 +164,6 @@
             color: #60a5fa;
         }
 
-        /* ── Badge "nuevo" en nav ── */
         .nav-badge {
             margin-left: auto;
             font-size: 0.55rem;
@@ -184,20 +178,17 @@
             flex-shrink: 0;
         }
 
-        /* ── Divider nav ── */
         .nav-divider {
             border-top: 1px solid rgba(255,255,255,0.06);
             margin: 8px 0;
         }
 
-        /* ── Logout / sitio ── */
         .nav-item.nav-danger { color: #fc8181; }
         .nav-item.nav-danger:hover { color: #feb2b2; background: rgba(252,129,129,0.07); border-left-color: #fc8181; }
 
         .nav-item.nav-info { color: #63b3ed; }
         .nav-item.nav-info:hover { color: #90cdf4; background: rgba(99,179,237,0.07); border-left-color: #63b3ed; }
 
-        /* ── Contenido ── */
         .content-wrapper {
             margin-left: var(--sidebar-width);
             padding: 36px 36px;
@@ -217,7 +208,6 @@
             }
         }
 
-        /* ── Hamburger ── */
         .hamburger-btn {
             background: rgba(255,255,255,0.08);
             border: none;
@@ -231,7 +221,6 @@
         }
         .hamburger-btn:hover { background: rgba(255,255,255,0.15); }
 
-        /* ── Alert de éxito ── */
         .alert-success-custom {
             background: #f0fdf4;
             border-left: 4px solid #22c55e;
@@ -248,7 +237,6 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    {{-- ── Topbar móvil ── --}}
     <div class="topbar-mobile">
         <button class="hamburger-btn" id="hamburgerBtn">
             <i class="bi bi-list" style="font-size:1.1rem;"></i>
@@ -263,12 +251,8 @@
 
     <div style="min-height:100vh;">
 
-        {{-- ══════════════════════════════════════════ --}}
-        {{-- SIDEBAR                                   --}}
-        {{-- ══════════════════════════════════════════ --}}
         <aside class="sidebar" id="sidebar">
 
-            {{-- Brand --}}
             <div class="sidebar-brand">
                 <div class="brand-icon">
                     <i class="bi bi-grid-3x3-gap-fill text-white" style="font-size:1rem;"></i>
@@ -279,19 +263,14 @@
                 </div>
             </div>
 
-            {{-- Nav --}}
             <nav class="nav-menu">
 
-                {{-- ── Dashboard ── --}}
                 <a href="{{ route('dashboard') }}"
                    class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart-line"></i>
                     <span>Resumen General</span>
                 </a>
 
-                {{-- ══════════════════════════════════════════ --}}
-                {{-- SECCIÓN: Logística Gastronómica           --}}
-                {{-- ══════════════════════════════════════════ --}}
                 <div class="nav-section-title">Logística Gastronómica</div>
 
                 <a href="{{ route('departamentos.index') }}"
@@ -324,9 +303,6 @@
                     <span>Ofertas de Empleo</span>
                 </a>
 
-                {{-- ══════════════════════════════════════════ --}}
-                {{-- SECCIÓN: Administración Interna           --}}
-                {{-- ══════════════════════════════════════════ --}}
                 <div class="nav-section-title">Administración Interna</div>
 
                 <a href="{{ route('trabajadores.index') }}"
@@ -338,7 +314,7 @@
                 <a href="{{ route('contratos.index') }}"
                    class="nav-item {{ request()->routeIs('contratos.*') ? 'active' : '' }}">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Contratos de Restaurantes-Gastrobares</span>
+                    <span>Contratos</span>
                 </a>
 
                 <a href="{{ route('membresias.index') }}"
@@ -359,10 +335,11 @@
                     <span>Usuarios del Sistema</span>
                 </a>
 
-                <a href="{{ route('notificaciones.index') }}"
-                   class="nav-item {{ request()->routeIs('notificaciones.*') ? 'active' : '' }}">
+                <a href="#"
+                   class="nav-item">
                     <i class="bi bi-bell"></i>
                     <span>Notificaciones</span>
+                    <span class="nav-badge">Pronto</span>
                 </a>
 
                 <a href="{{ route('reportes.index') }}"
@@ -400,7 +377,6 @@
 
             </nav>
 
-            {{-- Usuario en pie de sidebar --}}
             @auth
             <div class="px-3 pb-4 mt-auto flex-shrink-0">
                 <div class="d-flex align-items-center gap-2 px-3 py-3 rounded-3"
@@ -423,9 +399,6 @@
 
         </aside>
 
-        {{-- ══════════════════════════════════════════ --}}
-        {{-- CONTENIDO PRINCIPAL                       --}}
-        {{-- ══════════════════════════════════════════ --}}
         <main class="content-wrapper">
 
             @isset($header)

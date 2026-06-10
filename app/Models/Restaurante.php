@@ -164,15 +164,21 @@ class Restaurante extends Model
         return $this->reviews()->count();
     }
 
-    //nuevo
-
     public function platos(): HasMany
-{
-    return $this->hasMany(Plato::class);
-}
+    {
+        return $this->hasMany(Plato::class);
+    }
 
-public function pedidos(): HasMany
-{
-    return $this->hasMany(Pedido::class);
-}
+    public function pedidos(): HasMany
+    {
+        return $this->hasMany(Pedido::class);
+    }
+
+    /**
+     * Un restaurante puede tener MUCHAS categorías de platos
+     */
+    public function categoriasPlato(): HasMany
+    {
+        return $this->hasMany(\App\Models\CategoriaPlato::class, 'restaurante_id');
+    }
 }

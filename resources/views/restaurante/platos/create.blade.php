@@ -51,22 +51,22 @@
                                value="{{ old('precio') }}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Categoría</label>
-                        <input type="text" name="categoria" class="form-control"
-                               placeholder="Ej: Entradas, Platos fuertes..."
-                               value="{{ old('categoria') }}"
-                               list="categorias-sugeridas">
-                        <datalist id="categorias-sugeridas">
-                            <option value="Entradas">
-                            <option value="Platos fuertes">
-                            <option value="Mariscos">
-                            <option value="Carnes">
-                            <option value="Pastas">
-                            <option value="Ensaladas">
-                            <option value="Bebidas">
-                            <option value="Postres">
-                            <option value="Desayunos">
-                        </datalist>
+                        <label class="form-label fw-semibold" style="font-size:13px;">
+                            Categoría
+                            <a href="{{ route('restaurante.categorias.index') }}"
+                               class="ms-2 text-primary" style="font-size:11px;font-weight:500;" target="_blank">
+                                <i class="bi bi-plus-circle me-1"></i>Gestionar categorías
+                            </a>
+                        </label>
+                        <select name="categoria_id" class="form-select">
+                            <option value="">Sin categoría</option>
+                            @foreach($categorias as $cat)
+                                <option value="{{ $cat->id }}"
+                                    {{ old('categoria_id') == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>

@@ -14,7 +14,7 @@ class Plato extends Model
         'descripcion',
         'precio',
         'imagen',
-        'categoria',
+        'categoria_id',
         'activo',
         'orden',
     ];
@@ -29,12 +29,16 @@ class Plato extends Model
         return $this->belongsTo(Restaurante::class);
     }
 
+    public function categoriaPlato(): BelongsTo
+    {
+        return $this->belongsTo(CategoriaPlato::class, 'categoria_id');
+    }
+
     public function pedidoItems(): HasMany
     {
         return $this->hasMany(PedidoItem::class);
     }
 
-    // Scope para platos activos
     public function scopeActivos($query)
     {
         return $query->where('activo', true);

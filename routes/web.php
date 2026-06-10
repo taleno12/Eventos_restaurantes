@@ -10,12 +10,14 @@ use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmpleoController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\GastrobarReviewController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\DepartamentoUsuarioController;
 use App\Http\Controllers\GastrobarController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\Restaurante\CategoriaController;
 
 use App\Models\Restaurante;
 use App\Models\Evento;
@@ -54,8 +56,9 @@ Route::post('/contacto', function (\Illuminate\Http\Request $request) {
 })->name('contacto.store');
 
 // ── RESTAURANTES PÚBLICOS ────────────────────────────────────────────────────
-Route::get('/restaurantes',               [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
-Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'publicShow'])->name('restaurantes.show');
+Route::get('/restaurantes',                          [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
+Route::get('/restaurantes/{restaurante}',            [RestauranteController::class, 'publicShow'])->name('restaurantes.show');
+Route::get('/restaurantes/{restaurante}/ordenar',    [RestauranteController::class, 'ordenar'])->name('restaurantes.ordenar');
 
 // ── GASTROBARES PÚBLICOS ─────────────────────────────────────────────────────
 Route::get('/gastrobares',             [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
@@ -79,9 +82,15 @@ Route::middleware('auth')->get('/mi-restaurante/api/municipios/{id}', function (
 
 // ── REVIEWS Y SISTEMA DE COMENTARIOS (REQUIERE AUTH) ─────────────────────────
 Route::middleware('auth')->group(function () {
+    // Reviews de Restaurantes
     Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{review}',                    [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}',                 [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Reviews de Gastrobares
+    Route::post('/gastrobares/{gastrobar}/reviews', [GastrobarReviewController::class, 'store'])->name('gastrobar.reviews.store');
+    Route::put('/gastrobares/reviews/{review}',     [GastrobarReviewController::class, 'update'])->name('gastrobar.reviews.update');
+    Route::delete('/gastrobares/reviews/{review}',  [GastrobarReviewController::class, 'destroy'])->name('gastrobar.reviews.destroy');
 });
 
 // ── PANEL DE CONTROL / DASHBOARD (SOLO ADMIN) ────────────────────────────────
@@ -305,6 +314,12 @@ Route::middleware(['auth', 'role:restaurante,admin'])
         Route::resource('platos', \App\Http\Controllers\Restaurante\RestaurantePlatoController::class);
         Route::patch('platos/{plato}/toggle', [\App\Http\Controllers\Restaurante\RestaurantePlatoController::class, 'toggleActivo'])
             ->name('platos.toggle');
+
+        // ── CATEGORÍAS DE PLATOS ──────────────────────────────────────────────
+        Route::post('categorias/reorder', [CategoriaController::class, 'reorder'])
+            ->name('categorias.reorder');
+        Route::resource('categorias', CategoriaController::class)
+            ->only(['index', 'store', 'update', 'destroy']);
 
         // Pedidos del restaurante
         Route::get('/pedidos', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'index'])->name('pedidos.index');

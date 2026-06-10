@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Restaurante;
 
 use App\Http\Controllers\Controller;
 use App\Models\Plato;
+use App\Models\CategoriaPlato;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -18,19 +19,22 @@ class RestaurantePlatoController extends Controller
     public function index()
     {
         $restaurante = $this->restaurante();
+        $categorias  = $restaurante->categoriasPlato()->ordenadas()->get();
+
         $platos = Plato::where('restaurante_id', $restaurante->id)
-            ->orderBy('categoria')
+            ->orderBy('categoria_id')
             ->orderBy('orden')
             ->get()
-            ->groupBy('categoria');
+            ->groupBy(fn($p) => $p->categoriaPlato->nombre ?? 'Sin categoría');
 
-        return view('restaurante.platos.index', compact('restaurante', 'platos'));
+        return view('restaurante.platos.index', compact('restaurante', 'platos', 'categorias'));
     }
 
     public function create()
     {
         $restaurante = $this->restaurante();
-        return view('restaurante.platos.create', compact('restaurante'));
+        $categorias  = $restaurante->categoriasPlato()->ordenadas()->get();
+        return view('restaurante.platos.create', compact('restaurante', 'categorias'));
     }
 
     public function store(Request $request)
@@ -38,12 +42,12 @@ class RestaurantePlatoController extends Controller
         $restaurante = $this->restaurante();
 
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:150',
-            'descripcion' => 'nullable|string',
-            'precio'      => 'required|numeric|min:0',
-            'imagen'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'categoria'   => 'nullable|string|max:80',
-            'orden'       => 'nullable|integer|min:0',
+            'nombre'       => 'required|string|max:150',
+            'descripcion'  => 'nullable|string',
+            'precio'       => 'required|numeric|min:0',
+            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'categoria_id' => 'nullable|exists:categorias_plato,id',
+            'orden'        => 'nullable|integer|min:0',
         ]);
 
         $validated['restaurante_id'] = $restaurante->id;
@@ -65,7 +69,8 @@ class RestaurantePlatoController extends Controller
         $restaurante = $this->restaurante();
         abort_unless($plato->restaurante_id === $restaurante->id, 403);
 
-        return view('restaurante.platos.edit', compact('restaurante', 'plato'));
+        $categorias = $restaurante->categoriasPlato()->ordenadas()->get();
+        return view('restaurante.platos.edit', compact('restaurante', 'plato', 'categorias'));
     }
 
     public function update(Request $request, Plato $plato)
@@ -74,12 +79,12 @@ class RestaurantePlatoController extends Controller
         abort_unless($plato->restaurante_id === $restaurante->id, 403);
 
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:150',
-            'descripcion' => 'nullable|string',
-            'precio'      => 'required|numeric|min:0',
-            'imagen'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'categoria'   => 'nullable|string|max:80',
-            'orden'       => 'nullable|integer|min:0',
+            'nombre'       => 'required|string|max:150',
+            'descripcion'  => 'nullable|string',
+            'precio'       => 'required|numeric|min:0',
+            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'categoria_id' => 'nullable|exists:categorias_plato,id',
+            'orden'        => 'nullable|integer|min:0',
         ]);
 
         $validated['activo'] = $request->boolean('activo', false);
@@ -110,7 +115,6 @@ class RestaurantePlatoController extends Controller
             ->with('success', 'Plato eliminado del menú.');
     }
 
-    // Toggle rápido activo/inactivo desde el index
     public function toggleActivo(Plato $plato)
     {
         $restaurante = $this->restaurante();

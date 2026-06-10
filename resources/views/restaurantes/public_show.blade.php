@@ -588,6 +588,13 @@
                         <a href="{{ route('restaurantes.index') }}" class="btn-back">
                             <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
                         </a>
+
+                        @auth
+<a href="{{ route('pedidos.mis') }}"
+   style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:700;padding:7px 16px;border-radius:999px;text-decoration:none;">
+    <i class="fas fa-bag-shopping" style="font-size:10px;"></i> Mis Pedidos
+</a>
+@endauth
                         @auth
                             @if(auth()->user()->restaurante && auth()->user()->restaurante->id === $restaurante->id)
                                 <a href="{{ route('restaurante.dashboard') }}" class="btn-panel">
@@ -785,6 +792,295 @@
                         </div>
                     </div>
                 @endif
+
+                {{-- ══ SECCIÓN MENÚ + CARRITO ══ --}}
+{{-- Insertar DESPUÉS de card-galeria y ANTES de card-mapa --}}
+
+@if(!$platos->isEmpty())
+<div class="card" id="menu-section" style="order:3.5;">
+    <div class="card-body">
+        <div class="section-label">
+            <i class="fas fa-utensils"></i> Menú
+            <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">
+                — {{ $platos->flatten()->count() }} platillos
+            </span>
+        </div>
+
+        @if(session('pedido_success'))
+            <div style="background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-check-circle"></i> {{ session('pedido_success') }}
+            </div>
+        @endif
+
+        {{-- Tabs de categorías --}}
+        <div id="categorias-tabs" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+            <button onclick="filtrarCategoria('todas')" id="tab-todas"
+                    style="padding:6px 16px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #ea580c;background:#ea580c;color:white;transition:all 0.2s;">
+                Todos
+            </button>
+            @foreach($platos->keys() as $cat)
+                <button onclick="filtrarCategoria('{{ Str::slug($cat) }}')" id="tab-{{ Str::slug($cat) }}"
+                        style="padding:6px 16px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #e7e5e4;background:white;color:#78716c;transition:all 0.2s;">
+                    {{ $cat ?: 'Sin categoría' }}
+                </button>
+            @endforeach
+        </div>
+
+        {{-- Grid de platos --}}
+        <div id="platos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:24px;">
+            @foreach($platos as $categoria => $items)
+                @foreach($items as $plato)
+                <div class="plato-card" data-categoria="{{ Str::slug($categoria) }}"
+                     style="border:1px solid #e7e5e4;border-radius:16px;overflow:hidden;background:white;transition:all 0.2s;cursor:pointer;"
+                     onmouseover="this.style.borderColor='#ea580c';this.style.boxShadow='0 4px 20px rgba(234,88,12,0.12)'"
+                     onmouseout="this.style.borderColor='#e7e5e4';this.style.boxShadow='none'">
+
+                    {{-- Imagen --}}
+                    <div style="aspect-ratio:4/3;overflow:hidden;background:#f5f5f4;position:relative;">
+                        @if($plato->imagen)
+                            <img src="{{ asset('storage/'.$plato->imagen) }}"
+                                 style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;"
+                                 onmouseover="this.style.transform='scale(1.06)'"
+                                 onmouseout="this.style.transform='scale(1)'">
+                        @else
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-utensils" style="font-size:28px;color:#d6d3d1;"></i>
+                            </div>
+                        @endif
+                        <div style="position:absolute;top:8px;left:8px;background:rgba(255,255,255,0.92);border-radius:999px;padding:3px 10px;font-size:10px;font-weight:800;color:#78716c;letter-spacing:0.06em;text-transform:uppercase;">
+                            {{ $categoria ?: 'Menú' }}
+                        </div>
+                    </div>
+
+                    {{-- Info --}}
+                    <div style="padding:12px 14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px;">
+                            <span style="font-weight:700;color:#1c1917;font-size:14px;line-height:1.3;">{{ $plato->nombre }}</span>
+                            <span style="color:#ea580c;font-weight:800;font-size:15px;white-space:nowrap;">C$ {{ number_format($plato->precio, 0) }}</span>
+                        </div>
+                        @if($plato->descripcion)
+                            <p style="font-size:12px;color:#a8a29e;line-height:1.5;margin-bottom:10px;">{{ Str::limit($plato->descripcion, 60) }}</p>
+                        @endif
+
+                        @auth
+                            <button onclick="agregarAlCarrito({{ $plato->id }}, '{{ addslashes($plato->nombre) }}', {{ $plato->precio }})"
+                                    style="width:100%;padding:8px;border-radius:10px;border:none;background:#0c0a09;color:white;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.2s;"
+                                    onmouseover="this.style.background='#ea580c'"
+                                    onmouseout="this.style.background='#0c0a09'">
+                                <i class="fas fa-plus" style="font-size:10px;"></i> Agregar
+                            </button>
+                        @else
+                            <a href="{{ route('login') }}"
+                               style="width:100%;padding:8px;border-radius:10px;border:1px solid #e7e5e4;background:white;color:#78716c;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;transition:all 0.2s;"
+                               onmouseover="this.style.borderColor='#ea580c';this.style.color='#ea580c'"
+                               onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
+                                <i class="fas fa-sign-in-alt" style="font-size:10px;"></i> Inicia sesión para pedir
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+                @endforeach
+            @endforeach
+        </div>
+
+        {{-- Carrito (solo auth) --}}
+        @auth
+        <div id="carrito-section" style="display:none;border-top:1px solid #e7e5e4;padding-top:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:14px;font-weight:800;color:#1c1917;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-shopping-bag" style="color:#ea580c;"></i>
+                    Tu pedido
+                    <span id="carrito-count" style="background:#ea580c;color:white;border-radius:999px;padding:2px 8px;font-size:11px;">0</span>
+                </h3>
+                <button onclick="limpiarCarrito()"
+                        style="font-size:11px;color:#a8a29e;background:none;border:none;cursor:pointer;font-weight:600;">
+                    <i class="fas fa-times"></i> Vaciar
+                </button>
+            </div>
+
+            <div id="carrito-items" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid #e7e5e4;border-bottom:1px solid #e7e5e4;margin-bottom:16px;">
+                <span style="font-weight:700;color:#1c1917;">Total</span>
+                <span id="carrito-total" style="font-size:18px;font-weight:900;color:#ea580c;">C$ 0</span>
+            </div>
+
+            <form method="POST" action="{{ route('pedidos.store', $restaurante) }}" id="form-pedido">
+                @csrf
+                <div id="items-hidden"></div>
+
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Tipo de pedido</label>
+                    <div style="display:flex;gap:8px;">
+                        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;cursor:pointer;transition:all 0.2s;" id="label-mesa">
+                            <input type="radio" name="tipo" value="mesa" checked onchange="selectTipo('mesa')"
+                                   style="accent-color:#ea580c;">
+                            <span style="font-size:13px;font-weight:600;color:#1c1917;"><i class="fas fa-chair" style="color:#ea580c;margin-right:4px;"></i> Mesa</span>
+                        </label>
+                        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;cursor:pointer;transition:all 0.2s;" id="label-llevar">
+                            <input type="radio" name="tipo" value="para_llevar" onchange="selectTipo('para_llevar')"
+                                   style="accent-color:#ea580c;">
+                            <span style="font-size:13px;font-weight:600;color:#1c1917;"><i class="fas fa-bag-shopping" style="color:#ea580c;margin-right:4px;"></i> Para llevar</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">
+                        Notas <span style="font-weight:400;text-transform:none;">(opcional)</span>
+                    </label>
+                    <textarea name="notas" rows="2" maxlength="500"
+                              placeholder="Ej: Sin cebolla en el ceviche, alergia al maní..."
+                              style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:none;transition:border-color 0.2s;"
+                              onfocus="this.style.borderColor='#ea580c'"
+                              onblur="this.style.borderColor='#e7e5e4'"></textarea>
+                </div>
+
+                <button type="submit" id="btn-confirmar"
+                        style="width:100%;padding:14px;border-radius:12px;border:none;background:#ea580c;color:white;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;"
+                        onmouseover="this.style.background='#c2410c';this.style.transform='translateY(-1px)'"
+                        onmouseout="this.style.background='#ea580c';this.style.transform='none'">
+                    <i class="fas fa-paper-plane"></i> Confirmar Pedido
+                </button>
+            </form>
+        </div>
+        @endauth
+
+    </div>
+</div>
+@endif
+
+{{-- Carrito flotante (solo visible cuando hay items) --}}
+@auth
+<div id="carrito-flotante"
+     onclick="scrollAlCarrito()"
+     style="display:none;position:fixed;bottom:24px;right:24px;z-index:999;background:#ea580c;color:white;border-radius:999px;padding:14px 22px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 8px 32px rgba(234,88,12,0.4);display:none;align-items:center;gap:8px;transition:all 0.3s;">
+    <i class="fas fa-shopping-bag"></i>
+    <span id="flotante-count">0 items</span>
+    <span style="opacity:0.7;">·</span>
+    <span id="flotante-total">C$ 0</span>
+</div>
+@endauth
+
+<script>
+// ── Estado del carrito ────────────────────────────────────────────────────────
+let carrito = {}; // { id: { nombre, precio, cantidad } }
+
+function agregarAlCarrito(id, nombre, precio) {
+    if (carrito[id]) {
+        carrito[id].cantidad++;
+    } else {
+        carrito[id] = { nombre, precio, cantidad: 1 };
+    }
+    renderCarrito();
+    // Feedback visual
+    event.target.closest('button').innerHTML = '<i class="fas fa-check" style="font-size:10px;"></i> Agregado';
+    setTimeout(() => {
+        if (document.querySelector(`button[onclick*="agregarAlCarrito(${id},"]`))
+            document.querySelector(`button[onclick*="agregarAlCarrito(${id},"]`).innerHTML = '<i class="fas fa-plus" style="font-size:10px;"></i> Agregar';
+    }, 1000);
+}
+
+function cambiarCantidad(id, delta) {
+    if (!carrito[id]) return;
+    carrito[id].cantidad += delta;
+    if (carrito[id].cantidad <= 0) delete carrito[id];
+    renderCarrito();
+}
+
+function limpiarCarrito() {
+    carrito = {};
+    renderCarrito();
+}
+
+function renderCarrito() {
+    const ids = Object.keys(carrito);
+    const section = document.getElementById('carrito-section');
+    const flotante = document.getElementById('carrito-flotante');
+    const itemsDiv = document.getElementById('carrito-items');
+    const hiddenDiv = document.getElementById('items-hidden');
+    const countBadge = document.getElementById('carrito-count');
+    const totalEl = document.getElementById('carrito-total');
+    const flotanteCount = document.getElementById('flotante-count');
+    const flotanteTotal = document.getElementById('flotante-total');
+
+    if (ids.length === 0) {
+        section.style.display = 'none';
+        flotante.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    flotante.style.display = 'flex';
+
+    let total = 0;
+    let totalItems = 0;
+    let itemsHTML = '';
+    let hiddenHTML = '';
+
+    ids.forEach((id, index) => {
+        const item = carrito[id];
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+        totalItems += item.cantidad;
+
+        itemsHTML += `
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f4;">
+                <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:700;color:#1c1917;">${item.nombre}</div>
+                    <div style="font-size:12px;color:#a8a29e;">C$ ${item.precio.toLocaleString()} c/u</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <button onclick="cambiarCantidad(${id}, -1)" style="width:26px;height:26px;border-radius:50%;border:1px solid #e7e5e4;background:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:#78716c;">−</button>
+                    <span style="font-size:13px;font-weight:700;min-width:20px;text-align:center;">${item.cantidad}</span>
+                    <button onclick="cambiarCantidad(${id}, 1)" style="width:26px;height:26px;border-radius:50%;border:1px solid #e7e5e4;background:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:#78716c;">+</button>
+                </div>
+                <div style="font-size:13px;font-weight:800;color:#ea580c;min-width:60px;text-align:right;">C$ ${subtotal.toLocaleString()}</div>
+            </div>
+        `;
+
+        hiddenHTML += `
+            <input type="hidden" name="items[${index}][id]" value="${id}">
+            <input type="hidden" name="items[${index}][cantidad]" value="${item.cantidad}">
+        `;
+    });
+
+    itemsDiv.innerHTML = itemsHTML;
+    hiddenDiv.innerHTML = hiddenHTML;
+    countBadge.textContent = totalItems;
+    totalEl.textContent = `C$ ${total.toLocaleString()}`;
+    flotanteCount.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+    flotanteTotal.textContent = `C$ ${total.toLocaleString()}`;
+}
+
+function scrollAlCarrito() {
+    document.getElementById('carrito-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── Filtro por categoría ──────────────────────────────────────────────────────
+function filtrarCategoria(cat) {
+    document.querySelectorAll('.plato-card').forEach(card => {
+        card.style.display = (cat === 'todas' || card.dataset.categoria === cat) ? 'block' : 'none';
+    });
+    document.querySelectorAll('[id^="tab-"]').forEach(btn => {
+        const isActive = btn.id === `tab-${cat}`;
+        btn.style.background = isActive ? '#ea580c' : 'white';
+        btn.style.color = isActive ? 'white' : '#78716c';
+        btn.style.borderColor = isActive ? '#ea580c' : '#e7e5e4';
+    });
+}
+
+// ── Tipo pedido visual ────────────────────────────────────────────────────────
+function selectTipo(tipo) {
+    ['mesa','llevar'].forEach(t => {
+        const lbl = document.getElementById(`label-${t}`);
+        if (lbl) lbl.style.borderColor = '#e7e5e4';
+    });
+    const sel = document.getElementById(`label-${tipo === 'mesa' ? 'mesa' : 'llevar'}`);
+    if (sel) sel.style.borderColor = '#ea580c';
+}
+selectTipo('mesa');
+</script>
 
                 {{-- Mapa --}}
                 @if($restaurante->latitud && $restaurante->longitud)

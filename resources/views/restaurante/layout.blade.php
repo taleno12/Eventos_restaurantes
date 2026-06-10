@@ -398,9 +398,9 @@
                 Mis Empleos
             </a>
 
-            <a href="{{ route('restaurante.platos.index') }}" 
+            <a href="{{ route('restaurante.platos.index') }}"
              class="nav-link {{ request()->routeIs('restaurante.platos.*') ? 'active' : '' }}">
-              <i class="fas fa-utensils"></i>
+              <i class="bi bi-egg-fried"></i>
               Menú
             </a>
 
@@ -410,9 +410,10 @@
                 Galería
             </a>
 
-            <a href="{{ route('restaurante.pedidos.index') }}" 
+            <a href="{{ route('restaurante.pedidos.index') }}"
              class="nav-link {{ request()->routeIs('restaurante.pedidos.*') ? 'active' : '' }}">
-              <i class="fas fa-shopping-bag"></i> Pedidos
+              <i class="bi bi-bag-fill"></i>
+              Pedidos
             </a>
             
             <a href="{{ route('restaurante.perfil.edit') }}"

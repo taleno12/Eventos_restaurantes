@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Contrato;
 use App\Models\Gastrobar;
 use App\Models\Restaurante;
+use App\Models\Departamento;
+use App\Models\Municipio;
 use Illuminate\Http\Request;
 
 class ContratoController extends Controller
@@ -30,27 +32,24 @@ class ContratoController extends Controller
             $query->where('plan', $request->plan);
         }
 
-        $contratos    = $query->paginate(10);
-        $total        = Contrato::count();
-        $activos      = Contrato::where('estado', 'activo')->count();
-        $vencidos     = Contrato::where('estado', 'vencido')->count();
-        $pendientes   = Contrato::where('estado', 'pendiente')->count();
-        $gastrobares  = Gastrobar::orderBy('nombre')->get();
-        $restaurantes = Restaurante::orderBy('nombre')->get();
+        $contratos     = $query->paginate(10);
+        $total         = Contrato::count();
+        $activos       = Contrato::where('estado', 'activo')->count();
+        $vencidos      = Contrato::where('estado', 'vencido')->count();
+        $pendientes    = Contrato::where('estado', 'pendiente')->count();
+        $departamentos = Departamento::orderBy('nombre')->get();
 
         return view('contratos.index', compact(
             'contratos', 'total', 'activos', 'vencidos', 'pendientes',
-            'gastrobares', 'restaurantes'
+            'departamentos'
         ));
     }
 
     // ── CREATE ───────────────────────────────────────────────────
     public function create()
     {
-        $gastrobares  = Gastrobar::orderBy('nombre')->get();
-        $restaurantes = Restaurante::orderBy('nombre')->get();
-
-        return view('contratos.create', compact('gastrobares', 'restaurantes'));
+        $departamentos = Departamento::orderBy('nombre')->get();
+        return view('contratos.create', compact('departamentos'));
     }
 
     // ── STORE ────────────────────────────────────────────────────
@@ -62,7 +61,7 @@ class ContratoController extends Controller
             'restaurante_id'       => 'required_if:tipo_establecimiento,restaurante|nullable|exists:restaurantes,id',
             'representante'        => 'required|string|max:255',
             'direccion'            => 'nullable|string|max:255',
-            'plan'                 => 'required|in:gratuito,basico,premium',
+            'plan'                 => 'required|in:basico,premium',
             'fecha_inicio'         => 'required|date',
             'fecha_fin'            => 'required|date|after:fecha_inicio',
             'monto'                => 'nullable|numeric|min:0',
@@ -83,12 +82,31 @@ class ContratoController extends Controller
             'acepta_privacidad.accepted'    => 'Debes aceptar la Política de Privacidad.',
         ]);
 
+        // ── Validar que el establecimiento no tenga ya un contrato activo o pendiente ──
+        if ($request->tipo_establecimiento === 'gastrobar') {
+            $contratoExistente = Contrato::where('gastrobar_id', $request->gastrobar_id)
+                ->whereIn('estado', ['activo', 'pendiente'])
+                ->first();
+        } else {
+            $contratoExistente = Contrato::where('restaurante_id', $request->restaurante_id)
+                ->whereIn('estado', ['activo', 'pendiente'])
+                ->first();
+        }
+
+        if ($contratoExistente) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'establecimiento' => "Este establecimiento ya tiene el contrato #{$contratoExistente->numero_contrato} activo. No se puede crear otro."
+                ]);
+        }
+
         $ultimo = Contrato::max('id') ?? 0;
         $numero = 'CON-' . str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
 
         Contrato::create([
             'numero_contrato' => $numero,
-            'gastrobar_id'    => $request->tipo_establecimiento === 'gastrobar'  ? $request->gastrobar_id  : null,
+            'gastrobar_id'    => $request->tipo_establecimiento === 'gastrobar'   ? $request->gastrobar_id  : null,
             'restaurante_id'  => $request->tipo_establecimiento === 'restaurante' ? $request->restaurante_id : null,
             'representante'   => $request->representante,
             'direccion'       => $request->direccion,
@@ -114,10 +132,8 @@ class ContratoController extends Controller
     // ── EDIT ─────────────────────────────────────────────────────
     public function edit(Contrato $contrato)
     {
-        $gastrobares  = Gastrobar::orderBy('nombre')->get();
-        $restaurantes = Restaurante::orderBy('nombre')->get();
-
-        return view('contratos.edit', compact('contrato', 'gastrobares', 'restaurantes'));
+        $departamentos = Departamento::orderBy('nombre')->get();
+        return view('contratos.edit', compact('contrato', 'departamentos'));
     }
 
     // ── UPDATE ───────────────────────────────────────────────────
@@ -129,7 +145,7 @@ class ContratoController extends Controller
             'restaurante_id'       => 'required_if:tipo_establecimiento,restaurante|nullable|exists:restaurantes,id',
             'representante'        => 'required|string|max:255',
             'direccion'            => 'nullable|string|max:255',
-            'plan'                 => 'required|in:gratuito,basico,premium',
+            'plan'                 => 'required|in:basico,premium',
             'fecha_inicio'         => 'required|date',
             'fecha_fin'            => 'required|date|after:fecha_inicio',
             'monto'                => 'nullable|numeric|min:0',
@@ -137,8 +153,29 @@ class ContratoController extends Controller
             'estado'               => 'required|in:activo,vencido,pendiente,cancelado',
         ]);
 
+        // ── Validar duplicado en update (excluir el contrato actual) ──
+        if ($request->tipo_establecimiento === 'gastrobar') {
+            $contratoExistente = Contrato::where('gastrobar_id', $request->gastrobar_id)
+                ->whereIn('estado', ['activo', 'pendiente'])
+                ->where('id', '!=', $contrato->id)
+                ->first();
+        } else {
+            $contratoExistente = Contrato::where('restaurante_id', $request->restaurante_id)
+                ->whereIn('estado', ['activo', 'pendiente'])
+                ->where('id', '!=', $contrato->id)
+                ->first();
+        }
+
+        if ($contratoExistente) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'establecimiento' => "Este establecimiento ya tiene el contrato #{$contratoExistente->numero_contrato} activo. No se puede asignar otro."
+                ]);
+        }
+
         $contrato->update([
-            'gastrobar_id'   => $request->tipo_establecimiento === 'gastrobar'  ? $request->gastrobar_id  : null,
+            'gastrobar_id'   => $request->tipo_establecimiento === 'gastrobar'   ? $request->gastrobar_id  : null,
             'restaurante_id' => $request->tipo_establecimiento === 'restaurante' ? $request->restaurante_id : null,
             'representante'  => $request->representante,
             'direccion'      => $request->direccion,
@@ -162,5 +199,34 @@ class ContratoController extends Controller
 
         return redirect()->route('contratos.index')
             ->with('success', "Contrato {$numero} eliminado correctamente.");
+    }
+
+    // ── AJAX: Municipios por departamento ────────────────────────
+    public function getMunicipiosPorDepartamento(Request $request)
+    {
+        $municipios = Municipio::where('departamento_id', $request->departamento_id)
+            ->orderBy('nombre')
+            ->get(['id', 'nombre']);
+
+        return response()->json($municipios);
+    }
+
+    // ── AJAX: Establecimientos por municipio ─────────────────────
+    public function getEstablecimientosPorMunicipio(Request $request)
+    {
+        $tipo        = $request->tipo;
+        $municipioId = $request->municipio_id;
+
+        if ($tipo === 'gastrobar') {
+            $items = Gastrobar::where('municipio_id', $municipioId)
+                ->orderBy('nombre')
+                ->get(['id', 'nombre']);
+        } else {
+            $items = Restaurante::where('municipio_id', $municipioId)
+                ->orderBy('nombre')
+                ->get(['id', 'nombre', 'especialidad']);
+        }
+
+        return response()->json($items);
     }
 }

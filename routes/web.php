@@ -15,6 +15,7 @@ use App\Http\Controllers\DepartamentoUsuarioController;
 use App\Http\Controllers\GastrobarController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\ContratoController;
+use App\Http\Controllers\PagoController;
 
 use App\Models\Restaurante;
 use App\Models\Evento;
@@ -53,21 +54,17 @@ Route::post('/contacto', function (\Illuminate\Http\Request $request) {
 })->name('contacto.store');
 
 // ── RESTAURANTES PÚBLICOS ────────────────────────────────────────────────────
-Route::get('/restaurantes',           [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
+Route::get('/restaurantes',               [RestauranteController::class, 'publicIndex'])->name('restaurantes.index');
 Route::get('/restaurantes/{restaurante}', [RestauranteController::class, 'publicShow'])->name('restaurantes.show');
 
 // ── GASTROBARES PÚBLICOS ─────────────────────────────────────────────────────
-Route::get('/gastrobares',            [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
+Route::get('/gastrobares',             [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
 Route::get('/gastrobares/{gastrobar}', [GastrobarController::class, 'publicShow'])->name('gastrobares.show');
 
 // ── EMPLEOS PÚBLICOS ─────────────────────────────────────────────────────────
-Route::get('/empleos',                [EmpleoController::class, 'publicIndex'])->name('empleos.index');
-Route::get('/empleos/{empleo}',       [EmpleoController::class, 'show'])->name('empleos.show');
+Route::get('/empleos',                   [EmpleoController::class, 'publicIndex'])->name('empleos.index');
+Route::get('/empleos/{empleo}',          [EmpleoController::class, 'show'])->name('empleos.show');
 Route::post('/empleos/{empleo}/aplicar', [EmpleoController::class, 'aplicar'])->name('empleos.aplicar');
-
-// ── EVENTOS PÚBLICOS ─────────────────────────────────────────────────────────
-// ⚠️ MOVIDA al final, después de las rutas admin, para no capturar /eventos/create
-// Se define abajo con whereNumber para que solo acepte IDs numéricos
 
 // ── API PÚBLICA ───────────────────────────────────────────────────────────────
 Route::get('/api/public/departamentos/{id}/restaurantes', function ($id) {
@@ -158,27 +155,113 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // ── ADMINISTRACIÓN DE TRABAJADORES ────────────────────────────────────────
     Route::prefix('trabajadores')->name('trabajadores.')->group(function () {
-        Route::get('/',                    [TrabajadorController::class, 'index'])->name('index');
-        Route::get('/create',              [TrabajadorController::class, 'create'])->name('create');
-        Route::post('/',                   [TrabajadorController::class, 'store'])->name('store');
-        Route::get('/{trabajador}',        [TrabajadorController::class, 'show'])->name('show');
-        Route::get('/{trabajador}/edit',   [TrabajadorController::class, 'edit'])->name('edit');
-        Route::put('/{trabajador}',        [TrabajadorController::class, 'update'])->name('update');
-        Route::delete('/{trabajador}',     [TrabajadorController::class, 'destroy'])->name('destroy');
-        Route::post('/restaurantes-por-departamentos', [TrabajadorController::class, 'getRestaurantesPorDepartamentos'])->name('restaurantes.por.departamentos');
+        Route::get('/',                  [TrabajadorController::class, 'index'])->name('index');
+        Route::get('/create',            [TrabajadorController::class, 'create'])->name('create');
+        Route::post('/',                 [TrabajadorController::class, 'store'])->name('store');
+        Route::get('/{trabajador}',      [TrabajadorController::class, 'show'])->name('show');
+        Route::get('/{trabajador}/edit', [TrabajadorController::class, 'edit'])->name('edit');
+        Route::put('/{trabajador}',      [TrabajadorController::class, 'update'])->name('update');
+        Route::delete('/{trabajador}',   [TrabajadorController::class, 'destroy'])->name('destroy');
+
+        Route::post('/restaurantes-por-departamentos', [TrabajadorController::class, 'getRestaurantesPorDepartamentos'])
+            ->name('restaurantes.por.departamentos');
+        Route::post('/gastrobares-por-departamentos',  [TrabajadorController::class, 'getGastrobaresPorDepartamentos'])
+            ->name('gastrobares.por.departamentos');
+    });
+
+    // ── CONTRATOS ─────────────────────────────────────────────────────────────
+    Route::prefix('contratos')->name('contratos.')->group(function () {
+        Route::get('/',                [ContratoController::class, 'index'])->name('index');
+        Route::get('/create',          [ContratoController::class, 'create'])->name('create');
+        Route::post('/',               [ContratoController::class, 'store'])->name('store');
+        Route::get('/{contrato}',      [ContratoController::class, 'show'])->name('show');
+        Route::get('/{contrato}/edit', [ContratoController::class, 'edit'])->name('edit');
+        Route::put('/{contrato}',      [ContratoController::class, 'update'])->name('update');
+        Route::delete('/{contrato}',   [ContratoController::class, 'destroy'])->name('destroy');
+
+        Route::get('/ajax/municipios',       [ContratoController::class, 'getMunicipiosPorDepartamento'])
+            ->name('ajax.municipios');
+        Route::get('/ajax/establecimientos', [ContratoController::class, 'getEstablecimientosPorMunicipio'])
+            ->name('ajax.establecimientos');
     });
 
     // ── MÓDULOS DE GESTIÓN INTERNA ────────────────────────────────────────────
-    Route::resource('contratos', ContratoController::class);
     Route::get('/soporte',       function () { return view('soporte.index'); })->name('soporte.index');
     Route::get('/configuracion', function () { return view('configuracion.index'); })->name('configuracion.index');
 
-    // ── ADMINISTRACIÓN INTERNA (nuevos módulos) ───────────────────────────────
-    Route::get('/membresias',     function () { return view('membresias.index'); })->name('membresias.index');
-    Route::get('/pagos',          function () { return view('pagos.index'); })->name('pagos.index');
-    Route::get('/usuarios',       function () { return view('usuarios.index'); })->name('usuarios.index');
-    Route::get('/notificaciones', function () { return view('notificaciones.index'); })->name('notificaciones.index');
-    Route::get('/reportes',       function () { return view('reportes.index'); })->name('reportes.index');
+    // ── MEMBRESÍAS ────────────────────────────────────────────────────────────
+    Route::get('/membresias', function () {
+        $membresiasActivas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
+                                ->where('estado', 'activo')
+                                ->latest()
+                                ->paginate(10, ['*'], 'page_activas');
+
+        $membresiasPendientes = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
+                                ->where('estado', 'pendiente')
+                                ->latest()
+                                ->paginate(10, ['*'], 'page_pendientes');
+
+        $membresiasVencidas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
+                                ->where('estado', 'vencido')
+                                ->latest()
+                                ->paginate(10, ['*'], 'page_vencidas');
+
+        $membresiasCanceladas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
+                                ->where('estado', 'cancelado')
+                                ->latest()
+                                ->paginate(10, ['*'], 'page_canceladas');
+
+        $totalActivas    = \App\Models\Contrato::where('estado', 'activo')->count();
+        $totalPendientes = \App\Models\Contrato::where('estado', 'pendiente')->count();
+        $totalVencidas   = \App\Models\Contrato::where('estado', 'vencido')->count();
+        $totalCanceladas = \App\Models\Contrato::where('estado', 'cancelado')->count();
+        $totalPremium    = \App\Models\Contrato::where('estado', 'activo')->where('plan', 'premium')->count();
+        $totalBasico     = \App\Models\Contrato::where('estado', 'activo')->where('plan', 'basico')->count();
+        $porVencer       = \App\Models\Contrato::where('estado', 'activo')
+                                ->whereBetween('fecha_fin', [now(), now()->addDays(7)])
+                                ->count();
+
+        $membresias = $membresiasActivas;
+
+        return view('membresias.index', compact(
+            'membresias',
+            'membresiasActivas',
+            'membresiasPendientes',
+            'membresiasVencidas',
+            'membresiasCanceladas',
+            'totalActivas',
+            'totalPendientes',
+            'totalVencidas',
+            'totalCanceladas',
+            'totalPremium',
+            'totalBasico',
+            'porVencer'
+        ));
+    })->name('membresias.index');
+
+    // ── PAGOS ─────────────────────────────────────────────────────────────────
+    Route::prefix('pagos')->name('pagos.')->group(function () {
+        Route::get('/',                  [PagoController::class, 'index'])->name('index');
+        Route::post('/',                 [PagoController::class, 'store'])->name('store');
+        Route::get('/{pago}/pdf',        [PagoController::class, 'descargarPdf'])->name('pdf');
+        Route::get('/{pago}',            [PagoController::class, 'show'])->name('show');
+        Route::patch('/{pago}/estado',   [PagoController::class, 'updateEstado'])->name('updateEstado');
+        Route::delete('/{pago}',         [PagoController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── USUARIOS DEL SISTEMA ──────────────────────────────────────────────────
+    Route::prefix('usuarios')->name('usuarios.')->group(function () {
+        Route::get('/',             [\App\Http\Controllers\UsuarioController::class, 'index'])->name('index');
+        Route::get('/{user}/edit',  [\App\Http\Controllers\UsuarioController::class, 'edit'])->name('edit');
+        Route::put('/{user}',       [\App\Http\Controllers\UsuarioController::class, 'update'])->name('update');
+        Route::delete('/{user}',    [\App\Http\Controllers\UsuarioController::class, 'destroy'])->name('destroy');
+        Route::patch('/{user}/toggle', [\App\Http\Controllers\UsuarioController::class, 'toggle'])->name('toggle');
+    });
+
+    // ── REPORTES Y ESTADÍSTICAS ───────────────────────────────────────────────
+    Route::get('/reportes', function () {
+        return view('reportes.index');
+    })->name('reportes.index');
 
     // ── APIs INTERNAS ─────────────────────────────────────────────────────────
     Route::get('/api/departamentos/{id}/municipios', function ($id) {
@@ -217,11 +300,11 @@ Route::middleware(['auth', 'role:restaurante,admin'])
             ->name('galeria.store');
         Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
             ->name('galeria.destroy');
-        
+
         // Menú - Platos
         Route::resource('platos', \App\Http\Controllers\Restaurante\RestaurantePlatoController::class);
         Route::patch('platos/{plato}/toggle', [\App\Http\Controllers\Restaurante\RestaurantePlatoController::class, 'toggleActivo'])
-         ->name('platos.toggle');
+            ->name('platos.toggle');
 
         // Pedidos del restaurante
         Route::get('/pedidos', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'index'])->name('pedidos.index');
@@ -230,14 +313,14 @@ Route::middleware(['auth', 'role:restaurante,admin'])
         Route::get('/pedidos-polling', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
     });
 
-    //ruta de los pepedidos
-    Route::middleware('auth')->group(function () {
+// ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
+Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
     Route::get('/mis-pedidos', [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
     Route::get('/mis-pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
 });
 
-// ── EVENTOS PÚBLICOS (al final, con whereNumber para evitar capturar "create") ─
+// ── EVENTOS PÚBLICOS ──────────────────────────────────────────────────────────
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])
     ->name('eventos.show')
     ->whereNumber('evento');

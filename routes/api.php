@@ -231,7 +231,6 @@ Route::get('/eventos', function (Request $request) {
         }
     }
 
-    // ✅ FILTRO MUNICIPIO
     if ($request->filled('municipio')) {
         $query->where('municipio_id', $request->municipio);
     }
@@ -279,7 +278,6 @@ Route::get('/empleos', function (Request $request) {
         }
     }
 
-    // ✅ FILTRO MUNICIPIO AGREGADO
     if ($request->filled('municipio')) {
         $query->where('municipio_id', $request->municipio);
     }
@@ -487,5 +485,58 @@ Route::post('/usuario/municipio', function (Request $request) {
             'departamento_id' => $request->user()->departamento_id,
             'municipio_id'    => $request->user()->municipio_id,
         ],
+    ]);
+})->middleware('auth:sanctum');
+
+// ── SUBIR AVATAR DEL USUARIO ──
+Route::post('/usuario/avatar', function (Request $request) {
+    $request->validate([
+        'avatar' => 'required|image|max:2048',
+    ]);
+
+    $user = $request->user();
+
+    if ($user->avatar) {
+        $rutaAnterior = storage_path('app/public/' . $user->avatar);
+        if (file_exists($rutaAnterior)) {
+            unlink($rutaAnterior);
+        }
+    }
+
+    $ruta = $request->file('avatar')->store('avatars', 'public');
+    $user->update(['avatar' => $ruta]);
+
+    return response()->json([
+        'message'    => 'Avatar actualizado.',
+        'avatar_url' => asset('storage/' . $ruta),
+    ]);
+})->middleware('auth:sanctum');
+
+// ── OBTENER PERFIL DEL USUARIO ──
+Route::get('/usuario/perfil', function (Request $request) {
+    $user = $request->user();
+    return response()->json([
+        'id'              => $user->id,
+        'name'            => $user->name,
+        'email'           => $user->email,
+        'role'            => $user->role,
+        'departamento_id' => $user->departamento_id,
+        'municipio_id'    => $user->municipio_id,
+        'avatar_url'      => $user->avatar ? asset('storage/' . $user->avatar) : null,
+        'es_google'       => !is_null($user->google_id),
+    ]);
+})->middleware('auth:sanctum');
+
+// ── ACTUALIZAR NOMBRE DEL USUARIO ──
+Route::post('/usuario/nombre', function (Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $request->user()->update(['name' => $request->name]);
+
+    return response()->json([
+        'message' => 'Nombre actualizado.',
+        'name'    => $request->user()->fresh()->name,
     ]);
 })->middleware('auth:sanctum');

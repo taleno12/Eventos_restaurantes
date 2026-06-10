@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Trabajador;
 use App\Models\Departamento;
 use App\Models\Restaurante;
+use App\Models\Gastrobar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -47,7 +48,7 @@ class TrabajadorController extends Controller
     // ── CREATE ───────────────────────────────────────────────────
     public function create()
     {
-        $departamentos = Departamento::with('restaurantes')->orderBy('nombre')->get();
+        $departamentos = Departamento::with('restaurantes', 'gastrobares')->orderBy('nombre')->get();
         return view('trabajadores.create', compact('departamentos'));
     }
 
@@ -78,7 +79,6 @@ class TrabajadorController extends Controller
 
         $trabajador = Trabajador::create($data);
 
-        // Asignar los departamentos seleccionados (Many to Many)
         $trabajador->departamentos()->sync($request->departamentos);
 
         return redirect()->route('trabajadores.index')
@@ -90,15 +90,16 @@ class TrabajadorController extends Controller
     {
         $trabajador->load('departamentos');
         $restaurantes = $trabajador->restaurantesDisponibles();
+        $gastrobares  = $trabajador->gastrobaresDisponibles();
 
-        return view('trabajadores.show', compact('trabajador', 'restaurantes'));
+        return view('trabajadores.show', compact('trabajador', 'restaurantes', 'gastrobares'));
     }
 
     // ── EDIT ─────────────────────────────────────────────────────
     public function edit(Trabajador $trabajador)
     {
         $trabajador->load('departamentos');
-        $departamentos          = Departamento::with('restaurantes')->orderBy('nombre')->get();
+        $departamentos          = Departamento::with('restaurantes', 'gastrobares')->orderBy('nombre')->get();
         $departamentosAsignados = $trabajador->departamentos->pluck('id')->toArray();
 
         return view('trabajadores.edit', compact(
@@ -138,7 +139,6 @@ class TrabajadorController extends Controller
 
         $trabajador->update($data);
 
-        // sync() agrega los nuevos y elimina los que ya no están
         $trabajador->departamentos()->sync($request->departamentos);
 
         return redirect()->route('trabajadores.index')
@@ -152,7 +152,6 @@ class TrabajadorController extends Controller
             Storage::disk('public')->delete($trabajador->foto);
         }
 
-        // La tabla pivote se limpia automáticamente por el cascade
         $trabajador->delete();
 
         return redirect()->route('trabajadores.index')
@@ -160,10 +159,6 @@ class TrabajadorController extends Controller
     }
 
     // ── AJAX: restaurantes por departamento(s) ───────────────────
-    /**
-     * Recibe un array de departamento_ids y devuelve los restaurantes de esos departamentos.
-     * Usado en el formulario cuando el usuario selecciona departamentos.
-     */
     public function getRestaurantesPorDepartamentos(Request $request)
     {
         $ids = $request->input('departamentos', []);
@@ -174,5 +169,18 @@ class TrabajadorController extends Controller
             ->get();
 
         return response()->json($restaurantes);
+    }
+
+    // ── AJAX: gastrobares por departamento(s) ────────────────────
+    public function getGastrobaresPorDepartamentos(Request $request)
+    {
+        $ids = $request->input('departamentos', []);
+
+        $gastrobares = Gastrobar::whereIn('departamento_id', $ids)
+            ->select('id', 'nombre', 'departamento_id')
+            ->orderBy('nombre')
+            ->get();
+
+        return response()->json($gastrobares);
     }
 }

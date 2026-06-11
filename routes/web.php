@@ -326,6 +326,9 @@ Route::middleware(['auth', 'role:restaurante,admin'])
         Route::get('/pedidos/{pedido}', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'show'])->name('pedidos.show');
         Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'cambiarEstado'])->name('pedidos.estado');
         Route::get('/pedidos-polling', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
+
+        Route::get('/estadisticas', [\App\Http\Controllers\Restaurante\RestauranteEstadisticasController::class, 'index'])
+         ->name('estadisticas.index');
     });
 
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────

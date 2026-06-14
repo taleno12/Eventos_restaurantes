@@ -6,251 +6,379 @@
     <title>Ordenar — {{ $restaurante->nombre }} | Gastro Nicaragua</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=playfair-display:400,700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.bunny.net/css?family=playfair-display:400,700,900|instrument-sans:400,500,600,700,800" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        :root {
-            --orange: #ea580c; --orange-light: #fed7aa;
-            --dark: #0c0a09; --stone: #fafaf9;
-            --border: #e7e5e4; --text-muted: #78716c; --text-main: #1c1917;
-        }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* ── FOOTER SIEMPRE ABAJO ── */
-        html, body { height: 100%; }
-        html {
-            min-height: 100%;
+        :root {
+            --orange:  #ea580c;
+            --orange2: #c2410c;
+            --border:  #e5e7eb;
+            --bg:      #f9fafb;
+            --text:    #111827;
+            --muted:   #6b7280;
+            --white:   #ffffff;
+            --radius:  12px;
+            --shadow:  0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
         }
+
+        html, body { height: 100%; }
         body {
             font-family: 'Instrument Sans', sans-serif;
-            background: var(--stone); color: var(--text-main);
-            min-height: 100vh !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        .page-content {
-            flex: 1 1 auto !important;
+            background: var(--white);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
-        footer { flex-shrink: 0; }
+        a { text-decoration: none; color: inherit; }
 
-        .premium-title { font-family: 'Playfair Display', serif; }
-
-        /* TOPBAR */
+        /* ══ TOPBAR ══ */
         .topbar {
-            background: var(--dark); padding: 0 40px; height: 60px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.06); position: sticky; top: 0; z-index: 100;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 200;
+            height: 56px;
+            display: flex; align-items: center;
+            padding: 0 24px; gap: 16px;
         }
-        @media (max-width: 600px) { .topbar { padding: 0 16px; } }
-
-        .topbar-left { display: flex; align-items: center; gap: 12px; }
-        .btn-volver {
+        .btn-back {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--white); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text); transition: all 0.18s; flex-shrink: 0;
+        }
+        .btn-back:hover { border-color: var(--orange); color: var(--orange); background: #fff7ed; }
+        .topbar-brand {
+            font-size: 15px; font-weight: 700; color: var(--text);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .topbar-brand .sep { color: var(--border); font-weight: 400; }
+        .topbar-brand .name { color: var(--muted); font-weight: 500; }
+        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .btn-mis-pedidos {
             display: inline-flex; align-items: center; gap: 7px;
-            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.75); font-size: 12px; font-weight: 700;
-            padding: 7px 16px; border-radius: 999px; text-decoration: none;
-            transition: all 0.2s; letter-spacing: 0.04em;
+            border: 1.5px solid var(--border); border-radius: 999px;
+            padding: 7px 16px; font-size: 13px; font-weight: 600;
+            color: var(--muted); background: var(--white); cursor: pointer;
+            transition: all 0.18s;
         }
-        .btn-volver:hover { background: rgba(234,88,12,0.2); color: white; border-color: rgba(234,88,12,0.4); }
+        .btn-mis-pedidos:hover { border-color: var(--orange); color: var(--orange); }
 
-        .topbar-title {
-            color: white; font-size: 14px; font-weight: 700;
-            display: flex; align-items: center; gap: 8px;
+        /* ══ HERO ══ */
+        .rest-hero { border-bottom: 1px solid var(--border); padding: 20px 24px 0; background: var(--white); }
+        .rest-hero-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: flex-start; gap: 16px; }
+        .rest-logo {
+            width: 80px; height: 80px; border-radius: 16px;
+            border: 1.5px solid var(--border); object-fit: cover;
+            background: var(--bg); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-        .topbar-title span { color: rgba(255,255,255,0.4); font-weight: 400; }
+        .rest-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .rest-info { flex: 1; padding-bottom: 20px; }
+        .rest-info h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+        .rest-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+        .rest-meta i { color: var(--orange); font-size: 11px; }
+        .rest-meta-sep { color: var(--border); }
 
-        /* MINI HERO */
-        .mini-hero {
-            background: var(--dark); padding: 28px 40px;
-            display: flex; align-items: center; gap: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            position: relative; overflow: hidden;
+        /* ══ SEARCH ══ */
+        .search-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px 16px; background: var(--white); }
+        .search-input-wrap { position: relative; max-width: 480px; }
+        .search-input {
+            width: 100%; padding: 10px 16px 10px 40px;
+            border: 1.5px solid var(--border); border-radius: 999px;
+            font-size: 14px; font-family: inherit; outline: none;
+            background: var(--bg); transition: all 0.2s; color: var(--text);
         }
-        .mini-hero::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: radial-gradient(circle at 90% 50%, rgba(234,88,12,0.1) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        @media (max-width: 600px) { .mini-hero { padding: 20px 16px; } }
+        .search-input:focus { border-color: var(--orange); background: var(--white); box-shadow: 0 0 0 3px rgba(234,88,12,0.08); }
+        .search-input::placeholder { color: #9ca3af; }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 13px; pointer-events: none; }
 
-        .mini-hero-img {
-            width: 64px; height: 64px; border-radius: 16px;
-            object-fit: cover; border: 2px solid rgba(255,255,255,0.1); flex-shrink: 0;
-            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
+        /* ══ CATS BAR ══ */
+        .cats-bar { position: sticky; top: 56px; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); }
+        .cats-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; gap: 4px;
+            overflow-x: auto; scrollbar-width: none;
         }
-        .mini-hero-info { flex: 1; min-width: 0; }
-        .mini-hero-nombre { font-size: 20px; font-weight: 900; color: white; margin-bottom: 4px; }
-        .mini-hero-sub { font-size: 12px; color: rgba(255,255,255,0.45); display: flex; align-items: center; gap: 6px; }
-        .mini-hero-sub i { color: var(--orange); }
+        .cats-inner::-webkit-scrollbar { display: none; }
+        .cat-pill {
+            flex-shrink: 0; padding: 10px 18px;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            border: none; background: none; color: var(--muted);
+            border-bottom: 2.5px solid transparent;
+            transition: all 0.18s; white-space: nowrap; font-family: inherit;
+        }
+        .cat-pill:hover { color: var(--text); }
+        .cat-pill.active { color: var(--orange); border-bottom-color: var(--orange); }
 
-        /* LAYOUT */
-        .page-wrap {
-            max-width: 1100px; margin: 0 auto; padding: 36px 40px 80px;
-            display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start;
+        /* ══ PAGE BODY ══ */
+        .page-body {
             flex: 1;
+            max-width: 1200px; margin: 0 auto; width: 100%;
+            padding: 28px 24px 80px;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 28px; align-items: start;
         }
-        @media (max-width: 900px) { .page-wrap { grid-template-columns: 1fr; padding: 20px 16px 60px; } }
-
-        /* CARD */
-        .card { background: white; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 2px 16px rgba(0,0,0,0.04); overflow: hidden; }
-        .card-body { padding: 28px 32px; }
-        @media (max-width: 600px) { .card-body { padding: 18px 16px; } }
-
-        .section-label {
-            font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
-            color: #a8a29e; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
-        }
-        .section-label i { color: var(--orange); font-size: 11px; }
-        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-        /* ── PLATO CARD HORIZONTAL ── */
-        .plato-card {
-            border: 1px solid #e7e5e4;
-            border-radius: 14px;
-            overflow: hidden;
-            background: white;
-            transition: all 0.2s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: row;
-            align-items: stretch;
-            gap: 0;
-        }
-        .plato-card:hover {
-            border-color: #ea580c;
-            box-shadow: 0 4px 20px rgba(234,88,12,0.12);
+        @media (max-width: 960px) {
+            .page-body { grid-template-columns: 1fr; }
+            .sidebar-col { display: none; }
         }
 
-        .plato-img-wrap {
-            width: 110px; min-width: 110px;
-            flex-shrink: 0; position: relative; overflow: hidden;
+        /* ══ PLATO ROW ══ */
+        .cat-section { margin-bottom: 32px; }
+        .cat-section-title {
+            font-size: 18px; font-weight: 800; color: var(--text);
+            margin-bottom: 16px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
         }
-        .plato-img-wrap img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.4s;
-        }
-        .plato-card:hover .plato-img-wrap img { transform: scale(1.06); }
+        .platos-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
 
-        .plato-card-content {
-            padding: 12px 16px;
-            display: flex; flex-direction: column;
-            flex: 1; gap: 4px; min-width: 0;
+        .plato-row {
+            display: flex; align-items: center;
+            background: var(--white); padding: 18px 20px;
+            gap: 16px; cursor: pointer;
+            transition: background 0.15s;
         }
-        .plato-card-footer { margin-top: auto; padding-top: 8px; }
+        .plato-row:hover { background: #fafaf9; }
+        .plato-row:first-child { border-radius: 13px 13px 0 0; }
+        .plato-row:last-child  { border-radius: 0 0 13px 13px; }
+        .plato-row:only-child  { border-radius: 13px; }
 
-        .cat-badge-inline {
-            background: #f5f5f4; color: #a8a29e;
-            font-size: 9px; font-weight: 800;
-            letter-spacing: 0.1em; text-transform: uppercase;
-            padding: 2px 8px; border-radius: 999px;
-            display: inline-block; margin-bottom: 2px; align-self: flex-start;
-        }
-        .cat-badge-overlay {
-            position: absolute; top: 8px; left: 8px;
-            background: rgba(255,255,255,0.92); border-radius: 999px;
-            padding: 3px 10px; font-size: 10px; font-weight: 800;
-            color: #78716c; letter-spacing: 0.06em; text-transform: uppercase;
-        }
+        .plato-text { flex: 1; min-width: 0; }
+        .plato-nombre { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+        .plato-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 8px;
+                      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .plato-precio { font-size: 15px; font-weight: 800; color: var(--text); }
 
-        /* CARRITO */
-        .carrito-wrap { position: sticky; top: 76px; }
-        .carrito-card {
-            background: white; border-radius: 20px; border: 1px solid var(--border);
-            box-shadow: 0 2px 16px rgba(0,0,0,0.04); overflow: hidden;
+        .plato-img-side {
+            width: 110px; height: 88px; border-radius: 12px; overflow: hidden;
+            flex-shrink: 0; background: var(--bg); position: relative;
         }
-        .carrito-header {
-            background: var(--dark); padding: 18px 24px;
-            display: flex; align-items: center; justify-content: space-between;
+        .plato-img-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .plato-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f3f4f6; }
+        .plato-img-placeholder i { font-size: 22px; color: #d1d5db; }
+
+        .btn-add-overlay {
+            position: absolute; bottom: 6px; right: 6px;
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--orange); color: white; border: none;
+            font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(234,88,12,0.4); transition: all 0.18s;
+            font-weight: 700; line-height: 1;
         }
-        .carrito-titulo { color: white; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        .carrito-badge { background: var(--orange); color: white; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 800; }
-        .carrito-vaciar { font-size: 11px; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; font-weight: 600; transition: color 0.2s; }
-        .carrito-vaciar:hover { color: rgba(239,68,68,0.8); }
-        .carrito-body { padding: 20px 24px; }
-        .carrito-empty { text-align: center; padding: 32px 20px; color: #a8a29e; font-size: 13px; font-weight: 600; }
-        .carrito-empty i { display: block; font-size: 32px; color: #e7e5e4; margin-bottom: 10px; }
-        .carrito-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 0; border-bottom: 1px solid #f5f5f4;
-        }
-        .carrito-item:last-child { border-bottom: none; }
-        .item-nombre { font-size: 13px; font-weight: 700; color: var(--text-main); }
-        .item-precio-u { font-size: 12px; color: #a8a29e; }
+        .btn-add-overlay:hover { background: var(--orange2); transform: scale(1.1); }
+
+        /* ══ SIDEBAR CARRITO ══ */
+        .sidebar-col { position: sticky; top: calc(56px + 45px + 16px); }
+        .carrito-card { background: var(--white); border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+        .carrito-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .carrito-head-title { font-size: 16px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .carrito-count-badge { background: var(--orange); color: white; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 800; }
+        .btn-vaciar { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; font-weight: 600; transition: color 0.18s; font-family: inherit; }
+        .btn-vaciar:hover { color: #dc2626; }
+        .carrito-body { padding: 0; }
+        .carrito-empty-state { padding: 48px 24px; text-align: center; }
+        .carrito-empty-state .empty-img { width: 64px; height: 64px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; }
+        .carrito-empty-state p { font-size: 14px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+
+        .carrito-items-list { padding: 8px 0; }
+        .carrito-item-row { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid #f3f4f6; }
+        .carrito-item-row:last-child { border-bottom: none; }
+        .ci-name { font-size: 13px; font-weight: 700; color: var(--text); }
+        .ci-unit  { font-size: 12px; color: var(--muted); }
+        .qty-controls { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
         .qty-btn {
-            width: 26px; height: 26px; border-radius: 50%; border: 1px solid #e7e5e4;
-            background: white; cursor: pointer; font-size: 14px;
-            display: flex; align-items: center; justify-content: center; color: #78716c;
-            transition: all 0.15s;
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 1.5px solid var(--border); background: var(--white);
+            cursor: pointer; font-size: 15px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; color: var(--muted);
+            transition: all 0.15s; line-height: 1;
         }
         .qty-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .qty-num { font-size: 13px; font-weight: 700; min-width: 20px; text-align: center; }
-        .item-subtotal { font-size: 13px; font-weight: 800; color: var(--orange); min-width: 64px; text-align: right; }
-        .carrito-total-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 0; border-top: 1px solid #e7e5e4; border-bottom: 1px solid #e7e5e4;
-            margin: 4px 0 16px;
-        }
-        .total-label { font-weight: 700; color: var(--text-main); font-size: 14px; }
-        .total-valor { font-size: 20px; font-weight: 900; color: var(--orange); }
-        .radio-tipo {
+        .qty-num { font-size: 14px; font-weight: 800; min-width: 22px; text-align: center; }
+        .ci-subtotal { font-size: 14px; font-weight: 800; color: var(--text); min-width: 70px; text-align: right; flex-shrink: 0; }
+
+        .carrito-summary { padding: 16px 20px; border-top: 1px solid var(--border); }
+        .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .total-label { font-size: 15px; font-weight: 700; color: var(--text); }
+        .total-valor { font-size: 22px; font-weight: 900; color: var(--orange); }
+
+        .tipo-grid { display: flex; gap: 8px; margin-bottom: 14px; }
+        .tipo-opt {
             flex: 1; display: flex; align-items: center; gap: 8px;
-            padding: 10px 14px; border: 1px solid #e7e5e4; border-radius: 10px;
-            cursor: pointer; transition: all 0.2s;
+            padding: 10px 12px; border: 1.5px solid var(--border);
+            border-radius: 10px; cursor: pointer; transition: all 0.18s;
+            font-size: 13px; font-weight: 600; color: var(--muted);
         }
-        .radio-tipo:has(input:checked) { border-color: var(--orange); background: #fff7ed; }
+        .tipo-opt:has(input:checked) { border-color: var(--orange); background: #fff7ed; color: var(--orange); }
+        .tipo-opt input { accent-color: var(--orange); }
+
+        .notas-input {
+            width: 100%; padding: 10px 14px;
+            border: 1.5px solid var(--border); border-radius: 10px;
+            font-size: 13px; font-family: inherit; outline: none; resize: none;
+            transition: border-color 0.2s; color: var(--text); background: var(--white);
+            margin-bottom: 14px;
+        }
+        .notas-input:focus { border-color: var(--orange); }
+        .notas-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 6px; }
+
         .btn-confirmar {
             width: 100%; padding: 15px; border-radius: 12px; border: none;
-            background: var(--orange); color: white; font-size: 14px; font-weight: 800;
+            background: var(--orange); color: white; font-size: 15px; font-weight: 800;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            gap: 8px; transition: all 0.2s; font-family: inherit; letter-spacing: 0.02em;
+            gap: 8px; transition: all 0.2s; font-family: inherit;
         }
-        .btn-confirmar:hover { background: #c2410c; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(234,88,12,0.35); }
-        .btn-confirmar:disabled { background: #d6d3d1; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-confirmar:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
+        .btn-confirmar:disabled { background: #d1d5db; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* FLOTANTE */
-        #carrito-flotante {
-            display: none; position: fixed; bottom: 24px; right: 24px; z-index: 999;
-            background: var(--orange); color: white; border-radius: 999px;
-            padding: 14px 22px; font-size: 13px; font-weight: 800; cursor: pointer;
-            box-shadow: 0 8px 32px rgba(234,88,12,0.4); align-items: center; gap: 8px;
-            transition: all 0.3s;
+        /* ══ FLASH ══ */
+        .flash-success {
+            background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
+            border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
         }
-        #carrito-flotante:hover { background: #c2410c; transform: translateY(-2px); }
-        @media (min-width: 901px) { #carrito-flotante { display: none !important; } }
+
+        /* ══ FOOTER ══ */
+        footer {
+            background: #1c1917; color: #a8a29e;
+            border-top: 1px solid #292524; flex-shrink: 0;
+            margin-top: auto;
+        }
+        footer a { text-decoration: none; }
+
+        /* ══ MODAL PLATO ══ */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 9000;
+            background: rgba(0,0,0,0.55);
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+
+        @media (min-width: 600px) {
+            .modal-overlay { align-items: center; }
+        }
+
+        .modal-box {
+            background: var(--white);
+            width: 100%; max-width: 540px;
+            border-radius: 20px 20px 0 0;
+            max-height: 92vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.25s ease;
+        }
+        @media (min-width: 600px) {
+            .modal-box { border-radius: 20px; max-height: 85vh; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .modal-img {
+            width: 100%; height: 220px; object-fit: cover; flex-shrink: 0;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .modal-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f3f4f6; }
+        .modal-img-placeholder i { font-size: 48px; color: #d1d5db; }
+
+        .modal-content { padding: 22px 24px 0; flex: 1; overflow-y: auto; }
+        .modal-nombre { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 6px; line-height: 1.25; }
+        .modal-desc { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+        .modal-precio { font-size: 24px; font-weight: 900; color: var(--text); margin-bottom: 20px; }
+
+        /* cantidad dentro del modal */
+        .modal-qty-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 16px; margin-bottom: 20px;
+        }
+        .modal-qty-btn {
+            width: 38px; height: 38px; border-radius: 50%;
+            border: 2px solid var(--border); background: var(--white);
+            cursor: pointer; font-size: 20px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; color: var(--text);
+            transition: all 0.15s; line-height: 1;
+        }
+        .modal-qty-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .modal-qty-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .modal-qty-num { font-size: 22px; font-weight: 900; min-width: 36px; text-align: center; }
+
+        .modal-footer {
+            padding: 16px 24px 24px; flex-shrink: 0;
+            border-top: 1px solid var(--border);
+            background: var(--white);
+        }
+        .btn-agregar-modal {
+            width: 100%; padding: 16px; border-radius: 14px; border: none;
+            background: var(--orange); color: white; font-size: 16px; font-weight: 800;
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            gap: 8px; transition: all 0.2s; font-family: inherit;
+        }
+        .btn-agregar-modal:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
+        .btn-agregar-modal .bam-left { display: flex; align-items: center; gap: 10px; }
+        .bam-badge {
+            background: rgba(255,255,255,0.25); border-radius: 8px;
+            padding: 3px 10px; font-size: 14px; font-weight: 800;
+        }
+
+        .modal-close {
+            position: absolute; top: 14px; right: 14px;
+            width: 34px; height: 34px; border-radius: 50%;
+            background: rgba(0,0,0,0.4); border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 14px; z-index: 10; transition: background 0.18s;
+        }
+        .modal-close:hover { background: rgba(0,0,0,0.65); }
+        .modal-img-wrap { position: relative; flex-shrink: 0; }
+
+        @media (max-width: 600px) {
+            .topbar { padding: 0 16px; }
+            .rest-hero { padding: 16px 16px 0; }
+            .search-wrap { padding: 0 16px 14px; }
+            .cats-inner { padding: 0 16px; }
+            .page-body { padding: 20px 16px 40px; }
+            .plato-img-side { width: 88px; height: 72px; }
+            .modal-img { height: 180px; }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-   <div class="page-content flex-1 flex flex-col">
-
-    {{-- TOPBAR --}}
-    <div class="topbar">
-        <div class="topbar-left">
-            <a href="{{ route('restaurantes.show', $restaurante) }}" class="btn-volver">
-                <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
-            </a>
-            <div class="topbar-title">
-                <i class="fas fa-utensils" style="color:#ea580c;font-size:12px;"></i>
-                Ordenar <span>/ {{ $restaurante->nombre }}</span>
-            </div>
-        </div>
-        @auth
-            <a href="{{ route('pedidos.mis') }}"
-               style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:700;padding:7px 16px;border-radius:999px;text-decoration:none;">
-                <i class="fas fa-bag-shopping" style="font-size:10px;"></i> Mis Pedidos
-            </a>
-        @endauth
+{{-- ══ TOPBAR ══ --}}
+<header class="topbar">
+    <a href="{{ route('restaurantes.show', $restaurante) }}" class="btn-back">
+        <i class="fas fa-arrow-left" style="font-size:12px;"></i>
+    </a>
+    <div class="topbar-brand">
+        <i class="fas fa-utensils" style="color:var(--orange);font-size:12px;"></i>
+        Ordenar
+        <span class="sep">/</span>
+        <span class="name">{{ $restaurante->nombre }}</span>
     </div>
+    @auth
+        <div class="topbar-right">
+            <a href="{{ route('pedidos.mis') }}" class="btn-mis-pedidos">
+                <i class="fas fa-bag-shopping" style="font-size:11px;"></i> Mis Pedidos
+            </a>
+        </div>
+    @endauth
+</header>
 
-    {{-- MINI HERO --}}
-    <div class="mini-hero">
-        <div class="mini-hero-img">
+{{-- ══ HERO ══ --}}
+<div class="rest-hero">
+    <div class="rest-hero-inner">
+        <div class="rest-logo">
             @php
                 $imgUrl = $restaurante->foto_portada
                     ? asset('storage/'.$restaurante->foto_portada)
@@ -259,378 +387,432 @@
                         : null);
             @endphp
             @if($imgUrl)
-                <img src="{{ $imgUrl }}" alt="{{ $restaurante->nombre }}" style="width:100%;height:100%;object-fit:cover;">
+                <img src="{{ $imgUrl }}" alt="{{ $restaurante->nombre }}">
             @else
-                <i class="fas fa-utensils" style="font-size:22px;color:rgba(255,255,255,0.3);"></i>
+                <i class="fas fa-utensils" style="font-size:24px;color:#d1d5db;"></i>
             @endif
         </div>
-        <div class="mini-hero-info">
-            <div class="mini-hero-nombre premium-title">{{ $restaurante->nombre }}</div>
-            <div class="mini-hero-sub">
+        <div class="rest-info">
+            <h1>{{ $restaurante->nombre }}</h1>
+            <div class="rest-meta">
                 <i class="fas fa-map-marker-alt"></i>
-                {{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}
+                <span>{{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}</span>
                 @if($restaurante->especialidad)
-                    <span style="opacity:0.4;">·</span> {{ $restaurante->especialidad }}
+                    <span class="rest-meta-sep">·</span>
+                    <span>{{ $restaurante->especialidad }}</span>
                 @endif
+                @php $totalPlatillos = $platos->flatten()->count(); @endphp
+                <span class="rest-meta-sep">·</span>
+                <span>{{ $totalPlatillos }} platillos</span>
             </div>
         </div>
     </div>
+</div>
 
-    {{-- CONTENIDO --}}
-    <div class="page-wrap">
+{{-- ══ BÚSQUEDA ══ --}}
+<div class="search-wrap" style="padding-top:14px;">
+    <div class="search-input-wrap">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-platos" class="search-input" placeholder="Buscar productos...">
+    </div>
+</div>
 
-        {{-- COLUMNA MENÚ --}}
-        <div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="section-label">
-                        <i class="fas fa-utensils"></i> Menú
-                        <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">
-                            — {{ $platos->flatten()->count() }} platillos
-                        </span>
+{{-- ══ CATS ══ --}}
+<div class="cats-bar">
+    <div class="cats-inner">
+        <button class="cat-pill active" onclick="filtrarCat('todas', this)">Menú</button>
+        @foreach($platos->keys() as $cat)
+            <button class="cat-pill" onclick="filtrarCat('{{ Str::slug($cat) }}', this)">
+                {{ $cat ?: 'Sin categoría' }}
+            </button>
+        @endforeach
+    </div>
+</div>
+
+{{-- ══ BODY ══ --}}
+<div class="page-body">
+
+    <main id="menu-col">
+
+        @if(session('pedido_success'))
+            <div class="flash-success">
+                <i class="fas fa-check-circle"></i> {{ session('pedido_success') }}
+            </div>
+        @endif
+
+        @foreach($platos as $categoria => $items)
+        <div class="cat-section" data-cat="{{ Str::slug($categoria) }}" id="cat-{{ Str::slug($categoria) }}">
+            <h2 class="cat-section-title">{{ $categoria ?: 'Sin categoría' }}</h2>
+            <div class="platos-list">
+                @foreach($items as $plato)
+                <div class="plato-row"
+                     data-nombre="{{ strtolower($plato->nombre) }}"
+                     data-cat="{{ Str::slug($categoria) }}"
+                     @auth
+                     onclick="abrirModal({{ $plato->id }}, '{{ addslashes($plato->nombre) }}', {{ $plato->precio }}, '{{ addslashes($plato->descripcion ?? '') }}', '{{ $plato->imagen ? asset('storage/'.$plato->imagen) : '' }}')"
+                     @endauth>
+
+                    <div class="plato-text">
+                        <div class="plato-nombre">{{ $plato->nombre }}</div>
+                        @if($plato->descripcion)
+                            <div class="plato-desc">{{ $plato->descripcion }}</div>
+                        @endif
+                        <div class="plato-precio">C$ {{ number_format($plato->precio, 0) }}</div>
                     </div>
 
-                    @if(session('pedido_success'))
-                        <div style="background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
-                            <i class="fas fa-check-circle"></i> {{ session('pedido_success') }}
-                        </div>
-                    @endif
+                    <div class="plato-img-side">
+                        @if($plato->imagen)
+                            <img src="{{ asset('storage/'.$plato->imagen) }}" alt="{{ $plato->nombre }}" loading="lazy">
+                        @else
+                            <div class="plato-img-placeholder">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                        @endif
+                    </div>
 
-                    {{-- Tabs categorías --}}
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
-                        <button onclick="filtrarCategoria('todas')" id="tab-todas"
-                                style="padding:6px 16px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #ea580c;background:#ea580c;color:white;transition:all 0.2s;">
-                            Todos
+                    @guest
+                        <a href="{{ route('login') }}"
+                           onclick="event.stopPropagation()"
+                           style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--border);font-size:13px;font-weight:700;color:var(--muted);flex-shrink:0;transition:all 0.18s;"
+                           onmouseover="this.style.borderColor='#ea580c';this.style.color='#ea580c';"
+                           onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';">
+                            <i class="fas fa-sign-in-alt" style="font-size:10px;"></i> Ingresar
+                        </a>
+                    @endguest
+
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endforeach
+
+    </main>
+
+    {{-- CARRITO SIDEBAR --}}
+    @auth
+    <aside class="sidebar-col">
+        <div class="carrito-card" id="carrito-card">
+            <div class="carrito-head">
+                <div class="carrito-head-title">
+                    Mi pedido
+                    <span class="carrito-count-badge" id="carrito-count">0</span>
+                </div>
+                <button class="btn-vaciar" onclick="vaciarCarrito()">
+                    <i class="fas fa-trash" style="font-size:10px;margin-right:4px;"></i> Vaciar
+                </button>
+            </div>
+            <div class="carrito-body">
+                <div id="carrito-empty" class="carrito-empty-state">
+                    <div class="empty-img">
+                        <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                            <circle cx="26" cy="26" r="26" fill="#f3f4f6"/>
+                            <path d="M16 18h3l2.7 13.5a2 2 0 001.97 1.5h9.66a2 2 0 001.97-1.68l1.59-8.82H18.5" stroke="#d1d5db" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            <circle cx="22" cy="36" r="1.5" fill="#d1d5db"/>
+                            <circle cx="34" cy="36" r="1.5" fill="#d1d5db"/>
+                        </svg>
+                    </div>
+                    <p>Tu pedido está vacío.<br>Agrega platillos del menú.</p>
+                </div>
+                <div id="carrito-items-list" class="carrito-items-list" style="display:none;"></div>
+                <div id="carrito-summary" class="carrito-summary" style="display:none;">
+                    <div class="total-row">
+                        <span class="total-label">Total</span>
+                        <span class="total-valor" id="total-valor">C$ 0</span>
+                    </div>
+                    <form method="POST" action="{{ route('pedidos.store', $restaurante) }}" id="form-pedido">
+                        @csrf
+                        <div id="hidden-items"></div>
+                        <label class="notas-label">Tipo de pedido</label>
+                        <div class="tipo-grid" style="margin-bottom:14px;">
+                            <label class="tipo-opt">
+                                <input type="radio" name="tipo" value="mesa" checked>
+                                <i class="fas fa-chair" style="color:var(--orange);font-size:12px;"></i> Mesa
+                            </label>
+                            <label class="tipo-opt">
+                                <input type="radio" name="tipo" value="para_llevar">
+                                <i class="fas fa-bag-shopping" style="color:var(--orange);font-size:12px;"></i> Para llevar
+                            </label>
+                        </div>
+                        <label class="notas-label">Notas <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></label>
+                        <textarea name="notas" rows="2" maxlength="500" class="notas-input"
+                                  placeholder="Ej: Sin cebolla, alergia al maní..."></textarea>
+                        <button type="submit" class="btn-confirmar">
+                            <i class="fas fa-paper-plane" style="font-size:13px;"></i>
+                            Confirmar pedido
                         </button>
-                        @foreach($platos->keys() as $cat)
-                            <button onclick="filtrarCategoria('{{ Str::slug($cat) }}')" id="tab-{{ Str::slug($cat) }}"
-                                    style="padding:6px 16px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #e7e5e4;background:white;color:#78716c;transition:all 0.2s;">
-                                {{ $cat ?: 'Sin categoría' }}
-                            </button>
-                        @endforeach
-                    </div>
-
-                    {{-- Lista platos HORIZONTAL --}}
-                    <div id="platos-grid" style="display:flex;flex-direction:column;gap:12px;">
-                        @foreach($platos as $categoria => $items)
-
-                            <div class="cat-group-label" data-cat="{{ Str::slug($categoria) }}"
-                                 style="font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#a8a29e;display:flex;align-items:center;gap:10px;margin-top:8px;">
-                                <i class="fas fa-circle" style="color:#ea580c;font-size:6px;"></i>
-                                {{ $categoria ?: 'Sin categoría' }}
-                                <span style="flex:1;height:1px;background:#e7e5e4;display:block;"></span>
-                            </div>
-
-                            @foreach($items as $plato)
-                            <div class="plato-card" data-categoria="{{ Str::slug($categoria) }}">
-
-                                @if($plato->imagen)
-                                    <div class="plato-img-wrap">
-                                        <img src="{{ asset('storage/'.$plato->imagen) }}" alt="{{ $plato->nombre }}">
-                                        <span class="cat-badge-overlay">{{ $categoria ?: 'Menú' }}</span>
-                                    </div>
-                                @else
-                                    <div class="plato-img-wrap" style="background:#f5f5f4;display:flex;align-items:center;justify-content:center;">
-                                        <i class="fas fa-utensils" style="font-size:24px;color:#d6d3d1;"></i>
-                                    </div>
-                                @endif
-
-                                <div class="plato-card-content">
-                                    @if(!$plato->imagen)
-                                        <span class="cat-badge-inline">{{ $categoria ?: 'Menú' }}</span>
-                                    @endif
-
-                                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-                                        <span style="font-weight:700;color:#1c1917;font-size:14px;line-height:1.3;flex:1;min-width:0;">{{ $plato->nombre }}</span>
-                                        <span style="color:#ea580c;font-weight:800;font-size:15px;white-space:nowrap;">C$ {{ number_format($plato->precio, 0) }}</span>
-                                    </div>
-
-                                    @if($plato->descripcion)
-                                        <p style="font-size:12px;color:#a8a29e;line-height:1.5;margin:0;">{{ Str::limit($plato->descripcion, 80) }}</p>
-                                    @endif
-
-                                    <div class="plato-card-footer">
-                                        @auth
-                                            <button onclick="agregarAlCarrito({{ $plato->id }}, '{{ addslashes($plato->nombre) }}', {{ $plato->precio }})"
-                                                    id="btn-agregar-{{ $plato->id }}"
-                                                    style="padding:7px 18px;border-radius:10px;border:none;background:#0c0a09;color:white;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background 0.2s;"
-                                                    onmouseover="this.style.background='#ea580c'"
-                                                    onmouseout="this.style.background='#0c0a09'">
-                                                <i class="fas fa-plus" style="font-size:10px;"></i> Agregar
-                                            </button>
-                                        @else
-                                            <a href="{{ route('login') }}"
-                                               style="padding:7px 18px;border-radius:10px;border:1px solid #e7e5e4;background:white;color:#78716c;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:all 0.2s;"
-                                               onmouseover="this.style.borderColor='#ea580c';this.style.color='#ea580c'"
-                                               onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
-                                                <i class="fas fa-sign-in-alt" style="font-size:10px;"></i> Inicia sesión para pedir
-                                            </a>
-                                        @endauth
-                                    </div>
-                                </div>
-
-                            </div>
-                            @endforeach
-                        @endforeach
-                    </div>
-
+                    </form>
                 </div>
             </div>
         </div>
-
-        {{-- COLUMNA CARRITO --}}
-        @auth
-        <div class="carrito-wrap">
-            <div class="carrito-card">
-                <div class="carrito-header">
-                    <div class="carrito-titulo">
-                        <i class="fas fa-shopping-bag"></i>
-                        Tu pedido
-                        <span class="carrito-badge" id="carrito-count">0</span>
-                    </div>
-                    <button onclick="limpiarCarrito()" class="carrito-vaciar">
-                        <i class="fas fa-trash" style="font-size:10px;"></i> Vaciar
-                    </button>
-                </div>
-                <div class="carrito-body">
-                    <div id="carrito-empty" class="carrito-empty">
-                        <i class="fas fa-shopping-bag"></i>
-                        Aún no has agregado nada.<br>¡Selecciona tus platillos!
-                    </div>
-                    <div id="carrito-items"></div>
-                    <div id="carrito-checkout" style="display:none;">
-                        <div class="carrito-total-row">
-                            <span class="total-label">Total</span>
-                            <span class="total-valor" id="carrito-total">C$ 0</span>
-                        </div>
-                        <form method="POST" action="{{ route('pedidos.store', $restaurante) }}" id="form-pedido">
-                            @csrf
-                            <div id="items-hidden"></div>
-                            <div style="margin-bottom:12px;">
-                                <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Tipo de pedido</label>
-                                <div style="display:flex;gap:8px;">
-                                    <label class="radio-tipo" id="label-mesa">
-                                        <input type="radio" name="tipo" value="mesa" checked style="accent-color:#ea580c;">
-                                        <span style="font-size:13px;font-weight:600;color:#1c1917;">
-                                            <i class="fas fa-chair" style="color:#ea580c;margin-right:4px;"></i> Mesa
-                                        </span>
-                                    </label>
-                                    <label class="radio-tipo" id="label-llevar">
-                                        <input type="radio" name="tipo" value="para_llevar" style="accent-color:#ea580c;">
-                                        <span style="font-size:13px;font-weight:600;color:#1c1917;">
-                                            <i class="fas fa-bag-shopping" style="color:#ea580c;margin-right:4px;"></i> Para llevar
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div style="margin-bottom:16px;">
-                                <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">
-                                    Notas <span style="font-weight:400;text-transform:none;">(opcional)</span>
-                                </label>
-                                <textarea name="notas" rows="2" maxlength="500"
-                                          placeholder="Ej: Sin cebolla, alergia al maní..."
-                                          style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:none;transition:border-color 0.2s;"
-                                          onfocus="this.style.borderColor='#ea580c'"
-                                          onblur="this.style.borderColor='#e7e5e4'"></textarea>
-                            </div>
-                            <button type="submit" class="btn-confirmar">
-                                <i class="fas fa-paper-plane"></i> Confirmar Pedido
-                            </button>
-                        </form>
-                    </div>
-                </div>
+    </aside>
+    @else
+    <aside class="sidebar-col">
+        <div class="carrito-card">
+            <div class="carrito-head">
+                <div class="carrito-head-title">Mi pedido</div>
             </div>
-        </div>
-        @else
-        <div class="carrito-wrap">
-            <div class="carrito-card">
-                <div class="carrito-header">
-                    <div class="carrito-titulo"><i class="fas fa-shopping-bag"></i> Tu pedido</div>
-                </div>
-                <div class="carrito-body" style="text-align:center;padding:32px 24px;">
-                    <i class="fas fa-lock" style="font-size:28px;color:#e7e5e4;display:block;margin-bottom:12px;"></i>
-                    <p style="font-size:14px;color:#78716c;font-weight:600;margin-bottom:16px;">Inicia sesión para hacer tu pedido</p>
+            <div class="carrito-body">
+                <div class="carrito-empty-state">
+                    <i class="fas fa-lock" style="font-size:28px;color:#d1d5db;display:block;margin-bottom:12px;"></i>
+                    <p style="margin-bottom:16px;">Inicia sesión para hacer tu pedido</p>
                     <a href="{{ route('login') }}"
-                       style="display:inline-flex;align-items:center;gap:7px;background:#ea580c;color:white;text-decoration:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;">
+                       style="display:inline-flex;align-items:center;gap:7px;background:var(--orange);color:white;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;">
                         <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesión
                     </a>
                 </div>
             </div>
         </div>
-        @endauth
-
-    </div>{{-- /page-wrap --}}
-
-    {{-- CARRITO FLOTANTE móvil --}}
-    @auth
-    <div id="carrito-flotante" onclick="scrollAlCarrito()">
-        <i class="fas fa-shopping-bag"></i>
-        <span id="flotante-count">0 items</span>
-        <span style="opacity:0.6;">·</span>
-        <span id="flotante-total">C$ 0</span>
-    </div>
+    </aside>
     @endauth
 
-    </div>{{-- /page-content --}}
+</div>
 
-    {{-- FOOTER --}}
-    <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
-        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
-                <div class="sm:col-span-2 lg:col-span-4 space-y-4">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
-                    </div>
-                    <p class="text-stone-400 text-sm leading-relaxed font-light">
-                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                        Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
-                    </p>
-                    <div class="flex items-center gap-3 pt-1">
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
-                    <ul class="space-y-2.5 text-sm p-0 list-none m-0">
-                        <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
-                        <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Restaurantes</a></li>
-                        <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all inline-block no-underline">Gastrobares</a></li>
-                        <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
-                    </ul>
-                </div>
-                <div class="lg:col-span-3 space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Masaya</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Granada</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>León</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>San Juan del Sur</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Estelí</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Matagalpa</span>
-                    </div>
+{{-- ══ MODAL PLATO ══ --}}
+@auth
+<div class="modal-overlay" id="plato-modal" onclick="cerrarModalOverlay(event)">
+    <div class="modal-box">
+        <div class="modal-img-wrap">
+            <div class="modal-img" id="modal-img-wrap">
+                <div class="modal-img-placeholder" id="modal-placeholder">
+                    <i class="fas fa-utensils"></i>
                 </div>
             </div>
-            <div class="border-t border-stone-800 pt-6 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
-                <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Política de Privacidad</a>
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Términos de Servicio</a>
+            <button class="modal-close" onclick="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-content">
+            <div class="modal-nombre" id="modal-nombre">—</div>
+            <div class="modal-desc" id="modal-desc"></div>
+            <div class="modal-precio" id="modal-precio">C$ 0</div>
+
+            <div class="modal-qty-row">
+                <button class="modal-qty-btn" id="modal-qty-minus" onclick="modalCambiarQty(-1)">−</button>
+                <span class="modal-qty-num" id="modal-qty-num">1</span>
+                <button class="modal-qty-btn" onclick="modalCambiarQty(1)">+</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-agregar-modal" onclick="modalAgregar()">
+                <div class="bam-left">
+                    <span class="bam-badge" id="modal-badge">1</span>
+                    <span>Agregar a mi pedido</span>
+                </div>
+                <span id="modal-total-precio">C$ 0</span>
+            </button>
+        </div>
+    </div>
+</div>
+@endauth
+
+{{-- ══ FOOTER ══ --}}
+<footer>
+    <div style="max-width:1200px;margin:0 auto;padding:48px 24px 32px;">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;margin-bottom:32px;">
+            <div>
+                <div style="margin-bottom:14px;">
+                    <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;color:#fff;">
+                        Gastro<span style="color:#ea580c;">Nicaragua</span>
+                    </span>
+                </div>
+                <p style="color:#a8a29e;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
+                    La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                </p>
+                <div style="display:flex;gap:10px;">
+                    @foreach(['facebook-f','instagram','tiktok'] as $red)
+                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#292524;display:flex;align-items:center;justify-content:center;color:#a8a29e;font-size:12px;transition:all 0.2s;"
+                       onmouseover="this.style.background='#ea580c';this.style.color='#fff';"
+                       onmouseout="this.style.background='#292524';this.style.color='#a8a29e';">
+                        <i class="fab fa-{{ $red }}"></i>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <h4 style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:14px;">Portal</h4>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    @foreach([['home','Inicio'],['restaurantes.index','Restaurantes'],['gastrobares.index','Gastrobares'],['empleos.index','Empleos'],['contacto','Contacto']] as [$ruta, $label])
+                    <a href="{{ route($ruta) }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;"
+                       onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">{{ $label }}</a>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <h4 style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:14px;">Destinos</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    @foreach(['Masaya','Granada','León','San Juan del Sur','Estelí','Matagalpa'] as $d)
+                    <span style="color:#a8a29e;font-size:13px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#a8a29e';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#ea580c;margin-right:5px;"></i>{{ $d }}
+                    </span>
+                    @endforeach
                 </div>
             </div>
         </div>
-    </footer>
+        <div style="border-top:1px solid #292524;padding-top:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+            <p style="font-size:12px;color:#57534e;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+            <div style="display:flex;gap:16px;">
+                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;" onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Política de Privacidad</a>
+                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;" onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Términos de Servicio</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
-    <script>
-    let carrito = {};
+<script>
+// ── CARRITO ──
+let carrito = {};
 
-    function agregarAlCarrito(id, nombre, precio) {
-        if (carrito[id]) { carrito[id].cantidad++; }
-        else { carrito[id] = { nombre, precio, cantidad: 1 }; }
-        renderCarrito();
-        const btn = document.getElementById(`btn-agregar-${id}`);
-        if (btn) {
-            btn.innerHTML = '<i class="fas fa-check" style="font-size:10px;"></i> Agregado';
-            btn.style.background = '#22c55e';
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-plus" style="font-size:10px;"></i> Agregar';
-                btn.style.background = '#0c0a09';
-            }, 1000);
-        }
-    }
-
-    function cambiarCantidad(id, delta) {
-        if (!carrito[id]) return;
-        carrito[id].cantidad += delta;
-        if (carrito[id].cantidad <= 0) delete carrito[id];
-        renderCarrito();
-    }
-
-    function limpiarCarrito() { carrito = {}; renderCarrito(); }
-
-    function renderCarrito() {
-        const ids = Object.keys(carrito);
-        const emptyEl    = document.getElementById('carrito-empty');
-        const checkoutEl = document.getElementById('carrito-checkout');
-        const itemsEl    = document.getElementById('carrito-items');
-        const hiddenEl   = document.getElementById('items-hidden');
-        const countEl    = document.getElementById('carrito-count');
-        const totalEl    = document.getElementById('carrito-total');
-        const flotante   = document.getElementById('carrito-flotante');
-        const flotCount  = document.getElementById('flotante-count');
-        const flotTotal  = document.getElementById('flotante-total');
-
-        if (!emptyEl) return;
-
-        if (ids.length === 0) {
-            emptyEl.style.display = 'block';
-            checkoutEl.style.display = 'none';
-            itemsEl.innerHTML = '';
-            if (flotante) flotante.style.display = 'none';
-            countEl.textContent = '0';
-            return;
-        }
-
-        emptyEl.style.display = 'none';
-        checkoutEl.style.display = 'block';
-        if (flotante) flotante.style.display = 'flex';
-
-        let total = 0, totalItems = 0, itemsHTML = '', hiddenHTML = '';
-
-        ids.forEach((id, index) => {
-            const item = carrito[id];
-            const subtotal = item.precio * item.cantidad;
-            total += subtotal; totalItems += item.cantidad;
-            itemsHTML += `
-                <div class="carrito-item">
-                    <div style="flex:1;min-width:0;">
-                        <div class="item-nombre">${item.nombre}</div>
-                        <div class="item-precio-u">C$ ${item.precio.toLocaleString()} c/u</div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:5px;">
-                        <button class="qty-btn" onclick="cambiarCantidad(${id}, -1)">−</button>
-                        <span class="qty-num">${item.cantidad}</span>
-                        <button class="qty-btn" onclick="cambiarCantidad(${id}, 1)">+</button>
-                    </div>
-                    <div class="item-subtotal">C$ ${subtotal.toLocaleString()}</div>
-                </div>`;
-            hiddenHTML += `
-                <input type="hidden" name="items[${index}][id]" value="${id}">
-                <input type="hidden" name="items[${index}][cantidad]" value="${item.cantidad}">`;
-        });
-
-        itemsEl.innerHTML = itemsHTML;
-        hiddenEl.innerHTML = hiddenHTML;
-        countEl.textContent = totalItems;
-        totalEl.textContent = `C$ ${total.toLocaleString()}`;
-        if (flotCount) flotCount.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
-        if (flotTotal) flotTotal.textContent = `C$ ${total.toLocaleString()}`;
-    }
-
-    function scrollAlCarrito() {
-        const el = document.querySelector('.carrito-wrap');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function filtrarCategoria(cat) {
-        document.querySelectorAll('.plato-card').forEach(card => {
-            card.style.display = (cat === 'todas' || card.dataset.categoria === cat) ? 'flex' : 'none';
-        });
-        document.querySelectorAll('.cat-group-label').forEach(label => {
-            label.style.display = (cat === 'todas' || label.dataset.cat === cat) ? 'flex' : 'none';
-        });
-        document.querySelectorAll('[id^="tab-"]').forEach(btn => {
-            const isActive = btn.id === `tab-${cat}`;
-            btn.style.background  = isActive ? '#ea580c' : 'white';
-            btn.style.color       = isActive ? 'white'   : '#78716c';
-            btn.style.borderColor = isActive ? '#ea580c' : '#e7e5e4';
-        });
-    }
-
+function agregarItem(id, nombre, precio, cantidad) {
+    if (carrito[id]) carrito[id].cantidad += cantidad;
+    else carrito[id] = { nombre, precio, cantidad };
     renderCarrito();
-    </script>
+}
+
+function cambiarCantidad(id, delta) {
+    if (!carrito[id]) return;
+    carrito[id].cantidad += delta;
+    if (carrito[id].cantidad <= 0) delete carrito[id];
+    renderCarrito();
+}
+
+function vaciarCarrito() { carrito = {}; renderCarrito(); }
+
+function renderCarrito() {
+    const ids = Object.keys(carrito);
+    const emptyEl   = document.getElementById('carrito-empty');
+    const itemsEl   = document.getElementById('carrito-items-list');
+    const summaryEl = document.getElementById('carrito-summary');
+    const countEl   = document.getElementById('carrito-count');
+    const totalEl   = document.getElementById('total-valor');
+    const hiddenEl  = document.getElementById('hidden-items');
+    if (!emptyEl) return;
+
+    if (ids.length === 0) {
+        emptyEl.style.display   = 'block';
+        itemsEl.style.display   = 'none';
+        summaryEl.style.display = 'none';
+        itemsEl.innerHTML = '';
+        countEl.textContent = '0';
+        return;
+    }
+
+    emptyEl.style.display   = 'none';
+    itemsEl.style.display   = 'block';
+    summaryEl.style.display = 'block';
+
+    let total = 0, totalItems = 0, html = '', hidden = '';
+    ids.forEach((id, idx) => {
+        const { nombre, precio, cantidad } = carrito[id];
+        const sub = precio * cantidad;
+        total += sub; totalItems += cantidad;
+        html += `
+            <div class="carrito-item-row">
+                <div style="flex:1;min-width:0;">
+                    <div class="ci-name">${nombre}</div>
+                    <div class="ci-unit">C$ ${precio.toLocaleString()} c/u</div>
+                </div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="cambiarCantidad(${id}, -1)">−</button>
+                    <span class="qty-num">${cantidad}</span>
+                    <button class="qty-btn" onclick="cambiarCantidad(${id}, 1)">+</button>
+                </div>
+                <div class="ci-subtotal">C$ ${sub.toLocaleString()}</div>
+            </div>`;
+        hidden += `
+            <input type="hidden" name="items[${idx}][id]" value="${id}">
+            <input type="hidden" name="items[${idx}][cantidad]" value="${cantidad}">`;
+    });
+
+    itemsEl.innerHTML  = html;
+    hiddenEl.innerHTML = hidden;
+    countEl.textContent = totalItems;
+    totalEl.textContent = `C$ ${total.toLocaleString()}`;
+}
+
+// ── MODAL ──
+let modalData = { id: null, nombre: '', precio: 0, qty: 1 };
+
+function abrirModal(id, nombre, precio, desc, imgUrl) {
+    modalData = { id, nombre, precio, qty: 1 };
+
+    document.getElementById('modal-nombre').textContent = nombre;
+    document.getElementById('modal-desc').textContent   = desc;
+    document.getElementById('modal-precio').textContent = `C$ ${precio.toLocaleString()}`;
+
+    const wrap = document.getElementById('modal-img-wrap');
+    if (imgUrl) {
+        wrap.innerHTML = `<img src="${imgUrl}" alt="${nombre}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+    } else {
+        wrap.innerHTML = `<div class="modal-img-placeholder"><i class="fas fa-utensils"></i></div>`;
+    }
+
+    actualizarModalQty();
+    document.getElementById('plato-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal() {
+    document.getElementById('plato-modal').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function cerrarModalOverlay(e) {
+    if (e.target === document.getElementById('plato-modal')) cerrarModal();
+}
+
+function modalCambiarQty(delta) {
+    modalData.qty = Math.max(1, modalData.qty + delta);
+    actualizarModalQty();
+}
+
+function actualizarModalQty() {
+    const { precio, qty } = modalData;
+    document.getElementById('modal-qty-num').textContent   = qty;
+    document.getElementById('modal-badge').textContent     = qty;
+    document.getElementById('modal-total-precio').textContent = `C$ ${(precio * qty).toLocaleString()}`;
+    document.getElementById('modal-qty-minus').disabled   = qty <= 1;
+}
+
+function modalAgregar() {
+    const { id, nombre, precio, qty } = modalData;
+    agregarItem(id, nombre, precio, qty);
+    cerrarModal();
+}
+
+// ESC para cerrar
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+// ── FILTRO CATEGORÍAS ──
+function filtrarCat(cat, btn) {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.cat-section').forEach(sec => {
+        sec.style.display = (cat === 'todas' || sec.dataset.cat === cat) ? 'block' : 'none';
+    });
+    if (cat !== 'todas') {
+        const el = document.getElementById(`cat-${cat}`);
+        if (el) {
+            const offset = 56 + 45 + 16;
+            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+        }
+    }
+}
+
+// ── BÚSQUEDA ──
+document.getElementById('search-platos')?.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.plato-row').forEach(row => {
+        row.style.display = (!q || row.dataset.nombre.includes(q)) ? 'flex' : 'none';
+    });
+    document.querySelectorAll('.cat-section').forEach(sec => {
+        const visible = Array.from(sec.querySelectorAll('.plato-row')).some(r => r.style.display !== 'none');
+        sec.style.display = visible ? 'block' : 'none';
+    });
+});
+
+renderCarrito();
+</script>
 
 </body>
 </html>

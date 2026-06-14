@@ -55,7 +55,6 @@
 
                 <div class="row g-4">
 
-                    {{-- Nombre --}}
                     <div class="col-12">
                         <label class="form-label fw-semibold text-dark small">Nombre del Gastrobar <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -66,7 +65,6 @@
                         </div>
                     </div>
 
-                    {{-- Email --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Correo Electrónico <span class="text-muted fw-normal">(opcional)</span></label>
                         <div class="input-group">
@@ -77,7 +75,6 @@
                         </div>
                     </div>
 
-                    {{-- Tipo de Bar --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Tipo de Bar</label>
                         <div class="input-group">
@@ -91,7 +88,6 @@
                         </div>
                     </div>
 
-                    {{-- Tipo de Cocina --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Tipo de Cocina</label>
                         <div class="input-group">
@@ -102,7 +98,6 @@
                         </div>
                     </div>
 
-                    {{-- Capacidad --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Capacidad de Personas</label>
                         <div class="input-group">
@@ -128,7 +123,6 @@
 
                 <div class="row g-4">
 
-                    {{-- Tipo de Música --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Tipo de Música</label>
                         <div class="input-group">
@@ -142,7 +136,6 @@
                         </div>
                     </div>
 
-                    {{-- Ambiente --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Ambiente</label>
                         <div class="input-group">
@@ -156,7 +149,6 @@
                         </div>
                     </div>
 
-                    {{-- Hora Apertura --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Hora de Apertura</label>
                         <div class="input-group">
@@ -167,7 +159,6 @@
                         </div>
                     </div>
 
-                    {{-- Hora Cierre --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Hora de Cierre</label>
                         <div class="input-group">
@@ -178,7 +169,6 @@
                         </div>
                     </div>
 
-                    {{-- Días de Atención --}}
                     <div class="col-12">
                         <label class="form-label fw-semibold text-dark small">Días de Atención</label>
                         @php
@@ -217,7 +207,6 @@
 
                 <div class="row g-4">
 
-                    {{-- Departamento --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Departamento <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -232,7 +221,6 @@
                         </div>
                     </div>
 
-                    {{-- Municipio --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Municipio <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -304,7 +292,77 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 5: Foto de Portada                   --}}
+        {{-- CARD 5: Cuenta del Propietario            --}}
+        {{-- ══════════════════════════════════════════ --}}
+        @php $propietario = $gastrobar->propietario; @endphp
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-person-badge text-warning"></i> Cuenta del Propietario
+                </h6>
+                <p class="text-muted small mb-4">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Deja la contraseña en blanco si no deseas cambiarla.
+                </p>
+
+                <div class="row g-4">
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Nombre del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                            <input type="text" name="propietario_nombre"
+                                   value="{{ old('propietario_nombre', $propietario->name ?? '') }}"
+                                   required placeholder="Nombre completo"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Correo del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="propietario_email"
+                                   value="{{ old('propietario_email', $propietario->email ?? '') }}"
+                                   required placeholder="correo@propietario.com"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Nueva Contraseña <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="propietario_password" id="gb_password" minlength="8"
+                                   placeholder="Dejar en blanco para no cambiar"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('gb_password', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" name="propietario_password_confirmation" id="gb_password_confirm" minlength="8"
+                                   placeholder="Repetir nueva contraseña"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('gb_password_confirm', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 6: Foto de Portada                   --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -314,7 +372,6 @@
 
                 <div class="row g-4 align-items-start">
 
-                    {{-- Imagen actual --}}
                     <div class="col-12 col-md-6">
                         <p class="small fw-semibold text-muted mb-2">Imagen actual:</p>
                         @if($gastrobar->imagen_principal)
@@ -332,7 +389,6 @@
                         @endif
                     </div>
 
-                    {{-- Input nueva imagen --}}
                     <div class="col-12 col-md-6">
                         <p class="small fw-semibold text-muted mb-2">Reemplazar imagen <span class="fw-normal">(opcional)</span></p>
                         <label for="input-portada" class="w-100 cursor-pointer">
@@ -357,7 +413,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 6: Galería de Fotos                  --}}
+        {{-- CARD 7: Galería de Fotos                  --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -366,7 +422,6 @@
                     <span class="fw-normal text-secondary text-capitalize" style="font-size: 0.7rem;">(Máx. 4 — las nuevas reemplazan las existentes)</span>
                 </h6>
 
-                {{-- Fotos actuales --}}
                 @php
                     $galeriaActual = $gastrobar->galeria ?? [];
                     if (is_string($galeriaActual)) $galeriaActual = json_decode($galeriaActual, true) ?? [];
@@ -390,7 +445,6 @@
                     </p>
                 @endif
 
-                {{-- Nuevas fotos --}}
                 <div class="row g-3">
                     @for($i = 0; $i < 4; $i++)
                     <div class="col-6 col-sm-3">
@@ -415,7 +469,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 7: Mapa                              --}}
+        {{-- CARD 8: Mapa                              --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -423,7 +477,6 @@
                     <i class="bi bi-geo-alt text-warning"></i> Ubicación en el Mapa
                 </h6>
 
-                {{-- Buscador --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">Buscar Dirección</label>
                     <div class="d-flex gap-2">
@@ -444,7 +497,6 @@
                     </p>
                 </div>
 
-                {{-- Dirección Exacta --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
                         Dirección Exacta <span class="text-muted fw-normal">(se actualiza al buscar o hacer clic en el mapa)</span>
@@ -458,7 +510,6 @@
                     </div>
                 </div>
 
-                {{-- ▼ NUEVO: Campo de coordenadas visible (igual que en create) ▼ --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
                         Coordenadas <span class="text-muted fw-normal">(latitud, longitud — o haz clic en el mapa)</span>
@@ -468,7 +519,7 @@
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-compass"></i></span>
                             <input type="text" id="coordenadas-input"
                                    placeholder="Ej: 12.865400, -85.207200"
-                                   value="{{ old('latitud', $gastrobar->latitud) && old('longitud', $gastrobar->longitud) ? old('latitud', $gastrobar->latitud) . ', ' . old('longitud', $gastrobar->longitud) : ($gastrobar->latitud && $gastrobar->longitud ? $gastrobar->latitud . ', ' . $gastrobar->longitud : '') }}"
+                                   value="{{ $gastrobar->latitud && $gastrobar->longitud ? $gastrobar->latitud . ', ' . $gastrobar->longitud : '' }}"
                                    class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
                         </div>
                         <button type="button" id="btn-ir-coordenadas"
@@ -481,9 +532,7 @@
                         Escribe las coordenadas separadas por coma y presiona "Ir al mapa", o simplemente haz clic en el mapa.
                     </p>
                 </div>
-                {{-- ▲ FIN campo coordenadas ▲ --}}
 
-                {{-- Campos ocultos --}}
                 <input type="hidden" name="latitud"  id="latitud"  value="{{ old('latitud', $gastrobar->latitud) }}">
                 <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $gastrobar->longitud) }}">
 
@@ -497,7 +546,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 8: Descripción                       --}}
+        {{-- CARD 9: Descripción                       --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -530,6 +579,18 @@
 </style>
 
 <script>
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon  = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+
     // ── Preview Portada ──
     document.getElementById('input-portada').addEventListener('change', function () {
         const file = this.files[0];
@@ -677,7 +738,6 @@
             if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
         });
 
-        // ── Botón "Ir al mapa" desde coordenadas ──
         document.getElementById('btn-ir-coordenadas').addEventListener('click', function () {
             const valor  = document.getElementById('coordenadas-input').value.trim();
             const partes = valor.split(',');
@@ -706,7 +766,6 @@
             geocodeInverso(lat, lng);
         });
 
-        // Permitir Enter en el campo de coordenadas
         document.getElementById('coordenadas-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-ir-coordenadas').click(); }
         });
@@ -775,7 +834,6 @@
         function actualizarCoordenadas(lat, lng) {
             document.getElementById('latitud').value  = lat.toFixed(7);
             document.getElementById('longitud').value = lng.toFixed(7);
-            // ▼ Sincronizar el campo visible de coordenadas ▼
             document.getElementById('coordenadas-input').value = `${lat.toFixed(7)}, ${lng.toFixed(7)}`;
             actualizarInfo(lat, lng);
         }

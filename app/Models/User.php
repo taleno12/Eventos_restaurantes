@@ -20,6 +20,7 @@ class User extends Authenticatable
         'municipio_id',
         'role',
         'restaurante_id',
+        'gastrobar_id',
         'google_id',
         'avatar',
     ];
@@ -33,7 +34,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
@@ -52,6 +53,11 @@ class User extends Authenticatable
         return $this->belongsTo(\App\Models\Restaurante::class);
     }
 
+    public function gastrobar()
+    {
+        return $this->belongsTo(\App\Models\Gastrobar::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -60,6 +66,11 @@ class User extends Authenticatable
     public function isRestaurante(): bool
     {
         return $this->role === 'restaurante';
+    }
+
+    public function isGastrobar(): bool
+    {
+        return $this->role === 'gastrobar';
     }
 
     public function isUsuario(): bool

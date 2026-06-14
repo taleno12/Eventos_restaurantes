@@ -456,34 +456,25 @@
 
                         {{-- 2. MUNICIPIO --}}
                         <div class="search-segment" style="min-width:110px;">
-     <label for="search-municipio">
-        <i class="fas fa-city" style="color:#ea580c;"></i> Municipio
-    </label>
-    <select id="search-municipio" name="municipio"
-            {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
-        <option value="">{{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}</option>
-        @foreach($municipios as $mun)
-            <option value="{{ $mun->id }}"
-                    data-departamento="{{ $mun->departamento_id }}"
-                    {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
-                    style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
-                {{ $mun->nombre }}
-            </option>
-        @endforeach
-    </select>
-</div>
-                        {{-- 3. ESPECIALIDAD --}}
-                        <div class="search-segment" style="min-width:110px;">
-                            <label for="search-especialidad">
-                                <i class="fas fa-utensils" style="color:#ea580c;"></i> Especialidad
+                            <label for="search-municipio">
+                                <i class="fas fa-city" style="color:#ea580c;"></i> Municipio
                             </label>
-                            <input type="text" id="search-especialidad" name="especialidad"
-                                   value="{{ request('especialidad') }}"
-                                   placeholder="Asados, mariscos...">
+                            <select id="search-municipio" name="municipio"
+                                    {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
+                                <option value="">{{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}</option>
+                                @foreach($municipios as $mun)
+                                    <option value="{{ $mun->id }}"
+                                            data-departamento="{{ $mun->departamento_id }}"
+                                            {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
+                                            style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
+                                        {{ $mun->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
-                        {{-- 4. LOCAL --}}
-                        <div class="search-segment" style="min-width:120px;">
+                        {{-- 3. LOCAL --}}
+                        <div class="search-segment" style="min-width:140px;">
                             <label for="search-restaurante">
                                 <i class="fas fa-store" style="color:#ea580c;"></i> Local
                             </label>
@@ -591,35 +582,25 @@
                     </div>
 
                     {{-- 2. MUNICIPIO --}}
-                   <div class="flex flex-col gap-1">
-    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-        <i class="fas fa-city text-orange-500"></i> Municipio
-    </label>
-    <select id="search-municipio-mobile" name="municipio" class="nav-select-mobile"
-            {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
-        <option value="">{{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}</option>
-        @foreach($municipios as $mun)
-            <option value="{{ $mun->id }}"
-                    data-departamento="{{ $mun->departamento_id }}"
-                    {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
-                    style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
-                {{ $mun->nombre }}
-            </option>
-        @endforeach
-    </select>
-</div>
-
-                    {{-- 3. ESPECIALIDAD --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-utensils text-orange-500"></i> Especialidad
+                            <i class="fas fa-city text-orange-500"></i> Municipio
                         </label>
-                        <input type="text" id="search-especialidad-mobile" name="especialidad"
-                               value="{{ request('especialidad') }}"
-                               class="nav-input-mobile" placeholder="Asados, mariscos...">
+                        <select id="search-municipio-mobile" name="municipio" class="nav-select-mobile"
+                                {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
+                            <option value="">{{ (request('departamento') ?? $departamentoPredefinido) ? 'Todos' : 'Elige destino...' }}</option>
+                            @foreach($municipios as $mun)
+                                <option value="{{ $mun->id }}"
+                                        data-departamento="{{ $mun->departamento_id }}"
+                                        {{ (request('municipio') ?? $municipioPredefinido) == $mun->id ? 'selected' : '' }}
+                                        style="{{ (request('departamento') ?? $departamentoPredefinido) && $mun->departamento_id == (request('departamento') ?? $departamentoPredefinido) ? '' : 'display:none' }}">
+                                    {{ $mun->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    {{-- 4. LOCAL --}}
+                    {{-- 3. LOCAL --}}
                     <div class="flex flex-col gap-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
                             <i class="fas fa-store text-orange-500"></i> Local
@@ -681,7 +662,6 @@
                                                 </div>
                                                 <div>
                                                     <p class="label">Ubicación</p>
-                                                    {{-- ✅ CORRECCIÓN 1: null-safe para restaurante en hero --}}
                                                     <p class="value" style="font-size:13px;">{{ $evento->restaurante?->nombre ?? 'Sin ubicación' }}</p>
                                                 </div>
                                             </div>
@@ -765,7 +745,7 @@
         <main class="max-w-7xl mx-auto px-4 py-12 sm:py-20 md:py-24">
 
             {{-- Filtros activos --}}
-            @if(request('departamento') || request('municipio') || request('especialidad') || request('restaurante_id'))
+            @if(request('departamento') || request('municipio') || request('restaurante_id'))
                 <div class="mb-8 flex items-center gap-2 flex-wrap bg-stone-100 p-3 rounded-xl text-sm">
                     <span class="text-stone-500 font-medium">Búsqueda activa:</span>
                     @if(request('departamento'))
@@ -787,13 +767,6 @@
                             <i class="fas fa-store text-orange-500" style="font-size:9px;"></i>
                             {{ $restaurantes->find(request('restaurante_id'))?->nombre }}
                             <a href="{{ request()->fullUrlWithoutQuery(['restaurante_id']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
-                        </span>
-                    @endif
-                    @if(request('especialidad'))
-                        <span class="bg-white text-stone-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
-                            <i class="fas fa-utensils text-orange-500" style="font-size:9px;"></i>
-                            {{ request('especialidad') }}
-                            <a href="{{ request()->fullUrlWithoutQuery(['especialidad']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
                         </span>
                     @endif
                     <a href="{{ route('home') }}"
@@ -866,7 +839,6 @@
                                 <img src="{{ asset('storage/' . $item->imagen) }}"
                                      alt="{{ $item->titulo }}">
                             </a>
-                            {{-- Region badge: muestra departamento y municipio si existe --}}
                             <div class="card-region-badge">
                                 <span class="card-region-dot"></span>
                                 {{ $item->departamento->nombre }}
@@ -885,7 +857,6 @@
                             {{-- Establecimiento + badge tipo --}}
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
 
-                                {{-- Ícono según tipo --}}
                                 @if($item->gastrobar_id ?? false)
                                     <div style="width:36px;height:36px;background:#fff8e1;border:1px solid #fde68a;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                         <i class="fas fa-glass-martini-alt" style="color:#b45309;font-size:14px;"></i>
@@ -897,7 +868,6 @@
                                 @endif
 
                                 <div style="flex:1;min-width:0;">
-                                    {{-- Nombre del establecimiento --}}
                                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
                                         <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#ea580c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;">
                                             @if($item->gastrobar_id ?? false)
@@ -906,7 +876,6 @@
                                                 {{ $item->restaurante?->nombre ?? 'Sin local' }}
                                             @endif
                                         </span>
-                                        {{-- Badge tipo --}}
                                         @if($item->gastrobar_id ?? false)
                                             <span class="badge-gastrobar-ev">
                                                 <i class="fas fa-glass-martini-alt" style="font-size:9px;"></i> Gastrobar
@@ -917,7 +886,6 @@
                                             </span>
                                         @endif
                                     </div>
-                                    {{-- Especialidad si existe --}}
                                     @if($item->restaurante?->especialidad)
                                         <span style="font-size:9px;color:#a8a29e;font-weight:600;">{{ $item->restaurante->especialidad }}</span>
                                     @endif
@@ -957,7 +925,7 @@
                         <p class="text-stone-500 text-base leading-relaxed mb-8 font-light">
                             No encontramos eventos activos con los filtros seleccionados.
                         </p>
-                        @if(request('especialidad') || request('departamento') || request('municipio') || request('restaurante_id'))
+                        @if(request('departamento') || request('municipio') || request('restaurante_id'))
                             <a href="{{ route('home') }}"
                                class="bg-stone-900 text-stone-50 text-xs font-bold tracking-wider uppercase px-6 py-3.5 rounded-xl no-underline hover:bg-orange-600 transition-all shadow-md active:scale-95 border-0 cursor-pointer flex items-center gap-2">
                                 <i class="fas fa-undo text-[10px]"></i> Limpiar Filtros
@@ -1037,13 +1005,12 @@
                 bannerCarousel.cycle();
             }
 
-            // ── FILTRO CASCADA CON MUNICIPIO ──
+            // ── FILTRO CASCADA SIN ESPECIALIDAD ──
             const todosLosRestaurantes = @json($restaurantes->values());
 
-            function configurarFiltroCascada(deptoId, munId, especId, restId) {
+            function configurarFiltroCascada(deptoId, munId, restId) {
                 const deptoSel   = document.getElementById(deptoId);
                 const munSel     = document.getElementById(munId);
-                const especInput = especId ? document.getElementById(especId) : null;
                 const restSelect = document.getElementById(restId);
                 if (!deptoSel || !munSel || !restSelect) return;
 
@@ -1069,15 +1036,14 @@
                 function actualizarLocales() {
                     const depto = deptoSel.value;
                     const mun   = munSel.value;
-                    const espec = especInput ? especInput.value.toLowerCase().trim() : '';
 
                     restSelect.innerHTML = '';
                     const ph = document.createElement('option');
                     ph.value = '';
-                    ph.textContent = (!depto && !mun && !espec) ? 'Elige destino...' : 'Todos los locales';
+                    ph.textContent = (!depto && !mun) ? 'Elige destino...' : 'Todos los locales';
                     restSelect.appendChild(ph);
 
-                    if (!depto && !mun && !espec) {
+                    if (!depto && !mun) {
                         restSelect.disabled = true;
                         return;
                     }
@@ -1085,7 +1051,6 @@
                     let filtrados = todosLosRestaurantes;
                     if (depto) filtrados = filtrados.filter(r => String(r.departamento_id) === String(depto));
                     if (mun)   filtrados = filtrados.filter(r => String(r.municipio_id) === String(mun));
-                    if (espec) filtrados = filtrados.filter(r => r.especialidad && r.especialidad.toLowerCase().includes(espec));
 
                     filtrados.forEach(r => {
                         const opt = document.createElement('option');
@@ -1100,14 +1065,13 @@
 
                 deptoSel.addEventListener('change', () => { actualizarMunicipios(); actualizarLocales(); });
                 munSel.addEventListener('change', actualizarLocales);
-                if (especInput) especInput.addEventListener('input', actualizarLocales);
 
                 actualizarMunicipios();
                 actualizarLocales();
             }
 
-            configurarFiltroCascada('search-departamento', 'search-municipio', 'search-especialidad', 'search-restaurante');
-            configurarFiltroCascada('search-departamento-mobile', 'search-municipio-mobile', 'search-especialidad-mobile', 'search-restaurante-mobile');
+            configurarFiltroCascada('search-departamento', 'search-municipio', 'search-restaurante');
+            configurarFiltroCascada('search-departamento-mobile', 'search-municipio-mobile', 'search-restaurante-mobile');
 
             // ── MOBILE TOGGLE ──
             const mobileSearchToggle = document.getElementById('mobileSearchToggle');

@@ -63,15 +63,6 @@
             0%, 100% { box-shadow: 0 0 20px rgba(234,88,12,0.3); }
             50%       { box-shadow: 0 0 40px rgba(234,88,12,0.6); }
         }
-        @keyframes gradientShift {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes lineGrow {
-            from { transform: scaleX(0); }
-            to   { transform: scaleX(1); }
-        }
 
         .anim-fade-up   { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both; }
         .anim-fade-in   { animation: fadeIn 0.6s ease both; }
@@ -87,76 +78,113 @@
         .delay-6 { animation-delay: 0.6s; }
         .delay-7 { animation-delay: 0.7s; }
 
-        /* ── HERO ── */
-        .hero-section {
-            background: linear-gradient(135deg, #0c0a09 0%, #1c1917 40%, #2d1a0e 70%, #431407 100%);
-            background-size: 300% 300%;
-            animation: gradientShift 8s ease infinite;
-            padding: 140px 2rem 80px;
-            position: relative;
+
+
+        /* ── RESTAURANT INFO BAR (estilo PedidosYa) ── */
+        .resto-bar {
+            background: #fff;
+            border-bottom: 1px solid #f0eeec;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: 0 2px 12px rgba(28,25,23,0.06);
+        }
+        .resto-bar-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .resto-bar-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0 14px;
+            border-bottom: 1px solid #f5f4f2;
+        }
+        .resto-logo {
+            width: 64px; height: 64px;
+            border-radius: 14px;
+            border: 1.5px solid #f0eeec;
             overflow: hidden;
-            min-height: 380px;
+            flex-shrink: 0;
+            background: #f5f4f2;
+            display: flex; align-items: center; justify-content: center;
         }
-        .hero-noise {
-            position: absolute; inset: 0; opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            pointer-events: none;
+        .resto-logo img {
+            width: 100%; height: 100%; object-fit: cover;
         }
-        .hero-grid {
-            position: absolute; inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
+        .resto-logo-placeholder {
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--orange), var(--orange-light));
+            display: flex; align-items: center; justify-content: center;
         }
-        .hero-glow-1 {
-            position: absolute; top: -100px; right: -100px;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(234,88,12,0.25) 0%, transparent 65%);
-            pointer-events: none; animation: float 6s ease-in-out infinite;
+        .resto-info { flex: 1; min-width: 0; }
+        .resto-name {
+            font-size: 18px; font-weight: 800; color: #1c1917;
+            line-height: 1.2; margin-bottom: 5px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .hero-glow-2 {
-            position: absolute; bottom: -80px; left: 10%;
-            width: 350px; height: 350px;
-            background: radial-gradient(circle, rgba(251,146,60,0.12) 0%, transparent 65%);
-            pointer-events: none; animation: float 8s ease-in-out infinite reverse;
+        .resto-meta {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
         }
-        .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
-        .hero-badge-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
-        .hero-badge-resto {
+        .resto-badge-tipo {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #fff7ed; color: var(--orange);
+            border: 1.5px solid #fed7aa;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 999px;
+        }
+        .resto-reviews {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 12px; color: #78716c; font-weight: 600;
+        }
+        .resto-reviews i { color: #f59e0b; font-size: 11px; }
+        .resto-location-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 12px; color: #78716c; font-weight: 500;
+        }
+        .resto-location-pill i { color: var(--orange); font-size: 10px; }
+        .resto-back-btn {
             display: inline-flex; align-items: center; gap: 6px;
-            background: var(--orange); color: white;
-            font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
-            padding: 8px 18px; border-radius: 999px;
-            box-shadow: 0 4px 20px rgba(234,88,12,0.4);
+            border: 1.5px solid #e7e5e4; color: #78716c;
+            font-size: 12px; font-weight: 600;
+            padding: 8px 16px; border-radius: 999px;
+            text-decoration: none; transition: all 0.2s;
+            white-space: nowrap; flex-shrink: 0;
         }
-        .hero-badge-contrato {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.9);
-            font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
-            padding: 8px 18px; border-radius: 999px; backdrop-filter: blur(8px);
+        .resto-back-btn:hover {
+            border-color: #1c1917; color: #1c1917;
+            background: #faf9f6;
         }
-        .hero-title {
-            font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900;
-            color: white; line-height: 1.05; margin-bottom: 20px; letter-spacing: -0.02em;
+
+        /* Tabs estilo PedidosYa */
+        .resto-tabs {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
-        .hero-location {
-            display: inline-flex; align-items: center; gap: 8px;
-            color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;
+        .resto-tabs::-webkit-scrollbar { display: none; }
+        .resto-tab {
+            padding: 14px 20px;
+            font-size: 13px; font-weight: 700;
+            color: #a8a29e;
+            border: none; background: transparent;
+            border-bottom: 3px solid transparent;
+            cursor: pointer; white-space: nowrap;
+            transition: all 0.18s; font-family: 'Instrument Sans', sans-serif;
+            letter-spacing: 0.01em;
         }
-        .hero-location strong { color: white; }
-        .hero-line {
-            width: 60px; height: 3px;
-            background: linear-gradient(90deg, var(--orange), var(--orange-light));
-            border-radius: 2px; margin: 24px 0; transform-origin: left;
-            animation: lineGrow 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both;
+        .resto-tab:hover { color: #1c1917; }
+        .resto-tab.active {
+            color: #1c1917;
+            border-bottom-color: #1c1917;
         }
 
         /* ── MAIN LAYOUT ── */
         .main-wrap {
-            max-width: 1100px; margin: 0 auto; padding: 56px 2rem 80px;
+            max-width: 1100px; margin: 0 auto; padding: 48px 2rem 400px;
             display: grid; grid-template-columns: 1fr 360px;
             gap: 32px; align-items: start;
         }
@@ -190,7 +218,7 @@
         .empty-text { color: #b5b0ab; font-size: 13px; font-style: italic; display: flex; align-items: center; gap: 8px; }
 
         /* ── SIDEBAR ── */
-        .sidebar-sticky { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-sticky { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 20px; }
         .summary-card {
             background: white; border: 1px solid #f0eeec; border-radius: 24px;
             overflow: hidden; box-shadow: 0 4px 24px rgba(28,25,23,0.06); transition: box-shadow 0.3s ease;
@@ -329,6 +357,12 @@
             .main-wrap { grid-template-columns: 1fr; }
             .sidebar-sticky { position: static; }
         }
+        @media (max-width: 640px) {
+            .resto-bar-top { gap: 12px; padding: 12px 0 10px; }
+            .resto-logo { width: 52px; height: 52px; border-radius: 12px; }
+            .resto-name { font-size: 15px; }
+            .resto-back-btn span { display: none; }
+        }
         @media (max-width: 580px) {
             .modal-grid-2 { grid-template-columns: 1fr !important; }
             .modal-grid-4 { grid-template-columns: 1fr 1fr !important; }
@@ -337,71 +371,65 @@
 </head>
 <body class="bg-stone-50 text-stone-900">
 
-    {{-- ══ NAVBAR ══ --}}
-    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 sm:h-20 items-center">
+    {{-- ══ RESTAURANT BAR (estilo PedidosYa) ══ --}}
+    @php
+        $establecimiento = $empleo->gastrobar_id ? $empleo->gastrobar : $empleo->restaurante;
+        $esGastrobar     = (bool) $empleo->gastrobar_id;
+    @endphp
+    <div class="resto-bar anim-fade-in">
+        <div class="resto-bar-inner">
+            <div class="resto-bar-top">
 
-                {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
-                    <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
-                        Gastro<span class="text-orange-600">Nicaragua</span>
-                    </span>
-                </a>
+                {{-- Logo del establecimiento --}}
+                <div class="resto-logo">
+                    @if(!empty($establecimiento?->logo) || !empty($establecimiento?->imagen))
+                        <img src="{{ asset('storage/' . ($establecimiento->logo ?? $establecimiento->imagen)) }}"
+                             alt="{{ $establecimiento->nombre }}" loading="lazy">
+                    @else
+                        <div class="resto-logo-placeholder">
+                            <i class="{{ $esGastrobar ? 'fas fa-glass-martini-alt' : 'fas fa-utensils' }}"
+                               style="color:white;font-size:20px;"></i>
+                        </div>
+                    @endif
+                </div>
 
-                {{-- Volver --}}
-                <a href="{{ route('empleos.index') }}"
-                   class="flex items-center gap-2 border border-stone-200 text-stone-600 bg-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
-                    <i class="fas fa-chevron-left text-xs"></i>
+                {{-- Info del establecimiento --}}
+                <div class="resto-info">
+                    <div class="resto-name">{{ $establecimiento?->nombre }}</div>
+                    <div class="resto-meta">
+                        @if($empleo->tipo_contrato)
+                            <span class="resto-badge-tipo">
+                                <i class="fas fa-clock" style="font-size:9px;"></i>
+                                {{ $empleo->tipo_contrato }}
+                            </span>
+                        @endif
+                        <span class="resto-reviews">
+                            <i class="fas fa-star"></i>
+                            {{ $esGastrobar ? 'Gastrobar' : 'Restaurante' }}
+                        </span>
+                        <span class="resto-location-pill">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ $empleo->departamento->nombre }}@if($empleo->municipio), {{ $empleo->municipio->nombre }}@endif
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Botón volver --}}
+                <a href="{{ route('empleos.index') }}" class="resto-back-btn">
+                    <i class="fas fa-chevron-left" style="font-size:10px;"></i>
                     <span>Volver a empleos</span>
                 </a>
 
             </div>
+
+            {{-- Tabs --}}
+            <nav class="resto-tabs">
+                <button class="resto-tab active" onclick="scrollToSection('descripcion', this)">Descripción</button>
+                <button class="resto-tab"        onclick="scrollToSection('requisitos', this)">Requisitos</button>
+                <button class="resto-tab"        onclick="scrollToSection('detalle', this)">Detalles</button>
+            </nav>
         </div>
-    </nav>
-
-    {{-- ── HERO ── --}}
-    <header class="hero-section">
-        <div class="hero-noise"></div>
-        <div class="hero-grid"></div>
-        <div class="hero-glow-1"></div>
-        <div class="hero-glow-2"></div>
-
-        <div class="hero-inner">
-            <div class="hero-badge-row anim-fade-up">
-                <span class="hero-badge-resto">
-                    @if($empleo->gastrobar_id)
-                        <i class="fas fa-glass-martini-alt" style="font-size:9px;"></i>
-                        {{ $empleo->gastrobar?->nombre }}
-                    @else
-                        <i class="fas fa-store" style="font-size:9px;"></i>
-                        {{ $empleo->restaurante?->nombre }}
-                    @endif
-                </span>
-                @if($empleo->tipo_contrato)
-                    <span class="hero-badge-contrato">
-                        <i class="fas fa-clock" style="font-size:9px;"></i>
-                        {{ $empleo->tipo_contrato }}
-                    </span>
-                @endif
-            </div>
-
-            <h1 class="premium-title hero-title anim-fade-up delay-1">
-                {{ $empleo->titulo }}
-            </h1>
-
-            <div class="hero-line"></div>
-
-            <div class="hero-location anim-fade-up delay-2">
-                <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:12px;"></i>
-                <strong>{{ $empleo->departamento->nombre }}</strong>
-                @if($empleo->municipio)
-                    <span style="color:rgba(255,255,255,0.3);">—</span>
-                    <span>{{ $empleo->municipio->nombre }}</span>
-                @endif
-            </div>
-        </div>
-    </header>
+    </div>
 
     {{-- Alertas --}}
     @if(session('success'))
@@ -426,7 +454,7 @@
 
         <div style="display:flex;flex-direction:column;gap:20px;">
 
-            <div class="content-card anim-slide-r delay-2">
+            <div id="descripcion" class="content-card anim-slide-r delay-2">
                 <div class="card-header">
                     <div class="card-icon-wrap">
                         <i class="fas fa-align-left" style="color:#ea580c;font-size:14px;"></i>
@@ -436,7 +464,7 @@
                 <p class="card-body-text">{{ $empleo->descripcion }}</p>
             </div>
 
-            <div class="content-card anim-slide-r delay-3">
+            <div id="requisitos" class="content-card anim-slide-r delay-3">
                 <div class="card-header">
                     <div class="card-icon-wrap">
                         <i class="fas fa-clipboard-list" style="color:#ea580c;font-size:14px;"></i>
@@ -451,6 +479,41 @@
                         El establecimiento no especificó requisitos adicionales para esta posición.
                     </p>
                 @endif
+            </div>
+
+            {{-- Detalles extra como card adicional --}}
+            <div id="detalle" class="content-card anim-slide-r delay-4">
+                <div class="card-header">
+                    <div class="card-icon-wrap">
+                        <i class="fas fa-receipt" style="color:#ea580c;font-size:14px;"></i>
+                    </div>
+                    <span class="card-title-text">Detalles de la oferta</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f5f4f2;">
+                        <span style="font-size:13px;color:#78716c;font-weight:500;">Publicado</span>
+                        <span style="font-size:13px;font-weight:700;color:#1c1917;display:flex;align-items:center;gap:6px;">
+                            <i class="far fa-clock" style="color:#ea580c;font-size:11px;"></i>
+                            {{ $empleo->created_at->diffForHumans() }}
+                        </span>
+                    </div>
+                    @if($empleo->fecha_limite)
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f5f4f2;">
+                        <span style="font-size:13px;color:#78716c;font-weight:500;">Fecha límite</span>
+                        <span style="font-size:13px;font-weight:700;color:#dc2626;display:flex;align-items:center;gap:6px;">
+                            <i class="far fa-calendar-times" style="font-size:11px;"></i>
+                            {{ \Carbon\Carbon::parse($empleo->fecha_limite)->translatedFormat('d \d\e M, Y') }}
+                        </span>
+                    </div>
+                    @endif
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+                        <span style="font-size:13px;color:#78716c;font-weight:500;">Establecimiento</span>
+                        <span style="font-size:13px;font-weight:700;color:#1c1917;display:flex;align-items:center;gap:6px;">
+                            <i class="{{ $esGastrobar ? 'fas fa-glass-martini-alt' : 'fas fa-store' }}" style="color:#ea580c;font-size:11px;"></i>
+                            {{ $establecimiento?->nombre }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -498,9 +561,6 @@
                     </div>
                 </div>
 
-                @php
-                    $establecimiento = $empleo->gastrobar_id ? $empleo->gastrobar : $empleo->restaurante;
-                @endphp
                 <div class="social-section">
                     <span class="social-label">Conoce el establecimiento</span>
                     <div class="social-icons">
@@ -728,6 +788,7 @@
     <script>
         var cvTieneArchivo = false;
 
+        /* ── Modal ── */
         function abrirModalAplicar() {
             document.getElementById('applyModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -761,15 +822,42 @@
             btn.style.cursor  = 'not-allowed';
         });
 
-        const observer = new IntersectionObserver((entries) => {
+        /* ── Tabs scroll ── */
+        function scrollToSection(id, tabEl) {
+            document.querySelectorAll('.resto-tab').forEach(t => t.classList.remove('active'));
+            tabEl.classList.add('active');
+            const el = document.getElementById(id);
+            if (!el) return;
+            const barOffset = document.querySelector('.resto-bar').offsetHeight + 16;
+            // Asegurar que haya espacio para scroll antes de mover
+            ensureScrollSpace(el, barOffset);
+            setTimeout(() => {
+                const top = el.getBoundingClientRect().top + window.scrollY - barOffset;
+                window.scrollTo({ top, behavior: 'smooth' });
+            }, 10);
+        }
+
+        function ensureScrollSpace(targetEl, offset) {
+            const wrap = document.querySelector('.main-wrap');
+            const targetBottom = targetEl.getBoundingClientRect().bottom + window.scrollY;
+            const needed = targetBottom - offset + window.innerHeight * 0.5;
+            const current = document.documentElement.scrollHeight;
+            if (needed > current) {
+                const extra = needed - current + 80;
+                wrap.style.paddingBottom = (parseInt(wrap.style.paddingBottom || 48) + extra) + 'px';
+            }
+        }
+
+        /* ── Animaciones on scroll ── */
+        const animObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.style.animationPlayState = 'running';
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.anim-fade-up, .anim-slide-r, .anim-slide-l, .anim-scale-in').forEach(el => {
+        document.querySelectorAll('.anim-fade-up, .anim-fade-in, .anim-slide-r, .anim-slide-l, .anim-scale-in').forEach(el => {
             el.style.animationPlayState = 'paused';
-            observer.observe(el);
+            animObserver.observe(el);
         });
     </script>
 </body>

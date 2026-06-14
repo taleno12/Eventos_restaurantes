@@ -27,16 +27,18 @@ class UsuarioController extends Controller
 
         $usuarios = $query->latest()->paginate(15)->withQueryString();
 
-        $totalUsuarios = User::count();
-        $totalAdmins   = User::where('role', 'admin')->count();
+        $totalUsuarios     = User::count();
+        $totalAdmins       = User::where('role', 'admin')->count();
         $totalRestaurantes = User::where('role', 'restaurante')->count();
-        $totalClientes = User::whereNotIn('role', ['admin', 'restaurante'])->count();
+        $totalGastrobares  = User::where('role', 'gastrobar')->count();
+        $totalClientes     = User::where('role', 'usuario')->count();
 
         return view('usuarios.index', compact(
             'usuarios',
             'totalUsuarios',
             'totalAdmins',
             'totalRestaurantes',
+            'totalGastrobares',
             'totalClientes'
         ));
     }
@@ -53,7 +55,7 @@ class UsuarioController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'role'  => 'required|in:admin,restaurante,user',
+            'role'  => 'required|in:admin,restaurante,gastrobar,usuario',
         ]);
 
         $user->update([
@@ -69,7 +71,6 @@ class UsuarioController extends Controller
     // ── TOGGLE ACTIVO/INACTIVO ────────────────────────────────────
     public function toggle(User $user)
     {
-        // Usamos email_verified_at como indicador de activo/inactivo
         if ($user->email_verified_at) {
             $user->update(['email_verified_at' => null]);
             $msg = 'Usuario desactivado.';

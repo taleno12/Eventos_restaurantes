@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
 class Gastrobar extends Model
@@ -16,6 +17,7 @@ class Gastrobar extends Model
     protected $fillable = [
         'nombre',
         'email',
+        'telefono',        // ← agregado
         'tipo_cocina',
         'tipo_bar',
         'descripcion',
@@ -30,6 +32,7 @@ class Gastrobar extends Model
         'direccion',
         'latitud',
         'longitud',
+        'telefono',
         'whatsapp',
         'instagram',
         'facebook',
@@ -64,6 +67,29 @@ class Gastrobar extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function fotos(): HasMany
+    {
+        return $this->hasMany(GastrobarFoto::class);
+    }
+
+    public function eventos(): HasMany
+    {
+        return $this->hasMany(Evento::class);
+    }
+
+    public function empleos(): HasMany
+    {
+        return $this->hasMany(Empleo::class);
+    }
+
+    /**
+     * Un gastrobar TIENE UN propietario (usuario con rol 'gastrobar')
+     */
+    public function propietario(): HasOne
+    {
+        return $this->hasOne(User::class, 'gastrobar_id')->where('role', 'gastrobar');
     }
 
     // ── ACCESSORS ───────────────────────────────────────────────

@@ -1,1078 +1,1030 @@
 {{-- resources/views/gastrobares/public_show.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $gastrobar->nombre }} | Gastro Nicaragua</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $gastrobar->nombre }} | Gastro Nicaragua</title>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-        <link href="https://fonts.bunny.net/css?family=playfair-display:400,700,900|instrument-sans:400,500,600,700" rel="stylesheet" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link href="https://fonts.bunny.net/css?family=playfair-display:400,700,900|instrument-sans:400,500,600,700,800" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        <style>
-            :root {
-                --orange:       #ea580c;
-                --orange-light: #fed7aa;
-                --orange-glow:  rgba(234,88,12,0.18);
-                --dark:         #0c0a09;
-                --stone:        #fafaf9;
-                --border:       #e7e5e4;
-                --text-muted:   #78716c;
-                --text-main:    #1c1917;
-            }
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --orange:    #ea580c;
+            --orange-lt: #fff7ed;
+            --border:    #e5e7eb;
+            --text:      #1f2937;
+            --muted:     #6b7280;
+            --bg:        #f9fafb;
+            --white:     #ffffff;
+            --radius:    12px;
+            --shadow:    0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+        }
 
-            body {
-                font-family: 'Instrument Sans', sans-serif;
-                background: var(--stone);
-                color: var(--text-main);
-                overflow-x: hidden;
-            }
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
 
-            .premium-title { font-family: 'Playfair Display', serif; }
+        a { text-decoration: none; color: inherit; }
 
-            .hero-wrap {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                min-height: auto;
-                position: relative;
-            }
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            padding: 0 1.5rem;
+        }
+        .topbar-inner {
+            max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 56px; gap: 16px;
+        }
+        .topbar-logo {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; font-weight: 700;
+            font-size: 18px; color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .topbar-logo .dot { color: var(--orange); }
+        .topbar-actions { display: flex; align-items: center; gap: 8px; }
+        .btn-sm {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 600; padding: 7px 14px;
+            border-radius: 999px; border: 1.5px solid var(--border);
+            background: var(--white); color: var(--muted);
+            cursor: pointer; transition: all 0.18s;
+        }
+        .btn-sm:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-lt); }
+        .btn-sm.primary { background: var(--orange); color: white; border-color: var(--orange); }
+        .btn-sm.primary:hover { background: #c2410c; border-color: #c2410c; }
 
-            @media (max-width: 900px) {
-                .hero-wrap { grid-template-columns: 1fr; }
-                .hero-img-col { height: 52vw; min-height: 220px; max-height: 380px; }
-            }
+        .hero-banner {
+            position: relative; width: 100%;
+            height: 240px; overflow: hidden; background: #1f2937;
+        }
+        @media (min-width: 768px) { .hero-banner { height: 300px; } }
+        .hero-banner img {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.75; display: block;
+        }
+        .hero-banner-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%);
+        }
 
-            .hero-img-col {
-                position: relative;
-                overflow: hidden;
-                height: 420px;
-            }
+        .rest-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+        }
+        .rest-header-inner {
+            max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
+        }
+        .rest-header-top {
+            display: flex; align-items: flex-end; gap: 20px;
+            padding-top: 0; transform: translateY(-40px); margin-bottom: -40px;
+        }
+        .rest-logo-wrap {
+            width: 100px; height: 100px; border-radius: 18px;
+            border: 4px solid var(--white); overflow: hidden;
+            background: var(--orange-lt); flex-shrink: 0;
+            box-shadow: var(--shadow);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .rest-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .rest-logo-placeholder { font-size: 2.5rem; color: var(--orange); opacity: 0.5; }
+        .rest-info { padding-bottom: 8px; min-width: 0; flex: 1; }
+        .rest-info h1 {
+            font-size: clamp(1.4rem, 3vw, 2rem);
+            font-weight: 800; color: var(--text); line-height: 1.15; margin-bottom: 6px;
+        }
+        .rest-meta {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            font-size: 13px; color: var(--muted);
+        }
+        .rest-meta-item { display: flex; align-items: center; gap: 5px; font-weight: 600; }
+        .rest-meta-item i { color: var(--orange); font-size: 11px; }
+        .rest-meta-sep { color: var(--border); }
 
-            @media (min-width: 900px) {
-                .hero-img-col { height: auto; min-height: 420px; }
-            }
+        .rest-header-bottom {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 0 16px; gap: 12px; flex-wrap: wrap;
+        }
+        .rest-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 700; padding: 5px 12px;
+            border-radius: 999px; border: 1.5px solid;
+        }
+        .badge-green  { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+        .badge-red    { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+        .badge-gray   { background: #f9fafb; color: #6b7280; border-color: #e5e7eb; }
+        .badge-orange { background: var(--orange-lt); color: var(--orange); border-color: #fed7aa; }
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .badge-dot.green { background: #22c55e; }
+        .badge-dot.red   { background: #ef4444; }
 
-            .hero-bg {
-                position: absolute;
-                inset: 0;
-                background-size: cover;
-                background-position: center;
-                transition: transform 9s ease;
-            }
+        .stats-bar { background: var(--white); border-bottom: 1px solid var(--border); }
+        .stats-bar-inner {
+            max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
+            display: flex; align-items: stretch; gap: 0;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .stats-bar-inner::-webkit-scrollbar { display: none; }
+        .stat-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 14px 28px; min-width: 120px; border-right: 1px solid var(--border); flex-shrink: 0;
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-val { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1; }
+        .stat-val .accent { color: var(--orange); }
+        .stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-top: 3px; }
 
-            .hero-img-col:hover .hero-bg { transform: scale(1.05); }
+        .page-body {
+            max-width: 1280px; margin: 0 auto; padding: 28px 1.5rem 80px;
+            display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start;
+        }
+        @media (max-width: 1024px) {
+            .page-body { grid-template-columns: 1fr; }
+            .sidebar { order: -1; }
+        }
 
-            .hero-img-overlay {
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(135deg, rgba(12,10,9,0.35) 0%, transparent 60%);
-            }
+        .section-card {
+            background: var(--white); border-radius: var(--radius);
+            border: 1px solid var(--border); box-shadow: var(--shadow);
+            margin-bottom: 16px; overflow: hidden;
+        }
+        .section-head {
+            padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .section-title {
+            font-size: 15px; font-weight: 800; color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-title i { color: var(--orange); font-size: 13px; }
+        .section-body { padding: 20px 22px; }
 
-            .btn-zoom-portada {
-                position: absolute;
-                bottom: 20px; right: 20px; z-index: 10;
-                background: rgba(255,255,255,0.14);
-                border: 1px solid rgba(255,255,255,0.25);
-                backdrop-filter: blur(14px);
-                color: white; font-size: 12px; font-weight: 700;
-                padding: 8px 16px; border-radius: 999px;
-                cursor: pointer;
-                display: flex; align-items: center; gap: 7px;
-                transition: background 0.2s, transform 0.2s;
-                letter-spacing: 0.04em;
-            }
-            .btn-zoom-portada:hover { background: rgba(234,88,12,0.75); transform: translateY(-2px); }
+        .desc-text { font-size: 14.5px; color: #4b5563; line-height: 1.8; }
 
-            .hero-info-col {
-                background: var(--dark);
-                display: flex; flex-direction: column;
-                padding: 0; position: relative; overflow: hidden;
-            }
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 110px; gap: 8px;
+        }
+        @media (max-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 85px; } }
+        @media (max-width: 400px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+        .gallery-grid .g-first { grid-column: span 2; grid-row: span 2; }
+        .g-item { border-radius: 10px; overflow: hidden; cursor: zoom-in; position: relative; background: #f3f4f6; }
+        .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+        .g-item:hover img { transform: scale(1.07); }
+        .g-item::after {
+            content: '\f00e'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: white; background: rgba(0,0,0,0); opacity: 0; transition: all 0.25s;
+        }
+        .g-item:hover::after { background: rgba(0,0,0,0.35); opacity: 1; }
 
-            .hero-info-col::before {
-                content: '';
-                position: absolute; inset: 0;
-                background-image:
-                    radial-gradient(circle at 80% 20%, rgba(234,88,12,0.12) 0%, transparent 55%),
-                    radial-gradient(circle at 10% 85%, rgba(234,88,12,0.07) 0%, transparent 45%);
-                pointer-events: none;
-            }
+        #mapa-publico { height: 250px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+        .dir-box {
+            display: flex; align-items: flex-start; gap: 10px;
+            background: var(--orange-lt); border: 1px solid #fed7aa;
+            border-radius: 10px; padding: 12px 16px; margin-bottom: 14px;
+            font-size: 13.5px; color: #57534e; line-height: 1.6;
+        }
+        .dir-box i { color: var(--orange); margin-top: 2px; flex-shrink: 0; }
+        .btn-gmaps {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #1f2937; color: white; font-size: 13px; font-weight: 700;
+            padding: 10px 20px; border-radius: 10px; margin-top: 14px; transition: all 0.18s;
+        }
+        .btn-gmaps:hover { background: var(--orange); transform: translateY(-1px); }
 
-            .nav-inner {
-                position: relative; z-index: 10;
-                padding: 22px 40px;
-                display: flex; align-items: center; justify-content: space-between;
-                border-bottom: 1px solid rgba(255,255,255,0.06);
-            }
-            @media (max-width: 900px) { .nav-inner { padding: 18px 20px; } }
+        .dias-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+        .dia-pill { font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 999px; letter-spacing: 0.04em; }
+        .dia-pill.on  { background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; }
+        .dia-pill.off { background: #f9fafb; color: #d1d5db; border: 1.5px solid #e5e7eb; }
+        .hor-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 14px; border-radius: 10px; background: var(--bg);
+            border: 1px solid var(--border); margin-bottom: 8px;
+        }
+        .hor-row:last-child { margin-bottom: 0; }
+        .hor-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+        .hor-value { font-size: 14px; font-weight: 800; color: var(--text); }
 
-            .logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .rating-summary {
+            display: flex; align-items: center; gap: 20px;
+            background: var(--orange-lt); border: 1px solid #fed7aa;
+            border-radius: 12px; padding: 18px 22px; margin-bottom: 20px;
+        }
+        .rating-big { font-size: 3rem; font-weight: 900; color: var(--orange); line-height: 1; text-align: center; }
+        .rating-lbl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+        .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .bar-track { flex: 1; height: 6px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+        .bar-fill  { height: 100%; background: var(--orange); border-radius: 999px; transition: width 0.5s ease; }
 
-            .logo-icon {
-                width: 34px; height: 34px;
-                background: var(--orange); border-radius: 10px;
-                display: flex; align-items: center; justify-content: center;
-                box-shadow: 0 4px 16px rgba(234,88,12,0.4); flex-shrink: 0;
-            }
+        .review-item { border-bottom: 1px solid #f3f4f6; padding-bottom: 18px; margin-bottom: 18px; }
+        .review-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .review-avatar {
+            width: 38px; height: 38px; border-radius: 50%; background: #fed7aa;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 800; color: var(--orange); flex-shrink: 0; overflow: hidden;
+        }
+        .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-            .btn-back {
-                display: flex; align-items: center; gap: 7px;
-                background: rgba(255,255,255,0.07);
-                border: 1px solid rgba(255,255,255,0.12);
-                color: rgba(255,255,255,0.75);
-                font-size: 12px; font-weight: 700;
-                padding: 7px 16px; border-radius: 999px;
-                text-decoration: none; transition: all 0.2s;
-                letter-spacing: 0.04em;
-            }
-            .btn-back:hover { background: rgba(234,88,12,0.2); color: white; border-color: rgba(234,88,12,0.4); }
+        .form-input {
+            width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-size: 14px; outline: none; font-family: inherit;
+            background: var(--white); transition: border-color 0.2s; color: var(--text);
+        }
+        .form-input:focus { border-color: var(--orange); }
+        .form-textarea { resize: vertical; }
+        .form-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 6px; }
 
-            .hero-center {
-                position: relative; z-index: 10;
-                padding: 32px 40px; flex: 1;
-                display: flex; flex-direction: column; justify-content: center;
-            }
-            @media (max-width: 900px) { .hero-center { padding: 24px 20px; } }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--orange); color: white;
+            font-size: 14px; font-weight: 700; padding: 10px 24px;
+            border-radius: 999px; border: none; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(234,88,12,0.35);
+            transition: all 0.18s; white-space: nowrap; font-family: inherit;
+        }
+        .btn-primary:hover { background: #c2410c; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(234,88,12,0.4); }
 
-            .hero-badge {
-                display: inline-flex; align-items: center; gap: 6px;
-                background: rgba(234,88,12,0.18);
-                border: 1px solid rgba(234,88,12,0.35);
-                color: #fb923c;
-                font-size: 10px; font-weight: 800;
-                letter-spacing: 0.14em; text-transform: uppercase;
-                padding: 5px 12px; border-radius: 999px;
-                margin-bottom: 16px; width: fit-content;
-            }
+        .sidebar { display: flex; flex-direction: column; gap: 14px; }
 
-            .hero-title {
-                font-size: clamp(2rem, 3.5vw, 3.2rem);
-                font-weight: 900; line-height: 1.08;
-                color: white; margin-bottom: 14px;
-            }
+        .sidebar-card {
+            background: var(--white); border-radius: var(--radius);
+            border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
+        }
+        .sidebar-card-head {
+            padding: 14px 18px; border-bottom: 1px solid var(--border);
+            font-size: 13px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--muted);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .sidebar-card-head i { color: var(--orange); }
+        .sidebar-card-body { padding: 16px 18px; }
 
-            .hero-location {
-                display: flex; align-items: center; gap: 8px;
-                color: rgba(255,255,255,0.55);
-                font-size: 13px; font-weight: 600;
-                margin-bottom: 28px;
-            }
-            .hero-location i { color: var(--orange); }
-            .hero-location strong { color: rgba(255,255,255,0.85); }
+        .social-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .social-btn {
+            width: 46px; height: 46px; border-radius: 12px; font-size: 17px;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+            border: 1.5px solid transparent;
+        }
+        .social-btn:hover { transform: translateY(-3px) scale(1.07); }
+        .social-wa { background: #dcfce7; color: #16a34a; border-color: #bbf7d0; }
+        .social-wa:hover { background: #22c55e; color: white; box-shadow: 0 6px 18px rgba(34,197,94,0.35); }
+        .social-ig { background: #fce7f3; color: #db2777; border-color: #fbcfe8; }
+        .social-ig:hover { background: #ec4899; color: white; box-shadow: 0 6px 18px rgba(236,72,153,0.35); }
+        .social-tt { background: #f1f5f9; color: #0f172a; border-color: #e2e8f0; }
+        .social-tt:hover { background: #0f172a; color: white; box-shadow: 0 6px 18px rgba(15,23,42,0.25); }
+        .social-fb { background: #dbeafe; color: #2563eb; border-color: #bfdbfe; }
+        .social-fb:hover { background: #2563eb; color: white; box-shadow: 0 6px 18px rgba(37,99,235,0.35); }
 
-            .hero-stats {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1px;
-                background: rgba(255,255,255,0.07);
-                border: 1px solid rgba(255,255,255,0.07);
-                border-radius: 16px; overflow: hidden;
-            }
+        .btn-wa-cta {
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            width: 100%; background: #22c55e; color: white;
+            font-size: 14px; font-weight: 700; padding: 14px 20px;
+            border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
+            text-decoration: none; letter-spacing: 0.02em;
+        }
+        .btn-wa-cta:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
 
-            .hero-stat {
-                background: rgba(255,255,255,0.04);
-                padding: 16px 18px; transition: background 0.2s;
-            }
-            .hero-stat:hover { background: rgba(255,255,255,0.08); }
+        #lightbox {
+            position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease; padding: 20px;
+        }
+        #lightbox.active { opacity: 1; pointer-events: all; }
+        #lightbox-img {
+            max-width: min(90vw, 960px); max-height: 85vh; border-radius: 16px; object-fit: contain;
+            transform: scale(0.93); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #lightbox.active #lightbox-img { transform: scale(1); }
+        .lb-btn {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px); color: white; font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: background 0.18s; z-index: 10001;
+        }
+        .lb-btn:hover { background: rgba(234,88,12,0.65); }
+        #lb-prev { left: 14px; } #lb-next { right: 14px; }
+        #lb-close {
+            position: fixed; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px); color: white; font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: background 0.18s; z-index: 10001;
+        }
+        #lb-close:hover { background: rgba(239,68,68,0.65); }
+        #lb-counter {
+            position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.45); font-size: 12px; font-weight: 600;
+            letter-spacing: 0.08em; z-index: 10001; display: flex; gap: 8px; align-items: center;
+        }
+        .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.18s; }
+        .lb-dot.on { background: var(--orange); transform: scale(1.35); }
 
-            .hero-stat-label {
-                font-size: 9px; font-weight: 800;
-                letter-spacing: 0.16em; text-transform: uppercase;
-                color: rgba(255,255,255,0.3);
-                display: block; margin-bottom: 5px;
-            }
-            .hero-stat-value { font-size: 14px; font-weight: 800; color: white; }
+        @keyframes pulseDot { 0%,100%{box-shadow:0 0 0 2px rgba(34,197,94,.25)} 50%{box-shadow:0 0 0 4px rgba(34,197,94,.1)} }
 
-            .hero-foot {
-                position: relative; z-index: 10;
-                padding: 18px 40px;
-                border-top: 1px solid rgba(255,255,255,0.06);
-                display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            }
-            @media (max-width: 900px) { .hero-foot { padding: 14px 20px; } }
+        .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+        .alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
 
-            .main-wrap {
-                max-width: 1240px;
-                margin: 0 auto;
-                padding: 48px 40px 80px;
-                display: grid;
-                grid-template-columns: 1fr 360px;
-                gap: 28px; align-items: start;
-            }
-            @media (max-width: 1024px) { .main-wrap { grid-template-columns: 1fr; } }
-            @media (max-width: 600px)  { .main-wrap { padding: 28px 16px 60px; } }
+        .footer-main { background: #1c1917; color: #a8a29e; border-top: 1px solid #292524; }
+        .footer-main a { text-decoration: none; }
 
-            .card {
-                background: white; border-radius: 20px;
-                border: 1px solid var(--border);
-                box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-                overflow: hidden; transition: box-shadow 0.25s ease;
-            }
-            .card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); }
+        @media (max-width: 640px) {
+            .stats-bar-inner { padding: 0 1rem; }
+            .rest-header-inner { padding: 0 1rem; }
+            .page-body { padding: 16px 1rem 60px; gap: 16px; }
+            .topbar { padding: 0 1rem; }
+            .hero-banner { height: 180px; }
+            .rest-logo-wrap { width: 80px; height: 80px; }
+            .rest-header-top { transform: translateY(-30px); margin-bottom: -30px; }
+        }
+    </style>
+</head>
+<body>
 
-            .card-body { padding: 28px 32px; }
-            @media (max-width: 600px) { .card-body { padding: 20px 18px; } }
+<header class="topbar">
+    <div class="topbar-inner">
+        <a href="{{ route('home') }}" class="topbar-logo">
+            Gastro<span class="dot">Nicaragua</span>
+        </a>
+        <div class="topbar-actions">
+            <a href="{{ route('gastrobares.index') }}" class="btn-sm">
+                <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
+            </a>
+            @auth
+                @if(auth()->user()->email === 'admin@turismo.ni')
+                    <a href="{{ route('admin.gastrobares.edit', $gastrobar) }}" class="btn-sm primary">
+                        <i class="fas fa-cog" style="font-size:10px;"></i> Administrar
+                    </a>
+                @endif
+            @else
+                <a href="{{ route('login') }}" class="btn-sm primary">
+                    <i class="fas fa-sign-in-alt" style="font-size:10px;"></i> Ingresar
+                </a>
+            @endauth
+        </div>
+    </div>
+</header>
 
-            .section-label {
-                font-size: 10px; font-weight: 800;
-                letter-spacing: 0.18em; text-transform: uppercase;
-                color: #a8a29e;
-                display: flex; align-items: center; gap: 10px;
-                margin-bottom: 20px;
-            }
-            .section-label i { color: var(--orange); font-size: 11px; }
-            .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+@php
+    $bgUrl = '';
+    if ($gastrobar->imagen_principal)
+        $bgUrl = asset('storage/' . $gastrobar->imagen_principal);
+    elseif ($gastrobar->galeria && count($gastrobar->galeria) > 0)
+        $bgUrl = asset('storage/' . $gastrobar->galeria[0]);
+@endphp
+<div class="hero-banner">
+    @if($bgUrl)
+        <img src="{{ $bgUrl }}" alt="{{ $gastrobar->nombre }}">
+    @endif
+    <div class="hero-banner-overlay"></div>
+</div>
 
-            .desc-text { color: #57534e; font-size: 15px; line-height: 1.8; }
+@php
+    $totalReviews = $gastrobar->reviews()->count();
+    $avgRating    = $totalReviews > 0 ? round($gastrobar->reviews()->avg('rating'), 1) : null;
 
-            .gallery-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                grid-auto-rows: 120px; gap: 8px;
-            }
-            @media (max-width: 700px) {
-                .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 90px; }
-            }
-            @media (max-width: 420px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+    $tieneHorario = !empty($gastrobar->hora_apertura) && !empty($gastrobar->hora_cierre);
+    $estaAbierto  = false;
+    if ($tieneHorario) {
+        $horaActual  = now()->setTimezone('America/Managua')->format('H:i');
+        $diasActivos = $gastrobar->dias_atencion ?? [];
+        $diasMap = ['lunes'=>1,'martes'=>2,'miercoles'=>3,'jueves'=>4,'viernes'=>5,'sabado'=>6,'domingo'=>0];
+        $diaHoyNum = (int) now()->setTimezone('America/Managua')->format('w');
+        $hoyEsLaboral = empty($diasActivos) ? true : collect($diasActivos)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
+        if ($hoyEsLaboral) {
+            $ap = substr($gastrobar->hora_apertura, 0, 5);
+            $ci = substr($gastrobar->hora_cierre,   0, 5);
+            $estaAbierto = $ci > $ap ? ($horaActual >= $ap && $horaActual < $ci) : ($horaActual >= $ap || $horaActual < $ci);
+        }
+    }
+@endphp
 
-            .gallery-grid .g-item:first-child { grid-column: span 2; grid-row: span 2; }
-
-            .g-item {
-                border-radius: 12px; overflow: hidden;
-                cursor: zoom-in; position: relative;
-                border: 1px solid var(--border);
-            }
-            .g-item img {
-                width: 100%; height: 100%; object-fit: cover;
-                transition: transform 0.5s ease; display: block;
-            }
-            .g-item:hover img { transform: scale(1.08); }
-            .g-item::after {
-                content: '\f00e';
-                font-family: 'Font Awesome 6 Free'; font-weight: 900;
-                position: absolute; inset: 0;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 20px; color: white;
-                background: rgba(12,10,9,0);
-                transition: background 0.3s, opacity 0.3s; opacity: 0;
-            }
-            .g-item:hover::after { background: rgba(12,10,9,0.38); opacity: 1; }
-
-            .dia-pill {
-                display: inline-flex; align-items: center; justify-content: center;
-                width: 42px; height: 42px; border-radius: 50%;
-                font-size: 11px; font-weight: 700; text-transform: uppercase;
-                border: 1.5px solid var(--border); color: #a8a29e; background: #fafaf9;
-                transition: all 0.2s;
-            }
-            .dia-pill.activo {
-                background: var(--orange); border-color: var(--orange);
-                color: white; box-shadow: 0 4px 14px rgba(234,88,12,0.35);
-            }
-
-            #mapa-publico {
-                height: 260px; border-radius: 14px;
-                overflow: hidden; border: 1px solid var(--border);
-            }
-
-            .dir-box {
-                display: flex; align-items: flex-start; gap: 10px;
-                background: #fff7ed; border: 1px solid var(--orange-light);
-                border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;
-                font-size: 13.5px; color: #57534e; line-height: 1.6;
-            }
-            .dir-box i { color: var(--orange); margin-top: 2px; flex-shrink: 0; }
-
-            .btn-gmaps {
-                display: inline-flex; align-items: center; gap: 8px;
-                background: var(--dark); color: white; text-decoration: none;
-                font-size: 13px; font-weight: 700;
-                padding: 10px 20px; border-radius: 10px; margin-top: 14px;
-                transition: background 0.2s, transform 0.2s; letter-spacing: 0.02em;
-            }
-            .btn-gmaps:hover { background: var(--orange); transform: translateY(-1px); }
-
-            .sidebar { display: flex; flex-direction: column; gap: 16px; }
-            @media (min-width: 1024px) { .sidebar { position: sticky; top: 24px; } }
-
-            .contact-row {
-                background: #fafaf9; border: 1px solid var(--border);
-                border-radius: 10px; padding: 12px 14px;
-                font-size: 13px; font-weight: 600; color: #292524;
-                word-break: break-all;
-                display: flex; align-items: center; gap: 10px;
-            }
-            .contact-row i { color: var(--orange); }
-
-            .social-btn {
-                display: flex; align-items: center; justify-content: center;
-                width: 48px; height: 48px; border-radius: 14px;
-                font-size: 18px; text-decoration: none;
-                transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-            }
-            .social-btn:hover { transform: translateY(-4px) scale(1.08); }
-            .social-btn.wa { background: #dcfce7; color: #16a34a; }
-            .social-btn.wa:hover { background: #22c55e; color: white; box-shadow: 0 8px 24px rgba(34,197,94,0.4); }
-            .social-btn.ig { background: #fce7f3; color: #db2777; }
-            .social-btn.ig:hover { background: linear-gradient(135deg,#f59e0b,#ec4899,#8b5cf6); color: white; box-shadow: 0 8px 24px rgba(236,72,153,0.4); }
-            .social-btn.tt { background: #f1f5f9; color: #0f172a; }
-            .social-btn.tt:hover { background: #0f172a; color: white; box-shadow: 0 8px 24px rgba(15,23,42,0.3); }
-            .social-btn.fb { background: #dbeafe; color: #2563eb; }
-            .social-btn.fb:hover { background: #2563eb; color: white; box-shadow: 0 8px 24px rgba(37,99,235,0.4); }
-
-            .cta-btn {
-                display: flex; align-items: center; justify-content: center; gap: 9px;
-                width: 100%; background: var(--dark); color: white;
-                font-weight: 700; font-size: 14px;
-                padding: 15px 20px; border-radius: 14px; text-decoration: none;
-                transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
-                letter-spacing: 0.03em;
-            }
-            .cta-btn:hover {
-                background: var(--orange);
-                transform: translateY(-2px);
-                box-shadow: 0 12px 32px rgba(234,88,12,0.35);
-            }
-
-            #lightbox {
-                position: fixed; inset: 0; z-index: 9999;
-                background: rgba(12,10,9,0.96);
-                display: flex; align-items: center; justify-content: center;
-                opacity: 0; pointer-events: none;
-                transition: opacity 0.3s ease; padding: 20px;
-            }
-            #lightbox.active { opacity: 1; pointer-events: all; }
-            #lightbox-img {
-                max-width: min(90vw, 960px); max-height: 85vh;
-                border-radius: 18px; object-fit: contain;
-                box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-                transform: scale(0.92);
-                transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-                user-select: none;
-            }
-            #lightbox.active #lightbox-img { transform: scale(1); }
-
-            .lb-nav-btn {
-                position: fixed; top: 50%; transform: translateY(-50%);
-                width: 48px; height: 48px; border-radius: 50%;
-                background: rgba(255,255,255,0.1);
-                border: 1px solid rgba(255,255,255,0.15);
-                backdrop-filter: blur(8px);
-                display: flex; align-items: center; justify-content: center;
-                color: white; font-size: 16px; cursor: pointer;
-                transition: background 0.2s, transform 0.2s; z-index: 10000;
-            }
-            .lb-nav-btn:hover { background: rgba(234,88,12,0.7); transform: translateY(-50%) scale(1.08); }
-            #lb-prev { left: 16px; }
-            #lb-next { right: 16px; }
-
-            #lb-close {
-                position: fixed; top: 16px; right: 16px;
-                width: 40px; height: 40px; border-radius: 50%;
-                background: rgba(255,255,255,0.1);
-                border: 1px solid rgba(255,255,255,0.2);
-                backdrop-filter: blur(8px);
-                display: flex; align-items: center; justify-content: center;
-                color: white; font-size: 14px; cursor: pointer;
-                transition: background 0.2s; z-index: 10000;
-            }
-            #lb-close:hover { background: rgba(239,68,68,0.7); }
-
-            #lb-counter {
-                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-                color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;
-                letter-spacing: 0.08em; z-index: 10000;
-                display: flex; gap: 8px; align-items: center;
-            }
-            #lb-dots { display: flex; gap: 6px; align-items: center; }
-            .lb-dot {
-                width: 6px; height: 6px; border-radius: 50%;
-                background: rgba(255,255,255,0.25);
-                transition: background 0.2s, transform 0.2s; cursor: pointer;
-            }
-            .lb-dot.active { background: #ea580c; transform: scale(1.35); }
-
-            @keyframes fadeUp {
-                from { opacity: 0; transform: translateY(20px); }
-                to   { opacity: 1; transform: translateY(0); }
-            }
-            .fu  { animation: fadeUp 0.6s ease both; }
-            .d1  { animation-delay: 0.08s; }
-            .d2  { animation-delay: 0.16s; }
-            .d3  { animation-delay: 0.24s; }
-            .d4  { animation-delay: 0.32s; }
-        </style>
-    </head>
-    <body>
-
-        <section class="hero-wrap">
-
-            {{-- Columna imagen --}}
-            <div class="hero-img-col">
-                @php
-                    $bgUrl = '';
-                    if ($gastrobar->imagen_principal)
-                        $bgUrl = asset('storage/' . $gastrobar->imagen_principal);
-                    elseif ($gastrobar->galeria && count($gastrobar->galeria) > 0)
-                        $bgUrl = asset('storage/' . $gastrobar->galeria[0]);
-                    else
-                        $bgUrl = 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=1600&q=80';
-                @endphp
-                <div class="hero-bg" style="background-image:url('{{ $bgUrl }}');"></div>
-                <div class="hero-img-overlay"></div>
-
+<div class="rest-header">
+    <div class="rest-header-inner">
+        <div class="rest-header-top">
+            <div class="rest-logo-wrap">
                 @if($gastrobar->imagen_principal)
-                    <button class="btn-zoom-portada"
-                            onclick="openLightbox('{{ asset('storage/' . $gastrobar->imagen_principal) }}', -1)">
-                        <i class="fas fa-expand-alt" style="font-size:10px;"></i> Ver portada
-                    </button>
+                    <img src="{{ asset('storage/' . $gastrobar->imagen_principal) }}" alt="{{ $gastrobar->nombre }}">
+                @elseif($gastrobar->galeria && count($gastrobar->galeria) > 0)
+                    <img src="{{ asset('storage/' . $gastrobar->galeria[0]) }}" alt="{{ $gastrobar->nombre }}">
+                @else
+                    <span class="rest-logo-placeholder"><i class="fas fa-cocktail"></i></span>
                 @endif
             </div>
-
-            {{-- Columna info --}}
-            <div class="hero-info-col">
-
-                <nav class="nav-inner">
-                    <a href="{{ route('home') }}" class="logo-link">
-                        <div class="logo-icon">
-                            <i class="fas fa-cocktail" style="color:white;font-size:12px;"></i>
-                        </div>
-                        <span class="premium-title" style="font-size:19px;font-weight:700;color:white;font-style:italic;">
-                            Gastro<span style="color:#fb923c;">Nicaragua</span>
-                        </span>
-                    </a>
-                    <a href="{{ route('gastrobares.index') }}" class="btn-back">
-                        <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
-                    </a>
-                </nav>
-
-                <div class="hero-center">
-
-                    <div class="hero-badge fu">
-                        <i class="fas fa-cocktail" style="font-size:9px;"></i>
-                        Gastrobar
-                        @if($gastrobar->tipo_bar)
-                            &nbsp;·&nbsp; {{ $gastrobar->tipo_bar }}
-                        @endif
-                    </div>
-
-                    <h1 class="premium-title hero-title fu d1">
-                        {{ $gastrobar->nombre }}
-                    </h1>
-
-                    <div class="hero-location fu d2">
+            <div class="rest-info">
+                <h1>{{ $gastrobar->nombre }}</h1>
+                <div class="rest-meta">
+                    <span class="rest-meta-item">
                         <i class="fas fa-map-marker-alt"></i>
                         <strong>{{ $gastrobar->departamento->nombre }}</strong>
                         @if($gastrobar->municipio)
-                            <span style="opacity:.45;">·</span>
-                            <span>{{ $gastrobar->municipio->nombre }}</span>
+                            · {{ $gastrobar->municipio->nombre }}
                         @endif
-                    </div>
-
-                    @php
-                        $totalReviews = $gastrobar->reviews()->count();
-                        $avgRating    = $totalReviews > 0 ? round($gastrobar->reviews()->avg('rating'), 1) : null;
-                    @endphp
-
-                    <div class="hero-stats fu d3">
-                        <div class="hero-stat">
-                            <span class="hero-stat-label">Ambiente</span>
-                            <span class="hero-stat-value" style="color:#fb923c;">
-                                {{ $gastrobar->ambiente ?? ($gastrobar->tipo_bar ?? 'Bar') }}
-                            </span>
-                        </div>
-                        <div class="hero-stat">
-                            <span class="hero-stat-label">Calificación</span>
-                            <span class="hero-stat-value">
-                                @if($avgRating)
-                                    ★ {{ $avgRating }}<span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;"> /5</span>
-                                @else
-                                    <span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;">Sin reseñas</span>
-                                @endif
-                            </span>
-                        </div>
-                        <div class="hero-stat">
-                            <span class="hero-stat-label">Capacidad</span>
-                            <span class="hero-stat-value">
-                                @if($gastrobar->capacidad)
-                                    {{ $gastrobar->capacidad }}<span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;"> pers.</span>
-                                @else
-                                    <span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;">—</span>
-                                @endif
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero-foot fu d4">
-                    @php
-                        $abierto = true;
-                        if ($gastrobar->hora_apertura && $gastrobar->hora_cierre) {
-                            $ahora = \Carbon\Carbon::now()->format('H:i');
-                            $abierto = ($ahora >= $gastrobar->hora_apertura && $ahora <= $gastrobar->hora_cierre);
-                        }
-                    @endphp
-                    <span style="background:{{ $abierto ? '#dcfce7' : '#fee2e2' }};color:{{ $abierto ? '#15803d' : '#b91c1c' }};border:1px solid {{ $abierto ? '#bbf7d0' : '#fecaca' }};font-size:11px;font-weight:800;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;">
-                        <span style="width:6px;height:6px;background:{{ $abierto ? '#22c55e' : '#ef4444' }};border-radius:50%;display:inline-block;"></span>
-                        {{ $abierto ? 'ABIERTO' : 'CERRADO' }}
                     </span>
-
-                    @if(!empty($gastrobar->whatsapp))
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$gastrobar->whatsapp) }}" target="_blank" class="social-btn wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    @endif
-                    @if(!empty($gastrobar->instagram))
-                        <a href="{{ $gastrobar->instagram }}" target="_blank" class="social-btn ig" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    @endif
-                    @if(!empty($gastrobar->tiktok))
-                        <a href="{{ $gastrobar->tiktok }}" target="_blank" class="social-btn tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                    @endif
-                    @if(!empty($gastrobar->facebook))
-                        <a href="{{ $gastrobar->facebook }}" target="_blank" class="social-btn fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    @if($gastrobar->tipo_bar)
+                        <span class="rest-meta-sep">·</span>
+                        <span class="rest-meta-item">
+                            <i class="fas fa-cocktail"></i> {{ $gastrobar->tipo_bar }}
+                        </span>
                     @endif
                 </div>
-
             </div>
-        </section>
+        </div>
 
-        @php
-            $todasLasImagenes = [];
-            if ($gastrobar->galeria && count($gastrobar->galeria) > 0) {
-                foreach ($gastrobar->galeria as $foto) {
-                    $todasLasImagenes[] = asset('storage/' . $foto);
-                }
-            }
-        @endphp
+        <div class="rest-header-bottom">
+            <div class="rest-badges">
+                @if($avgRating)
+                    <span class="badge badge-orange">
+                        <i class="fas fa-star" style="font-size:10px;"></i>
+                        {{ $avgRating }} · {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
+                    </span>
+                @endif
+                @if($tieneHorario)
+                    @if($estaAbierto)
+                        <span class="badge badge-green">
+                            <span class="badge-dot green" style="animation:pulseDot 2s infinite;"></span>
+                            Abierto ahora
+                        </span>
+                    @else
+                        <span class="badge badge-red">
+                            <span class="badge-dot red"></span>
+                            Cerrado ahora
+                        </span>
+                    @endif
+                @else
+                    <span class="badge badge-gray">
+                        <i class="fas fa-clock" style="font-size:10px;"></i> Horario no configurado
+                    </span>
+                @endif
+                @if($gastrobar->ambiente)
+                    <span class="badge badge-gray">
+                        <i class="fas fa-music" style="font-size:10px;"></i> {{ $gastrobar->ambiente }}
+                    </span>
+                @endif
+                @if($gastrobar->tipo_cocina)
+                    <span class="badge badge-gray">
+                        <i class="fas fa-utensils" style="font-size:10px;"></i> {{ $gastrobar->tipo_cocina }}
+                    </span>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 
-        <main class="main-wrap">
+{{-- ══ STATS BAR ══ --}}
+<div class="stats-bar">
+    <div class="stats-bar-inner">
+        @if($avgRating)
+            <div class="stat-item">
+                <div class="stat-val"><span class="accent">★</span> {{ $avgRating }}</div>
+                <div class="stat-lbl">Calificación</div>
+            </div>
+        @endif
+        <div class="stat-item">
+            <div class="stat-val">{{ $totalReviews }}</div>
+            <div class="stat-lbl">Reseñas</div>
+        </div>
+        @if($gastrobar->municipio)
+            <div class="stat-item">
+                <div class="stat-val" style="font-size:14px;">{{ $gastrobar->municipio->nombre }}</div>
+                <div class="stat-lbl">Municipio</div>
+            </div>
+        @endif
+        @if($gastrobar->capacidad)
+            <div class="stat-item">
+                <div class="stat-val">{{ $gastrobar->capacidad }}</div>
+                <div class="stat-lbl">Capacidad</div>
+            </div>
+        @endif
+        @if($tieneHorario)
+            <div class="stat-item">
+                <div class="stat-val" style="font-size:14px;">
+                    {{ \Carbon\Carbon::parse($gastrobar->hora_apertura)->format('g:i A') }}
+                    –
+                    {{ \Carbon\Carbon::parse($gastrobar->hora_cierre)->format('g:i A') }}
+                </div>
+                <div class="stat-lbl">Horario</div>
+            </div>
+        @endif
+        @if($gastrobar->tipo_bar)
+            <div class="stat-item">
+                <div class="stat-val" style="font-size:13px;color:var(--orange);">{{ $gastrobar->tipo_bar }}</div>
+                <div class="stat-lbl">Tipo de bar</div>
+            </div>
+        @endif
+        {{-- ← NUEVOS: teléfono y tipo de cocina --}}
+        @if($gastrobar->tipo_cocina)
+            <div class="stat-item">
+                <div class="stat-val" style="font-size:13px;">{{ $gastrobar->tipo_cocina }}</div>
+                <div class="stat-lbl">Tipo de cocina</div>
+            </div>
+        @endif
+        @if($gastrobar->telefono)
+            <div class="stat-item">
+                <div class="stat-val" style="font-size:13px;">{{ $gastrobar->telefono }}</div>
+                <div class="stat-lbl">Teléfono</div>
+            </div>
+        @endif
+    </div>
+</div>
 
-            {{-- ── COLUMNA PRINCIPAL ── --}}
-            <div style="display:flex;flex-direction:column;gap:24px;">
+@php
+    $todasLasImagenes = [];
+    if ($gastrobar->fotos && $gastrobar->fotos->count() > 0) {
+        foreach ($gastrobar->fotos as $foto) {
+            $todasLasImagenes[] = asset('storage/' . $foto->ruta_foto);
+        }
+    } elseif ($gastrobar->galeria && count($gastrobar->galeria) > 0) {
+        foreach ($gastrobar->galeria as $foto) {
+            $todasLasImagenes[] = asset('storage/' . $foto);
+        }
+    }
+    $diasActivos = $gastrobar->dias_atencion ?? [];
+@endphp
 
-                {{-- Descripción --}}
-                <div class="card">
-                    <div class="card-body">
-                        <div class="section-label">
-                            <i class="fas fa-align-left"></i> Sobre el gastrobar
-                        </div>
-                        <p class="desc-text">
-                            @if($gastrobar->descripcion)
-                                {{ $gastrobar->descripcion }}
-                            @else
-                                Bienvenidos a <strong style="color:var(--text-main);">{{ $gastrobar->nombre }}</strong>.
-                                Somos un espacio único para disfrutar de la mejor experiencia en la hermosa localidad
-                                de {{ $gastrobar->municipio->nombre ?? '' }}, {{ $gastrobar->departamento->nombre ?? '' }}.
-                                ¡Visítanos y vive una noche inigualable!
-                            @endif
-                        </p>
+<div class="page-body">
+    <main>
+
+        {{-- Descripción --}}
+        <div class="section-card">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-align-left"></i> Sobre el gastrobar</div>
+            </div>
+            <div class="section-body">
+                <p class="desc-text">
+                    @if($gastrobar->descripcion)
+                        {{ $gastrobar->descripcion }}
+                    @else
+                        Bienvenidos a <strong>{{ $gastrobar->nombre }}</strong>.
+                        Somos un espacio único para disfrutar de la mejor experiencia en la hermosa localidad
+                        de {{ optional($gastrobar->municipio)->nombre }}, {{ $gastrobar->departamento->nombre }}.
+                        ¡Visítanos y vive una noche inigualable!
+                    @endif
+                </p>
+            </div>
+        </div>
+
+        {{-- Galería --}}
+        @if(count($todasLasImagenes) > 0)
+            <div class="section-card">
+                <div class="section-head">
+                    <div class="section-title"><i class="fas fa-images"></i> Galería de fotos</div>
+                    <span style="font-size:11px;color:var(--muted);">clic para ampliar</span>
+                </div>
+                <div class="section-body">
+                    <div class="gallery-grid">
+                        @foreach($todasLasImagenes as $index => $fotoUrl)
+                            <div class="g-item {{ $index === 0 ? 'g-first' : '' }}"
+                                 onclick="openLightbox('{{ $fotoUrl }}', {{ $index }})">
+                                <img src="{{ $fotoUrl }}"
+                                     alt="Foto {{ $index + 1 }} de {{ $gastrobar->nombre }}"
+                                     loading="lazy">
+                            </div>
+                        @endforeach
                     </div>
                 </div>
+            </div>
+        @endif
 
-                {{-- Horarios y días de atención --}}
-                @if(($gastrobar->hora_apertura && $gastrobar->hora_cierre) || ($gastrobar->dias_atencion && count($gastrobar->dias_atencion) > 0))
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-label">
-                                <i class="fas fa-clock"></i> Horario de atención
-                            </div>
+        {{-- Mapa --}}
+        @if($gastrobar->latitud && $gastrobar->longitud)
+            <div class="section-card">
+                <div class="section-head">
+                    <div class="section-title"><i class="fas fa-map-marker-alt"></i> Cómo llegar</div>
+                </div>
+                <div class="section-body">
+                    @if($gastrobar->direccion)
+                        <div class="dir-box">
+                            <i class="fas fa-map-pin"></i>
+                            <p>{{ $gastrobar->direccion }}</p>
+                        </div>
+                    @endif
+                    <div id="mapa-publico"></div>
+                    <a href="https://www.google.com/maps?q={{ $gastrobar->latitud }},{{ $gastrobar->longitud }}"
+                       target="_blank" class="btn-gmaps">
+                        <i class="fas fa-directions"></i> Abrir en Google Maps
+                    </a>
+                </div>
+            </div>
+        @endif
 
-                            @if($gastrobar->hora_apertura && $gastrobar->hora_cierre)
-                                <div style="display:flex;align-items:center;gap:10px;background:#fff7ed;border:1px solid var(--orange-light);border-radius:12px;padding:14px 18px;margin-bottom:20px;">
-                                    <i class="fas fa-clock" style="color:var(--orange);font-size:18px;"></i>
-                                    <div>
-                                        <span style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#a8a29e;display:block;margin-bottom:3px;">Horario</span>
-                                        <span style="font-size:15px;font-weight:700;color:var(--text-main);">
-                                            {{ \Carbon\Carbon::parse($gastrobar->hora_apertura)->format('g:i A') }}
-                                            <span style="color:#a8a29e;font-weight:400;">–</span>
-                                            {{ \Carbon\Carbon::parse($gastrobar->hora_cierre)->format('g:i A') }}
-                                        </span>
+        {{-- Reseñas --}}
+        <div class="section-card" id="resenas">
+            <div class="section-head">
+                <div class="section-title"><i class="fas fa-star"></i> Reseñas</div>
+                <span style="font-size:12px;color:var(--muted);font-weight:600;">
+                    {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
+                </span>
+            </div>
+            <div class="section-body">
+
+                @if(session('success'))
+                    <div class="alert alert-success"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> {{ session('error') }}</div>
+                @endif
+
+                @if($totalReviews > 0)
+                    <div class="rating-summary">
+                        <div>
+                            <div class="rating-big">{{ $avgRating }}</div>
+                            <div class="rating-lbl">de 5</div>
+                        </div>
+                        <div style="flex:1;">
+                            @for($s = 5; $s >= 1; $s--)
+                                @php $cnt = $gastrobar->reviews()->where('rating', $s)->count(); @endphp
+                                <div class="bar-row">
+                                    <span style="font-size:11px;font-weight:700;color:var(--muted);min-width:10px;">{{ $s }}</span>
+                                    <i class="fas fa-star" style="font-size:10px;color:#f59e0b;"></i>
+                                    <div class="bar-track">
+                                        <div class="bar-fill" style="width:{{ $totalReviews > 0 ? round($cnt/$totalReviews*100) : 0 }}%;"></div>
                                     </div>
+                                    <span style="font-size:11px;color:var(--muted);font-weight:600;min-width:18px;">{{ $cnt }}</span>
                                 </div>
-                            @endif
-
-                            @if($gastrobar->dias_atencion && count($gastrobar->dias_atencion) > 0)
-                                @php
-                                    $diasSemana = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
-                                    $diasLabels = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-                                @endphp
-                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                    @foreach($diasSemana as $i => $dia)
-                                        <div class="dia-pill {{ in_array($dia, $gastrobar->dias_atencion) ? 'activo' : '' }}">
-                                            {{ $diasLabels[$i] }}
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
+                            @endfor
                         </div>
                     </div>
                 @endif
 
-                {{-- Mapa --}}
-                @if($gastrobar->latitud && $gastrobar->longitud)
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-label">
-                                <i class="fas fa-map-marker-alt"></i> Cómo llegar
-                            </div>
-
-                            @if($gastrobar->direccion)
-                                <div class="dir-box">
-                                    <i class="fas fa-map-pin"></i>
-                                    <p>{{ $gastrobar->direccion }}</p>
-                                </div>
-                            @endif
-
-                            <div id="mapa-publico"></div>
-
-                            <a href="https://www.google.com/maps?q={{ $gastrobar->latitud }},{{ $gastrobar->longitud }}"
-                               target="_blank" class="btn-gmaps">
-                                <i class="fas fa-directions"></i> Abrir en Google Maps
-                            </a>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Galería --}}
-                @if(count($todasLasImagenes) > 0)
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-label">
-                                <i class="fas fa-images"></i>
-                                Galería de fotos
-                                <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">— clic para ampliar</span>
-                            </div>
-                            <div class="gallery-grid">
-                                @foreach($gastrobar->galeria as $index => $foto)
-                                    <div class="g-item" onclick="openLightbox('{{ asset('storage/' . $foto) }}', {{ $index }})">
-                                        <img src="{{ asset('storage/' . $foto) }}"
-                                             alt="Foto {{ $index + 1 }} de {{ $gastrobar->nombre }}"
-                                             loading="lazy">
+                @auth
+                    @php $miResena = $gastrobar->reviews()->where('user_id', auth()->id())->first(); @endphp
+                    @if(!$miResena)
+                        <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+                            <p style="font-size:12px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">
+                                <i class="fas fa-pencil-alt" style="color:var(--orange);margin-right:6px;"></i> Deja tu reseña
+                            </p>
+                            <form action="{{ route('gastrobar.reviews.store', $gastrobar) }}" method="POST">
+                                @csrf
+                                <div style="margin-bottom:14px;">
+                                    <label class="form-label">Calificación</label>
+                                    <div style="display:flex;gap:4px;" id="star-selector">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <button type="button" onclick="setRating({{ $i }})" data-star="{{ $i }}"
+                                                    style="font-size:28px;background:none;border:none;cursor:pointer;color:#d1d5db;transition:color 0.15s;padding:0 2px;"
+                                                    onmouseover="hoverRating({{ $i }})" onmouseout="resetHover()">★</button>
+                                        @endfor
                                     </div>
-                                @endforeach
-                            </div>
+                                    <input type="hidden" name="rating" id="rating-input" value="">
+                                    @error('rating')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
+                                </div>
+                                <div style="margin-bottom:10px;">
+                                    <label class="form-label">Título <span style="color:#d1d5db;font-weight:400;">(opcional)</span></label>
+                                    <input type="text" name="title" value="{{ old('title') }}" class="form-input" placeholder="Ej: Excelente ambiente" maxlength="100">
+                                    @error('title')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
+                                </div>
+                                <div style="margin-bottom:14px;">
+                                    <label class="form-label">Comentario <span style="color:#d1d5db;font-weight:400;">(opcional)</span></label>
+                                    <textarea name="body" rows="3" class="form-input form-textarea" placeholder="Cuéntanos tu experiencia..." maxlength="1000">{{ old('body') }}</textarea>
+                                    @error('body')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
+                                </div>
+                                <button type="submit" class="btn-primary" style="font-size:13px;padding:9px 22px;">
+                                    <i class="fas fa-paper-plane" style="font-size:11px;"></i> Publicar reseña
+                                </button>
+                            </form>
                         </div>
+                    @endif
+                @else
+                    <div style="background:var(--orange-lt);border:1px solid #fed7aa;border-radius:12px;padding:18px 20px;text-align:center;margin-bottom:24px;">
+                        <i class="fas fa-lock" style="color:var(--orange);font-size:20px;display:block;margin-bottom:8px;"></i>
+                        <p style="font-size:14px;color:#57534e;font-weight:600;margin-bottom:12px;">Inicia sesión para dejar tu reseña</p>
+                        <a href="{{ route('login') }}" class="btn-primary" style="font-size:13px;padding:9px 22px;display:inline-flex;">
+                            <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesión
+                        </a>
                     </div>
-                @endif
+                @endauth
 
-                {{-- ══ RESEÑAS ══ --}}
-                <div class="card" id="resenas">
-                    <div class="card-body">
-                        <div class="section-label">
-                            <i class="fas fa-star"></i> Reseñas
-                            <span style="font-size:10px;color:#d6d3d1;font-weight:500;text-transform:none;letter-spacing:0;">
-                                — {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
-                            </span>
+                @php $reviews = $gastrobar->reviews()->with('user')->latest()->get(); @endphp
+
+                @forelse($reviews as $review)
+                    <div class="review-item">
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+                                <div class="review-avatar">
+                                    @if($review->user->avatar ?? false)
+                                        <img src="{{ $review->user->avatar }}" alt="">
+                                    @else
+                                        {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                    @endif
+                                </div>
+                                <div>
+                                    <p style="font-size:14px;font-weight:700;color:var(--text);margin:0;">{{ $review->user->name }}</p>
+                                    <p style="font-size:11px;color:var(--muted);margin:0;">{{ $review->created_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:2px;flex-shrink:0;">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <span style="color:{{ $i <= $review->rating ? '#f59e0b' : '#e5e7eb' }};font-size:14px;">★</span>
+                                @endfor
+                            </div>
                         </div>
+                        @if($review->title)<p style="font-size:14px;font-weight:700;margin-bottom:4px;">{{ $review->title }}</p>@endif
+                        @if($review->body)<p style="font-size:14px;color:#4b5563;line-height:1.7;margin:0;">{{ $review->body }}</p>@endif
 
-                        {{-- Mensajes de sesión --}}
-                        @if(session('success'))
-                            <div style="background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
-                                <i class="fas fa-check-circle"></i> {{ session('success') }}
-                            </div>
-                        @endif
-                        @if(session('error'))
-                            <div style="background:#fee2e2;border:1px solid #fecaca;color:#dc2626;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
-                                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                            </div>
-                        @endif
-
-                        {{-- Resumen de calificaciones --}}
-                        @if($totalReviews > 0)
-                            <div style="display:flex;align-items:center;gap:20px;background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:20px 24px;margin-bottom:24px;">
-                                <div style="text-align:center;min-width:64px;">
-                                    <div style="font-size:3rem;font-weight:900;color:#ea580c;line-height:1;">{{ $avgRating }}</div>
-                                    <div style="font-size:11px;color:#a8a29e;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;">de 5</div>
-                                </div>
-                                <div style="flex:1;">
-                                    @for($s = 5; $s >= 1; $s--)
-                                        @php $cnt = $gastrobar->reviews()->where('rating', $s)->count(); @endphp
-                                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                                            <span style="font-size:11px;font-weight:700;color:#78716c;min-width:12px;">{{ $s }}</span>
-                                            <i class="fas fa-star" style="font-size:10px;color:#f59e0b;"></i>
-                                            <div style="flex:1;height:6px;background:#e7e5e4;border-radius:999px;overflow:hidden;">
-                                                <div style="height:100%;background:#ea580c;border-radius:999px;width:{{ $totalReviews > 0 ? round($cnt/$totalReviews*100) : 0 }}%;transition:width 0.6s ease;"></div>
-                                            </div>
-                                            <span style="font-size:11px;color:#a8a29e;font-weight:600;min-width:20px;">{{ $cnt }}</span>
-                                        </div>
-                                    @endfor
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- Formulario nueva reseña --}}
                         @auth
-                            @php $miResena = $gastrobar->reviews()->where('user_id', auth()->id())->first(); @endphp
-                            @if(!$miResena)
-                                <div style="background:#f9fafb;border:1px solid #e7e5e4;border-radius:16px;padding:24px;margin-bottom:28px;">
-                                    <p style="font-size:13px;font-weight:800;color:#1c1917;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">
-                                        <i class="fas fa-pencil-alt" style="color:#ea580c;margin-right:6px;"></i> Deja tu reseña
-                                    </p>
-                                    <form action="{{ route('gastrobar.reviews.store', $gastrobar) }}" method="POST">
-                                        @csrf
-                                        <div style="margin-bottom:16px;">
-                                            <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:8px;">Calificación</label>
-                                            <div style="display:flex;gap:6px;" id="star-selector">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    <button type="button" onclick="setRating({{ $i }})" data-star="{{ $i }}"
-                                                            style="font-size:28px;background:none;border:none;cursor:pointer;color:#d6d3d1;transition:color 0.15s,transform 0.15s;padding:0 2px;"
-                                                            onmouseover="hoverRating({{ $i }})" onmouseout="resetHover()">★</button>
-                                                @endfor
-                                            </div>
-                                            <input type="hidden" name="rating" id="rating-input" value="">
-                                            @error('rating')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
-                                        </div>
-                                        <div style="margin-bottom:12px;">
-                                            <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">
-                                                Título <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
-                                            </label>
-                                            <input type="text" name="title" value="{{ old('title') }}" placeholder="Ej: Excelente ambiente" maxlength="100"
-                                                   style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;transition:border-color 0.2s;"
-                                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">
-                                            @error('title')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
-                                        </div>
-                                        <div style="margin-bottom:16px;">
-                                            <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">
-                                                Comentario <span style="color:#d6d3d1;font-weight:400;">(opcional)</span>
-                                            </label>
-                                            <textarea name="body" rows="3" placeholder="Cuéntanos tu experiencia..." maxlength="1000"
-                                                      style="width:100%;padding:10px 14px;border:1px solid #e7e5e4;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:white;resize:vertical;transition:border-color 0.2s;"
-                                                      onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">{{ old('body') }}</textarea>
-                                            @error('body')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
-                                        </div>
-                                        <button type="submit"
-                                                style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:white;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.2s,transform 0.2s;"
-                                                onmouseover="this.style.background='#c2410c';this.style.transform='translateY(-1px)'"
-                                                onmouseout="this.style.background='#ea580c';this.style.transform='none'">
-                                            <i class="fas fa-paper-plane" style="font-size:12px;"></i> Publicar reseña
+                            @if(auth()->id() === $review->user_id || auth()->user()->email === 'admin@turismo.ni')
+                                <div style="display:flex;gap:7px;margin-top:10px;">
+                                    <button onclick="toggleEdit({{ $review->id }})" class="btn-sm" style="font-size:11px;padding:5px 11px;">
+                                        <i class="fas fa-pencil-alt" style="font-size:9px;"></i> Editar
+                                    </button>
+                                    <form action="{{ route('gastrobar.reviews.destroy', $review) }}" method="POST"
+                                          onsubmit="return confirm('¿Eliminar esta reseña?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn-sm" style="font-size:11px;padding:5px 11px;">
+                                            <i class="fas fa-trash" style="font-size:9px;"></i> Eliminar
                                         </button>
                                     </form>
                                 </div>
+                                <div id="edit-form-{{ $review->id }}" style="display:none;margin-top:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:16px;">
+                                    <form action="{{ route('gastrobar.reviews.update', $review) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <div style="margin-bottom:12px;">
+                                            <label class="form-label">Calificación</label>
+                                            <div style="display:flex;gap:4px;" id="edit-stars-{{ $review->id }}">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <button type="button" onclick="setEditRating({{ $review->id }},{{ $i }})" data-star="{{ $i }}"
+                                                            style="font-size:22px;background:none;border:none;cursor:pointer;padding:0 2px;color:{{ $i <= $review->rating ? '#f59e0b' : '#d1d5db' }};transition:color 0.15s;">★</button>
+                                                @endfor
+                                            </div>
+                                            <input type="hidden" name="rating" id="edit-rating-{{ $review->id }}" value="{{ $review->rating }}">
+                                        </div>
+                                        <input type="text" name="title" value="{{ $review->title }}" class="form-input" placeholder="Título" maxlength="100" style="margin-bottom:8px;">
+                                        <textarea name="body" rows="3" maxlength="1000" class="form-input form-textarea" style="margin-bottom:12px;">{{ $review->body }}</textarea>
+                                        <button type="submit" class="btn-primary" style="font-size:12px;padding:8px 18px;">Guardar cambios</button>
+                                        <button type="button" onclick="toggleEdit({{ $review->id }})" class="btn-sm" style="margin-left:6px;">Cancelar</button>
+                                    </form>
+                                </div>
                             @endif
-                        @else
-                            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:20px 24px;margin-bottom:28px;text-align:center;">
-                                <i class="fas fa-lock" style="color:#ea580c;font-size:20px;margin-bottom:8px;display:block;"></i>
-                                <p style="font-size:14px;color:#57534e;font-weight:600;margin-bottom:12px;">Inicia sesión para dejar tu reseña</p>
-                                <a href="{{ route('login') }}"
-                                   style="display:inline-flex;align-items:center;gap:7px;background:#ea580c;color:white;text-decoration:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;">
-                                    <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesión
-                                </a>
-                            </div>
                         @endauth
-
-                        {{-- Listado de reseñas --}}
-                        @php $reviews = $gastrobar->reviews()->with('user')->latest()->get(); @endphp
-
-                        @forelse($reviews as $review)
-                            <div style="border-bottom:1px solid #f5f5f4;padding-bottom:20px;margin-bottom:20px;">
-                                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
-                                    <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-                                        <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fed7aa;display:flex;align-items:center;justify-content:center;">
-                                            @if($review->user->avatar ?? false)
-                                                <img src="{{ $review->user->avatar }}" alt="" style="width:100%;height:100%;object-fit:cover;">
-                                            @else
-                                                <span style="font-size:15px;font-weight:800;color:#ea580c;">{{ strtoupper(substr($review->user->name, 0, 1)) }}</span>
-                                            @endif
-                                        </div>
-                                        <div style="min-width:0;">
-                                            <p style="font-size:14px;font-weight:700;color:#1c1917;margin:0;">{{ $review->user->name }}</p>
-                                            <p style="font-size:11px;color:#a8a29e;margin:0;">{{ $review->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                    <div style="display:flex;gap:2px;flex-shrink:0;">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <span style="color:{{ $i <= $review->rating ? '#f59e0b' : '#e7e5e4' }};font-size:14px;">★</span>
-                                        @endfor
-                                    </div>
-                                </div>
-                                @if($review->title)
-                                    <p style="font-size:14px;font-weight:700;color:#1c1917;margin-bottom:4px;">{{ $review->title }}</p>
-                                @endif
-                                @if($review->body)
-                                    <p style="font-size:14px;color:#57534e;line-height:1.7;margin:0;">{{ $review->body }}</p>
-                                @endif
-
-                                {{-- Acciones editar/eliminar --}}
-                                @auth
-                                    @if(auth()->id() === $review->user_id || auth()->user()->email === 'admin@turismo.ni')
-                                        <div style="display:flex;gap:8px;margin-top:10px;">
-                                            <button onclick="toggleEdit({{ $review->id }})"
-                                                    style="font-size:12px;font-weight:600;color:#78716c;background:none;border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all 0.2s;"
-                                                    onmouseover="this.style.borderColor='#ea580c';this.style.color='#ea580c'"
-                                                    onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
-                                                <i class="fas fa-pencil-alt" style="font-size:10px;"></i> Editar
-                                            </button>
-                                            <form action="{{ route('gastrobar.reviews.destroy', $review) }}" method="POST"
-                                                  onsubmit="return confirm('¿Eliminar esta reseña?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit"
-                                                        style="font-size:12px;font-weight:600;color:#78716c;background:none;border:1px solid #e7e5e4;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all 0.2s;"
-                                                        onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'"
-                                                        onmouseout="this.style.borderColor='#e7e5e4';this.style.color='#78716c'">
-                                                    <i class="fas fa-trash" style="font-size:10px;"></i> Eliminar
-                                                </button>
-                                            </form>
-                                        </div>
-
-                                        {{-- Formulario editar --}}
-                                        <div id="edit-form-{{ $review->id }}" style="display:none;margin-top:14px;background:#f9fafb;border:1px solid #e7e5e4;border-radius:12px;padding:16px;">
-                                            <form action="{{ route('gastrobar.reviews.update', $review) }}" method="POST">
-                                                @csrf @method('PUT')
-                                                <div style="margin-bottom:12px;">
-                                                    <label style="font-size:11px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">Calificación</label>
-                                                    <div style="display:flex;gap:4px;" id="edit-stars-{{ $review->id }}">
-                                                        @for($i = 1; $i <= 5; $i++)
-                                                            <button type="button" onclick="setEditRating({{ $review->id }}, {{ $i }})" data-star="{{ $i }}"
-                                                                    style="font-size:24px;background:none;border:none;cursor:pointer;padding:0 2px;color:{{ $i <= $review->rating ? '#f59e0b' : '#d6d3d1' }};transition:color 0.15s;">★</button>
-                                                        @endfor
-                                                    </div>
-                                                    <input type="hidden" name="rating" id="edit-rating-{{ $review->id }}" value="{{ $review->rating }}">
-                                                </div>
-                                                <input type="text" name="title" value="{{ $review->title }}" placeholder="Título" maxlength="100"
-                                                       style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;border-radius:9px;font-size:13px;font-family:inherit;margin-bottom:10px;outline:none;"
-                                                       onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">
-                                                <textarea name="body" rows="3" maxlength="1000"
-                                                          style="width:100%;padding:9px 12px;border:1px solid #e7e5e4;border-radius:9px;font-size:13px;font-family:inherit;resize:vertical;outline:none;margin-bottom:12px;"
-                                                          onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e7e5e4'">{{ $review->body }}</textarea>
-                                                <button type="submit"
-                                                        style="background:#ea580c;color:white;border:none;padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-                                                    Guardar cambios
-                                                </button>
-                                                <button type="button" onclick="toggleEdit({{ $review->id }})"
-                                                        style="background:none;border:1px solid #e7e5e4;color:#78716c;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:6px;">
-                                                    Cancelar
-                                                </button>
-                                            </form>
-                                        </div>
-                                    @endif
-                                @endauth
-                            </div>
-                        @empty
-                            <div style="text-align:center;padding:40px 20px;">
-                                <i class="far fa-comment-dots" style="font-size:36px;color:#d6d3d1;display:block;margin-bottom:12px;"></i>
-                                <p style="color:#a8a29e;font-size:14px;font-weight:600;">Aún no hay reseñas. ¡Sé el primero!</p>
-                            </div>
-                        @endforelse
                     </div>
-                </div>
-
-                <script>
-                    let selectedRating = 0;
-                    function setRating(val) {
-                        selectedRating = val;
-                        document.getElementById('rating-input').value = val;
-                        updateStars('star-selector', val, '#f59e0b');
-                    }
-                    function hoverRating(val) { updateStars('star-selector', val, '#fb923c'); }
-                    function resetHover()     { updateStars('star-selector', selectedRating, '#f59e0b'); }
-                    function updateStars(containerId, val, activeColor) {
-                        document.querySelectorAll(`#${containerId} button`).forEach(btn => {
-                            btn.style.color = parseInt(btn.dataset.star) <= val ? activeColor : '#d6d3d1';
-                        });
-                    }
-                    function toggleEdit(id) {
-                        const el = document.getElementById(`edit-form-${id}`);
-                        el.style.display = el.style.display === 'none' ? 'block' : 'none';
-                    }
-                    function setEditRating(reviewId, val) {
-                        document.getElementById(`edit-rating-${reviewId}`).value = val;
-                        document.querySelectorAll(`#edit-stars-${reviewId} button`).forEach(btn => {
-                            btn.style.color = parseInt(btn.dataset.star) <= val ? '#f59e0b' : '#d6d3d1';
-                        });
-                    }
-                </script>
-
-            </div>{{-- /col-principal --}}
-
-            {{-- ── SIDEBAR ── --}}
-            <aside class="sidebar">
-
-                {{-- Información --}}
-                <div class="card">
-                    <div class="card-body">
-                        <div class="section-label">
-                            <i class="far fa-clock"></i> Información
-                        </div>
-
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f5f5f4;">
-                            <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Estado actual</span>
-                            <span style="background:{{ $abierto ? '#dcfce7' : '#fee2e2' }};color:{{ $abierto ? '#15803d' : '#b91c1c' }};border:1px solid {{ $abierto ? '#bbf7d0' : '#fecaca' }};font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.06em;display:inline-flex;align-items:center;gap:5px;">
-                                <span style="width:6px;height:6px;background:{{ $abierto ? '#22c55e' : '#ef4444' }};border-radius:50%;display:inline-block;"></span>
-                                {{ $abierto ? 'ABIERTO' : 'CERRADO' }}
-                            </span>
-                        </div>
-
-                        @if($gastrobar->tipo_cocina)
-                            <div style="margin-bottom:12px;">
-                                <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:6px;">Cocina</span>
-                                <div class="contact-row">
-                                    <i class="fas fa-utensils"></i> {{ $gastrobar->tipo_cocina }}
-                                </div>
-                            </div>
-                        @endif
-
-                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:10px;">Contacto</span>
-                        <div class="contact-row">
-                            <i class="fas fa-envelope"></i>
-                            {{ $gastrobar->email ?? 'No disponible' }}
-                        </div>
+                @empty
+                    <div style="text-align:center;padding:36px 20px;">
+                        <i class="far fa-comment-dots" style="font-size:32px;color:#d1d5db;display:block;margin-bottom:10px;"></i>
+                        <p style="color:var(--muted);font-size:14px;font-weight:600;">Aún no hay reseñas. ¡Sé el primero!</p>
                     </div>
-                </div>
-
-                {{-- Redes sociales --}}
-                @if(!empty($gastrobar->whatsapp) || !empty($gastrobar->instagram) || !empty($gastrobar->tiktok) || !empty($gastrobar->facebook))
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-label">
-                                <i class="fas fa-share-alt"></i> Redes sociales
-                            </div>
-                            <div style="display:flex;flex-wrap:wrap;gap:10px;">
-                                @if(!empty($gastrobar->whatsapp))
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$gastrobar->whatsapp) }}" target="_blank" class="social-btn wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                                @endif
-                                @if(!empty($gastrobar->instagram))
-                                    <a href="{{ $gastrobar->instagram }}" target="_blank" class="social-btn ig" title="Instagram"><i class="fab fa-instagram"></i></a>
-                                @endif
-                                @if(!empty($gastrobar->tiktok))
-                                    <a href="{{ $gastrobar->tiktok }}" target="_blank" class="social-btn tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                                @endif
-                                @if(!empty($gastrobar->facebook))
-                                    <a href="{{ $gastrobar->facebook }}" target="_blank" class="social-btn fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- CTA --}}
-                <a href="mailto:{{ $gastrobar->email ?? 'contacto@gastronicaragua.com' }}" class="cta-btn">
-                    <i class="fas fa-paper-plane" style="font-size:13px;"></i>
-                    Enviar consulta al local
-                </a>
-
-            </aside>
-
-        </main>
-
-        <footer style="background:#0c0a09;color:white;padding:40px 2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
-            <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
-                <div style="width:30px;height:30px;background:#ea580c;border-radius:9px;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-cocktail" style="color:white;font-size:11px;"></i>
-                </div>
-                <span class="premium-title" style="color:white;font-size:17px;font-style:italic;">Gastro<span style="color:#fb923c;">Nicaragua</span></span>
-            </div>
-            <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">© {{ date('Y') }} — Experiencias Culinarias de Nicaragua</p>
-        </footer>
-
-        {{-- LIGHTBOX --}}
-        <div id="lightbox" onclick="handleLightboxClick(event)">
-            <button id="lb-close"  onclick="closeLightbox()"><i class="fas fa-times"></i></button>
-            <button id="lb-prev"   class="lb-nav-btn" onclick="navigateLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
-            <button id="lb-next"   class="lb-nav-btn" onclick="navigateLightbox(1)"><i class="fas fa-chevron-right"></i></button>
-            <img id="lightbox-img" src="" alt="Foto ampliada">
-            <div id="lb-counter">
-                <span id="lb-text"></span>
-                <div id="lb-dots"></div>
+                @endforelse
             </div>
         </div>
 
         <script>
-            const galeriaImages = @json($todasLasImagenes);
-            let currentIndex = 0, isPortada = false;
-
-            const lb    = document.getElementById('lightbox');
-            const lbImg = document.getElementById('lightbox-img');
-            const lbText= document.getElementById('lb-text');
-            const lbDots= document.getElementById('lb-dots');
-            const lbPrev= document.getElementById('lb-prev');
-            const lbNext= document.getElementById('lb-next');
-
-            function openLightbox(src, index) {
-                isPortada    = (index === -1);
-                currentIndex = isPortada ? 0 : index;
-                lbImg.src = src;
-                lb.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                updateControls();
-            }
-
-            function closeLightbox() {
-                lb.classList.remove('active');
-                document.body.style.overflow = '';
-                setTimeout(() => { lbImg.src = ''; }, 300);
-            }
-
-            function navigateLightbox(dir) {
-                if (isPortada || galeriaImages.length === 0) return;
-                currentIndex = (currentIndex + dir + galeriaImages.length) % galeriaImages.length;
-                lbImg.style.opacity   = '0';
-                lbImg.style.transform = 'scale(0.94)';
-                setTimeout(() => {
-                    lbImg.src             = galeriaImages[currentIndex];
-                    lbImg.style.opacity   = '1';
-                    lbImg.style.transform = 'scale(1)';
-                    updateControls();
-                }, 180);
-            }
-
-            function updateControls() {
-                const showNav = !isPortada && galeriaImages.length > 1;
-                lbPrev.style.display = showNav ? 'flex' : 'none';
-                lbNext.style.display = showNav ? 'flex' : 'none';
-                if (!isPortada && galeriaImages.length > 0) {
-                    lbText.textContent = `${currentIndex + 1} / ${galeriaImages.length}`;
-                    lbDots.innerHTML = galeriaImages.map((_,i) =>
-                        `<span class="lb-dot ${i === currentIndex ? 'active' : ''}" onclick="jumpTo(${i})"></span>`
-                    ).join('');
-                } else {
-                    lbText.textContent = 'Foto de portada';
-                    lbDots.innerHTML   = '';
-                }
-            }
-
-            function jumpTo(i) { currentIndex = i; lbImg.src = galeriaImages[i]; updateControls(); }
-            function handleLightboxClick(e) { if (e.target === lb) closeLightbox(); }
-
-            document.addEventListener('keydown', e => {
-                if (!lb.classList.contains('active')) return;
-                if (e.key === 'Escape')     closeLightbox();
-                if (e.key === 'ArrowRight') navigateLightbox(1);
-                if (e.key === 'ArrowLeft')  navigateLightbox(-1);
-            });
-
-            lbImg.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-        </script>
-
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <script>
-            @if($gastrobar->latitud && $gastrobar->longitud)
-            document.addEventListener('DOMContentLoaded', function() {
-                const mapa = L.map('mapa-publico', { scrollWheelZoom: false })
-                              .setView([{{ $gastrobar->latitud }}, {{ $gastrobar->longitud }}], 16);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                    maxZoom: 19
-                }).addTo(mapa);
-
-                const icono = L.divIcon({
-                    html: `<div style="width:22px;height:22px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.4);"></div>`,
-                    iconSize: [22,22], iconAnchor: [11,22], className: ''
+            let selectedRating = 0;
+            function setRating(val) { selectedRating = val; document.getElementById('rating-input').value = val; updateStars('star-selector', val, '#f59e0b'); }
+            function hoverRating(val) { updateStars('star-selector', val, '#fb923c'); }
+            function resetHover() { updateStars('star-selector', selectedRating, '#f59e0b'); }
+            function updateStars(id, val, color) {
+                document.querySelectorAll(`#${id} button`).forEach(btn => {
+                    btn.style.color = parseInt(btn.dataset.star) <= val ? color : '#d1d5db';
                 });
-
-                L.marker([{{ $gastrobar->latitud }}, {{ $gastrobar->longitud }}], { icon: icono })
-                    .addTo(mapa)
-                    .bindPopup(`
-                        <strong style="font-size:13px;color:#1c1917;">{{ $gastrobar->nombre }}</strong><br>
-                        <span style="font-size:12px;color:#78716c;">{{ optional($gastrobar->municipio)->nombre }}, {{ $gastrobar->departamento->nombre }}</span>
-                    `, { maxWidth: 200 })
-                    .openPopup();
-            });
-            @endif
+            }
+            function toggleEdit(id) { const el = document.getElementById(`edit-form-${id}`); el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
+            function setEditRating(rid, val) {
+                document.getElementById(`edit-rating-${rid}`).value = val;
+                document.querySelectorAll(`#edit-stars-${rid} button`).forEach(btn => {
+                    btn.style.color = parseInt(btn.dataset.star) <= val ? '#f59e0b' : '#d1d5db';
+                });
+            }
         </script>
+    </main>
 
-    </body>
+    {{-- ══ SIDEBAR ══ --}}
+    <aside class="sidebar">
+
+        {{-- Redes sociales --}}
+        @if(!empty($gastrobar->whatsapp) || !empty($gastrobar->instagram) || !empty($gastrobar->tiktok) || !empty($gastrobar->facebook))
+            <div class="sidebar-card">
+                <div class="sidebar-card-head"><i class="fas fa-share-alt"></i> Redes sociales</div>
+                <div class="sidebar-card-body">
+                    <div class="social-grid">
+                        @if(!empty($gastrobar->whatsapp))
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$gastrobar->whatsapp) }}" target="_blank" class="social-btn social-wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        @endif
+                        @if(!empty($gastrobar->instagram))
+                            <a href="{{ $gastrobar->instagram }}" target="_blank" class="social-btn social-ig" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        @endif
+                        @if(!empty($gastrobar->tiktok))
+                            <a href="{{ $gastrobar->tiktok }}" target="_blank" class="social-btn social-tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                        @endif
+                        @if(!empty($gastrobar->facebook))
+                            <a href="{{ $gastrobar->facebook }}" target="_blank" class="social-btn social-fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Horario --}}
+        @if($tieneHorario || count($diasActivos) > 0)
+            <div class="sidebar-card">
+                <div class="sidebar-card-head"><i class="far fa-clock"></i> Horario de atención</div>
+                <div class="sidebar-card-body">
+                    @php
+                        $diasConfig = ['lunes'=>'Lun','martes'=>'Mar','miercoles'=>'Mié','jueves'=>'Jue','viernes'=>'Vie','sabado'=>'Sáb','domingo'=>'Dom'];
+                    @endphp
+                    @if(count($diasActivos) > 0)
+                        <div class="dias-grid">
+                            @foreach($diasConfig as $valor => $etiqueta)
+                                <span class="dia-pill {{ in_array($valor, $diasActivos) ? 'on' : 'off' }}">{{ $etiqueta }}</span>
+                            @endforeach
+                        </div>
+                    @endif
+                    <div class="hor-row">
+                        <span class="hor-label"><i class="fas fa-door-open" style="color:#22c55e;font-size:11px;"></i> Apertura</span>
+                        <span class="hor-value">
+                            @if($gastrobar->hora_apertura)
+                                {{ \Carbon\Carbon::parse($gastrobar->hora_apertura)->format('g:i A') }}
+                            @else
+                                <span style="color:#d1d5db;">—</span>
+                            @endif
+                        </span>
+                    </div>
+                    <div class="hor-row">
+                        <span class="hor-label"><i class="fas fa-door-closed" style="color:#ef4444;font-size:11px;"></i> Cierre</span>
+                        <span class="hor-value">
+                            @if($gastrobar->hora_cierre)
+                                {{ \Carbon\Carbon::parse($gastrobar->hora_cierre)->format('g:i A') }}
+                            @else
+                                <span style="color:#d1d5db;">—</span>
+                            @endif
+                        </span>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Información: solo capacidad --}}
+        @if($gastrobar->capacidad)
+            <div class="sidebar-card">
+                <div class="sidebar-card-head"><i class="fas fa-info-circle"></i> Información</div>
+                <div class="sidebar-card-body" style="display:flex;flex-direction:column;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text);">
+                        <i class="fas fa-users" style="color:var(--orange);flex-shrink:0;"></i>
+                        Capacidad: {{ $gastrobar->capacidad }} personas
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- CTA WhatsApp --}}
+        @if(!empty($gastrobar->whatsapp))
+            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $gastrobar->whatsapp) }}"
+               target="_blank" class="btn-wa-cta">
+                <i class="fab fa-whatsapp" style="font-size:18px;"></i>
+                Contactar por WhatsApp
+            </a>
+        @else
+            <a href="mailto:{{ $gastrobar->email ?? 'contacto@gastronicaragua.com' }}" class="btn-wa-cta"
+               style="background:#1f2937;">
+                <i class="fas fa-envelope" style="font-size:16px;"></i>
+                Enviar consulta al local
+            </a>
+        @endif
+
+    </aside>
+</div>
+
+{{-- ══ FOOTER ══ --}}
+<footer class="footer-main">
+    <div style="max-width:1280px;margin:0 auto;padding:48px 1.5rem 32px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-bottom:40px;">
+            <div style="grid-column:span 2 / span 2;max-width:380px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                    <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;color:#fff;">
+                        Gastro<span style="color:#ea580c;">Nicaragua</span>
+                    </span>
+                </div>
+                <p style="color:#a8a29e;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
+                    La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                    Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                </p>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    @foreach(['fab fa-facebook-f','fab fa-instagram','fab fa-tiktok'] as $icon)
+                        <a href="#" style="width:32px;height:32px;border-radius:50%;background:#292524;display:flex;align-items:center;justify-content:center;color:#a8a29e;font-size:12px;transition:all 0.2s;"
+                           onmouseover="this.style.background='#ea580c';this.style.color='#fff';"
+                           onmouseout="this.style.background='#292524';this.style.color='#a8a29e';">
+                            <i class="{{ $icon }}"></i>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:16px;">Portal</h4>
+                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+                    <li><a href="{{ route('home') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;" onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Inicio</a></li>
+                    <li><a href="{{ route('restaurantes.index') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;" onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Restaurantes</a></li>
+                    <li><a href="{{ route('gastrobares.index') }}" style="color:#ea580c;font-size:14px;font-weight:600;">Gastrobares</a></li>
+                    <li><a href="{{ route('empleos.index') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;" onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Bolsa de Empleos</a></li>
+                    <li><a href="{{ route('contacto') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;" onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Contacto</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:16px;">Destinos Destacados</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    @foreach(['Masaya','Granada','León','San Juan del Sur','Estelí','Matagalpa'] as $destino)
+                        <span style="color:#a8a29e;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                              onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#a8a29e';">
+                            <i class="fas fa-chevron-right" style="font-size:9px;color:#ea580c;margin-right:6px;"></i>{{ $destino }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <div style="border-top:1px solid #292524;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <p style="font-size:12px;color:#57534e;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+            <div style="display:flex;gap:16px;">
+                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;" onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Política de Privacidad</a>
+                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;" onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Términos de Servicio</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+{{-- ══ LIGHTBOX ══ --}}
+<div id="lightbox" onclick="handleLbClick(event)">
+    <button id="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+    <button id="lb-prev" class="lb-btn" onclick="navLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button id="lb-next" class="lb-btn" onclick="navLightbox(1)"><i class="fas fa-chevron-right"></i></button>
+    <img id="lightbox-img" src="" alt="">
+    <div id="lb-counter"><span id="lb-text"></span><div id="lb-dots"></div></div>
+</div>
+
+<script>
+    const galeriaImages = @json($todasLasImagenes);
+    let curIdx = 0, isPortada = false;
+    const lb    = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    const lbText = document.getElementById('lb-text');
+    const lbDots = document.getElementById('lb-dots');
+
+    function openLightbox(src, index) {
+        isPortada = (index === -1); curIdx = isPortada ? 0 : index;
+        lbImg.src = src; lb.classList.add('active'); document.body.style.overflow = 'hidden'; updateLb();
+    }
+    function closeLightbox() {
+        lb.classList.remove('active'); document.body.style.overflow = '';
+        setTimeout(() => { lbImg.src = ''; }, 300);
+    }
+    function navLightbox(dir) {
+        if (isPortada || galeriaImages.length === 0) return;
+        curIdx = (curIdx + dir + galeriaImages.length) % galeriaImages.length;
+        lbImg.style.opacity = '0'; lbImg.style.transform = 'scale(0.95)';
+        setTimeout(() => { lbImg.src = galeriaImages[curIdx]; lbImg.style.opacity = '1'; lbImg.style.transform = 'scale(1)'; updateLb(); }, 160);
+    }
+    function updateLb() {
+        const show = !isPortada && galeriaImages.length > 1;
+        document.getElementById('lb-prev').style.display = show ? 'flex' : 'none';
+        document.getElementById('lb-next').style.display = show ? 'flex' : 'none';
+        if (!isPortada && galeriaImages.length > 0) {
+            lbText.textContent = `${curIdx + 1} / ${galeriaImages.length}`;
+            lbDots.innerHTML = galeriaImages.map((_,i) => `<span class="lb-dot ${i===curIdx?'on':''}" onclick="jumpLb(${i})"></span>`).join('');
+        } else { lbText.textContent = 'Foto de portada'; lbDots.innerHTML = ''; }
+    }
+    function jumpLb(i) { curIdx = i; lbImg.src = galeriaImages[i]; updateLb(); }
+    function handleLbClick(e) { if (e.target === lb) closeLightbox(); }
+    document.addEventListener('keydown', e => {
+        if (!lb.classList.contains('active')) return;
+        if (e.key === 'Escape')     closeLightbox();
+        if (e.key === 'ArrowRight') navLightbox(1);
+        if (e.key === 'ArrowLeft')  navLightbox(-1);
+    });
+    lbImg.style.transition = 'opacity 0.16s ease, transform 0.16s ease';
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    @if($gastrobar->latitud && $gastrobar->longitud)
+    document.addEventListener('DOMContentLoaded', function() {
+        const mapa = L.map('mapa-publico', { scrollWheelZoom: false })
+                      .setView([{{ $gastrobar->latitud }}, {{ $gastrobar->longitud }}], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19
+        }).addTo(mapa);
+        const icono = L.divIcon({
+            html: `<div style="width:20px;height:20px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>`,
+            iconSize: [20,20], iconAnchor: [10,20], className: ''
+        });
+        L.marker([{{ $gastrobar->latitud }}, {{ $gastrobar->longitud }}], { icon: icono })
+            .addTo(mapa)
+            .bindPopup(`<strong style="font-size:13px;">{{ $gastrobar->nombre }}</strong><br><span style="font-size:12px;color:#6b7280;">{{ optional($gastrobar->municipio)->nombre }}, {{ $gastrobar->departamento->nombre }}</span>`, { maxWidth: 200 })
+            .openPopup();
+    });
+    @endif
+</script>
+
+</body>
 </html>

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Gastrobar;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 
@@ -103,32 +105,39 @@ class GastrobarController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre'          => 'required|string|max:100',
-            'email'           => 'nullable|email|max:150',
-            'tipo_cocina'     => 'nullable|string|max:100',
-            'tipo_bar'        => 'nullable|string|max:100',
-            'descripcion'     => 'nullable|string|max:500',
-            'hora_apertura'   => 'nullable|date_format:H:i',
-            'hora_cierre'     => 'nullable|date_format:H:i',
-            'dias_atencion'   => 'nullable|array',
-            'tipo_musica'     => 'nullable|string|max:100',
-            'capacidad'       => 'nullable|integer|min:1',
-            'ambiente'        => 'nullable|string|max:50',
-            'departamento_id' => 'nullable|exists:departamentos,id',
-            'municipio_id'    => 'nullable|exists:municipios,id',
-            'direccion'       => 'nullable|string|max:255',
-            'latitud'         => 'nullable|numeric',
-            'longitud'        => 'nullable|numeric',
-            'whatsapp'        => 'nullable|string|max:20',
-            'instagram'       => 'nullable|url|max:255',
-            'facebook'        => 'nullable|url|max:255',
-            'tiktok'          => 'nullable|url|max:255',
-            'imagen_principal'=> 'nullable|image|max:3072',
-            'galeria'         => 'nullable|array|max:4',
-            'galeria.*'       => 'nullable|image|max:3072',
+            'nombre'               => 'required|string|max:100',
+            'email'                => 'nullable|email|max:150',
+            'tipo_cocina'          => 'nullable|string|max:100',
+            'tipo_bar'             => 'nullable|string|max:100',
+            'descripcion'          => 'nullable|string|max:500',
+            'hora_apertura'        => 'nullable|date_format:H:i',
+            'hora_cierre'          => 'nullable|date_format:H:i',
+            'dias_atencion'        => 'nullable|array',
+            'tipo_musica'          => 'nullable|string|max:100',
+            'capacidad'            => 'nullable|integer|min:1',
+            'ambiente'             => 'nullable|string|max:50',
+            'departamento_id'      => 'nullable|exists:departamentos,id',
+            'municipio_id'         => 'nullable|exists:municipios,id',
+            'direccion'            => 'nullable|string|max:255',
+            'latitud'              => 'nullable|numeric',
+            'longitud'             => 'nullable|numeric',
+            'whatsapp'             => 'nullable|string|max:20',
+            'instagram'            => 'nullable|url|max:255',
+            'facebook'             => 'nullable|url|max:255',
+            'tiktok'               => 'nullable|url|max:255',
+            'imagen_principal'     => 'nullable|image|max:3072',
+            'galeria'              => 'nullable|array|max:4',
+            'galeria.*'            => 'nullable|image|max:3072',
+            'propietario_nombre'   => 'required|string|max:255',
+            'propietario_email'    => 'required|email|unique:users,email',
+            'propietario_password' => 'required|string|min:8|confirmed',
         ]);
 
-        $data = $request->except(['imagen_principal', 'galeria']);
+        $data = $request->except([
+            'imagen_principal', 'galeria',
+            'propietario_nombre', 'propietario_email',
+            'propietario_password', 'propietario_password_confirmation',
+        ]);
 
         if ($request->hasFile('imagen_principal')) {
             $data['imagen_principal'] = $request->file('imagen_principal')
@@ -147,13 +156,21 @@ class GastrobarController extends Controller
 
         $gastrobar = Gastrobar::create($data);
 
+        User::create([
+            'name'         => $request->propietario_nombre,
+            'email'        => $request->propietario_email,
+            'password'     => Hash::make($request->propietario_password),
+            'role'         => 'gastrobar',
+            'gastrobar_id' => $gastrobar->id,
+        ]);
+
         $this->enviarNotificacionFCM(
             '🍹 Nuevo gastrobar',
             "¡{$gastrobar->nombre} ya está en GastroNicaragua!"
         );
 
         return redirect()->route('admin.gastrobares.index')
-            ->with('success', 'Gastrobar registrado correctamente.');
+            ->with('success', 'Gastrobar y usuario propietario creados correctamente.');
     }
 
     // ── SHOW (ADMIN) ─────────────────────────────────────────────
@@ -169,6 +186,7 @@ class GastrobarController extends Controller
         $departamentos = Departamento::orderBy('nombre')->get();
         $municipios    = Municipio::where('departamento_id', $gastrobar->departamento_id)
                             ->orderBy('nombre')->get();
+        $gastrobar->load('propietario');
 
         return view('gastrobares.edit', compact('gastrobar', 'departamentos', 'municipios'));
     }
@@ -176,33 +194,55 @@ class GastrobarController extends Controller
     // ── UPDATE ───────────────────────────────────────────────────
     public function update(Request $request, Gastrobar $gastrobar)
     {
+        $propietario = User::where('gastrobar_id', $gastrobar->id)
+            ->where('role', 'gastrobar')
+            ->first();
+
+        if (!$propietario) {
+            $propietario = User::where('email', $request->propietario_email)
+                ->where('role', 'gastrobar')
+                ->first();
+
+            if ($propietario) {
+                $propietario->gastrobar_id = $gastrobar->id;
+                $propietario->save();
+            }
+        }
+
         $request->validate([
-            'nombre'          => 'required|string|max:100',
-            'email'           => 'nullable|email|max:150',
-            'tipo_cocina'     => 'nullable|string|max:100',
-            'tipo_bar'        => 'nullable|string|max:100',
-            'descripcion'     => 'nullable|string|max:500',
-            'hora_apertura'   => 'nullable|date_format:H:i',
-            'hora_cierre'     => 'nullable|date_format:H:i',
-            'dias_atencion'   => 'nullable|array',
-            'tipo_musica'     => 'nullable|string|max:100',
-            'capacidad'       => 'nullable|integer|min:1',
-            'ambiente'        => 'nullable|string|max:50',
-            'departamento_id' => 'nullable|exists:departamentos,id',
-            'municipio_id'    => 'nullable|exists:municipios,id',
-            'direccion'       => 'nullable|string|max:255',
-            'latitud'         => 'nullable|numeric',
-            'longitud'        => 'nullable|numeric',
-            'whatsapp'        => 'nullable|string|max:20',
-            'instagram'       => 'nullable|url|max:255',
-            'facebook'        => 'nullable|url|max:255',
-            'tiktok'          => 'nullable|url|max:255',
-            'imagen_principal'=> 'nullable|image|max:3072',
-            'galeria'         => 'nullable|array|max:4',
-            'galeria.*'       => 'nullable|image|max:3072',
+            'nombre'               => 'required|string|max:100',
+            'email'                => 'nullable|email|max:150',
+            'tipo_cocina'          => 'nullable|string|max:100',
+            'tipo_bar'             => 'nullable|string|max:100',
+            'descripcion'          => 'nullable|string|max:500',
+            'hora_apertura'        => 'nullable|date_format:H:i',
+            'hora_cierre'          => 'nullable|date_format:H:i',
+            'dias_atencion'        => 'nullable|array',
+            'tipo_musica'          => 'nullable|string|max:100',
+            'capacidad'            => 'nullable|integer|min:1',
+            'ambiente'             => 'nullable|string|max:50',
+            'departamento_id'      => 'nullable|exists:departamentos,id',
+            'municipio_id'         => 'nullable|exists:municipios,id',
+            'direccion'            => 'nullable|string|max:255',
+            'latitud'              => 'nullable|numeric',
+            'longitud'             => 'nullable|numeric',
+            'whatsapp'             => 'nullable|string|max:20',
+            'instagram'            => 'nullable|url|max:255',
+            'facebook'             => 'nullable|url|max:255',
+            'tiktok'               => 'nullable|url|max:255',
+            'imagen_principal'     => 'nullable|image|max:3072',
+            'galeria'              => 'nullable|array|max:4',
+            'galeria.*'            => 'nullable|image|max:3072',
+            'propietario_nombre'   => 'required|string|max:255',
+            'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
+            'propietario_password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $data = $request->except(['imagen_principal', 'galeria']);
+        $data = $request->except([
+            'imagen_principal', 'galeria',
+            'propietario_nombre', 'propietario_email',
+            'propietario_password', 'propietario_password_confirmation',
+        ]);
 
         if ($request->hasFile('imagen_principal')) {
             if ($gastrobar->imagen_principal) {
@@ -229,6 +269,15 @@ class GastrobarController extends Controller
 
         $gastrobar->update($data);
 
+        if ($propietario) {
+            $propietario->name  = $request->propietario_nombre;
+            $propietario->email = $request->propietario_email;
+            if ($request->filled('propietario_password')) {
+                $propietario->password = Hash::make($request->propietario_password);
+            }
+            $propietario->save();
+        }
+
         return redirect()->route('admin.gastrobares.index')
             ->with('success', 'Gastrobar actualizado correctamente.');
     }
@@ -245,6 +294,13 @@ class GastrobarController extends Controller
             }
         }
 
+        // Eliminar fotos de la tabla gastrobar_fotos
+        foreach ($gastrobar->fotos as $foto) {
+            Storage::disk('public')->delete($foto->ruta_foto);
+            $foto->delete();
+        }
+
+        User::where('gastrobar_id', $gastrobar->id)->delete();
         $gastrobar->delete();
 
         return redirect()->route('admin.gastrobares.index')
@@ -269,8 +325,8 @@ class GastrobarController extends Controller
 
         $query = Gastrobar::with(['departamento', 'municipio'])->latest();
 
-        if ($deptoFiltro)             $query->where('departamento_id', $deptoFiltro);
-        if ($munFiltro)               $query->where('municipio_id', $munFiltro);
+        if ($deptoFiltro)                 $query->where('departamento_id', $deptoFiltro);
+        if ($munFiltro)                   $query->where('municipio_id', $munFiltro);
         if ($request->filled('tipo_bar')) $query->where('tipo_bar', $request->tipo_bar);
         if ($request->filled('ambiente')) $query->where('ambiente', $request->ambiente);
         if ($request->filled('search'))   $query->where('nombre', 'like', '%' . $request->search . '%');
@@ -291,7 +347,7 @@ class GastrobarController extends Controller
     // ── PUBLIC SHOW ──────────────────────────────────────────────
     public function publicShow(Gastrobar $gastrobar)
     {
-        $gastrobar->load(['departamento', 'municipio']);
+        $gastrobar->load(['departamento', 'municipio', 'fotos']);
         return view('gastrobares.public_show', compact('gastrobar'));
     }
 }

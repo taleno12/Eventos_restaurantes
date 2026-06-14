@@ -308,7 +308,78 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 5: Foto de Portada                   --}}
+        {{-- CARD 5: Cuenta del Propietario            --}}
+        {{-- ══════════════════════════════════════════ --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
+                <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-person-badge text-warning"></i> Cuenta del Propietario
+                </h6>
+                <p class="text-muted small mb-4">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Se creará un usuario con acceso al panel del gastrobar.
+                </p>
+
+                <div class="row g-4">
+
+                    {{-- Nombre del Propietario --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Nombre del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                            <input type="text" name="propietario_nombre" value="{{ old('propietario_nombre') }}" required
+                                   placeholder="Nombre completo"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    {{-- Correo del Propietario --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Correo del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="propietario_email" value="{{ old('propietario_email') }}" required
+                                   placeholder="correo@propietario.com"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
+                    {{-- Contraseña con toggle --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Contraseña <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="propietario_password" id="gb_password" required minlength="8"
+                                   placeholder="Mínimo 8 caracteres"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('gb_password', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Confirmar Contraseña con toggle --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" name="propietario_password_confirmation" id="gb_password_confirm" required minlength="8"
+                                   placeholder="Repite la contraseña"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
+                                    onclick="togglePassword('gb_password_confirm', this)" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════ --}}
+        {{-- CARD 6: Foto de Portada                   --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -335,9 +406,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 6: Galería de Fotos                  --}}
-        {{-- FIX: name="galeria[0]" ... "galeria[3]"   --}}
-        {{-- Evita que slots vacíos rompan el array    --}}
+        {{-- CARD 7: Galería de Fotos                  --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -357,7 +426,6 @@
                             <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
                                  style="aspect-ratio: 1/1; border: 2px dashed #dee2e6; cursor: pointer; transition: border-color 0.2s;"
                                  onmouseover="this.style.borderColor='#ffc107'" onmouseout="this.style.borderColor='#dee2e6'">
-                                {{-- FIX CLAVE: name="galeria[0]", "galeria[1]", etc. en vez de galeria[] --}}
                                 <input type="file" name="galeria[{{ $i }}]" id="galeria_{{ $i }}" accept="image/*"
                                        class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer; z-index:10;">
                                 <div id="placeholder-{{ $i }}" class="text-center">
@@ -375,7 +443,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 7: Mapa                              --}}
+        {{-- CARD 8: Mapa                              --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -383,7 +451,6 @@
                     <i class="bi bi-geo-alt text-warning"></i> Ubicación en el Mapa
                 </h6>
 
-                {{-- Buscador --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">Buscar Dirección</label>
                     <div class="d-flex gap-2">
@@ -404,7 +471,6 @@
                     </p>
                 </div>
 
-                {{-- Dirección exacta --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
                         Dirección Exacta <span class="text-muted fw-normal">(se guarda automáticamente al buscar o hacer clic en el mapa)</span>
@@ -418,7 +484,6 @@
                     </div>
                 </div>
 
-                {{-- Campo único de coordenadas --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold text-dark small">
                         Coordenadas <span class="text-muted fw-normal">(latitud, longitud — o haz clic en el mapa)</span>
@@ -442,11 +507,9 @@
                     </p>
                 </div>
 
-                {{-- Campos ocultos que se envían al servidor --}}
                 <input type="hidden" id="latitud"  name="latitud"  value="{{ old('latitud') }}">
                 <input type="hidden" id="longitud" name="longitud" value="{{ old('longitud') }}">
 
-                {{-- Mapa --}}
                 <div id="mapa-gastrobar" class="w-100 rounded-3 border shadow-sm" style="height: 340px;"></div>
 
                 <p id="mapa-coords-info" class="small text-muted mt-2 d-none">
@@ -457,7 +520,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════ --}}
-        {{-- CARD 8: Descripción                       --}}
+        {{-- CARD 9: Descripción                       --}}
         {{-- ══════════════════════════════════════════ --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
@@ -490,6 +553,18 @@
 </style>
 
 <script>
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon  = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+
     // ── Preview Portada ──
     document.getElementById('imagen').addEventListener('change', function () {
         const file = this.files[0];
@@ -552,7 +627,6 @@
         depSelect.addEventListener('change', function () { cargarMunicipios(this.value); });
         if (depSelect.value) cargarMunicipios(depSelect.value, muniSelect.dataset.oldMuni);
 
-        // ── FIX: Garantizar que dirección se envíe aunque geocoding no haya terminado ──
         document.getElementById('form-gastrobar').addEventListener('submit', function () {
             muniSelect.disabled = false;
 
@@ -561,12 +635,9 @@
             const lat       = document.getElementById('latitud').value;
             const lng       = document.getElementById('longitud').value;
 
-            // Si el campo dirección está vacío, usar el texto buscado como fallback
             if (!dirInput.value.trim() && dirBuscar.value.trim()) {
                 dirInput.value = dirBuscar.value.trim();
             }
-
-            // Si aún está vacío pero hay coordenadas, guardar las coordenadas como dirección
             if (!dirInput.value.trim() && lat && lng) {
                 dirInput.value = lat + ', ' + lng;
             }
@@ -642,7 +713,6 @@
             if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
         });
 
-        // ── Botón "Ir al mapa" desde coordenadas ──
         document.getElementById('btn-ir-coordenadas').addEventListener('click', function () {
             const valor = document.getElementById('coordenadas-input').value.trim();
             const partes = valor.split(',');
@@ -671,7 +741,6 @@
             geocodeInverso(lat, lng);
         });
 
-        // Permitir Enter en el campo de coordenadas
         document.getElementById('coordenadas-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-ir-coordenadas').click(); }
         });
@@ -740,7 +809,6 @@
         function actualizarCoordenadas(lat, lng) {
             document.getElementById('latitud').value  = lat.toFixed(7);
             document.getElementById('longitud').value = lng.toFixed(7);
-            // Actualizar el campo visible de coordenadas
             document.getElementById('coordenadas-input').value = `${lat.toFixed(7)}, ${lng.toFixed(7)}`;
             actualizarInfo(lat, lng);
         }

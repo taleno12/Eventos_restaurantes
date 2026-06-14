@@ -82,12 +82,10 @@ Route::middleware('auth')->get('/mi-restaurante/api/municipios/{id}', function (
 
 // ── REVIEWS Y SISTEMA DE COMENTARIOS (REQUIERE AUTH) ─────────────────────────
 Route::middleware('auth')->group(function () {
-    // Reviews de Restaurantes
     Route::post('/restaurantes/{restaurante}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{review}',                    [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}',                 [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-    // Reviews de Gastrobares
     Route::post('/gastrobares/{gastrobar}/reviews', [GastrobarReviewController::class, 'store'])->name('gastrobar.reviews.store');
     Route::put('/gastrobares/reviews/{review}',     [GastrobarReviewController::class, 'update'])->name('gastrobar.reviews.update');
     Route::delete('/gastrobares/reviews/{review}',  [GastrobarReviewController::class, 'destroy'])->name('gastrobar.reviews.destroy');
@@ -107,12 +105,10 @@ Route::get('/dashboard', function () {
 // ── ÁREA ADMINISTRATIVA PROTEGIDA (SOLO ADMIN) ───────────────────────────────
 Route::middleware(['auth', 'admin'])->group(function () {
 
-    // PERFIL DE USUARIO
     Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // ADMINISTRACIÓN DE RESTAURANTES
     Route::prefix('admin/restaurantes')->name('admin.restaurantes.')->group(function () {
         Route::get('/',                   [RestauranteController::class, 'index'])->name('index');
         Route::get('/create',             [RestauranteController::class, 'create'])->name('create');
@@ -123,7 +119,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/{restaurante}',      [RestauranteController::class, 'adminShow'])->name('show');
     });
 
-    // ADMINISTRACIÓN DE GASTROBARES
     Route::prefix('admin/gastrobares')->name('admin.gastrobares.')->group(function () {
         Route::get('/',                  [GastrobarController::class, 'index'])->name('index');
         Route::get('/create',            [GastrobarController::class, 'create'])->name('create');
@@ -134,7 +129,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/{gastrobar}',       [GastrobarController::class, 'adminShow'])->name('show');
     });
 
-    // ADMINISTRACIÓN DE EVENTOS
     Route::get('/eventos',               [EventoController::class, 'index'])->name('eventos.index');
     Route::get('/eventos/create',        [EventoController::class, 'create'])->name('eventos.create');
     Route::post('/eventos',              [EventoController::class, 'store'])->name('eventos.store');
@@ -143,15 +137,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/eventos/{evento}',    [EventoController::class, 'update']);
     Route::delete('/eventos/{evento}',   [EventoController::class, 'destroy'])->name('eventos.destroy');
 
-    // GALERÍA DE FOTOS DE EVENTOS
     Route::post('/eventos/{evento}/imagenes',  [EventoImagenController::class, 'store'])->name('evento.imagenes.store');
     Route::delete('/evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])->name('evento.imagenes.destroy');
 
-    // ADMINISTRACIÓN DE DEPARTAMENTOS
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
     Route::resource('departamentos', DepartamentoController::class);
 
-    // PANEL DE EMPLEOS ADMIN
     Route::prefix('admin/empleos')->name('admin.empleos.')->group(function () {
         Route::get('/',                [EmpleoController::class, 'index'])->name('index');
         Route::get('/crear',           [EmpleoController::class, 'create'])->name('create');
@@ -162,7 +153,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::delete('/{empleo}',     [EmpleoController::class, 'destroy'])->name('destroy');
     });
 
-    // ── ADMINISTRACIÓN DE TRABAJADORES ────────────────────────────────────────
     Route::prefix('trabajadores')->name('trabajadores.')->group(function () {
         Route::get('/',                  [TrabajadorController::class, 'index'])->name('index');
         Route::get('/create',            [TrabajadorController::class, 'create'])->name('create');
@@ -178,7 +168,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
             ->name('gastrobares.por.departamentos');
     });
 
-    // ── CONTRATOS ─────────────────────────────────────────────────────────────
     Route::prefix('contratos')->name('contratos.')->group(function () {
         Route::get('/',                [ContratoController::class, 'index'])->name('index');
         Route::get('/create',          [ContratoController::class, 'create'])->name('create');
@@ -194,30 +183,21 @@ Route::middleware(['auth', 'admin'])->group(function () {
             ->name('ajax.establecimientos');
     });
 
-    // ── MÓDULOS DE GESTIÓN INTERNA ────────────────────────────────────────────
     Route::get('/soporte',       function () { return view('soporte.index'); })->name('soporte.index');
     Route::get('/configuracion', function () { return view('configuracion.index'); })->name('configuracion.index');
 
-    // ── MEMBRESÍAS ────────────────────────────────────────────────────────────
     Route::get('/membresias', function () {
         $membresiasActivas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'activo')
-                                ->latest()
+                                ->where('estado', 'activo')->latest()
                                 ->paginate(10, ['*'], 'page_activas');
-
         $membresiasPendientes = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'pendiente')
-                                ->latest()
+                                ->where('estado', 'pendiente')->latest()
                                 ->paginate(10, ['*'], 'page_pendientes');
-
         $membresiasVencidas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'vencido')
-                                ->latest()
+                                ->where('estado', 'vencido')->latest()
                                 ->paginate(10, ['*'], 'page_vencidas');
-
         $membresiasCanceladas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'cancelado')
-                                ->latest()
+                                ->where('estado', 'cancelado')->latest()
                                 ->paginate(10, ['*'], 'page_canceladas');
 
         $totalActivas    = \App\Models\Contrato::where('estado', 'activo')->count();
@@ -227,52 +207,39 @@ Route::middleware(['auth', 'admin'])->group(function () {
         $totalPremium    = \App\Models\Contrato::where('estado', 'activo')->where('plan', 'premium')->count();
         $totalBasico     = \App\Models\Contrato::where('estado', 'activo')->where('plan', 'basico')->count();
         $porVencer       = \App\Models\Contrato::where('estado', 'activo')
-                                ->whereBetween('fecha_fin', [now(), now()->addDays(7)])
-                                ->count();
+                                ->whereBetween('fecha_fin', [now(), now()->addDays(7)])->count();
 
         $membresias = $membresiasActivas;
 
         return view('membresias.index', compact(
-            'membresias',
-            'membresiasActivas',
-            'membresiasPendientes',
-            'membresiasVencidas',
-            'membresiasCanceladas',
-            'totalActivas',
-            'totalPendientes',
-            'totalVencidas',
-            'totalCanceladas',
-            'totalPremium',
-            'totalBasico',
-            'porVencer'
+            'membresias', 'membresiasActivas', 'membresiasPendientes',
+            'membresiasVencidas', 'membresiasCanceladas',
+            'totalActivas', 'totalPendientes', 'totalVencidas', 'totalCanceladas',
+            'totalPremium', 'totalBasico', 'porVencer'
         ));
     })->name('membresias.index');
 
-    // ── PAGOS ─────────────────────────────────────────────────────────────────
     Route::prefix('pagos')->name('pagos.')->group(function () {
-        Route::get('/',                  [PagoController::class, 'index'])->name('index');
-        Route::post('/',                 [PagoController::class, 'store'])->name('store');
-        Route::get('/{pago}/pdf',        [PagoController::class, 'descargarPdf'])->name('pdf');
-        Route::get('/{pago}',            [PagoController::class, 'show'])->name('show');
-        Route::patch('/{pago}/estado',   [PagoController::class, 'updateEstado'])->name('updateEstado');
-        Route::delete('/{pago}',         [PagoController::class, 'destroy'])->name('destroy');
+        Route::get('/',                [PagoController::class, 'index'])->name('index');
+        Route::post('/',               [PagoController::class, 'store'])->name('store');
+        Route::get('/{pago}/pdf',      [PagoController::class, 'descargarPdf'])->name('pdf');
+        Route::get('/{pago}',          [PagoController::class, 'show'])->name('show');
+        Route::patch('/{pago}/estado', [PagoController::class, 'updateEstado'])->name('updateEstado');
+        Route::delete('/{pago}',       [PagoController::class, 'destroy'])->name('destroy');
     });
 
-    // ── USUARIOS DEL SISTEMA ──────────────────────────────────────────────────
     Route::prefix('usuarios')->name('usuarios.')->group(function () {
-        Route::get('/',             [\App\Http\Controllers\UsuarioController::class, 'index'])->name('index');
-        Route::get('/{user}/edit',  [\App\Http\Controllers\UsuarioController::class, 'edit'])->name('edit');
-        Route::put('/{user}',       [\App\Http\Controllers\UsuarioController::class, 'update'])->name('update');
-        Route::delete('/{user}',    [\App\Http\Controllers\UsuarioController::class, 'destroy'])->name('destroy');
+        Route::get('/',                [\App\Http\Controllers\UsuarioController::class, 'index'])->name('index');
+        Route::get('/{user}/edit',     [\App\Http\Controllers\UsuarioController::class, 'edit'])->name('edit');
+        Route::put('/{user}',          [\App\Http\Controllers\UsuarioController::class, 'update'])->name('update');
+        Route::delete('/{user}',       [\App\Http\Controllers\UsuarioController::class, 'destroy'])->name('destroy');
         Route::patch('/{user}/toggle', [\App\Http\Controllers\UsuarioController::class, 'toggle'])->name('toggle');
     });
 
-    // ── REPORTES Y ESTADÍSTICAS ───────────────────────────────────────────────
     Route::get('/reportes', function () {
         return view('reportes.index');
     })->name('reportes.index');
 
-    // ── APIs INTERNAS ─────────────────────────────────────────────────────────
     Route::get('/api/departamentos/{id}/municipios', function ($id) {
         return App\Models\Municipio::where('departamento_id', $id)->get(['id', 'nombre']);
     })->name('api.departamentos.municipios');
@@ -303,38 +270,64 @@ Route::middleware(['auth', 'role:restaurante,admin'])
             ->name('perfil.update');
         Route::resource('eventos', \App\Http\Controllers\Restaurante\RestauranteEventoController::class);
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
-        Route::get('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])
-            ->name('galeria.index');
-        Route::post('/galeria', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])
-            ->name('galeria.store');
-        Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])
-            ->name('galeria.destroy');
+        Route::get('/galeria',           [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])->name('galeria.index');
+        Route::post('/galeria',          [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])->name('galeria.store');
+        Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])->name('galeria.destroy');
 
-        // Menú - Platos
         Route::resource('platos', \App\Http\Controllers\Restaurante\RestaurantePlatoController::class);
         Route::patch('platos/{plato}/toggle', [\App\Http\Controllers\Restaurante\RestaurantePlatoController::class, 'toggleActivo'])
             ->name('platos.toggle');
 
-        // ── CATEGORÍAS DE PLATOS ──────────────────────────────────────────────
-        Route::post('categorias/reorder', [CategoriaController::class, 'reorder'])
-            ->name('categorias.reorder');
-        Route::resource('categorias', CategoriaController::class)
-            ->only(['index', 'store', 'update', 'destroy']);
+        Route::post('categorias/reorder', [CategoriaController::class, 'reorder'])->name('categorias.reorder');
+        Route::resource('categorias', CategoriaController::class)->only(['index', 'store', 'update', 'destroy']);
 
-        // Pedidos del restaurante
-        Route::get('/pedidos', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'index'])->name('pedidos.index');
-        Route::get('/pedidos/{pedido}', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'show'])->name('pedidos.show');
+        Route::get('/pedidos',                   [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'index'])->name('pedidos.index');
+        Route::get('/pedidos/{pedido}',          [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'show'])->name('pedidos.show');
         Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'cambiarEstado'])->name('pedidos.estado');
-        Route::get('/pedidos-polling', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
+        Route::get('/pedidos-polling',           [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
 
         Route::get('/estadisticas', [\App\Http\Controllers\Restaurante\RestauranteEstadisticasController::class, 'index'])
-         ->name('estadisticas.index');
+            ->name('estadisticas.index');
+
+        Route::get('/api/municipios/{id}', function ($id) {
+            return response()->json(
+                App\Models\Municipio::where('departamento_id', $id)->orderBy('nombre')->get(['id', 'nombre'])
+            );
+        });
+    });
+
+// ── PANEL DEL GASTROBAR ───────────────────────────────────────────────────────
+Route::middleware(['auth', 'role:gastrobar,admin'])
+    ->prefix('mi-gastrobar')
+    ->name('gastrobar.')
+    ->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Gastrobar\GastrobarDashboardController::class, 'index'])
+            ->name('dashboard');
+        Route::get('/perfil', [\App\Http\Controllers\Gastrobar\GastrobarPerfilController::class, 'edit'])
+            ->name('perfil.edit');
+        Route::put('/perfil', [\App\Http\Controllers\Gastrobar\GastrobarPerfilController::class, 'update'])
+            ->name('perfil.update');
+
+        // ← RUTA DE MUNICIPIOS PARA EL PANEL DEL GASTROBAR
+        Route::get('/api/municipios/{id}', function ($id) {
+            return response()->json(
+                App\Models\Municipio::where('departamento_id', $id)->orderBy('nombre')->get(['id', 'nombre'])
+            );
+        });
+
+        Route::resource('eventos', \App\Http\Controllers\Gastrobar\GastrobarEventoController::class);
+        Route::resource('empleos', \App\Http\Controllers\Gastrobar\GastrobarEmpleoController::class);
+        Route::get('/galeria',           [\App\Http\Controllers\Gastrobar\GastrobarGaleriaController::class, 'index'])->name('galeria.index');
+        Route::post('/galeria',          [\App\Http\Controllers\Gastrobar\GastrobarGaleriaController::class, 'store'])->name('galeria.store');
+        Route::delete('/galeria/{foto}', [\App\Http\Controllers\Gastrobar\GastrobarGaleriaController::class, 'destroy'])->name('galeria.destroy');
+        Route::get('/estadisticas', [\App\Http\Controllers\Gastrobar\GastrobarEstadisticasController::class, 'index'])
+            ->name('estadisticas.index');
     });
 
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
-    Route::get('/mis-pedidos', [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
+    Route::get('/mis-pedidos',        [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
     Route::get('/mis-pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
 });
 

@@ -23,12 +23,21 @@
         </a>
     </div>
 
-    {{-- ── Mensaje de Éxito ── --}}
+    {{-- ── Mensajes ── --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
             <div class="d-flex align-items-center">
                 <i class="bi bi-check-circle-fill me-2 fs-5"></i>
                 <div>{{ session('success') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                <div>{{ session('error') }}</div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -81,7 +90,6 @@
     <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white p-3">
         <form method="GET" action="{{ route('admin.empleos.index') }}" class="row g-3 align-items-center">
 
-            {{-- Tabs Todos / Restaurantes / Gastrobares --}}
             <div class="col-12 col-sm-auto">
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('admin.empleos.index', array_merge(request()->except(['tipo','page']), ['tipo' => ''])) }}"
@@ -102,7 +110,6 @@
                 </div>
             </div>
 
-            {{-- Buscador por título --}}
             <div class="col-12 col-sm">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 text-muted">
@@ -154,10 +161,8 @@
                         @forelse($empleos as $empleo)
                         <tr class="border-bottom" style="border-color: #edf2f7 !important;">
 
-                            {{-- Puesto & ID --}}
                             <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center">
-                                    {{-- Barra lateral: azul = restaurante, amarillo = gastrobar --}}
                                     <div class="rounded-pill me-2"
                                          style="width: 4px; height: 32px;
                                                 background-color: {{ $empleo->gastrobar_id ? '#f59e0b' : '#3b82f6' }};">
@@ -176,7 +181,6 @@
                                 </div>
                             </td>
 
-                            {{-- Establecimiento (restaurante o gastrobar) --}}
                             <td class="py-3" style="font-size: 0.9rem;">
                                 @if($empleo->gastrobar_id)
                                     <div class="d-flex align-items-center gap-1">
@@ -195,7 +199,6 @@
                                 @endif
                             </td>
 
-                            {{-- Tipo de Contrato --}}
                             <td class="py-3">
                                 <span class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 fw-bold"
                                       style="font-size: 0.72rem;">
@@ -203,12 +206,10 @@
                                 </span>
                             </td>
 
-                            {{-- Salario --}}
                             <td class="py-3 fw-bold text-dark" style="font-size: 0.9rem; color: #2d3748 !important;">
                                 {{ $empleo->salario ? 'C$ ' . number_format($empleo->salario, 2) : 'A convenir' }}
                             </td>
 
-                            {{-- Estado Activa / Inactiva --}}
                             <td class="py-3 text-center">
                                 @if($empleo->activo)
                                     <span class="badge rounded-pill px-2 py-1 fw-semibold d-inline-flex align-items-center gap-1"
@@ -223,12 +224,10 @@
                                 @endif
                             </td>
 
-                            {{-- Fecha de Publicación --}}
                             <td class="py-3 text-muted" style="font-size: 0.82rem;">
                                 <i class="bi bi-calendar3 me-1"></i> {{ $empleo->created_at->format('d M Y') }}
                             </td>
 
-                            {{-- Panel de Acciones --}}
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-3">
                                     <a href="{{ route('admin.empleos.edit', $empleo) }}"
@@ -279,7 +278,6 @@
         </div>
     </div>
 
-    {{-- Paginación --}}
     @if($empleos->hasPages())
         <div class="mt-4 d-flex justify-content-end">
             {{ $empleos->withQueryString()->links('pagination::bootstrap-5') }}

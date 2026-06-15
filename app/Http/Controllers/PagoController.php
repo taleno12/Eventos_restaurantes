@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Pago;
 use App\Models\Contrato;
+use App\Models\Departamento;
+use App\Models\Municipio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -46,6 +48,9 @@ class PagoController extends Controller
                                 ->latest()
                                 ->get();
 
+        // Departamentos para el filtro en cascada del modal "Registrar Pago"
+        $departamentos = Departamento::orderBy('nombre')->get();
+
         $totalRecaudado  = Pago::pagados()->sum('monto');
         $totalPagados    = Pago::pagados()->count();
         $totalPendientes = Pago::pendientes()->count();
@@ -58,12 +63,59 @@ class PagoController extends Controller
         return view('pagos.index', compact(
             'pagos',
             'contratosActivos',
+            'departamentos',
             'totalRecaudado',
             'totalPagados',
             'totalPendientes',
             'totalAnulados',
             'recaudadoMes'
         ));
+    }
+
+    // ── AJAX: MUNICIPIOS POR DEPARTAMENTO ──────────────────────────
+    // GET /pagos/ajax/municipios/{departamento}
+
+    public function municipiosPorDepartamento(Departamento $departamento)
+    {
+        $municipios = $departamento->municipios()
+                        ->orderBy('nombre')
+                        ->get(['id', 'nombre']);
+
+        return response()->json($municipios);
+    }
+
+    // ── AJAX: CONTRATOS POR MUNICIPIO ───────────────────────────────
+    // GET /pagos/ajax/contratos?municipio_id=##
+
+    public function contratosPorMunicipio(Request $request)
+    {
+        $request->validate([
+            'municipio_id' => 'required|exists:municipios,id',
+        ]);
+
+        $municipioId = $request->query('municipio_id');
+
+        $contratos = Contrato::with(['restaurante', 'gastrobar'])
+            ->whereIn('estado', ['activo', 'pendiente'])
+            ->where(function ($q) use ($municipioId) {
+                $q->whereHas('restaurante', fn($r) => $r->where('municipio_id', $municipioId))
+                  ->orWhereHas('gastrobar', fn($g) => $g->where('municipio_id', $municipioId));
+            })
+            ->latest()
+            ->get()
+            ->map(function ($contrato) {
+                $est = $contrato->establecimiento();
+
+                return [
+                    'id'              => $contrato->id,
+                    'numero_contrato' => $contrato->numero_contrato,
+                    'nombre'          => $est ? $est->nombre : 'Sin establecimiento',
+                    'tipo'            => $contrato->tipoEstablecimiento(),
+                    'plan'            => $contrato->plan,
+                ];
+            });
+
+        return response()->json($contratos);
     }
 
     // ── STORE ─────────────────────────────────────────────────────

@@ -85,7 +85,8 @@ class RestauranteController extends Controller
             ? ($request->filled('municipio') ? $request->municipio : null)
             : $municipioPredefinido;
 
-        $query = Restaurante::with(['departamento', 'municipio'])
+        $query = Restaurante::activos()
+            ->with(['departamento', 'municipio'])
             ->withCount(['eventos' => function ($q) {
                 $q->where('fecha_evento', '>=', now());
             }]);
@@ -121,6 +122,10 @@ class RestauranteController extends Controller
 
     public function publicShow(Restaurante $restaurante)
     {
+        if (!$restaurante->activo) {
+            abort(404);
+        }
+
         $restaurante->load(['departamento', 'municipio', 'imagenes']);
 
         $platos = \App\Models\Plato::where('restaurante_id', $restaurante->id)
@@ -135,6 +140,10 @@ class RestauranteController extends Controller
 
     public function ordenar(Restaurante $restaurante)
     {
+        if (!$restaurante->activo) {
+            abort(404);
+        }
+
         $platos = $restaurante->platos()->where('activo', true)->get()->groupBy('categoria');
         return view('restaurantes.ordenar', compact('restaurante', 'platos'));
     }
@@ -337,6 +346,22 @@ class RestauranteController extends Controller
 
         return redirect()->route('admin.restaurantes.index')
             ->with('success', 'Restaurante eliminado correctamente.');
+    }
+
+    /**
+     * Activa o desactiva un restaurante.
+     * Al desactivarlo, deja de aparecer en la vista pública junto con
+     * sus eventos y empleos, y se bloquea el acceso de su propietario.
+     */
+    public function toggleActivo(Restaurante $restaurante)
+    {
+        $restaurante->update(['activo' => !$restaurante->activo]);
+
+        return redirect()->back()->with('success',
+            $restaurante->activo
+                ? 'Restaurante activado correctamente.'
+                : 'Restaurante desactivado. Ya no aparecerá en la vista pública y su propietario no podrá acceder al panel.'
+        );
     }
 
     public function getPorMunicipio($municipio_id)

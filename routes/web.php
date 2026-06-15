@@ -17,6 +17,8 @@ use App\Http\Controllers\GastrobarController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\Restaurante\CategoriaController;
 
 use App\Models\Restaurante;
@@ -116,6 +118,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/{restaurante}/edit', [RestauranteController::class, 'edit'])->name('edit');
         Route::put('/{restaurante}',      [RestauranteController::class, 'update'])->name('update');
         Route::delete('/{restaurante}',   [RestauranteController::class, 'destroy'])->name('destroy');
+        Route::patch('/{restaurante}/toggle', [RestauranteController::class, 'toggleActivo'])->name('toggle');
         Route::get('/{restaurante}',      [RestauranteController::class, 'adminShow'])->name('show');
     });
 
@@ -126,6 +129,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/{gastrobar}/edit',  [GastrobarController::class, 'edit'])->name('edit');
         Route::put('/{gastrobar}',       [GastrobarController::class, 'update'])->name('update');
         Route::delete('/{gastrobar}',    [GastrobarController::class, 'destroy'])->name('destroy');
+        Route::patch('/{gastrobar}/toggle', [GastrobarController::class, 'toggleActivo'])->name('toggle');
         Route::get('/{gastrobar}',       [GastrobarController::class, 'adminShow'])->name('show');
     });
 
@@ -222,23 +226,40 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('pagos')->name('pagos.')->group(function () {
         Route::get('/',                [PagoController::class, 'index'])->name('index');
         Route::post('/',               [PagoController::class, 'store'])->name('store');
+
+        Route::get('/ajax/municipios/{departamento}', [PagoController::class, 'municipiosPorDepartamento'])
+            ->name('ajax.municipios');
+        Route::get('/ajax/contratos', [PagoController::class, 'contratosPorMunicipio'])
+            ->name('ajax.contratos');
+
         Route::get('/{pago}/pdf',      [PagoController::class, 'descargarPdf'])->name('pdf');
         Route::get('/{pago}',          [PagoController::class, 'show'])->name('show');
         Route::patch('/{pago}/estado', [PagoController::class, 'updateEstado'])->name('updateEstado');
         Route::delete('/{pago}',       [PagoController::class, 'destroy'])->name('destroy');
     });
 
+    // ── NOTIFICACIONES ────────────────────────────────────────────────────────
+    Route::prefix('notificaciones')->name('notificaciones.')->group(function () {
+        Route::get('/',                       [NotificacionController::class, 'index'])->name('index');
+        Route::patch('/marcar-todas',         [NotificacionController::class, 'marcarTodasLeidas'])->name('marcarTodasLeidas');
+        Route::patch('/{notificacion}/leer',  [NotificacionController::class, 'marcarLeida'])->name('marcarLeida');
+        Route::delete('/{notificacion}',      [NotificacionController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── USUARIOS DEL SISTEMA ──────────────────────────────────────────────────
     Route::prefix('usuarios')->name('usuarios.')->group(function () {
         Route::get('/',                [\App\Http\Controllers\UsuarioController::class, 'index'])->name('index');
+        Route::get('/create',          [\App\Http\Controllers\UsuarioController::class, 'create'])->name('create');
+        Route::post('/',               [\App\Http\Controllers\UsuarioController::class, 'store'])->name('store');
         Route::get('/{user}/edit',     [\App\Http\Controllers\UsuarioController::class, 'edit'])->name('edit');
         Route::put('/{user}',          [\App\Http\Controllers\UsuarioController::class, 'update'])->name('update');
         Route::delete('/{user}',       [\App\Http\Controllers\UsuarioController::class, 'destroy'])->name('destroy');
         Route::patch('/{user}/toggle', [\App\Http\Controllers\UsuarioController::class, 'toggle'])->name('toggle');
+        Route::get('/{user}',          [\App\Http\Controllers\UsuarioController::class, 'show'])->name('show');
     });
 
-    Route::get('/reportes', function () {
-        return view('reportes.index');
-    })->name('reportes.index');
+    // ── REPORTES ──────────────────────────────────────────────────────────────
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
     Route::get('/api/departamentos/{id}/municipios', function ($id) {
         return App\Models\Municipio::where('departamento_id', $id)->get(['id', 'nombre']);
@@ -258,7 +279,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // ── PANEL DEL RESTAURANTE ─────────────────────────────────────────────────────
-Route::middleware(['auth', 'role:restaurante,admin'])
+Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
     ->prefix('mi-restaurante')
     ->name('restaurante.')
     ->group(function () {
@@ -297,7 +318,7 @@ Route::middleware(['auth', 'role:restaurante,admin'])
     });
 
 // ── PANEL DEL GASTROBAR ───────────────────────────────────────────────────────
-Route::middleware(['auth', 'role:gastrobar,admin'])
+Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
     ->prefix('mi-gastrobar')
     ->name('gastrobar.')
     ->group(function () {
@@ -308,7 +329,6 @@ Route::middleware(['auth', 'role:gastrobar,admin'])
         Route::put('/perfil', [\App\Http\Controllers\Gastrobar\GastrobarPerfilController::class, 'update'])
             ->name('perfil.update');
 
-        // ← RUTA DE MUNICIPIOS PARA EL PANEL DEL GASTROBAR
         Route::get('/api/municipios/{id}', function ($id) {
             return response()->json(
                 App\Models\Municipio::where('departamento_id', $id)->orderBy('nombre')->get(['id', 'nombre'])
@@ -327,7 +347,7 @@ Route::middleware(['auth', 'role:gastrobar,admin'])
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
-    Route::get('/mis-pedidos',        [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
+    Route::get('/mis-pedidos',          [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
     Route::get('/mis-pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
 });
 

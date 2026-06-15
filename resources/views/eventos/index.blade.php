@@ -22,7 +22,7 @@
         </a>
     </div>
 
-    {{-- ── Alerta éxito ── --}}
+    {{-- ── Mensajes ── --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -32,12 +32,20 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     {{-- ── Barra de filtros ── --}}
     <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white p-3">
         <form method="GET" action="{{ route('eventos.index') }}" class="row g-3 align-items-center">
 
-            {{-- Tabs Todos / Restaurantes / Gastrobares --}}
             <div class="col-12 col-sm-auto">
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('eventos.index', array_merge(request()->except(['tipo','page']), ['tipo' => ''])) }}"
@@ -58,7 +66,6 @@
                 </div>
             </div>
 
-            {{-- Buscador por título --}}
             <div class="col-12 col-sm">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 text-muted">
@@ -68,7 +75,6 @@
                            class="form-control bg-light border-start-0 ps-0"
                            placeholder="Buscar por título..."
                            style="box-shadow: none;">
-                    {{-- Preservar tipo activo al buscar --}}
                     @if(request('tipo'))
                         <input type="hidden" name="tipo" value="{{ request('tipo') }}">
                     @endif
@@ -117,10 +123,8 @@
                         @forelse($eventos as $evento)
                         <tr class="border-bottom" style="border-color: #edf2f7 !important;">
 
-                            {{-- Evento --}}
                             <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center">
-                                    {{-- Barra lateral: azul = restaurante, amarillo = gastrobar --}}
                                     <div class="rounded-pill me-2"
                                          style="width: 4px; height: 26px;
                                                 background-color: {{ $evento->gastrobar_id ? '#f59e0b' : '#3b82f6' }};">
@@ -135,19 +139,16 @@
                                 </div>
                             </td>
 
-                            {{-- Fecha / Hora --}}
                             <td class="py-3 text-secondary" style="font-size: 0.9rem;">
                                 <i class="bi bi-clock me-1 text-muted"></i>
                                 {{ \Carbon\Carbon::parse($evento->fecha_evento)->format('d M Y, h:i A') }}
                             </td>
 
-                            {{-- Precio --}}
                             <td class="py-3 fw-bold text-dark"
                                 style="font-size: 0.95rem; color: #2d3748 !important;">
                                 C$ {{ number_format($evento->precio, 2) }}
                             </td>
 
-                            {{-- Ubicación + establecimiento --}}
                             <td class="py-3">
                                 <div class="d-flex align-items-center mb-1">
                                     <i class="bi bi-geo-alt text-danger me-1" style="font-size: 0.85rem;"></i>
@@ -171,7 +172,6 @@
                                 </small>
                             </td>
 
-                            {{-- Destacado --}}
                             <td class="py-3">
                                 @if($evento->is_destacado)
                                     <span class="badge rounded-pill px-2 py-1 fw-semibold"
@@ -187,7 +187,6 @@
                                 @endif
                             </td>
 
-                            {{-- Acciones --}}
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-3">
                                     <a href="{{ route('eventos.edit', $evento->id) }}"

@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Http;
 
 class EventoController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // HELPER FCM
-    // ─────────────────────────────────────────────────────────────────────────
-
     private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
     {
         try {
@@ -88,15 +84,23 @@ class EventoController extends Controller
             ? ($request->filled('departamento') ? $request->departamento : null)
             : $departamentoPredefinido;
 
-        $restaurantes = Restaurante::orderBy('nombre')->get();
+        $restaurantes = Restaurante::activos()->orderBy('nombre')->get();
 
         $eventosDestacados = Evento::with(['restaurante', 'gastrobar', 'departamento'])
             ->where('is_destacado', true)
+            ->where(function ($q) {
+                $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
+                  ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
+            })
             ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
             ->latest()
             ->get();
 
-        $query = Evento::with(['restaurante', 'gastrobar', 'departamento', 'municipio']);
+        $query = Evento::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
+            ->where(function ($q) {
+                $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
+                  ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
+            });
 
         if ($deptoFiltro) {
             $query->where('departamento_id', $deptoFiltro);
@@ -120,6 +124,10 @@ class EventoController extends Controller
 
         if ($eventos->isEmpty() && !$hayFiltroActivo && !$departamentoPredefinido) {
             $eventos = Evento::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
+                ->where(function ($q) {
+                    $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
+                      ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
+                })
                 ->latest()
                 ->take(6)
                 ->get();
@@ -138,10 +146,19 @@ class EventoController extends Controller
     public function show(Evento $evento)
     {
         $evento->load(['restaurante', 'gastrobar', 'departamento', 'municipio', 'imagenes']);
+
+        $entidadActiva = ($evento->restaurante && $evento->restaurante->activo)
+                      || ($evento->gastrobar   && $evento->gastrobar->activo);
+
+        abort_unless($entidadActiva, 404);
+
         return view('eventos-show', compact('evento'));
     }
 
-    // ── ADMIN: index con filtro tipo ──────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // ADMIN
+    // ─────────────────────────────────────────────────────────────────────────
+
     public function index(Request $request)
     {
         $this->soloAdmin();
@@ -162,7 +179,6 @@ class EventoController extends Controller
         return view('eventos.index', compact('eventos'));
     }
 
-    // ── ADMIN: create ─────────────────────────────────────────────────────────
     public function create()
     {
         $this->soloAdmin();
@@ -172,7 +188,6 @@ class EventoController extends Controller
         return view('eventos.create', compact('departamentos', 'restaurantes', 'gastrobares'));
     }
 
-    // ── ADMIN: store ──────────────────────────────────────────────────────────
     public function store(Request $request)
     {
         $this->soloAdmin();
@@ -191,14 +206,12 @@ class EventoController extends Controller
             'galeria.*'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        // Al menos uno de los dos debe estar presente
         if (!$request->filled('restaurante_id') && !$request->filled('gastrobar_id')) {
             return back()->withErrors(['restaurante_id' => 'Debes seleccionar un restaurante o un gastrobar.'])->withInput();
         }
 
         $datos = $request->except(['imagen', 'galeria']);
-        $datos['is_destacado']  = $request->boolean('is_destacado', false);
-        // Asegurar que solo uno quede guardado (el que no aplica va null)
+        $datos['is_destacado']   = $request->boolean('is_destacado', false);
         $datos['restaurante_id'] = $request->filled('restaurante_id') ? $request->restaurante_id : null;
         $datos['gastrobar_id']   = $request->filled('gastrobar_id')   ? $request->gastrobar_id   : null;
 
@@ -226,7 +239,6 @@ class EventoController extends Controller
             ->with('success', 'Evento publicado con éxito.');
     }
 
-    // ── ADMIN: edit ───────────────────────────────────────────────────────────
     public function edit(Evento $evento)
     {
         $this->soloAdmin();
@@ -238,7 +250,6 @@ class EventoController extends Controller
         return view('eventos.edit', compact('evento', 'departamentos', 'municipios', 'restaurantes', 'gastrobares'));
     }
 
-    // ── ADMIN: update ─────────────────────────────────────────────────────────
     public function update(Request $request, Evento $evento)
     {
         $this->soloAdmin();
@@ -288,7 +299,6 @@ class EventoController extends Controller
             ->with('success', 'Evento actualizado correctamente.');
     }
 
-    // ── ADMIN: destroy ────────────────────────────────────────────────────────
     public function destroy(Evento $evento)
     {
         $this->soloAdmin();

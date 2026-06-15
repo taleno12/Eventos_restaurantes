@@ -113,4 +113,14 @@ class Gastrobar extends Model
         if (!$this->hora_apertura && !$this->hora_cierre) return 'No especificado';
         return ($this->hora_apertura ?? '--') . ' - ' . ($this->hora_cierre ?? '--');
     }
+
+    // ── SCOPES ──────────────────────────────────────────────────
+
+    /**
+     * Solo gastrobares activos (no desactivados por el admin)
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true);
+    }
 }

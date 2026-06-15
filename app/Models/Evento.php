@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property-read \App\Models\Municipio|null $municipio
  * @property-read \App\Models\Restaurante|null $restaurante
  * @property-read \App\Models\Gastrobar|null $gastrobar
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento deEntidadesActivas()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evento query()
@@ -91,5 +92,19 @@ class Evento extends Model
     public function getPrecioFormateadoAttribute()
     {
         return 'C$ ' . number_format($this->precio, 2);
+    }
+
+    /**
+     * Solo eventos cuyo restaurante o gastrobar esté activo (no desactivado por el admin)
+     */
+    public function scopeDeEntidadesActivas($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereHas('restaurante', function ($sub) {
+                $sub->where('activo', true);
+            })->orWhereHas('gastrobar', function ($sub) {
+                $sub->where('activo', true);
+            });
+        });
     }
 }

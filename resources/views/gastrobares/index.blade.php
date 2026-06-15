@@ -22,12 +22,21 @@
         </a>
     </div>
 
-    {{-- ── Mensaje de Éxito ── --}}
+    {{-- ── Mensajes ── --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
             <div class="d-flex align-items-center">
                 <i class="bi bi-check-circle-fill me-2 fs-5"></i>
                 <div>{{ session('success') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                <div>{{ session('error') }}</div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -114,7 +123,7 @@
         </form>
     </div>
 
-    {{-- ── Tabla Principal de Gastrobares ── --}}
+    {{-- ── Tabla Principal ── --}}
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -126,7 +135,7 @@
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Ubicación</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Horario</th>
                             <th class="py-3 text-secondary border-0 text-center" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Estado</th>
-                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; width: 160px;">Acciones</th>
+                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; width: 180px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="border-top-0">
@@ -145,7 +154,7 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <span class="fw-bold text-dark d-block text-uppercase" style="color: #2d3748 !important; font-size: 0.9rem;">{{ $gastrobar->nombre }}</span>
+                                        <span class="fw-bold text-dark d-block text-uppercase" style="font-size: 0.9rem;">{{ $gastrobar->nombre }}</span>
                                         <small class="text-muted" style="font-size: 0.75rem;">{{ $gastrobar->email ?? 'ID: #' . $gastrobar->id }}</small>
                                     </div>
                                 </div>
@@ -154,7 +163,7 @@
                             {{-- Tipo --}}
                             <td class="py-3">
                                 @if($gastrobar->tipo_bar)
-                                    <span class="badge px-2 py-1 text-uppercase fw-bold" style="background:#fff8e1; color:#b45309; font-size: 0.7rem; letter-spacing: 0.3px;">
+                                    <span class="badge px-2 py-1 text-uppercase fw-bold" style="background:#fff8e1; color:#b45309; font-size: 0.7rem;">
                                         {{ $gastrobar->tipo_bar }}
                                     </span>
                                 @endif
@@ -200,8 +209,8 @@
                                         <span class="bg-success rounded-circle" style="width: 5px; height: 5px;"></span> ACTIVO
                                     </span>
                                 @else
-                                    <span class="badge rounded-pill bg-light text-muted border px-2 py-1 fw-normal" style="font-size: 0.72rem;">
-                                        INACTIVO
+                                    <span class="badge rounded-pill bg-light text-muted border px-2 py-1 fw-normal d-inline-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                                        <span class="bg-secondary rounded-circle" style="width: 5px; height: 5px;"></span> INACTIVO
                                     </span>
                                 @endif
                             </td>
@@ -209,24 +218,45 @@
                             {{-- Acciones --}}
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-2">
+
                                     <a href="{{ route('admin.gastrobares.show', $gastrobar->id) }}"
-                                       class="text-secondary p-1 action-icon-view" title="Ver Detalle" style="transition: color 0.2s;">
+                                       class="text-secondary p-1 action-icon-view" title="Ver Detalle">
                                         <i class="bi bi-eye fs-5"></i>
                                     </a>
+
                                     <a href="{{ route('admin.gastrobares.edit', $gastrobar->id) }}"
-                                       class="text-secondary p-1 action-icon-edit" title="Editar Gastrobar" style="transition: color 0.2s;">
+                                       class="text-secondary p-1 action-icon-edit" title="Editar Gastrobar">
                                         <i class="bi bi-pencil fs-5"></i>
                                     </a>
+
+                                    {{-- Toggle Activo/Inactivo --}}
+                                    <form action="{{ route('admin.gastrobares.toggle', $gastrobar->id) }}" method="POST"
+                                          class="d-inline m-0"
+                                          onsubmit="return confirm('{{ $gastrobar->activo ? '¿Desactivar este gastrobar? Se ocultará de la vista pública junto con sus eventos y empleos, y su propietario perderá acceso.' : '¿Activar este gastrobar?' }}')">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit"
+                                                class="btn btn-link p-1 m-0 border-0 align-baseline {{ $gastrobar->activo ? 'action-icon-toggle-off' : 'action-icon-toggle-on' }}"
+                                                title="{{ $gastrobar->activo ? 'Desactivar' : 'Activar' }}"
+                                                style="box-shadow: none; text-decoration: none;">
+                                            <i class="bi {{ $gastrobar->activo ? 'bi-toggle-on fs-5 text-success' : 'bi-toggle-off fs-5 text-secondary' }}"></i>
+                                        </button>
+                                    </form>
+
+                                    {{-- Eliminar --}}
                                     <form action="{{ route('admin.gastrobares.destroy', $gastrobar->id) }}" method="POST"
                                           class="d-inline m-0"
-                                          onsubmit="return confirm('¿Estás seguro de que deseas eliminar este gastrobar? Esta acción no se puede deshacer.');">
+                                          onsubmit="return confirm('¿Eliminar este gastrobar? Esta acción no se puede deshacer.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-link text-secondary p-1 m-0 border-0 align-baseline action-icon-delete"
-                                                title="Eliminar Gastrobar" style="box-shadow: none; text-decoration: none;">
+                                        <button type="submit"
+                                                class="btn btn-link text-secondary p-1 m-0 border-0 align-baseline action-icon-delete"
+                                                title="Eliminar Gastrobar"
+                                                style="box-shadow: none; text-decoration: none;">
                                             <i class="bi bi-trash fs-5"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
 
@@ -256,9 +286,11 @@
 </div>
 
 <style>
-    .action-icon-view:hover  { color: #0d6efd !important; }
-    .action-icon-edit:hover  { color: #ffc107 !important; }
+    .action-icon-view:hover   { color: #0d6efd !important; }
+    .action-icon-edit:hover   { color: #ffc107 !important; }
     .action-icon-delete:hover { color: #dc3545 !important; }
+    .action-icon-toggle-off:hover i { color: #dc3545 !important; }
+    .action-icon-toggle-on:hover i  { color: #198754 !important; }
     .table-hover tbody tr:hover { background-color: #f8fafc !important; }
 </style>
 

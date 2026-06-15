@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Http;
 
 class GastrobarController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // HELPER FCM
-    // ─────────────────────────────────────────────────────────────────────────
-
     private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
     {
         try {
@@ -68,7 +64,6 @@ class GastrobarController extends Controller
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
-    // ── INDEX ────────────────────────────────────────────────────
     public function index(Request $request)
     {
         $query = Gastrobar::with(['departamento', 'municipio'])->latest();
@@ -94,14 +89,12 @@ class GastrobarController extends Controller
         ));
     }
 
-    // ── CREATE ───────────────────────────────────────────────────
     public function create()
     {
         $departamentos = Departamento::orderBy('nombre')->get();
         return view('gastrobares.create', compact('departamentos'));
     }
 
-    // ── STORE ────────────────────────────────────────────────────
     public function store(Request $request)
     {
         $request->validate([
@@ -165,22 +158,20 @@ class GastrobarController extends Controller
         ]);
 
         $this->enviarNotificacionFCM(
-            '🍹 Nuevo gastrobar',
-            "¡{$gastrobar->nombre} ya está en GastroNicaragua!"
+            'Nuevo gastrobar',
+            "{$gastrobar->nombre} ya está en GastroNicaragua!"
         );
 
         return redirect()->route('admin.gastrobares.index')
             ->with('success', 'Gastrobar y usuario propietario creados correctamente.');
     }
 
-    // ── SHOW (ADMIN) ─────────────────────────────────────────────
     public function adminShow(Gastrobar $gastrobar)
     {
         $gastrobar->load(['departamento', 'municipio']);
         return view('gastrobares.show', compact('gastrobar'));
     }
 
-    // ── EDIT ─────────────────────────────────────────────────────
     public function edit(Gastrobar $gastrobar)
     {
         $departamentos = Departamento::orderBy('nombre')->get();
@@ -191,7 +182,6 @@ class GastrobarController extends Controller
         return view('gastrobares.edit', compact('gastrobar', 'departamentos', 'municipios'));
     }
 
-    // ── UPDATE ───────────────────────────────────────────────────
     public function update(Request $request, Gastrobar $gastrobar)
     {
         $propietario = User::where('gastrobar_id', $gastrobar->id)
@@ -282,7 +272,6 @@ class GastrobarController extends Controller
             ->with('success', 'Gastrobar actualizado correctamente.');
     }
 
-    // ── DESTROY ──────────────────────────────────────────────────
     public function destroy(Gastrobar $gastrobar)
     {
         if ($gastrobar->imagen_principal) {
@@ -294,7 +283,6 @@ class GastrobarController extends Controller
             }
         }
 
-        // Eliminar fotos de la tabla gastrobar_fotos
         foreach ($gastrobar->fotos as $foto) {
             Storage::disk('public')->delete($foto->ruta_foto);
             $foto->delete();
@@ -307,7 +295,6 @@ class GastrobarController extends Controller
             ->with('success', 'Gastrobar eliminado correctamente.');
     }
 
-    // ── PUBLIC INDEX ─────────────────────────────────────────────
     public function publicIndex(Request $request)
     {
         $departamentoPredefinido = auth()->check() ? auth()->user()->departamento_id : null;
@@ -323,7 +310,7 @@ class GastrobarController extends Controller
             ? ($request->filled('municipio') ? $request->municipio : null)
             : $municipioPredefinido;
 
-        $query = Gastrobar::with(['departamento', 'municipio'])->latest();
+        $query = Gastrobar::activos()->with(['departamento', 'municipio'])->latest();
 
         if ($deptoFiltro)                 $query->where('departamento_id', $deptoFiltro);
         if ($munFiltro)                   $query->where('municipio_id', $munFiltro);
@@ -344,10 +331,29 @@ class GastrobarController extends Controller
         ));
     }
 
-    // ── PUBLIC SHOW ──────────────────────────────────────────────
     public function publicShow(Gastrobar $gastrobar)
     {
+        if (!$gastrobar->activo) {
+            abort(404);
+        }
+
         $gastrobar->load(['departamento', 'municipio', 'fotos']);
         return view('gastrobares.public_show', compact('gastrobar'));
+    }
+
+    /**
+     * Activa o desactiva un gastrobar.
+     * Al desactivarlo deja de aparecer en la vista pública junto con
+     * sus eventos y empleos, y se bloquea el acceso de su propietario.
+     */
+    public function toggleActivo(Gastrobar $gastrobar)
+    {
+        $gastrobar->update(['activo' => !$gastrobar->activo]);
+
+        return redirect()->back()->with('success',
+            $gastrobar->activo
+                ? 'Gastrobar activado correctamente.'
+                : 'Gastrobar desactivado. Ya no aparecerá en la vista pública y su propietario no podrá acceder al panel.'
+        );
     }
 }

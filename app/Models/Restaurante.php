@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\Municipio|null $municipio
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $reviews
  * @property-read \App\Models\User|null $propietario
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante activos()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Restaurante query()
@@ -89,6 +90,7 @@ class Restaurante extends Model
 
     protected $casts = [
         'dias_laborales' => 'array',
+        'activo' => 'boolean',
     ];
 
     /**
@@ -180,5 +182,13 @@ class Restaurante extends Model
     public function categoriasPlato(): HasMany
     {
         return $this->hasMany(\App\Models\CategoriaPlato::class, 'restaurante_id');
+    }
+
+    /**
+     * Solo restaurantes activos (no desactivados por el admin)
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true);
     }
 }

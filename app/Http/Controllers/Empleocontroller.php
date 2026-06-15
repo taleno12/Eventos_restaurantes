@@ -15,10 +15,6 @@ use App\Mail\AplicacionEmpleo;
 
 class EmpleoController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // HELPER FCM
-    // ─────────────────────────────────────────────────────────────────────────
-
     private function enviarNotificacionFCM(string $titulo, string $cuerpo): void
     {
         try {
@@ -91,6 +87,7 @@ class EmpleoController extends Controller
 
         $query = Empleo::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
             ->where('activo', true)
+            ->deEntidadesActivas()
             ->orderByDesc('created_at');
 
         if ($search = $request->input('search')) {
@@ -102,20 +99,15 @@ class EmpleoController extends Controller
             });
         }
 
-        if ($deptoFiltro) {
-            $query->where('departamento_id', $deptoFiltro);
-        }
-
-        if ($munFiltro) {
-            $query->where('municipio_id', $munFiltro);
-        }
+        if ($deptoFiltro) $query->where('departamento_id', $deptoFiltro);
+        if ($munFiltro)   $query->where('municipio_id', $munFiltro);
 
         $empleos            = $query->paginate(9)->withQueryString();
         $departamentos      = Departamento::orderBy('nombre')->get();
         $municipios         = Municipio::orderBy('nombre')->get();
-        $totalRestaurantes  = Restaurante::count();
+        $totalRestaurantes  = Restaurante::activos()->count();
         $totalDepartamentos = Departamento::count();
-        $totalActivos       = Empleo::where('activo', true)->count();
+        $totalActivos       = Empleo::where('activo', true)->deEntidadesActivas()->count();
 
         return view('empleos', compact(
             'empleos',
@@ -132,7 +124,14 @@ class EmpleoController extends Controller
     public function show(Empleo $empleo)
     {
         abort_unless($empleo->activo, 404);
+
         $empleo->load(['restaurante', 'gastrobar', 'departamento', 'municipio']);
+
+        $entidadActiva = ($empleo->restaurante && $empleo->restaurante->activo)
+                      || ($empleo->gastrobar   && $empleo->gastrobar->activo);
+
+        abort_unless($entidadActiva, 404);
+
         return view('empleos-show', compact('empleo'));
     }
 

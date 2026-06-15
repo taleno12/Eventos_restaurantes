@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-    
+
     {{-- ── Encabezado Principal ── --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -17,13 +17,12 @@
                 <i class="bi bi-circle-fill text-secondary me-1" style="font-size: 6px; vertical-align: middle;"></i> Control, estados y localización de establecimientos en la plataforma.
             </p>
         </div>
-        {{-- RUTA REPARADA --}}
         <a href="{{ route('admin.restaurantes.create') }}" class="btn btn-primary px-4 rounded-pill shadow-sm fw-semibold">
             <i class="bi bi-plus-lg me-1"></i> Nuevo Restaurante
         </a>
     </div>
 
-    {{-- ── Mensaje de Éxito ── --}}
+    {{-- ── Mensajes ── --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
             <div class="d-flex align-items-center">
@@ -33,8 +32,17 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-    {{-- ── Bloque de Tarjetas de Métricas ── --}}
+    {{-- ── Tarjetas de Métricas ── --}}
     <div class="row g-3 mb-4">
         <div class="col-12 col-sm-4">
             <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
@@ -112,26 +120,26 @@
         </form>
     </div>
 
-    {{-- ── Tabla Principal de Restaurantes ── --}}
+    {{-- ── Tabla Principal ── --}}
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light text-uppercase text-muted border-bottom" style="background-color: #f8f9fa !important;">
+                    <thead class="bg-light text-uppercase text-muted border-bottom">
                         <tr>
                             <th class="ps-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Restaurante</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Especialidad</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Ubicación</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Contacto</th>
                             <th class="py-3 text-secondary border-0 text-center" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Estado</th>
-                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; width: 160px;">Acciones</th>
+                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; width: 180px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="border-top-0">
                         @forelse($restaurantes as $restaurante)
                         <tr class="border-bottom" style="border-color: #edf2f7 !important;">
-                            
-                            {{-- ID, Imagen y Nombre --}}
+
+                            {{-- Imagen y Nombre --}}
                             <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center">
                                     <div class="bg-primary rounded-pill me-3" style="width: 4px; height: 32px;"></div>
@@ -143,23 +151,23 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <span class="fw-bold text-dark d-block text-uppercase tracking-wide" style="color: #2d3748 !important; font-size: 0.9rem;">{{ $restaurante->nombre }}</span>
+                                        <span class="fw-bold text-dark d-block text-uppercase" style="font-size: 0.9rem;">{{ $restaurante->nombre }}</span>
                                         <small class="text-muted" style="font-size: 0.75rem;">ID: #{{ $restaurante->id }}</small>
                                     </div>
                                 </div>
                             </td>
-                            
+
                             {{-- Especialidad --}}
                             <td class="py-3">
                                 @if($restaurante->especialidad)
-                                    <span class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.3px;">
+                                    <span class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 text-uppercase fw-bold" style="font-size: 0.7rem;">
                                         {{ $restaurante->especialidad }}
                                     </span>
                                 @else
                                     <span class="text-muted small">—</span>
                                 @endif
                             </td>
-                            
+
                             {{-- Ubicación --}}
                             <td class="py-3">
                                 <div class="d-flex flex-column">
@@ -176,8 +184,8 @@
                                     @endif
                                 </div>
                             </td>
-                            
-                            {{-- Canales de Contacto --}}
+
+                            {{-- Contacto --}}
                             <td class="py-3">
                                 <div class="d-flex flex-column gap-1">
                                     @if($restaurante->email)
@@ -192,39 +200,53 @@
                                     @endif
                                 </div>
                             </td>
-                            
-                            {{-- Estado Activo/Inactivo --}}
+
+                            {{-- Estado --}}
                             <td class="py-3 text-center">
-                                @if($restaurante->activo ?? true)
-                                    <span class="badge rounded-pill px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1" style="background-color: #e6fffa; color: #047481; border: 1px solid #b2f5ea; font-size: 0.72rem;">
+                                @if($restaurante->activo)
+                                    <span class="badge rounded-pill px-2 py-1 fw-semibold d-inline-flex align-items-center gap-1" style="background-color: #e6fffa; color: #047481; border: 1px solid #b2f5ea; font-size: 0.72rem;">
                                         <span class="bg-success rounded-circle" style="width: 5px; height: 5px;"></span> ACTIVO
                                     </span>
                                 @else
-                                    <span class="badge rounded-pill bg-light text-muted border px-2.5 py-1 fw-normal" style="font-size: 0.72rem;">
-                                        INACTIVO
+                                    <span class="badge rounded-pill bg-light text-muted border px-2 py-1 fw-normal d-inline-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                                        <span class="bg-secondary rounded-circle" style="width: 5px; height: 5px;"></span> INACTIVO
                                     </span>
                                 @endif
                             </td>
-                            
-                            {{-- Panel de Acciones --}}
+
+                            {{-- Acciones --}}
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-2">
-                                    {{-- RUTAS REPARADAS --}}
-                                    <a href="{{ route('admin.restaurantes.show', $restaurante->id) }}" class="text-secondary p-1 action-icon-view" title="Ver Detalle" style="transition: color 0.2s;">
+
+                                    <a href="{{ route('admin.restaurantes.show', $restaurante->id) }}" class="text-secondary p-1 action-icon-view" title="Ver Detalle">
                                         <i class="bi bi-eye fs-5"></i>
                                     </a>
-                                    
-                                    <a href="{{ route('admin.restaurantes.edit', $restaurante->id) }}" class="text-secondary p-1 action-icon-edit" title="Editar Restaurante" style="transition: color 0.2s;">
+
+                                    <a href="{{ route('admin.restaurantes.edit', $restaurante->id) }}" class="text-secondary p-1 action-icon-edit" title="Editar">
                                         <i class="bi bi-pencil fs-5"></i>
                                     </a>
-                                    
-                                    <form action="{{ route('admin.restaurantes.destroy', $restaurante->id) }}" method="POST" class="d-inline m-0" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este restaurante? Esta acción no se puede deshacer.');">
+
+                                    {{-- Toggle Activo/Inactivo --}}
+                                    <form action="{{ route('admin.restaurantes.toggle', $restaurante->id) }}" method="POST" class="d-inline m-0"
+                                          onsubmit="return confirm('{{ $restaurante->activo ? '¿Desactivar este restaurante? Se ocultará de la vista pública junto con sus eventos y empleos, y su propietario perderá acceso.' : '¿Activar este restaurante?' }}')">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-link p-1 m-0 border-0 align-baseline {{ $restaurante->activo ? 'action-icon-toggle-off' : 'action-icon-toggle-on' }}"
+                                                title="{{ $restaurante->activo ? 'Desactivar' : 'Activar' }}" style="box-shadow: none; text-decoration: none;">
+                                            <i class="bi {{ $restaurante->activo ? 'bi-toggle-on fs-5 text-success' : 'bi-toggle-off fs-5 text-secondary' }}"></i>
+                                        </button>
+                                    </form>
+
+                                    {{-- Eliminar --}}
+                                    <form action="{{ route('admin.restaurantes.destroy', $restaurante->id) }}" method="POST" class="d-inline m-0"
+                                          onsubmit="return confirm('¿Eliminar este restaurante? Esta acción no se puede deshacer.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-link text-secondary p-1 m-0 border-0 align-baseline action-icon-delete" title="Eliminar Restaurante" style="box-shadow: none; text-decoration: none;">
+                                        <button type="submit" class="btn btn-link text-secondary p-1 m-0 border-0 align-baseline action-icon-delete" title="Eliminar" style="box-shadow: none; text-decoration: none;">
                                             <i class="bi bi-trash fs-5"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>
@@ -244,7 +266,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- Paginación --}}
     <div class="mt-4 d-flex justify-content-end">
         {{ $restaurantes->withQueryString()->links('pagination::bootstrap-5') }}
@@ -252,9 +274,11 @@
 </div>
 
 <style>
-    .action-icon-view:hover { color: #0d6efd !important; }
-    .action-icon-edit:hover { color: #ffc107 !important; }
+    .action-icon-view:hover  { color: #0d6efd !important; }
+    .action-icon-edit:hover  { color: #ffc107 !important; }
     .action-icon-delete:hover { color: #dc3545 !important; }
+    .action-icon-toggle-off:hover i { color: #dc3545 !important; }
+    .action-icon-toggle-on:hover i  { color: #198754 !important; }
     .table-hover tbody tr:hover { background-color: #f8fafc !important; }
 </style>
 

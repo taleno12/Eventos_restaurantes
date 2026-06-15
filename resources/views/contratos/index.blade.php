@@ -32,6 +32,15 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     {{-- ── Tarjetas de Métricas ── --}}
     <div class="row g-3 mb-4">
@@ -212,17 +221,21 @@
                             </td>
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-2">
-                                    <a href="{{ route('contratos.show', $contrato) }}" class="text-secondary p-1" title="Ver Contrato">
+                                    <a href="{{ route('contratos.show', $contrato) }}"
+                                       class="text-secondary p-1 action-icon-view" title="Ver Contrato">
                                         <i class="bi bi-eye fs-5"></i>
                                     </a>
-                                    <a href="{{ route('contratos.edit', $contrato) }}" class="text-secondary p-1" title="Editar">
+                                    <a href="{{ route('contratos.edit', $contrato) }}"
+                                       class="text-secondary p-1 action-icon-edit" title="Editar">
                                         <i class="bi bi-pencil fs-5"></i>
                                     </a>
-                                    <form action="{{ route('contratos.destroy', $contrato) }}" method="POST" class="d-inline"
+                                    <form action="{{ route('contratos.destroy', $contrato) }}" method="POST" class="d-inline m-0"
                                           onsubmit="return confirm('¿Eliminar contrato {{ $contrato->numero_contrato }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn p-1 text-secondary border-0 bg-transparent" title="Eliminar">
+                                        <button type="submit"
+                                                class="btn btn-link text-secondary p-1 m-0 border-0 align-baseline action-icon-delete"
+                                                title="Eliminar" style="box-shadow: none; text-decoration: none;">
                                             <i class="bi bi-trash fs-5"></i>
                                         </button>
                                     </form>
@@ -289,7 +302,6 @@
                     </p>
                     <div class="row g-3 mb-3">
 
-                        {{-- Tipo de establecimiento --}}
                         <div class="col-md-12">
                             <label class="form-label small fw-semibold text-dark">Tipo de Establecimiento <span class="text-danger">*</span></label>
                             <div class="d-flex gap-3">
@@ -308,7 +320,6 @@
                             </div>
                         </div>
 
-                        {{-- Paso 1: Departamento --}}
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">
                                 <i class="bi bi-geo-alt text-warning me-1"></i>Departamento <span class="text-danger">*</span>
@@ -321,7 +332,6 @@
                             </select>
                         </div>
 
-                        {{-- Paso 2: Municipio --}}
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold text-dark">
                                 <i class="bi bi-pin-map text-warning me-1"></i>Municipio <span class="text-danger">*</span>
@@ -331,7 +341,6 @@
                             </select>
                         </div>
 
-                        {{-- Paso 3: Establecimiento (dinámico según tipo) --}}
                         <div class="col-md-4" id="selectEstablecimientoWrap">
                             <label class="form-label small fw-semibold text-dark" id="labelEstablecimiento">
                                 <i class="bi bi-shop text-warning me-1"></i>Gastrobar <span class="text-danger">*</span>
@@ -339,12 +348,10 @@
                             <select id="modal_establecimiento_id" class="form-select bg-light" style="box-shadow:none;cursor:pointer;" disabled>
                                 <option value="">Primero selecciona municipio</option>
                             </select>
-                            {{-- inputs hidden que se envían al form --}}
                             <input type="hidden" name="gastrobar_id"   id="hidden_gastrobar_id"   value="{{ old('gastrobar_id') }}">
                             <input type="hidden" name="restaurante_id" id="hidden_restaurante_id" value="{{ old('restaurante_id') }}">
                         </div>
 
-                        {{-- Representante y dirección --}}
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold text-dark">Representante Legal <span class="text-danger">*</span></label>
                             <input type="text" name="representante" value="{{ old('representante') }}"
@@ -363,7 +370,6 @@
 
                     <hr class="my-3" style="border-color:#edf2f7;">
 
-                    {{-- ── Sección: Plan y Condiciones ── --}}
                     <p class="text-uppercase fw-bold text-muted mb-2" style="font-size:0.7rem;letter-spacing:0.8px;">
                         <i class="bi bi-credit-card me-1"></i> Plan y Condiciones Comerciales
                     </p>
@@ -425,7 +431,6 @@
 
                     <hr class="my-3" style="border-color:#edf2f7;">
 
-                    {{-- ── Sección: Términos ── --}}
                     <p class="text-uppercase fw-bold text-muted mb-2" style="font-size:0.7rem;letter-spacing:0.8px;">
                         <i class="bi bi-shield-check me-1"></i> Términos y Condiciones
                     </p>
@@ -477,6 +482,13 @@
     </div>
 </div>
 
+<style>
+    .action-icon-view:hover   { color: #0d6efd !important; }
+    .action-icon-edit:hover   { color: #ffc107 !important; }
+    .action-icon-delete:hover { color: #dc3545 !important; }
+    .table-hover tbody tr:hover { background-color: #f8fafc !important; }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -491,7 +503,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const hiddenGastrobar       = document.getElementById('hidden_gastrobar_id');
     const hiddenRestaurante     = document.getElementById('hidden_restaurante_id');
 
-    // ── Abrir modal automáticamente si hay errores de validación ──
     @if($errors->any())
         var modal = new bootstrap.Modal(document.getElementById('modalNuevoContrato'));
         modal.show();
@@ -506,7 +517,6 @@ document.addEventListener('DOMContentLoaded', function () {
         sel.disabled = true;
     }
 
-    // ── Cambio de tipo (gastrobar / restaurante) ──
     document.querySelectorAll('input[name="tipo_establecimiento"]').forEach(radio => {
         radio.addEventListener('change', function () {
             const esGastrobar = this.value === 'gastrobar';
@@ -522,7 +532,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ── Cambio de departamento → cargar municipios ──
     selectDepto.addEventListener('change', function () {
         resetSelect(selectMunicipio, 'Cargando...');
         resetSelect(selectEstablecimiento, 'Primero selecciona municipio');
@@ -545,7 +554,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // ── Cambio de municipio → cargar establecimientos ──
     selectMunicipio.addEventListener('change', function () {
         resetSelect(selectEstablecimiento, 'Cargando...');
         hiddenGastrobar.value   = '';
@@ -577,14 +585,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // ── Al seleccionar establecimiento → actualizar hidden inputs ──
     selectEstablecimiento.addEventListener('change', function () {
         const tipo = getTipo();
         hiddenGastrobar.value   = tipo === 'gastrobar'   ? this.value : '';
         hiddenRestaurante.value = tipo === 'restaurante' ? this.value : '';
     });
 
-    // ── Limpiar al cerrar el modal ──
     document.getElementById('modalNuevoContrato').addEventListener('hidden.bs.modal', function () {
         selectDepto.value = '';
         resetSelect(selectMunicipio, 'Primero selecciona departamento');

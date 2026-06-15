@@ -12,12 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // ✅ FIX: excluir rutas API públicas de la verificación CSRF y sesión web
         $middleware->statefulApi();
 
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminOnly::class,
-            'role'  => \App\Http\Middleware\RoleMiddleware::class,
+            'admin'         => \App\Http\Middleware\AdminOnly::class,
+            'role'          => \App\Http\Middleware\RoleMiddleware::class,
+            'entidad.activa' => \App\Http\Middleware\CheckEntidadActiva::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

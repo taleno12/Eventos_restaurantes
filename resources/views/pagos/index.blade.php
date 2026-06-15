@@ -373,16 +373,51 @@
                 <div class="modal-body p-4">
                     <div class="row g-3">
 
+                        {{-- ── Filtro: Departamento ── --}}
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-semibold">Departamento</label>
+                            <select id="filtroDepartamento" class="form-select">
+                                <option value="">— Todos —</option>
+                                @foreach($departamentos as $depto)
+                                    <option value="{{ $depto->id }}">{{ $depto->nombre }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted" style="min-height:1.25rem; display:block;">
+                                Filtra la lista de contratos por ubicación
+                            </small>
+                        </div>
+
+                        {{-- ── Filtro: Municipio ── --}}
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-semibold">Municipio</label>
+                            <select id="filtroMunicipio" class="form-select" disabled>
+                                <option value="">— Seleccionar municipio —</option>
+                            </select>
+                            <small class="text-muted" style="min-height:1.25rem; display:block;">&nbsp;</small>
+                        </div>
+
+                        {{-- ── Tipo ── --}}
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-semibold">Tipo</label>
+                            <select id="filtroTipo" class="form-select" disabled>
+                                <option value="">— Todos —</option>
+                                <option value="restaurante">Solo Restaurantes</option>
+                                <option value="gastrobar">Solo Gastrobares</option>
+                            </select>
+                            <small class="text-muted" style="min-height:1.25rem; display:block;">&nbsp;</small>
+                        </div>
+
                         {{-- Contrato --}}
                         <div class="col-12">
                             <label class="form-label fw-semibold">
                                 Contrato <span class="text-danger">*</span>
                             </label>
-                            <select name="contrato_id" class="form-select @error('contrato_id') is-invalid @enderror" required>
+                            <select id="selectContrato" name="contrato_id" class="form-select @error('contrato_id') is-invalid @enderror" required>
                                 <option value="">— Seleccionar contrato —</option>
                                 @foreach($contratosActivos as $contrato)
                                     @php $est = $contrato->establecimiento(); @endphp
                                     <option value="{{ $contrato->id }}"
+                                            data-tipo="{{ $contrato->tipoEstablecimiento() }}"
                                             {{ old('contrato_id') == $contrato->id ? 'selected' : '' }}>
                                         {{ $contrato->numero_contrato }}
                                         — {{ $est ? $est->nombre : 'Sin establecimiento' }}
@@ -393,6 +428,9 @@
                             @error('contrato_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small id="ayudaContrato" class="text-muted">
+                                Mostrando todos los contratos activos/pendientes. Usa los filtros de arriba para ubicar más rápido un restaurante o gastrobar.
+                            </small>
                         </div>
 
                         {{-- Monto --}}
@@ -518,5 +556,145 @@
     });
 </script>
 @endif
+
+{{-- ════════════════════════════════════════════════════════════
+     FILTRO EN CASCADA: Departamento -> Municipio -> Contrato
+════════════════════════════════════════════════════════════ --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const selectDepartamento = document.getElementById('filtroDepartamento');
+    const selectMunicipio    = document.getElementById('filtroMunicipio');
+    const selectTipo         = document.getElementById('filtroTipo');
+    const selectContrato     = document.getElementById('selectContrato');
+    const ayudaContrato      = document.getElementById('ayudaContrato');
+
+    // Guardamos las opciones originales (todos los contratos activos/pendientes)
+    const opcionesOriginales = Array.from(selectContrato.options)
+        .filter(opt => opt.value !== '')
+        .map(opt => ({
+            value: opt.value,
+            text:  opt.textContent.trim(),
+            tipo:  opt.dataset.tipo || ''
+        }));
+
+    function resetContrato(mensaje) {
+        selectContrato.innerHTML = '';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = mensaje;
+        selectContrato.appendChild(placeholder);
+    }
+
+    function poblarContratos(lista, vacioMsg) {
+        resetContrato('— Seleccionar contrato —');
+
+        if (lista.length === 0) {
+            resetContrato(vacioMsg);
+            return;
+        }
+
+        lista.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.value;
+            opt.textContent = c.text;
+            if (c.tipo) opt.dataset.tipo = c.tipo;
+            selectContrato.appendChild(opt);
+        });
+    }
+
+    function aplicarFiltroTipo(lista) {
+        const tipo = selectTipo.value;
+        if (!tipo) return lista;
+        return lista.filter(c => c.tipo === tipo);
+    }
+
+    // ── Cambio de Departamento → recargar Municipios ──
+    selectDepartamento.addEventListener('change', function () {
+        const deptoId = this.value;
+
+        selectTipo.value = '';
+        selectTipo.disabled = true;
+        delete selectMunicipio.dataset.contratos;
+
+        if (!deptoId) {
+            selectMunicipio.innerHTML = '<option value="">— Selecciona un departamento —</option>';
+            selectMunicipio.disabled = true;
+            poblarContratos(opcionesOriginales, '— No hay contratos disponibles —');
+            ayudaContrato.textContent = 'Mostrando todos los contratos activos/pendientes. Usa los filtros de arriba para ubicar más rápido un restaurante o gastrobar.';
+            return;
+        }
+
+        selectMunicipio.innerHTML = '<option value="">— Cargando... —</option>';
+        selectMunicipio.disabled = true;
+
+        fetch(`/pagos/ajax/municipios/${deptoId}`)
+            .then(res => res.json())
+            .then(data => {
+                selectMunicipio.innerHTML = '<option value="">— Seleccionar municipio —</option>';
+                data.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = m.nombre;
+                    selectMunicipio.appendChild(opt);
+                });
+                selectMunicipio.disabled = false;
+
+                resetContrato('— Selecciona un municipio para ver los contratos —');
+                ayudaContrato.textContent = 'Selecciona un municipio para ver los restaurantes/gastrobares de esa zona.';
+            })
+            .catch(() => {
+                selectMunicipio.innerHTML = '<option value="">— Error al cargar municipios —</option>';
+            });
+    });
+
+    // ── Cambio de Municipio → recargar Contratos ──
+    selectMunicipio.addEventListener('change', function () {
+        const municipioId = this.value;
+
+        if (!municipioId) {
+            selectTipo.value = '';
+            selectTipo.disabled = true;
+            delete selectMunicipio.dataset.contratos;
+            resetContrato('— Selecciona un municipio para ver los contratos —');
+            return;
+        }
+
+        resetContrato('— Cargando contratos... —');
+        selectTipo.disabled = false;
+
+        fetch(`/pagos/ajax/contratos?municipio_id=${municipioId}`)
+            .then(res => res.json())
+            .then(data => {
+                const lista = data.map(c => ({
+                    value: c.id,
+                    text:  `${c.numero_contrato} — ${c.nombre} (${c.tipo === 'gastrobar' ? 'Gastrobar' : 'Restaurante'}${c.plan ? ' - ' + c.plan.charAt(0).toUpperCase() + c.plan.slice(1) : ''})`,
+                    tipo:  c.tipo
+                }));
+
+                selectMunicipio.dataset.contratos = JSON.stringify(lista);
+
+                const filtrada = aplicarFiltroTipo(lista);
+                poblarContratos(filtrada, '— No hay contratos en este municipio —');
+
+                ayudaContrato.textContent = `Mostrando ${filtrada.length} contrato(s) en este municipio.`;
+            })
+            .catch(() => {
+                resetContrato('— Error al cargar contratos —');
+            });
+    });
+
+    // ── Cambio de Tipo (restaurante / gastrobar) dentro del municipio ya cargado ──
+    selectTipo.addEventListener('change', function () {
+        if (!selectMunicipio.dataset.contratos) return;
+
+        const lista = JSON.parse(selectMunicipio.dataset.contratos);
+        const filtrada = aplicarFiltroTipo(lista);
+        poblarContratos(filtrada, '— No hay contratos de este tipo en este municipio —');
+        ayudaContrato.textContent = `Mostrando ${filtrada.length} contrato(s) en este municipio.`;
+    });
+
+});
+</script>
 
 @endsection

@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\Restaurante|null $restaurante
  * @property-read \App\Models\Gastrobar|null $gastrobar
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo activas()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo deEntidadesActivas()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo query()
@@ -95,5 +96,19 @@ class Empleo extends Model
                          $q->whereNull('fecha_limite')
                            ->orWhere('fecha_limite', '>=', now());
                      });
+    }
+
+    /**
+     * Solo empleos cuyo restaurante o gastrobar esté activo (no desactivado por el admin)
+     */
+    public function scopeDeEntidadesActivas($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereHas('restaurante', function ($sub) {
+                $sub->where('activo', true);
+            })->orWhereHas('gastrobar', function ($sub) {
+                $sub->where('activo', true);
+            });
+        });
     }
 }

@@ -112,9 +112,9 @@ Route::get('/dashboard', function () {
         'eventosProximos'      => Evento::where('fecha_evento', '>=', now())->count(),
         'eventosDestacados'    => Evento::where('is_destacado', true)->count(),
         'ultimosEventos'       => Evento::with(['restaurante', 'gastrobar'])
-                                        ->latest()
-                                        ->take(6)
-                                        ->get(),
+            ->latest()
+            ->take(6)
+            ->get(),
 
         // ── Empleos ───────────────────────────────────────────────
         'totalEmpleos'         => Empleo::count(),
@@ -125,8 +125,8 @@ Route::get('/dashboard', function () {
         'contratosPendientes'  => Contrato::where('estado', 'pendiente')->count(),
         'contratosVencidos'    => Contrato::where('estado', 'vencido')->count(),
         'contratosPorVencer'   => Contrato::where('estado', 'activo')
-                                          ->whereBetween('fecha_fin', [now(), now()->addDays(7)])
-                                          ->count(),
+            ->whereBetween('fecha_fin', [now(), now()->addDays(7)])
+            ->count(),
         'contratosPremium'     => Contrato::where('estado', 'activo')->where('plan', 'premium')->count(),
         'contratosBasico'      => Contrato::where('estado', 'activo')->where('plan', 'basico')->count(),
 
@@ -143,7 +143,7 @@ Route::get('/dashboard', function () {
         'deptoConRestaurantes' => Restaurante::distinct()->count('departamento_id'),
         'deptoConGastrobares'  => Gastrobar::distinct()->count('departamento_id'),
         'deptoConEventos'      => Evento::where('fecha_evento', '>=', now())
-                                        ->distinct()->count('departamento_id'),
+            ->distinct()->count('departamento_id'),
     ]);
 })->middleware(['auth', 'admin'])->name('dashboard');
 
@@ -176,19 +176,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/{gastrobar}',       [GastrobarController::class, 'adminShow'])->name('show');
     });
 
-// ── EVENTOS (REQUIERE AUTH, NO ADMIN) ────────────────────────────────────────
-Route::middleware('auth')->group(function () {
-    Route::get('/eventos',               [EventoController::class, 'index'])->name('eventos.index');
-    Route::get('/eventos/create',        [EventoController::class, 'create'])->name('eventos.create');
-    Route::post('/eventos',              [EventoController::class, 'store'])->name('eventos.store');
-    Route::get('/eventos/{evento}/edit', [EventoController::class, 'edit'])->name('eventos.edit');
-    Route::put('/eventos/{evento}',      [EventoController::class, 'update'])->name('eventos.update');
-    Route::patch('/eventos/{evento}',    [EventoController::class, 'update']);
-    Route::delete('/eventos/{evento}',   [EventoController::class, 'destroy'])->name('eventos.destroy');
+    // ── EVENTOS (REQUIERE AUTH, NO ADMIN) ────────────────────────────────────────
+    Route::middleware('auth')->group(function () {
+        Route::get('/eventos',               [EventoController::class, 'index'])->name('eventos.index');
+        Route::get('/eventos/create',        [EventoController::class, 'create'])->name('eventos.create');
+        Route::post('/eventos',              [EventoController::class, 'store'])->name('eventos.store');
+        Route::get('/eventos/{evento}/edit', [EventoController::class, 'edit'])->name('eventos.edit');
+        Route::put('/eventos/{evento}',      [EventoController::class, 'update'])->name('eventos.update');
+        Route::patch('/eventos/{evento}',    [EventoController::class, 'update']);
+        Route::delete('/eventos/{evento}',   [EventoController::class, 'destroy'])->name('eventos.destroy');
 
-    Route::post('/eventos/{evento}/imagenes',  [EventoImagenController::class, 'store'])->name('evento.imagenes.store');
-    Route::delete('/evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])->name('evento.imagenes.destroy');
-});
+        Route::post('/eventos/{evento}/imagenes',  [EventoImagenController::class, 'store'])->name('evento.imagenes.store');
+        Route::delete('/evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])->name('evento.imagenes.destroy');
+    });
 
 
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
@@ -234,7 +234,9 @@ Route::middleware('auth')->group(function () {
             ->name('ajax.establecimientos');
     });
 
-    Route::get('/soporte', function () { return view('soporte.index'); })->name('soporte.index');
+    Route::get('/soporte', function () {
+        return view('soporte.index');
+    })->name('soporte.index');
 
     Route::get('/configuracion', function () {
         return view('configuracion.index', [
@@ -251,8 +253,8 @@ Route::middleware('auth')->group(function () {
             'contratosPendientes'  => Contrato::where('estado', 'pendiente')->count(),
             'contratosVencidos'    => Contrato::where('estado', 'vencido')->count(),
             'contratosPorVencer'   => Contrato::where('estado', 'activo')
-                                              ->whereBetween('fecha_fin', [now(), now()->addDays(7)])
-                                              ->count(),
+                ->whereBetween('fecha_fin', [now(), now()->addDays(7)])
+                ->count(),
             'contratosPremium'     => Contrato::where('estado', 'activo')->where('plan', 'premium')->count(),
             'contratosBasico'      => Contrato::where('estado', 'activo')->where('plan', 'basico')->count(),
 
@@ -267,17 +269,17 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/membresias', function () {
         $membresiasActivas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'activo')->latest()
-                                ->paginate(10, ['*'], 'page_activas');
+            ->where('estado', 'activo')->latest()
+            ->paginate(10, ['*'], 'page_activas');
         $membresiasPendientes = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'pendiente')->latest()
-                                ->paginate(10, ['*'], 'page_pendientes');
+            ->where('estado', 'pendiente')->latest()
+            ->paginate(10, ['*'], 'page_pendientes');
         $membresiasVencidas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'vencido')->latest()
-                                ->paginate(10, ['*'], 'page_vencidas');
+            ->where('estado', 'vencido')->latest()
+            ->paginate(10, ['*'], 'page_vencidas');
         $membresiasCanceladas = \App\Models\Contrato::with(['gastrobar', 'restaurante'])
-                                ->where('estado', 'cancelado')->latest()
-                                ->paginate(10, ['*'], 'page_canceladas');
+            ->where('estado', 'cancelado')->latest()
+            ->paginate(10, ['*'], 'page_canceladas');
 
         $totalActivas    = \App\Models\Contrato::where('estado', 'activo')->count();
         $totalPendientes = \App\Models\Contrato::where('estado', 'pendiente')->count();
@@ -286,15 +288,23 @@ Route::middleware('auth')->group(function () {
         $totalPremium    = \App\Models\Contrato::where('estado', 'activo')->where('plan', 'premium')->count();
         $totalBasico     = \App\Models\Contrato::where('estado', 'activo')->where('plan', 'basico')->count();
         $porVencer       = \App\Models\Contrato::where('estado', 'activo')
-                                ->whereBetween('fecha_fin', [now(), now()->addDays(7)])->count();
+            ->whereBetween('fecha_fin', [now(), now()->addDays(7)])->count();
 
         $membresias = $membresiasActivas;
 
         return view('membresias.index', compact(
-            'membresias', 'membresiasActivas', 'membresiasPendientes',
-            'membresiasVencidas', 'membresiasCanceladas',
-            'totalActivas', 'totalPendientes', 'totalVencidas', 'totalCanceladas',
-            'totalPremium', 'totalBasico', 'porVencer'
+            'membresias',
+            'membresiasActivas',
+            'membresiasPendientes',
+            'membresiasVencidas',
+            'membresiasCanceladas',
+            'totalActivas',
+            'totalPendientes',
+            'totalVencidas',
+            'totalCanceladas',
+            'totalPremium',
+            'totalBasico',
+            'porVencer'
         ));
     })->name('membresias.index');
 
@@ -353,6 +363,7 @@ Route::middleware('auth')->group(function () {
     })->name('api.departamentos.restaurantes');
 });
 
+
 // ── PANEL DEL RESTAURANTE ─────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
     ->prefix('mi-restaurante')
@@ -390,6 +401,23 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
                 App\Models\Municipio::where('departamento_id', $id)->orderBy('nombre')->get(['id', 'nombre'])
             );
         });
+
+        Route::get('/soporte', function () {
+            return view('restaurante.soporte.index', [
+                'restaurante' => \Illuminate\Support\Facades\Auth::user()->restaurante,
+            ]);
+        })->name('soporte.index');
+
+        //reviews
+        Route::get('/resenas', [\App\Http\Controllers\Restaurante\RestauranteReviewController::class, 'index'])
+            ->name('reviews.index');
+
+        //info
+        Route::get('/informacion', function () {
+            return view('restaurante.info.index', [
+                'restaurante' => \Illuminate\Support\Facades\Auth::user()->restaurante,
+            ]);
+        })->name('info.index');
     });
 
 // ── PANEL DEL GASTROBAR ───────────────────────────────────────────────────────

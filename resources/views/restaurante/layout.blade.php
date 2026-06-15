@@ -11,7 +11,8 @@
     {{-- Bootstrap Icons --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {{-- Google Fonts --}}
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
         *,
@@ -663,10 +664,12 @@
             <i class="bi bi-list" style="font-size:17px;"></i>
         </button>
         <div class="d-flex align-items-center gap-2">
-            <div style="width:28px;height:28px;background:linear-gradient(135deg,#f97316,#ea580c);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(249,115,22,.3)">
+            <div
+                style="width:28px;height:28px;background:linear-gradient(135deg,#f97316,#ea580c);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(249,115,22,.3)">
                 <i class="bi bi-shop" style="color:white;font-size:12px;"></i>
             </div>
-            <span style="font-weight:800;font-size:13px;color:var(--text);">{{ Str::limit($restaurante->nombre, 22) }}</span>
+            <span style="font-weight:800;font-size:13px;color:var(--text);">{{ Str::limit($restaurante->nombre, 22)
+                }}</span>
         </div>
     </div>
 
@@ -724,6 +727,24 @@
                 class="nav-link {{ request()->routeIs('restaurante.estadisticas.*') ? 'active' : '' }}">
                 <i class="bi bi-bar-chart-fill"></i>
                 Estadísticas
+            </a>
+
+            <a href="{{ route('restaurante.soporte.index') }}"
+                class="nav-link {{ request()->routeIs('restaurante.soporte.*') ? 'active' : '' }}">
+                <i class="bi bi-headset"></i>
+                Soporte
+            </a>
+
+            <a href="{{ route('restaurante.reviews.index') }}"
+                class="nav-link {{ request()->routeIs('restaurante.reviews.*') ? 'active' : '' }}">
+                <i class="bi bi-star-fill"></i>
+                Reseñas
+            </a>
+
+            <a href="{{ route('restaurante.info.index') }}"
+                class="nav-link {{ request()->routeIs('restaurante.info.*') ? 'active' : '' }}">
+                <i class="bi bi-info-circle-fill"></i>
+                Ayuda e Info
             </a>
 
             <a href="{{ route('restaurante.perfil.edit') }}"

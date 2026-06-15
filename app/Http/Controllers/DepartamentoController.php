@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departamento;
+use App\Models\Municipio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +23,6 @@ class DepartamentoController extends Controller
      */
     public function create()
     {
-        // Solo el admin puede crear
         if (Auth::check() && Auth::user()->email !== 'admin@turismo.ni') {
             abort(403);
         }
@@ -30,26 +30,41 @@ class DepartamentoController extends Controller
     }
 
     /**
-     * Guardar el departamento en la base de datos
+     * Guardar el departamento y sus municipios iniciales
      */
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|unique:departamentos,nombre|max:255'
+            'nombre' => 'required|unique:departamentos,nombre|max:255',
         ]);
 
-        Departamento::create($request->all());
+        $departamento = Departamento::create(['nombre' => $request->nombre]);
+
+        // Procesar municipios separados por coma
+        if ($request->filled('municipios_lista')) {
+            $municipios = array_filter(
+                array_map('trim', explode(',', $request->municipios_lista))
+            );
+
+            foreach ($municipios as $nombreMunicipio) {
+                if ($nombreMunicipio !== '') {
+                    Municipio::create([
+                        'nombre'          => $nombreMunicipio,
+                        'departamento_id' => $departamento->id,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('departamentos.index')
                          ->with('success', 'Departamento creado correctamente.');
     }
 
     /**
-     * Método Show: Evita el error "Undefined method" de la imagen image_9eb511.png
+     * Redirige al index (no se necesita vista individual)
      */
     public function show(Departamento $departamento)
     {
-        // Redirigimos al index porque no necesitamos una página individual para cada departamento
         return redirect()->route('departamentos.index');
     }
 
@@ -65,15 +80,32 @@ class DepartamentoController extends Controller
     }
 
     /**
-     * Actualizar el nombre del departamento
+     * Actualizar el departamento
      */
     public function update(Request $request, Departamento $departamento)
     {
         $request->validate([
-            'nombre' => 'required|max:255|unique:departamentos,nombre,' . $departamento->id
+            'nombre' => 'required|max:255|unique:departamentos,nombre,' . $departamento->id,
         ]);
 
-        $departamento->update($request->all());
+        $departamento->update(['nombre' => $request->nombre]);
+
+        // Si se pasan municipios adicionales en el update, también se crean
+        if ($request->filled('municipios_lista')) {
+            $municipios = array_filter(
+                array_map('trim', explode(',', $request->municipios_lista))
+            );
+
+            foreach ($municipios as $nombreMunicipio) {
+                if ($nombreMunicipio !== '') {
+                    // Solo crea si no existe ya en este departamento
+                    Municipio::firstOrCreate([
+                        'nombre'          => $nombreMunicipio,
+                        'departamento_id' => $departamento->id,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('departamentos.index')
                          ->with('success', 'Departamento actualizado.');
@@ -88,7 +120,6 @@ class DepartamentoController extends Controller
             abort(403);
         }
 
-        // Nota: Esto fallará si el departamento tiene restaurantes asociados (por la llave foránea)
         $departamento->delete();
 
         return redirect()->route('departamentos.index')

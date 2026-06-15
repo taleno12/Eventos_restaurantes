@@ -14,11 +14,11 @@
             </h1>
             <p class="text-muted mb-0 small">
                 <i class="bi bi-circle-fill text-secondary me-1" style="font-size: 6px; vertical-align: middle;"></i>
-                Modificando: <strong>{{ $user->name }}</strong>
+                Modificando: <strong>{{ $usuario->name }}</strong>
             </p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('usuarios.show', $user->id) }}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
+            <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
                 <i class="bi bi-eye me-1"></i> Ver
             </a>
             <a href="{{ route('usuarios.index') }}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
@@ -43,22 +43,22 @@
     @endif
 
     @php
-        $activo = !is_null($user->email_verified_at);
+        $activo = ($usuario->estado ?? 'activo') === 'activo';
         $rolConfig = [
             'admin'       => ['label'=>'Administrador','bg'=>'#fff3cd','color'=>'#856404','icon'=>'bi-shield-fill-check'],
             'restaurante' => ['label'=>'Restaurante',  'bg'=>'#cfe2ff','color'=>'#0a3878','icon'=>'bi-shop'],
             'gastrobar'   => ['label'=>'Gastrobar',    'bg'=>'#d1e7dd','color'=>'#0a3622','icon'=>'bi-cup-straw'],
             'usuario'     => ['label'=>'Cliente',      'bg'=>'#f8d7da','color'=>'#842029','icon'=>'bi-person-heart'],
         ];
-        $rc = $rolConfig[$user->role] ?? ['label'=>ucfirst($user->role),'bg'=>'#e2e8f0','color'=>'#4a5568','icon'=>'bi-person'];
-        $iniciales = strtoupper(substr($user->name ?? 'U', 0, 2));
+        $rc = $rolConfig[$usuario->role] ?? ['label'=>ucfirst($usuario->role),'bg'=>'#e2e8f0','color'=>'#4a5568','icon'=>'bi-person'];
+        $iniciales = strtoupper(substr($usuario->name ?? 'U', 0, 2));
         $colores = [
             'admin'       => ['bg'=>'#fff3cd','color'=>'#856404'],
             'restaurante' => ['bg'=>'#cfe2ff','color'=>'#0a3878'],
             'gastrobar'   => ['bg'=>'#d1e7dd','color'=>'#0a3622'],
             'usuario'     => ['bg'=>'#f8d7da','color'=>'#842029'],
         ];
-        $c = $colores[$user->role] ?? ['bg'=>'#e2e8f0','color'=>'#4a5568'];
+        $c = $colores[$usuario->role] ?? ['bg'=>'#e2e8f0','color'=>'#4a5568'];
     @endphp
 
     <div class="row g-4">
@@ -70,16 +70,16 @@
                 <div class="card-body text-center px-3 pb-4" style="margin-top:-36px;">
                     <div class="rounded-3 border border-4 border-white overflow-hidden bg-light d-inline-flex align-items-center justify-content-center shadow mb-2"
                          style="width:64px;height:64px;">
-                        @if(!empty($user->foto))
-                            <img src="{{ Storage::url($user->foto) }}" alt="{{ $user->name }}" class="w-100 h-100" style="object-fit:cover;">
+                        @if(!empty($usuario->foto))
+                            <img src="{{ Storage::url($usuario->foto) }}" alt="{{ $usuario->name }}" class="w-100 h-100" style="object-fit:cover;">
                         @else
                             <span class="fw-bold fs-5" style="color:{{ $c['color'] }};background:{{ $c['bg'] }};width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
                                 {{ $iniciales }}
                             </span>
                         @endif
                     </div>
-                    <h6 class="fw-bold text-dark text-uppercase mb-1 small">{{ $user->name }}</h6>
-                    <p class="text-muted mb-2" style="font-size:0.72rem;">{{ $user->email }}</p>
+                    <h6 class="fw-bold text-dark text-uppercase mb-1 small">{{ $usuario->name }}</h6>
+                    <p class="text-muted mb-2" style="font-size:0.72rem;">{{ $usuario->email }}</p>
                     <span class="badge px-2 py-1 fw-bold text-uppercase d-inline-flex align-items-center gap-1 mb-2"
                           style="background:{{ $rc['bg'] }};color:{{ $rc['color'] }};font-size:0.65rem;">
                         <i class="bi {{ $rc['icon'] }}" style="font-size:0.6rem;"></i> {{ $rc['label'] }}
@@ -102,13 +102,13 @@
                     <div class="text-start">
                         <p class="text-uppercase text-muted fw-bold mb-2" style="font-size:0.65rem;letter-spacing:0.5px;">Info de cuenta</p>
                         <small class="text-muted d-block mb-1">
-                            <i class="bi bi-hash text-warning me-1"></i> ID: <strong>#{{ $user->id }}</strong>
+                            <i class="bi bi-hash text-warning me-1"></i> ID: <strong>#{{ $usuario->id }}</strong>
                         </small>
                         <small class="text-muted d-block mb-1">
-                            <i class="bi bi-calendar-plus text-warning me-1"></i> Registro: <strong>{{ $user->created_at->format('d/m/Y') }}</strong>
+                            <i class="bi bi-calendar-plus text-warning me-1"></i> Registro: <strong>{{ $usuario->created_at->format('d/m/Y') }}</strong>
                         </small>
                         <small class="text-muted d-block">
-                            <i class="bi bi-clock text-warning me-1"></i> {{ $user->created_at->diffForHumans() }}
+                            <i class="bi bi-clock text-warning me-1"></i> {{ $usuario->created_at->diffForHumans() }}
                         </small>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
             <div class="card border-0 shadow-sm rounded-3 bg-white">
                 <div class="card-body p-4 p-lg-5">
 
-                    <form action="{{ route('usuarios.update', $user->id) }}" method="POST">
+                    <form action="{{ route('usuarios.update', $usuario->id) }}" method="POST" autocomplete="off">
                         @csrf
                         @method('PUT')
 
@@ -132,9 +132,10 @@
                         <div class="row g-3 mb-4">
                             <div class="col-12 col-sm-6">
                                 <label class="form-label fw-semibold small">Nombre completo <span class="text-danger">*</span></label>
-                                <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                                <input type="text" name="name" value="{{ old('name', $usuario->name) }}"
                                        class="form-control @error('name') is-invalid @enderror"
                                        placeholder="Ej: María López"
+                                       autocomplete="off"
                                        style="box-shadow:none;">
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -144,9 +145,10 @@
                                 <label class="form-label fw-semibold small">Teléfono</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
-                                    <input type="text" name="telefono" value="{{ old('telefono', $user->telefono) }}"
+                                    <input type="text" name="telefono" value="{{ old('telefono', $usuario->telefono) }}"
                                            class="form-control border-start-0 @error('telefono') is-invalid @enderror"
                                            placeholder="Ej: 8888-8888"
+                                           autocomplete="off"
                                            style="box-shadow:none;">
                                 </div>
                                 @error('telefono')
@@ -165,9 +167,10 @@
                                 <label class="form-label fw-semibold small">Correo electrónico <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                                    <input type="email" name="email" value="{{ old('email', $user->email) }}"
+                                    <input type="email" name="email" value="{{ old('email', $usuario->email) }}"
                                            class="form-control border-start-0 @error('email') is-invalid @enderror"
                                            placeholder="correo@ejemplo.com"
+                                           autocomplete="off"
                                            style="box-shadow:none;">
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -179,10 +182,10 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-badge"></i></span>
                                     <select name="role" class="form-select border-start-0 @error('role') is-invalid @enderror" style="box-shadow:none;cursor:pointer;">
-                                        <option value="admin"       {{ old('role', $user->role) == 'admin'       ? 'selected' : '' }}>Administrador</option>
-                                        <option value="restaurante" {{ old('role', $user->role) == 'restaurante' ? 'selected' : '' }}>Restaurante</option>
-                                        <option value="gastrobar"   {{ old('role', $user->role) == 'gastrobar'   ? 'selected' : '' }}>Gastrobar</option>
-                                        <option value="usuario"     {{ old('role', $user->role) == 'usuario'     ? 'selected' : '' }}>Cliente</option>
+                                        <option value="admin"       {{ old('role', $usuario->role) == 'admin'       ? 'selected' : '' }}>Administrador</option>
+                                        <option value="restaurante" {{ old('role', $usuario->role) == 'restaurante' ? 'selected' : '' }}>Restaurante</option>
+                                        <option value="gastrobar"   {{ old('role', $usuario->role) == 'gastrobar'   ? 'selected' : '' }}>Gastrobar</option>
+                                        <option value="usuario"     {{ old('role', $usuario->role) == 'usuario'     ? 'selected' : '' }}>Cliente</option>
                                     </select>
                                     @error('role')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -205,6 +208,7 @@
                                     <input type="password" name="password" id="password"
                                            class="form-control border-start-0 border-end-0 @error('password') is-invalid @enderror"
                                            placeholder="Mínimo 8 caracteres"
+                                           autocomplete="new-password"
                                            style="box-shadow:none;">
                                     <button type="button" class="input-group-text bg-light border-start-0 text-muted" id="togglePassword" style="cursor:pointer;">
                                         <i class="bi bi-eye" id="eyeIcon"></i>
@@ -221,6 +225,7 @@
                                     <input type="password" name="password_confirmation"
                                            class="form-control border-start-0"
                                            placeholder="Repetir contraseña"
+                                           autocomplete="new-password"
                                            style="box-shadow:none;">
                                 </div>
                             </div>

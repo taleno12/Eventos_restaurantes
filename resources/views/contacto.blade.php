@@ -17,19 +17,19 @@
         .premium-title { font-family: 'Playfair Display', serif; }
 
         .contact-hero {
-            background: linear-gradient(135deg, #1c1917 0%, #292524 60%, #431407 100%);
+            background: linear-gradient(135deg, #1c1917 0%, #292524 60%, #1e3a8a 100%);
             position: relative; overflow: hidden;
         }
         .contact-hero::before {
             content: '';
             position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 70% 50%, rgba(234,88,12,0.18) 0%, transparent 60%);
+            background: radial-gradient(ellipse at 70% 50%, rgba(37,99,235,0.18) 0%, transparent 60%);
             pointer-events: none;
         }
         .ghost-text {
             font-family: 'Playfair Display', serif; font-weight: 900;
             font-size: clamp(5rem, 18vw, 16rem); line-height: 1; color: transparent;
-            -webkit-text-stroke: 1px rgba(234,88,12,0.08); letter-spacing: -0.04em;
+            -webkit-text-stroke: 1px rgba(37,99,235,0.08); letter-spacing: -0.04em;
             position: absolute; bottom: -2rem; right: -1rem;
             pointer-events: none; user-select: none; white-space: nowrap;
         }
@@ -40,13 +40,13 @@
         }
         .plan-pill {
             display: inline-flex; align-items: center; gap: 8px;
-            background: #fff7ed; border: 1.5px solid #fed7aa;
-            color: #c2410c; font-size: 10px; font-weight: 800;
+            background: #eff6ff; border: 1.5px solid #bfdbfe;
+            color: #1d4ed8; font-size: 10px; font-weight: 800;
             letter-spacing: 0.2em; text-transform: uppercase;
             padding: 6px 18px; border-radius: 999px;
         }
         .plan-pill .dot {
-            width: 7px; height: 7px; background: #ea580c; border-radius: 50%;
+            width: 7px; height: 7px; background: #2563eb; border-radius: 50%;
             animation: pulse-dot 1.6s ease-in-out infinite;
         }
 
@@ -60,19 +60,19 @@
         .plan-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 40px 80px rgba(28,25,23,0.10);
-            border-color: #fed7aa;
+            border-color: #bfdbfe;
         }
         .plan-card.featured {
-            border-color: #ea580c;
-            box-shadow: 0 20px 60px rgba(234,88,12,0.15);
+            border-color: #2563eb;
+            box-shadow: 0 20px 60px rgba(37,99,235,0.15);
         }
         .plan-card.featured:hover {
-            box-shadow: 0 40px 80px rgba(234,88,12,0.22);
-            border-color: #c2410c;
+            box-shadow: 0 40px 80px rgba(37,99,235,0.22);
+            border-color: #1d4ed8;
         }
         .plan-badge {
             position: absolute; top: 20px; right: 20px;
-            background: #ea580c; color: white;
+            background: #2563eb; color: white;
             font-size: 9px; font-weight: 900; letter-spacing: 0.2em;
             text-transform: uppercase; padding: 5px 12px; border-radius: 999px;
         }
@@ -93,7 +93,7 @@
             border-bottom: 1px dashed #f1f0ee;
         }
         .plan-feature:last-child { border-bottom: none; }
-        .plan-feature .check { color: #ea580c; font-size: 12px; width: 18px; flex-shrink: 0; }
+        .plan-feature .check { color: #2563eb; font-size: 12px; width: 18px; flex-shrink: 0; }
         .plan-feature .x { color: #d1cdc8; font-size: 12px; width: 18px; flex-shrink: 0; }
         .plan-btn {
             display: block; width: 100%; text-align: center;
@@ -107,9 +107,9 @@
         }
         .plan-btn-outline:hover { background: #1c1917; color: #fff; border-color: #1c1917; }
         .plan-btn-primary {
-            background: #ea580c; color: #fff; border-color: #ea580c;
+            background: #2563eb; color: #fff; border-color: #2563eb;
         }
-        .plan-btn-primary:hover { background: #c2410c; border-color: #c2410c; transform: scale(1.02); }
+        .plan-btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; transform: scale(1.02); }
 
         .faq-item { border-bottom: 1px solid #f1f0ee; transition: all 0.2s; }
         .faq-question {
@@ -119,7 +119,7 @@
             font-family: 'Instrument Sans', sans-serif; font-size: 15px;
             font-weight: 700; color: #1c1917; transition: color 0.2s;
         }
-        .faq-question:hover { color: #ea580c; }
+        .faq-question:hover { color: #2563eb; }
         .faq-icon {
             width: 28px; height: 28px; border-radius: 50%;
             border: 1.5px solid #e7e5e4; display: flex;
@@ -127,7 +127,7 @@
             font-size: 11px; color: #a8a29e; flex-shrink: 0;
             transition: all 0.3s;
         }
-        .faq-item.open .faq-icon { background: #ea580c; border-color: #ea580c; color: white; transform: rotate(45deg); }
+        .faq-item.open .faq-icon { background: #2563eb; border-color: #2563eb; color: white; transform: rotate(45deg); }
         .faq-answer {
             max-height: 0; overflow: hidden;
             transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1), padding 0.3s;
@@ -148,9 +148,9 @@
             outline: none;
         }
         .contact-input:focus {
-            border-color: #ea580c;
+            border-color: #2563eb;
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(234,88,12,0.10);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
         }
         .contact-input::placeholder { color: #c4bfbb; }
         .contact-label {
@@ -164,11 +164,11 @@
             background: #fff; border: 1px solid #f1f0ee; border-radius: 1.2rem;
             padding: 20px; transition: all 0.3s;
         }
-        .info-card:hover { border-color: #fed7aa; box-shadow: 0 8px 24px rgba(234,88,12,0.08); }
+        .info-card:hover { border-color: #bfdbfe; box-shadow: 0 8px 24px rgba(37,99,235,0.08); }
         .info-icon {
             width: 44px; height: 44px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; background: #fff7ed;
+            flex-shrink: 0; background: #eff6ff;
         }
 
         .bento-card {
@@ -183,6 +183,7 @@
         }
         .fade-in-up { animation: fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
     </style>
+
 </head>
 <body class="bg-stone-50 text-stone-900">
 
@@ -193,7 +194,7 @@
 
                 <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
                     <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
-                        Gastro<span class="text-orange-600">Nicaragua</span>
+                        Gastro<span class="text-blue-600">Nicaragua</span>
                     </span>
                 </a>
 
@@ -205,17 +206,17 @@
                     </a>
 
                     <a href="{{ route('contacto') }}"
-                       class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-orange-100 sm:bg-transparent text-orange-600 sm:text-stone-600 hover:text-orange-600 transition-colors no-underline font-semibold"
+                       class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-blue-100 sm:bg-transparent text-blue-600 sm:text-stone-600 hover:text-blue-600 transition-colors no-underline font-semibold"
                        title="Contacto">
                         <i class="fas fa-envelope text-sm sm:hidden"></i>
-                        <span class="hidden sm:inline text-sm font-bold text-orange-600">Contacto</span>
+                        <span class="hidden sm:inline text-sm font-bold text-blue-600">Contacto</span>
                     </a>
 
                     @if (Route::has('login'))
                         @auth
-                            @if(auth()->user()->email === 'admin@turismo.ni')
+                            @if(in_array(auth()->user()->email, ['kevintaleno17@gmail.com', '15ulisesramirez@gmail.com']))
                                 <a href="{{ url('/dashboard') }}"
-                                   class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-orange-50 sm:bg-transparent border border-orange-200 sm:border-0 text-orange-600 hover:text-orange-700 transition-colors no-underline">
+                                   class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-blue-50 sm:bg-transparent border border-blue-200 sm:border-0 text-blue-600 hover:text-blue-700 transition-colors no-underline">
                                     <i class="fas fa-chart-line text-sm sm:hidden"></i>
                                     <span class="hidden sm:inline text-sm font-semibold">Panel</span>
                                 </a>
@@ -225,7 +226,7 @@
                                 <button type="submit" class="text-sm font-semibold text-stone-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-1 sm:px-2">Salir</button>
                             </form>
                         @else
-                            <a href="{{ route('login') }}" class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-1 sm:px-2">Ingresar</a>
+                            <a href="{{ route('login') }}" class="text-sm font-semibold text-stone-600 hover:text-blue-600 transition-colors no-underline px-1 sm:px-2">Ingresar</a>
                         @endauth
                     @endif
                 </div>
@@ -240,30 +241,30 @@
                  alt="Gastronomía premium"
                  style="width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.04);animation:heroZoom 14s ease-in-out infinite alternate;">
             <div style="position:absolute;inset:0;background:linear-gradient(110deg,rgba(12,9,8,0.93) 0%,rgba(20,12,6,0.82) 45%,rgba(60,20,5,0.45) 100%);"></div>
-            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 75% 40%,rgba(234,88,12,0.22) 0%,transparent 55%);"></div>
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 75% 40%,rgba(37,99,235,0.22) 0%,transparent 55%);"></div>
             <div style="position:absolute;inset:0;opacity:0.04;background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
         </div>
 
-        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,#ea580c 30%,#fb923c 60%,transparent);z-index:5;"></div>
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,#2563eb 30%,#3b82f6 60%,transparent);z-index:5;"></div>
 
         <div class="max-w-7xl mx-auto px-6 w-full" style="position:relative;z-index:10;">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;" class="hero-grid">
 
                 <div>
                     <div class="fade-in-up" style="animation-delay:0.05s;opacity:0;margin-bottom:24px;">
-                        <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.35);backdrop-filter:blur(8px);padding:7px 16px;border-radius:999px;">
-                            <span style="width:7px;height:7px;background:#fb923c;border-radius:50%;display:inline-block;animation:pulse-dot 1.6s ease-in-out infinite;"></span>
-                            <span style="font-size:10px;font-weight:800;letter-spacing:0.22em;text-transform:uppercase;color:#fb923c;">Únete a la plataforma</span>
+                        <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.35);backdrop-filter:blur(8px);padding:7px 16px;border-radius:999px;">
+                            <span style="width:7px;height:7px;background:#3b82f6;border-radius:50%;display:inline-block;animation:pulse-dot 1.6s ease-in-out infinite;"></span>
+                            <span style="font-size:10px;font-weight:800;letter-spacing:0.22em;text-transform:uppercase;color:#3b82f6;">Únete a la plataforma</span>
                         </div>
                     </div>
 
                     <h1 class="premium-title fade-in-up"
                         style="font-size:clamp(2.8rem,5.5vw,5rem);line-height:1.0;color:#fff;margin:0 0 24px;animation-delay:0.15s;opacity:0;letter-spacing:-0.02em;">
                         Crece con<br>
-                        <em style="color:#fb923c;font-style:normal;position:relative;display:inline-block;">
+                        <em style="color:#3b82f6;font-style:normal;position:relative;display:inline-block;">
                             Gastro Nicaragua
                             <svg style="position:absolute;bottom:-8px;left:0;width:100%;height:10px;overflow:visible;" viewBox="0 0 300 10" preserveAspectRatio="none">
-                                <path d="M2 7 Q75 1 150 6 Q225 11 298 4" stroke="#ea580c" stroke-width="2.5" fill="none" stroke-linecap="round"
+                                <path d="M2 7 Q75 1 150 6 Q225 11 298 4" stroke="#2563eb" stroke-width="2.5" fill="none" stroke-linecap="round"
                                       stroke-dasharray="300" stroke-dashoffset="300"
                                       style="animation:drawLine 1.2s cubic-bezier(0.4,0,0.2,1) 0.8s forwards;"/>
                             </svg>
@@ -276,9 +277,9 @@
 
                     <div class="fade-in-up" style="display:flex;flex-wrap:wrap;gap:12px;animation-delay:0.35s;opacity:0;">
                         <a href="#planes"
-                           style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:#fff;padding:14px 28px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.25s;box-shadow:0 8px 32px rgba(234,88,12,0.40);"
-                           onmouseover="this.style.background='#c2410c';this.style.transform='translateY(-2px)'"
-                           onmouseout="this.style.background='#ea580c';this.style.transform='translateY(0)'">
+                           style="display:inline-flex;align-items:center;gap:8px;background:#2563eb;color:#fff;padding:14px 28px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.25s;box-shadow:0 8px 32px rgba(37,99,235,0.40);"
+                           onmouseover="this.style.background='#1d4ed8';this.style.transform='translateY(-2px)'"
+                           onmouseout="this.style.background='#2563eb';this.style.transform='translateY(0)'">
                             <i class="fas fa-rocket" style="font-size:11px;"></i> Ver Planes
                         </a>
                         <a href="#contacto-form"
@@ -292,7 +293,7 @@
 
                 <div style="position:relative;display:flex;flex-direction:column;gap:16px;" class="hero-cards">
                     <div class="fade-in-up" style="animation-delay:0.3s;opacity:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(16px);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:16px;transform:translateX(20px);">
-                        <div style="width:48px;height:48px;background:#ea580c;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 20px rgba(234,88,12,0.4);">
+                        <div style="width:48px;height:48px;background:#2563eb;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 20px rgba(37,99,235,0.4);">
                             <i class="fas fa-chart-line" style="color:#fff;font-size:18px;"></i>
                         </div>
                         <div>
@@ -304,7 +305,7 @@
 
                     <div class="fade-in-up" style="animation-delay:0.4s;opacity:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(16px);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:16px;transform:translateX(20px);">
                         <div style="width:48px;height:48px;background:rgba(255,255,255,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i class="fas fa-map-marker-alt" style="color:#fb923c;font-size:18px;"></i>
+                            <i class="fas fa-map-marker-alt" style="color:#3b82f6;font-size:18px;"></i>
                         </div>
                         <div>
                             <div style="font-size:11px;color:rgba(214,211,208,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:2px;">Cobertura</div>
@@ -313,9 +314,9 @@
                         </div>
                     </div>
 
-                    <div class="fade-in-up" style="animation-delay:0.5s;opacity:0;background:rgba(234,88,12,0.12);border:1px solid rgba(234,88,12,0.25);backdrop-filter:blur(16px);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:16px;transform:translateX(20px);">
+                    <div class="fade-in-up" style="animation-delay:0.5s;opacity:0;background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.25);backdrop-filter:blur(16px);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:16px;transform:translateX(20px);">
                         <div style="width:48px;height:48px;background:rgba(255,255,255,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i class="fas fa-calendar-check" style="color:#fb923c;font-size:18px;"></i>
+                            <i class="fas fa-calendar-check" style="color:#3b82f6;font-size:18px;"></i>
                         </div>
                         <div>
                             <div style="font-size:11px;color:rgba(214,211,208,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:2px;">Eventos activos</div>
@@ -360,47 +361,47 @@
                 <span class="plan-pill mb-4 inline-flex">
                     <span class="dot"></span> ¿Por qué unirse?
                 </span>
-                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Todo lo que obtienes al<br><em class="text-orange-600 not-italic">registrar tu negocio</em></h2>
+                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Todo lo que obtienes al<br><em class="text-blue-600 not-italic">registrar tu negocio</em></h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="0">
-                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-eye text-orange-600 text-lg"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-eye text-blue-600 text-lg"></i>
                     </div>
                     <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Visibilidad Masiva</h3>
                     <p class="text-stone-500 text-sm leading-relaxed">Aparece en búsquedas de miles de turistas y locales que buscan experiencias gastronómicas en tu región.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-calendar-check text-orange-600 text-lg"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-calendar-check text-blue-600 text-lg"></i>
                     </div>
                     <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Gestión de Eventos</h3>
                     <p class="text-stone-500 text-sm leading-relaxed">Publica y gestiona tus eventos gastronómicos, noches de degustación, cenas especiales y más desde un solo lugar.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-briefcase text-orange-600 text-lg"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-briefcase text-blue-600 text-lg"></i>
                     </div>
                     <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Bolsa de Empleo</h3>
                     <p class="text-stone-500 text-sm leading-relaxed">Publica vacantes y encuentra el talento gastronómico que necesitas directamente en la plataforma.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="0">
-                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-chart-line text-orange-600 text-lg"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-chart-line text-blue-600 text-lg"></i>
                     </div>
                     <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Estadísticas en Tiempo Real</h3>
                     <p class="text-stone-500 text-sm leading-relaxed">Accede a métricas de visitas, interacciones y el alcance de tu perfil desde tu panel administrativo.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-star text-orange-600 text-lg"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-star text-blue-600 text-lg"></i>
                     </div>
                     <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Perfil Destacado</h3>
                     <p class="text-stone-500 text-sm leading-relaxed">Tu restaurante aparece en el carrusel principal del home visto por todos los visitantes de la plataforma.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-headset text-orange-600 text-lg"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-headset text-blue-600 text-lg"></i>
                     </div>
                     <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Soporte Dedicado</h3>
                     <p class="text-stone-500 text-sm leading-relaxed">Nuestro equipo te ayuda con el proceso de registro, publicación de contenido y cualquier duda técnica.</p>
@@ -416,7 +417,7 @@
                 <span class="plan-pill mb-4 inline-flex">
                     <span class="dot"></span> Planes & Precios
                 </span>
-                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-orange-600 not-italic">se adapta a tu negocio</em></h2>
+                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-blue-600 not-italic">se adapta a tu negocio</em></h2>
                 <p class="text-stone-500 text-sm mt-4 max-w-md mx-auto leading-relaxed">Sin contratos de largo plazo. Cancela cuando quieras. Empieza hoy mismo.</p>
             </div>
 
@@ -424,8 +425,8 @@
 
                 {{-- Plan Básico --}}
                 <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="0">
-                    <div class="plan-icon-wrap" style="background:#fff7ed;">
-                        <i class="fas fa-fire text-orange-600 text-xl"></i>
+                    <div class="plan-icon-wrap" style="background:#eff6ff;">
+                        <i class="fas fa-fire text-blue-600 text-xl"></i>
                     </div>
                     <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Básico</h3>
                     <p class="text-stone-400 text-xs mb-6">Para negocios en crecimiento</p>
@@ -458,10 +459,10 @@
                     <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Premium</h3>
                     <p class="text-stone-400 text-xs mb-6">Máxima visibilidad para tu negocio</p>
                     <div class="mb-6">
-                        <div class="plan-price" style="color:#ea580c;"><sup style="color:#ea580c;">$</sup>35<small>/mes</small></div>
+                        <div class="plan-price" style="color:#2563eb;"><sup style="color:#2563eb;">$</sup>35<small>/mes</small></div>
                         <p class="text-stone-400 text-xs mt-1">USD por mes</p>
                     </div>
-                    <div class="mb-4 p-3 rounded-xl bg-orange-50 border border-orange-100 text-xs text-orange-700 space-y-1">
+                    <div class="mb-4 p-3 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-700 space-y-1">
                         <p class="font-semibold mb-1">¿Por qué vale la diferencia?</p>
                         <p>🎯 Tus eventos aparecen en el header — lo primero que ven todos los visitantes al entrar</p>
                         <p>🍽️ Tu restaurante sale en el carrusel principal — máxima exposición garantizada</p>
@@ -471,8 +472,8 @@
                         <div class="plan-feature"><i class="fas fa-check check"></i>Galería ilimitada + videos</div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo ilimitada</div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas avanzadas</div>
-                        <div class="plan-feature" style="color:#1c1917;font-weight:700;"><i class="fas fa-check check" style="color:#ea580c;"></i><strong>Eventos destacados en el header</strong></div>
-                        <div class="plan-feature" style="color:#1c1917;font-weight:700;"><i class="fas fa-check check" style="color:#ea580c;"></i><strong>Restaurante en carrusel principal</strong></div>
+                        <div class="plan-feature" style="color:#1c1917;font-weight:700;"><i class="fas fa-check check" style="color:#2563eb;"></i><strong>Eventos destacados en el header</strong></div>
+                        <div class="plan-feature" style="color:#1c1917;font-weight:700;"><i class="fas fa-check check" style="color:#2563eb;"></i><strong>Restaurante en carrusel principal</strong></div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Badge verificado ✓</div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Posición #1 en búsquedas</div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Soporte 24/7 prioritario</div>
@@ -485,9 +486,9 @@
 
             <div class="mt-10 text-center">
                 <p class="text-stone-400 text-sm">
-                    <i class="fas fa-shield-alt text-orange-600 mr-1"></i>
+                    <i class="fas fa-shield-alt text-blue-600 mr-1"></i>
                     Sin contratos. Precios en dólares estadounidenses (USD).
-                    <a href="#faq" class="text-orange-600 hover:text-orange-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
+                    <a href="#faq" class="text-blue-600 hover:text-blue-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
                 </p>
             </div>
         </div>
@@ -504,7 +505,7 @@
                         <span class="dot"></span> Hablemos
                     </span>
                     <h2 class="premium-title text-4xl font-black text-stone-900 mt-4 mb-4">
-                        ¿Listo para registrar<br><em class="text-orange-600 not-italic">tu negocio?</em>
+                        ¿Listo para registrar<br><em class="text-blue-600 not-italic">tu negocio?</em>
                     </h2>
                     <p class="text-stone-500 text-sm leading-relaxed max-w-md mb-10">
                         Escríbenos y nuestro equipo comercial te contactará en menos de 24 horas para guiarte en el proceso de registro y elegir el plan ideal para tu negocio.
@@ -513,7 +514,7 @@
                     <div class="space-y-4 mb-10">
                         <div class="info-card">
                             <div class="info-icon">
-                                <i class="fas fa-map-marker-alt text-orange-600"></i>
+                                <i class="fas fa-map-marker-alt text-blue-600"></i>
                             </div>
                             <div>
                                 <div class="font-bold text-sm text-stone-900">Ubicación</div>
@@ -522,7 +523,7 @@
                         </div>
                         <div class="info-card">
                             <div class="info-icon">
-                                <i class="fab fa-whatsapp text-orange-600"></i>
+                                <i class="fab fa-whatsapp text-blue-600"></i>
                             </div>
                             <div>
                                 <div class="font-bold text-sm text-stone-900">WhatsApp Comercial</div>
@@ -531,7 +532,7 @@
                         </div>
                         <div class="info-card">
                             <div class="info-icon">
-                                <i class="fas fa-clock text-orange-600"></i>
+                                <i class="fas fa-clock text-blue-600"></i>
                             </div>
                             <div>
                                 <div class="font-bold text-sm text-stone-900">Horario de Atención</div>
@@ -545,19 +546,19 @@
                         <div class="text-xs font-black uppercase tracking-widest text-stone-400 mb-3">Síguenos en redes</div>
                         <div class="flex gap-3">
                             <a href="https://www.facebook.com/kevin.taleno.98" target="_blank" rel="noopener noreferrer"
-                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all no-underline">
                                 <i class="fab fa-facebook-f text-sm"></i>
                             </a>
                             <a href="https://www.instagram.com/taleno5196" target="_blank" rel="noopener noreferrer"
-                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all no-underline">
                                 <i class="fab fa-instagram text-sm"></i>
                             </a>
                             <a href="https://www.tiktok.com/@kevintaleno2" target="_blank" rel="noopener noreferrer"
-                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all no-underline">
                                 <i class="fab fa-tiktok text-sm"></i>
                             </a>
                             <a href="https://wa.me/50583767512" target="_blank" rel="noopener noreferrer"
-                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all no-underline">
+                               class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all no-underline">
                                 <i class="fab fa-whatsapp text-sm"></i>
                             </a>
                         </div>
@@ -616,7 +617,7 @@
                         </div>
 
                         <button type="submit"
-                                class="w-full bg-orange-600 text-white py-3.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all shadow-md shadow-orange-200 flex items-center justify-center gap-2 border-0 cursor-pointer">
+                                class="w-full bg-blue-600 text-white py-3.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2 border-0 cursor-pointer">
                             <i class="fab fa-whatsapp text-base"></i>
                             <span>Enviar por WhatsApp</span>
                         </button>
@@ -638,11 +639,11 @@
                 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500&display=swap');
                 .faq-wrap { max-width:700px; margin:0 auto; padding:2rem 0 1rem; font-family:'DM Sans',sans-serif; }
                 .faq-header { text-align:center; margin-bottom:2.5rem; }
-                .faq-pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:#854F0B; background:#FAEEDA; padding:5px 14px; border-radius:99px; border:0.5px solid #EF9F27; margin-bottom:1rem; }
-                .faq-pill-dot { width:6px; height:6px; border-radius:50%; background:#EF9F27; }
+                .faq-pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:#1e3a8a; background:#eff6ff; padding:5px 14px; border-radius:99px; border:0.5px solid #2563eb; margin-bottom:1rem; }
+                .faq-pill-dot { width:6px; height:6px; border-radius:50%; background:#2563eb; }
                 .faq-title { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; line-height:1.2; color:#1c1917; margin:0; }
-                .faq-title em { font-style:italic; color:#D85A30; }
-                .faq-divider { width:40px; height:2px; background:#EF9F27; margin:1.25rem auto 0; border-radius:2px; }
+                .faq-title em { font-style:italic; color:#2563eb; }
+                .faq-divider { width:40px; height:2px; background:#2563eb; margin:1.25rem auto 0; border-radius:2px; }
                 .faq-list { border-top:0.5px solid #e7e5e4; }
                 .faq-item { border-bottom:0.5px solid #e7e5e4; transition:background 0.2s; }
                 .faq-item.open { background:#fafaf9; border-radius:12px; border:0.5px solid #d6d3d1; margin:6px 0; }
@@ -650,14 +651,14 @@
                 .faq-q { font-size:15px; font-weight:500; line-height:1.4; font-family:'DM Sans',sans-serif; }
                 .faq-num { font-family:'Playfair Display',serif; font-size:13px; font-style:italic; color:#78716c; min-width:22px; flex-shrink:0; }
                 .faq-icon-wrap { width:30px; height:30px; border-radius:50%; border:0.5px solid #d6d3d1; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; color:#78716c; transition:transform 0.3s, background 0.2s, border-color 0.2s; }
-                .faq-item.open .faq-icon-wrap { transform:rotate(45deg); background:#FAEEDA; border-color:#EF9F27; color:#854F0B; }
+                .faq-item.open .faq-icon-wrap { transform:rotate(45deg); background:#eff6ff; border-color:#2563eb; color:#1e3a8a; }
                 .faq-answer { font-size:14px; color:#57534e; line-height:1.75; max-height:0; overflow:hidden; transition:max-height 0.35s ease, padding 0.3s ease; padding:0 1rem; }
                 .faq-item.open .faq-answer { max-height:400px; padding:0 1rem 1.25rem; }
                 .plan-row { display:flex; align-items:flex-start; gap:10px; padding:7px 10px; border-radius:8px; margin-bottom:4px; background:#fff; border:0.5px solid #e7e5e4; }
                 .badge { display:inline-flex; align-items:center; font-size:11px; font-weight:500; padding:3px 10px; border-radius:99px; white-space:nowrap; flex-shrink:0; letter-spacing:0.03em; }
-                .badge-premium { background:#FAEEDA; color:#854F0B; border:0.5px solid #EF9F27; }
+                .badge-premium { background:#eff6ff; color:#1e3a8a; border:0.5px solid #2563eb; }
                 .badge-basico { background:#F1EFE8; color:#5F5E5A; border:0.5px solid #B4B2A9; }
-                .faq-highlight-box { background:#FAEEDA; border:0.5px solid #EF9F27; border-left:3px solid #D85A30; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:13px; color:#633806; line-height:1.6; display:flex; gap:8px; align-items:flex-start; }
+                .faq-highlight-box { background:#eff6ff; border:0.5px solid #2563eb; border-left:3px solid #2563eb; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:13px; color:#1e3a8a; line-height:1.6; display:flex; gap:8px; align-items:flex-start; }
             </style>
 
             <div class="faq-wrap">
@@ -689,7 +690,7 @@
                         <div class="faq-answer">
                             <p style="margin:0 0 12px;">La diferencia clave está en la <strong style="color:#1c1917;">visibilidad</strong>:</p>
                             <div class="plan-row"><span class="badge badge-basico">Básico $25</span><span>Tus eventos aparecen en la sección de eventos de la plataforma. Tu restaurante NO aparece en el carrusel principal.</span></div>
-                            <div class="plan-row"><span class="badge badge-premium">Premium $35</span><span>Tus eventos se muestran en el <strong style="color:#854F0B;">header de la página principal</strong> — lo primero que ven todos al entrar. Además tu restaurante aparece en el <strong style="color:#854F0B;">carrusel principal</strong>.</span></div>
+                            <div class="plan-row"><span class="badge badge-premium">Premium $35</span><span>Tus eventos se muestran en el <strong style="color:#1e3a8a;">header de la página principal</strong> — lo primero que ven todos al entrar. Además tu restaurante aparece en el <strong style="color:#1e3a8a;">carrusel principal</strong>.</span></div>
                             <div class="faq-highlight-box"><i class="fas fa-fire" style="font-size:14px;flex-shrink:0;margin-top:2px;"></i>El header y el carrusel reciben el 100% de las visitas. Los restaurantes Premium tienen hasta 4× más clics que los listados regulares.</div>
                         </div>
                     </div>
@@ -771,26 +772,26 @@
                  alt="Restaurante premium"
                  style="width:100%;height:100%;object-fit:cover;object-position:center;">
             <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(12,9,8,0.92) 0%,rgba(30,15,5,0.85) 50%,rgba(67,20,7,0.80) 100%);"></div>
-            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(234,88,12,0.2) 0%,transparent 60%);"></div>
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(37,99,235,0.2) 0%,transparent 60%);"></div>
         </div>
-        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent,#ea580c 40%,transparent);"></div>
-        <div style="position:absolute;right:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent,#ea580c 40%,transparent);"></div>
+        <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent,#2563eb 40%,transparent);"></div>
+        <div style="position:absolute;right:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent,#2563eb 40%,transparent);"></div>
         <div class="max-w-3xl mx-auto px-6 text-center" style="position:relative;z-index:10;">
-            <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.3);padding:6px 16px;border-radius:999px;margin-bottom:24px;">
-                <span style="width:6px;height:6px;background:#fb923c;border-radius:50%;animation:pulse-dot 1.6s ease-in-out infinite;display:inline-block;"></span>
-                <span style="font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#fb923c;">Empieza hoy</span>
+            <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);padding:6px 16px;border-radius:999px;margin-bottom:24px;">
+                <span style="width:6px;height:6px;background:#3b82f6;border-radius:50%;animation:pulse-dot 1.6s ease-in-out infinite;display:inline-block;"></span>
+                <span style="font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#3b82f6;">Empieza hoy</span>
             </div>
             <h2 class="premium-title" style="color:#fff;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.05;margin-bottom:16px;">
-                ¿Tu restaurante aún no<br><em style="color:#fb923c;font-style:normal;">está en el mapa?</em>
+                ¿Tu restaurante aún no<br><em style="color:#3b82f6;font-style:normal;">está en el mapa?</em>
             </h2>
             <p style="color:rgba(214,211,208,0.75);font-size:1rem;line-height:1.75;max-width:480px;margin:0 auto 40px;">
                 Miles de personas buscan experiencias gastronómicas en Nicaragua cada mes. Asegúrate de que te encuentren a ti.
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
                 <a href="#planes"
-                   style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:#fff;padding:15px 32px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 10px 36px rgba(234,88,12,0.45);transition:all 0.25s;"
-                   onmouseover="this.style.background='#c2410c';this.style.transform='translateY(-2px)'"
-                   onmouseout="this.style.background='#ea580c';this.style.transform='translateY(0)'">
+                   style="display:inline-flex;align-items:center;gap:8px;background:#2563eb;color:#fff;padding:15px 32px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 10px 36px rgba(37,99,235,0.45);transition:all 0.25s;"
+                   onmouseover="this.style.background='#1d4ed8';this.style.transform='translateY(-2px)'"
+                   onmouseout="this.style.background='#2563eb';this.style.transform='translateY(0)'">
                     <i class="fas fa-rocket" style="font-size:11px;"></i> Comenzar Ahora
                 </a>
                 <a href="https://api.whatsapp.com/send?phone=50583767512&text=Hola%20Gastro%20Nicaragua%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20planes" target="_blank"
@@ -802,54 +803,55 @@
             </div>
         </div>
     </section>
-
-    {{-- ══ FOOTER ══ --}}
-    <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
-        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
-                <div class="sm:col-span-2 lg:col-span-4 space-y-4">
-                    <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
-                    <p class="text-stone-400 text-sm leading-relaxed font-light">
-                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                        Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
-                    </p>
-                    <div class="flex items-center gap-3 pt-1">
-                        <a href="https://www.facebook.com/kevin.taleno.98" target="_blank" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.instagram.com/taleno5196" target="_blank" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.tiktok.com/@kevintaleno2" target="_blank" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+        {{-- ══ FOOTER ══ --}}
+        <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
+                    <div class="sm:col-span-2 lg:col-span-4 space-y-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed font-light">
+                            La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                            Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                        </p>
+                        <div class="flex items-center gap-3 pt-1">
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
+                        <ul class="space-y-2.5 text-sm p-0 list-none m-0">
+                            <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
+                            <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
+                            <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                            <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                            <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-3 space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
+                        <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
+                        </div>
                     </div>
                 </div>
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
-                    <ul class="space-y-2.5 text-sm p-0 list-none m-0">
-                        <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Inicio</a></li>
-                        <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Restaurantes</a></li>
-                        <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all no-underline">Gastrobares</a></li>
-                        <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all no-underline">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="text-orange-400 font-semibold no-underline">Contacto & Planes</a></li>
-                    </ul>
-                </div>
-                <div class="lg:col-span-3 space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Masaya</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Granada</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>León</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>San Juan del Sur</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Estelí</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Matagalpa</span>
+                <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-stone-800 pt-6 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
-                <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Política de Privacidad</a>
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Términos de Servicio</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -895,3 +897,4 @@
     </script>
 </body>
 </html>
+

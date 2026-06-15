@@ -9,10 +9,12 @@ class AdminOnly
 {
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->email !== 'admin@turismo.ni') {
-            return redirect('/');
+        // Verificar si el usuario está autenticado y tiene rol admin
+        if (auth()->check() && auth()->user()->role === 'admin') {
+            return $next($request);
         }
 
-        return $next($request);
+        // Si no es admin, redirigir al home
+        return redirect('/');
     }
 }

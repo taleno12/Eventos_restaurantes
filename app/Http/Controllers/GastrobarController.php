@@ -350,6 +350,11 @@ class GastrobarController extends Controller
     {
         $gastrobar->update(['activo' => !$gastrobar->activo]);
 
+        // Sincronizar estado del usuario propietario
+        User::where('gastrobar_id', $gastrobar->id)
+            ->where('role', 'gastrobar')
+            ->update(['estado' => $gastrobar->activo ? 'activo' : 'suspendido']);
+
         return redirect()->back()->with('success',
             $gastrobar->activo
                 ? 'Gastrobar activado correctamente.'

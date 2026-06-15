@@ -14,15 +14,15 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --orange:    #ea580c;
-            --orange-lt: #fff7ed;
-            --border:    #e5e7eb;
-            --text:      #1f2937;
-            --muted:     #6b7280;
-            --bg:        #f9fafb;
-            --white:     #ffffff;
-            --radius:    12px;
-            --shadow:    0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+            --blue:    #2563eb;
+            --blue-lt: #eff6ff;
+            --border:  #e2e8f0;
+            --text:    #0f172a;
+            --muted:   #64748b;
+            --bg:      #f8fafc;
+            --white:   #ffffff;
+            --radius:  12px;
+            --shadow:  0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
         }
 
         body {
@@ -52,7 +52,7 @@
             font-size: 18px; color: var(--text);
             display: flex; align-items: center; gap: 8px;
         }
-        .topbar-logo .dot { color: var(--orange); }
+        .topbar-logo .dot { color: var(--blue); }
         .topbar-actions { display: flex; align-items: center; gap: 8px; }
         .btn-sm {
             display: inline-flex; align-items: center; gap: 6px;
@@ -61,9 +61,9 @@
             background: var(--white); color: var(--muted);
             cursor: pointer; transition: all 0.18s;
         }
-        .btn-sm:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-lt); }
-        .btn-sm.primary { background: var(--orange); color: white; border-color: var(--orange); }
-        .btn-sm.primary:hover { background: #c2410c; border-color: #c2410c; }
+        .btn-sm:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+        .btn-sm.primary { background: var(--blue); color: white; border-color: var(--blue); }
+        .btn-sm.primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
         /* ══ HERO ══ */
         .hero-banner {
@@ -95,13 +95,13 @@
         .rest-logo-wrap {
             width: 100px; height: 100px; border-radius: 18px;
             border: 4px solid var(--white); overflow: hidden;
-            background: var(--orange-lt); flex-shrink: 0;
+            background: var(--blue-lt); flex-shrink: 0;
             box-shadow: var(--shadow);
             display: flex; align-items: center; justify-content: center;
         }
         .rest-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .rest-logo-placeholder {
-            font-size: 2.5rem; color: var(--orange); opacity: 0.5;
+            font-size: 2.5rem; color: var(--blue); opacity: 0.5;
         }
         .rest-info { padding-bottom: 8px; min-width: 0; flex: 1; }
         .rest-info h1 {
@@ -114,7 +114,7 @@
             font-size: 13px; color: var(--muted);
         }
         .rest-meta-item { display: flex; align-items: center; gap: 5px; font-weight: 600; }
-        .rest-meta-item i { color: var(--orange); font-size: 11px; }
+        .rest-meta-item i { color: var(--blue); font-size: 11px; }
         .rest-meta-sep { color: var(--border); }
 
         .rest-header-bottom {
@@ -129,21 +129,21 @@
         }
         .badge-green  { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
         .badge-red    { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
-        .badge-gray   { background: #f9fafb; color: #6b7280; border-color: #e5e7eb; }
-        .badge-orange { background: var(--orange-lt); color: var(--orange); border-color: #fed7aa; }
+        .badge-gray   { background: #f9fafb; color: #64748b; border-color: #e2e8f0; }
+        .badge-blue   { background: var(--blue-lt); color: var(--blue); border-color: #bfdbfe; }
         .badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
         .badge-dot.green { background: #22c55e; }
         .badge-dot.red   { background: #ef4444; }
 
         .btn-ordenar {
             display: inline-flex; align-items: center; gap: 8px;
-            background: var(--orange); color: white;
+            background: var(--blue); color: white;
             font-size: 14px; font-weight: 700; padding: 10px 24px;
             border-radius: 999px; border: none; cursor: pointer;
-            box-shadow: 0 4px 14px rgba(234,88,12,0.35);
+            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
             transition: all 0.18s; white-space: nowrap;
         }
-        .btn-ordenar:hover { background: #c2410c; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(234,88,12,0.4); }
+        .btn-ordenar:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
 
         /* ══ STATS BAR ══ */
         .stats-bar {
@@ -163,7 +163,7 @@
         }
         .stat-item:last-child { border-right: none; }
         .stat-val { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1; }
-        .stat-val .accent { color: var(--orange); }
+        .stat-val .accent { color: var(--blue); }
         .stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-top: 3px; }
 
         /* ══ LAYOUT PRINCIPAL ══ */
@@ -191,11 +191,11 @@
             font-size: 15px; font-weight: 800; color: var(--text);
             display: flex; align-items: center; gap: 8px;
         }
-        .section-title i { color: var(--orange); font-size: 13px; }
+        .section-title i { color: var(--blue); font-size: 13px; }
         .section-body { padding: 20px 22px; }
 
         /* descripción */
-        .desc-text { font-size: 14.5px; color: #4b5563; line-height: 1.8; }
+        .desc-text { font-size: 14.5px; color: #475569; line-height: 1.8; }
 
         /* galería */
         .gallery-grid {
@@ -205,7 +205,7 @@
         @media (max-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 85px; } }
         @media (max-width: 400px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
         .gallery-grid .g-first { grid-column: span 2; grid-row: span 2; }
-        .g-item { border-radius: 10px; overflow: hidden; cursor: zoom-in; position: relative; background: #f3f4f6; }
+        .g-item { border-radius: 10px; overflow: hidden; cursor: zoom-in; position: relative; background: #f1f5f9; }
         .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
         .g-item:hover img { transform: scale(1.07); }
         .g-item::after {
@@ -219,36 +219,36 @@
         #mapa-publico { height: 250px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
         .dir-box {
             display: flex; align-items: flex-start; gap: 10px;
-            background: var(--orange-lt); border: 1px solid #fed7aa;
+            background: var(--blue-lt); border: 1px solid #bfdbfe;
             border-radius: 10px; padding: 12px 16px; margin-bottom: 14px;
-            font-size: 13.5px; color: #57534e; line-height: 1.6;
+            font-size: 13.5px; color: #475569; line-height: 1.6;
         }
-        .dir-box i { color: var(--orange); margin-top: 2px; flex-shrink: 0; }
+        .dir-box i { color: var(--blue); margin-top: 2px; flex-shrink: 0; }
         .btn-gmaps {
             display: inline-flex; align-items: center; gap: 8px;
             background: #1f2937; color: white; font-size: 13px; font-weight: 700;
             padding: 10px 20px; border-radius: 10px; margin-top: 14px; transition: all 0.18s;
         }
-        .btn-gmaps:hover { background: var(--orange); transform: translateY(-1px); }
+        .btn-gmaps:hover { background: var(--blue); transform: translateY(-1px); }
 
         /* reseñas */
         .rating-summary {
             display: flex; align-items: center; gap: 20px;
-            background: var(--orange-lt); border: 1px solid #fed7aa;
+            background: var(--blue-lt); border: 1px solid #bfdbfe;
             border-radius: 12px; padding: 18px 22px; margin-bottom: 20px;
         }
-        .rating-big { font-size: 3rem; font-weight: 900; color: var(--orange); line-height: 1; text-align: center; }
+        .rating-big { font-size: 3rem; font-weight: 900; color: var(--blue); line-height: 1; text-align: center; }
         .rating-lbl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
         .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .bar-track { flex: 1; height: 6px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
-        .bar-fill  { height: 100%; background: var(--orange); border-radius: 999px; transition: width 0.5s ease; }
+        .bar-track { flex: 1; height: 6px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+        .bar-fill  { height: 100%; background: var(--blue); border-radius: 999px; transition: width 0.5s ease; }
 
-        .review-item { border-bottom: 1px solid #f3f4f6; padding-bottom: 18px; margin-bottom: 18px; }
+        .review-item { border-bottom: 1px solid #f1f5f9; padding-bottom: 18px; margin-bottom: 18px; }
         .review-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .review-avatar {
-            width: 38px; height: 38px; border-radius: 50%; background: #fed7aa;
+            width: 38px; height: 38px; border-radius: 50%; background: #bfdbfe;
             display: flex; align-items: center; justify-content: center;
-            font-size: 15px; font-weight: 800; color: var(--orange); flex-shrink: 0; overflow: hidden;
+            font-size: 15px; font-weight: 800; color: var(--blue); flex-shrink: 0; overflow: hidden;
         }
         .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -257,7 +257,7 @@
             border-radius: 10px; font-size: 14px; outline: none; font-family: inherit;
             background: var(--white); transition: border-color 0.2s; color: var(--text);
         }
-        .form-input:focus { border-color: var(--orange); }
+        .form-input:focus { border-color: var(--blue); }
         .form-textarea { resize: vertical; }
         .form-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 6px; }
 
@@ -274,7 +274,7 @@
             letter-spacing: 0.1em; color: var(--muted);
             display: flex; align-items: center; gap: 8px;
         }
-        .sidebar-card-head i { color: var(--orange); }
+        .sidebar-card-head i { color: var(--blue); }
         .sidebar-card-body { padding: 16px 18px; }
 
         /* redes */
@@ -298,8 +298,8 @@
         /* horario */
         .dias-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
         .dia-pill { font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 999px; letter-spacing: 0.04em; }
-        .dia-pill.on  { background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; }
-        .dia-pill.off { background: #f9fafb; color: #d1d5db; border: 1.5px solid #e5e7eb; }
+        .dia-pill.on  { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; }
+        .dia-pill.off { background: #f9fafb; color: #cbd5e1; border: 1.5px solid #e2e8f0; }
         .hor-row {
             display: flex; align-items: center; justify-content: space-between;
             padding: 10px 14px; border-radius: 10px; background: var(--bg);
@@ -339,7 +339,7 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: background 0.18s; z-index: 10001;
         }
-        .lb-btn:hover { background: rgba(234,88,12,0.65); }
+        .lb-btn:hover { background: rgba(37,99,235,0.65); }
         #lb-prev { left: 14px; } #lb-next { right: 14px; }
         #lb-close {
             position: fixed; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%;
@@ -355,7 +355,7 @@
             letter-spacing: 0.08em; z-index: 10001; display: flex; gap: 8px; align-items: center;
         }
         .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.18s; }
-        .lb-dot.on { background: var(--orange); transform: scale(1.35); }
+        .lb-dot.on { background: var(--blue); transform: scale(1.35); }
 
         @keyframes pulseDot { 0%,100%{box-shadow:0 0 0 2px rgba(34,197,94,.25)} 50%{box-shadow:0 0 0 4px rgba(34,197,94,.1)} }
 
@@ -363,14 +363,6 @@
         .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
         .alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-
-        /* ══ FOOTER ══ */
-        .footer-main {
-            background: #1c1917;
-            color: #a8a29e;
-            border-top: 1px solid #292524;
-        }
-        .footer-main a { text-decoration: none; }
 
         /* mobile */
         @media (max-width: 640px) {
@@ -487,7 +479,7 @@
 
             <div class="rest-badges">
                 @if($avgRating)
-                    <span class="badge badge-orange">
+                    <span class="badge badge-blue">
                         <i class="fas fa-star" style="font-size:10px;"></i>
                         {{ $avgRating }} · {{ $totalReviews }} {{ $totalReviews === 1 ? 'reseña' : 'reseñas' }}
                     </span>
@@ -517,8 +509,6 @@
                     </span>
                 @endif
             </div>
-
-            {{-- Botón ordenar ELIMINADO de aquí — ahora está junto a "Sobre el restaurante" --}}
         </div>
     </div>
 </div>
@@ -544,7 +534,7 @@
         @endif
         @if($restaurante->especialidad)
             <div class="stat-item">
-                <div class="stat-val" style="font-size:13px;color:var(--orange);">{{ $restaurante->especialidad }}</div>
+                <div class="stat-val" style="font-size:13px;color:var(--blue);">{{ $restaurante->especialidad }}</div>
                 <div class="stat-lbl">Especialidad</div>
             </div>
         @endif
@@ -576,7 +566,7 @@
     {{-- COLUMNA PRINCIPAL --}}
     <main>
 
-        {{-- ▼ CAMBIO 1: Botón "Ordenar ahora" movido aquí, al lado de "Sobre el restaurante" --}}
+        {{-- Botón "Ordenar ahora" --}}
         <div class="section-card">
             <div class="section-head">
                 <div class="section-title"><i class="fas fa-align-left"></i> Sobre el restaurante</div>
@@ -690,7 +680,7 @@
                     @if(!$miResena)
                         <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
                             <p style="font-size:12px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">
-                                <i class="fas fa-pencil-alt" style="color:var(--orange);margin-right:6px;"></i> Deja tu reseña
+                                <i class="fas fa-pencil-alt" style="color:var(--blue);margin-right:6px;"></i> Deja tu reseña
                             </p>
                             <form action="{{ route('reviews.store', $restaurante) }}" method="POST">
                                 @csrf
@@ -723,9 +713,9 @@
                         </div>
                     @endif
                 @else
-                    <div style="background:var(--orange-lt);border:1px solid #fed7aa;border-radius:12px;padding:18px 20px;text-align:center;margin-bottom:24px;">
-                        <i class="fas fa-lock" style="color:var(--orange);font-size:20px;display:block;margin-bottom:8px;"></i>
-                        <p style="font-size:14px;color:#57534e;font-weight:600;margin-bottom:12px;">Inicia sesión para dejar tu reseña</p>
+                    <div style="background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:12px;padding:18px 20px;text-align:center;margin-bottom:24px;">
+                        <i class="fas fa-lock" style="color:var(--blue);font-size:20px;display:block;margin-bottom:8px;"></i>
+                        <p style="font-size:14px;color:#475569;font-weight:600;margin-bottom:12px;">Inicia sesión para dejar tu reseña</p>
                         <a href="{{ route('login') }}" class="btn-ordenar" style="font-size:13px;padding:9px 22px;display:inline-flex;">
                             <i class="fas fa-sign-in-alt" style="font-size:11px;"></i> Iniciar sesión
                         </a>
@@ -753,12 +743,12 @@
                             </div>
                             <div style="display:flex;gap:2px;flex-shrink:0;">
                                 @for($i = 1; $i <= 5; $i++)
-                                    <span style="color:{{ $i <= $review->rating ? '#f59e0b' : '#e5e7eb' }};font-size:14px;">★</span>
+                                    <span style="color:{{ $i <= $review->rating ? '#f59e0b' : '#e2e8f0' }};font-size:14px;">★</span>
                                 @endfor
                             </div>
                         </div>
                         @if($review->title)<p style="font-size:14px;font-weight:700;margin-bottom:4px;">{{ $review->title }}</p>@endif
-                        @if($review->body)<p style="font-size:14px;color:#4b5563;line-height:1.7;margin:0;">{{ $review->body }}</p>@endif
+                        @if($review->body)<p style="font-size:14px;color:#475569;line-height:1.7;margin:0;">{{ $review->body }}</p>@endif
 
                         @auth
                             @if(auth()->id() === $review->user_id || auth()->user()->email === 'admin@turismo.ni')
@@ -807,7 +797,7 @@
         <script>
             let selectedRating = 0;
             function setRating(val) { selectedRating = val; document.getElementById('rating-input').value = val; updateStars('star-selector', val, '#f59e0b'); }
-            function hoverRating(val) { updateStars('star-selector', val, '#fb923c'); }
+            function hoverRating(val) { updateStars('star-selector', val, '#60a5fa'); }
             function resetHover() { updateStars('star-selector', selectedRating, '#f59e0b'); }
             function updateStars(id, val, color) {
                 document.querySelectorAll(`#${id} button`).forEach(btn => {
@@ -896,37 +886,36 @@
     </aside>
 </div>
 
-{{-- ▼ CAMBIO 2: Footer completo igual al del welcome.blade.php ▼ --}}
-<footer class="footer-main">
-    <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8"
-         style="max-width:1280px;margin:0 auto;padding:48px 1.5rem 32px;">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-bottom:40px;">
+{{-- ══ FOOTER CSS PURO (sin Tailwind) ══ --}}
+<footer style="background:#0f172a;color:#cbd5e1;border-top:1px solid #1e293b;">
+    <div style="max-width:1280px;margin:0 auto;padding:48px 1.5rem 32px;">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:40px;">
 
             {{-- Columna marca --}}
-            <div style="grid-column:span 2 / span 2;max-width:380px;" class="brand-col">
+            <div style="max-width:380px;">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
                     <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;color:#fff;">
-                        Gastro<span style="color:#ea580c;">Nicaragua</span>
+                        Gastro<span style="color:#3b82f6;">Nicaragua</span>
                     </span>
                 </div>
-                <p style="color:#a8a29e;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
+                <p style="color:#94a3b8;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
                     La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
                     Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
                 </p>
                 <div style="display:flex;align-items:center;gap:10px;">
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#292524;display:flex;align-items:center;justify-content:center;color:#a8a29e;font-size:12px;transition:all 0.2s;"
-                       onmouseover="this.style.background='#ea580c';this.style.color='#fff';"
-                       onmouseout="this.style.background='#292524';this.style.color='#a8a29e';">
+                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
+                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
+                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#292524;display:flex;align-items:center;justify-content:center;color:#a8a29e;font-size:12px;transition:all 0.2s;"
-                       onmouseover="this.style.background='#ea580c';this.style.color='#fff';"
-                       onmouseout="this.style.background='#292524';this.style.color='#a8a29e';">
+                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
+                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
+                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#292524;display:flex;align-items:center;justify-content:center;color:#a8a29e;font-size:12px;transition:all 0.2s;"
-                       onmouseover="this.style.background='#ea580c';this.style.color='#fff';"
-                       onmouseout="this.style.background='#292524';this.style.color='#a8a29e';">
+                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
+                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
+                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
                         <i class="fab fa-tiktok"></i>
                     </a>
                 </div>
@@ -936,15 +925,16 @@
             <div>
                 <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:16px;">Portal</h4>
                 <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-                    <li><a href="{{ route('home') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;"
-                           onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Inicio</a></li>
-                    <li><a href="{{ route('restaurantes.index') }}" style="color:#ea580c;font-size:14px;font-weight:600;">Restaurantes</a></li>
-                    <li><a href="{{ route('gastrobares.index') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;"
-                           onmouseover="this.style.color='#a855f7';" onmouseout="this.style.color='#a8a29e';">Gastrobares</a></li>
-                    <li><a href="{{ route('empleos.index') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;"
-                           onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Bolsa de Empleos</a></li>
-                    <li><a href="{{ route('contacto') }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;"
-                           onmouseover="this.style.color='#f97316';" onmouseout="this.style.color='#a8a29e';">Contacto</a></li>
+                    <li><a href="{{ route('home') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
+                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Inicio</a></li>
+                    <li><a href="{{ route('restaurantes.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
+                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Restaurantes</a></li>
+                    <li><a href="{{ route('gastrobares.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
+                           onmouseover="this.style.color='#818cf8';" onmouseout="this.style.color='#94a3b8';">Gastrobares</a></li>
+                    <li><a href="{{ route('empleos.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
+                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Bolsa de Empleos</a></li>
+                    <li><a href="{{ route('contacto') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
+                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Contacto</a></li>
                 </ul>
             </div>
 
@@ -952,25 +942,43 @@
             <div>
                 <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:16px;">Destinos Destacados</h4>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                    @foreach(['Masaya','Granada','León','San Juan del Sur','Estelí','Matagalpa'] as $destino)
-                        <span style="color:#a8a29e;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                              onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#a8a29e';">
-                            <i class="fas fa-chevron-right" style="font-size:9px;color:#ea580c;margin-right:6px;"></i>{{ $destino }}
-                        </span>
-                    @endforeach
+                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Masaya
+                    </span>
+                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Granada
+                    </span>
+                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>León
+                    </span>
+                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>San Juan del Sur
+                    </span>
+                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Estelí
+                    </span>
+                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
+                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
+                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Matagalpa
+                    </span>
                 </div>
             </div>
 
         </div>
 
         {{-- Línea inferior --}}
-        <div style="border-top:1px solid #292524;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
-            <p style="font-size:12px;color:#57534e;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+        <div style="border-top:1px solid #1e293b;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <p style="font-size:12px;color:#64748b;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
             <div style="display:flex;gap:16px;">
-                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;"
-                   onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Política de Privacidad</a>
-                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;"
-                   onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Términos de Servicio</a>
+                <a href="#" style="font-size:12px;color:#64748b;text-decoration:none;transition:color 0.2s;"
+                   onmouseover="this.style.color='#94a3b8';" onmouseout="this.style.color='#64748b';">Política de Privacidad</a>
+                <a href="#" style="font-size:12px;color:#64748b;text-decoration:none;transition:color 0.2s;"
+                   onmouseover="this.style.color='#94a3b8';" onmouseout="this.style.color='#64748b';">Términos de Servicio</a>
             </div>
         </div>
     </div>
@@ -1037,7 +1045,7 @@
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19
         }).addTo(mapa);
         const icono = L.divIcon({
-            html: `<div style="width:20px;height:20px;background:#ea580c;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>`,
+            html: `<div style="width:20px;height:20px;background:#2563eb;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.3);"></div>`,
             iconSize: [20,20], iconAnchor: [10,20], className: ''
         });
         L.marker([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], { icon: icono })

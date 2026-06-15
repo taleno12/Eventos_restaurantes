@@ -143,6 +143,52 @@
                 </div>
             </div>
 
+            {{-- ── Cuenta del Propietario ── --}}
+            @php $propietario = \App\Models\User::where('gastrobar_id', $gastrobar->id)->where('role', 'gastrobar')->first(); @endphp
+            @if($propietario)
+            <div class="card border-0 shadow-sm rounded-3 bg-white">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom d-flex align-items-center gap-2"
+                        style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;color:#2d3748;">
+                        <i class="bi bi-person-badge text-warning"></i> Cuenta del Propietario
+                    </h5>
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center fw-black text-white shadow-sm flex-shrink-0"
+                             style="width:52px;height:52px;font-size:1.3rem;background:linear-gradient(135deg,#1e293b,#334155);">
+                            {{ strtoupper(substr($propietario->name, 0, 1)) }}
+                        </div>
+                        <div class="row g-3 flex-grow-1 w-100">
+                            <div class="col-12 col-sm-6">
+                                <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                    <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Nombre</p>
+                                    <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                                        <i class="bi bi-person text-secondary"></i>
+                                        {{ $propietario->name }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                    <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Correo del Propietario</p>
+                                    <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                                        <i class="bi bi-envelope text-secondary flex-shrink-0"></i>
+                                        <span class="text-truncate">{{ $propietario->email }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 p-3 rounded-3"
+                         style="background:#fffbeb;border:1px solid #fde68a;">
+                        <i class="bi bi-shield-check text-warning"></i>
+                        <small class="fw-semibold" style="color:#92400e;">
+                            Este usuario tiene acceso al panel de administración del gastrobar.
+                        </small>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             {{-- ── Horarios y Días de Atención ── --}}
             <div class="card border-0 shadow-sm rounded-3 bg-white">
                 <div class="card-body p-4">
@@ -439,6 +485,21 @@
                                 </span>
                             @else
                                 <span class="badge bg-light text-muted border" style="font-size:0.7rem;">Sin fotos</span>
+                            @endif
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+                             style="background:#f8fafc;border:1px solid #e2e8f0;">
+                            <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">
+                                <i class="bi bi-person-badge text-warning"></i> Propietario
+                            </span>
+                            @if(isset($propietario) && $propietario)
+                                <span class="badge fw-semibold"
+                                      style="background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;font-size:0.7rem;">
+                                    <i class="bi bi-check-lg me-1"></i>Asignado
+                                </span>
+                            @else
+                                <span class="badge bg-light text-muted border" style="font-size:0.7rem;">Sin asignar</span>
                             @endif
                         </div>
 

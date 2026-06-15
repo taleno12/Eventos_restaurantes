@@ -117,7 +117,7 @@
                     </span>
                     <input type="text" name="search" value="{{ request('search') }}"
                            class="form-control bg-light border-start-0 ps-0"
-                           placeholder="Buscar por título..."
+                           placeholder="Buscar por título, departamento o municipio..."
                            style="box-shadow: none;">
                     @if(request('tipo'))
                         <input type="hidden" name="tipo" value="{{ request('tipo') }}">
@@ -150,6 +150,7 @@
                         <tr>
                             <th class="ps-4 py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Puesto</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Establecimiento</th>
+                            <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Ubicación</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Tipo</th>
                             <th class="py-3 text-secondary border-0" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Salario</th>
                             <th class="py-3 text-secondary border-0 text-center" style="font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600;">Estado</th>
@@ -197,6 +198,20 @@
                                         <span class="text-secondary">{{ $empleo->restaurante->nombre ?? 'N/A' }}</span>
                                     </div>
                                 @endif
+                            </td>
+
+                            <td class="py-3">
+                                <div class="d-flex align-items-center gap-1 flex-wrap">
+                                    <i class="bi bi-geo-alt text-danger" style="font-size: 0.85rem;"></i>
+                                    <span class="badge bg-light text-dark border px-2 py-1 fw-medium" style="font-size: 0.72rem;">
+                                        {{ $empleo->departamento->nombre ?? '—' }}
+                                    </span>
+                                    @if($empleo->municipio)
+                                        <span class="badge bg-light text-secondary border px-2 py-1 fw-medium" style="font-size: 0.72rem;">
+                                            {{ $empleo->municipio->nombre }}
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
 
                             <td class="py-3">
@@ -254,7 +269,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
+                            <td colspan="8" class="text-center text-muted py-5">
                                 <i class="bi bi-briefcase-fill d-block display-6 text-muted mb-3" style="opacity: 0.4;"></i>
                                 <span class="fs-6 d-block mb-1">
                                     @if(request('tipo') === 'restaurante')

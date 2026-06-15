@@ -13,15 +13,17 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --orange:    #ea580c;
-            --orange-lt: #fff7ed;
+            --blue:      #2563eb;
+            --blue-dk:   #1d4ed8;
+            --blue-lt:   #eff6ff;
+            --blue-bd:   #bfdbfe;
             --border:    #e5e7eb;
-            --text:      #1f2937;
-            --muted:     #6b7280;
-            --bg:        #f9fafb;
+            --text:      #0f172a;
+            --muted:     #64748b;
+            --bg:        #f8fafc;
             --white:     #ffffff;
             --radius:    12px;
-            --shadow:    0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+            --shadow:    0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
         }
 
         body {
@@ -51,7 +53,7 @@
             font-size: 18px; color: var(--text);
             display: flex; align-items: center; gap: 8px;
         }
-        .topbar-logo .dot { color: var(--orange); }
+        .topbar-logo .dot { color: var(--blue); }
         .topbar-actions { display: flex; align-items: center; gap: 8px; }
         .btn-sm {
             display: inline-flex; align-items: center; gap: 6px;
@@ -60,30 +62,30 @@
             background: var(--white); color: var(--muted);
             cursor: pointer; transition: all 0.18s;
         }
-        .btn-sm:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-lt); }
-        .btn-sm.primary { background: var(--orange); color: white; border-color: var(--orange); }
-        .btn-sm.primary:hover { background: #c2410c; border-color: #c2410c; }
+        .btn-sm:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-lt); }
+        .btn-sm.primary { background: var(--blue); color: white; border-color: var(--blue); }
+        .btn-sm.primary:hover { background: var(--blue-dk); border-color: var(--blue-dk); }
 
         /* ══ HERO BANNER ══ */
         .hero-banner {
             position: relative; width: 100%;
-            height: 260px; overflow: hidden; background: #1f2937;
+            height: 260px; overflow: hidden; background: #0f172a;
         }
-        @media (min-width: 768px) { .hero-banner { height: 320px; } }
+        @media (min-width: 768px) { .hero-banner { height: 340px; } }
         .hero-banner img {
             width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.75; display: block;
+            opacity: 0.72; display: block;
             cursor: zoom-in; transition: opacity 0.2s;
         }
-        .hero-banner img:hover { opacity: 0.85; }
+        .hero-banner img:hover { opacity: 0.82; }
         .hero-banner-overlay {
             position: absolute; inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.52) 100%);
+            background: linear-gradient(to bottom, rgba(15,23,42,0.08) 0%, rgba(15,23,42,0.62) 100%);
             pointer-events: none;
         }
         .hero-zoom-hint {
             position: absolute; bottom: 16px; right: 16px;
-            background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+            background: rgba(15,23,42,0.5); backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.15);
             color: white; font-size: 12px; font-weight: 700;
             padding: 7px 14px; border-radius: 999px;
@@ -106,12 +108,11 @@
         .evt-thumb-wrap {
             width: 100px; height: 100px; border-radius: 18px;
             border: 4px solid var(--white); overflow: hidden;
-            background: var(--orange-lt); flex-shrink: 0;
+            background: var(--blue-lt); flex-shrink: 0;
             box-shadow: var(--shadow);
             display: flex; align-items: center; justify-content: center;
         }
         .evt-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .evt-thumb-placeholder { font-size: 2.5rem; color: var(--orange); opacity: 0.5; }
 
         .evt-info { padding-bottom: 8px; min-width: 0; flex: 1; }
         .evt-info h1 {
@@ -124,7 +125,7 @@
             font-size: 13px; color: var(--muted);
         }
         .evt-meta-item { display: flex; align-items: center; gap: 5px; font-weight: 600; }
-        .evt-meta-item i { color: var(--orange); font-size: 11px; }
+        .evt-meta-item i { color: var(--blue); font-size: 11px; }
 
         .evt-header-bottom {
             display: flex; align-items: center; justify-content: space-between;
@@ -136,10 +137,10 @@
             font-size: 11px; font-weight: 700; padding: 5px 12px;
             border-radius: 999px; border: 1.5px solid;
         }
-        .badge-orange { background: var(--orange-lt); color: var(--orange); border-color: #fed7aa; }
-        .badge-gray   { background: #f9fafb; color: #6b7280; border-color: #e5e7eb; }
+        .badge-blue   { background: var(--blue-lt); color: var(--blue); border-color: var(--blue-bd); }
+        .badge-gray   { background: #f8fafc; color: #64748b; border-color: #e2e8f0; }
         .badge-green  { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
-        .badge-red    { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+        .badge-indigo { background: #eef2ff; color: #4338ca; border-color: #c7d2fe; }
 
         /* ══ STATS BAR ══ */
         .stats-bar {
@@ -159,7 +160,7 @@
         }
         .stat-item:last-child { border-right: none; }
         .stat-val { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1; }
-        .stat-val .accent { color: var(--orange); }
+        .stat-val .accent { color: var(--blue); }
         .stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-top: 3px; }
 
         /* ══ LAYOUT ══ */
@@ -187,10 +188,10 @@
             font-size: 15px; font-weight: 800; color: var(--text);
             display: flex; align-items: center; gap: 8px;
         }
-        .section-title i { color: var(--orange); font-size: 13px; }
+        .section-title i { color: var(--blue); font-size: 13px; }
         .section-body { padding: 20px 22px; }
 
-        .desc-text { font-size: 14.5px; color: #4b5563; line-height: 1.8; }
+        .desc-text { font-size: 14.5px; color: #475569; line-height: 1.8; }
 
         /* ══ GALERÍA ══ */
         .gallery-grid {
@@ -200,7 +201,7 @@
         @media (max-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 85px; } }
         @media (max-width: 400px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
         .gallery-grid .g-first { grid-column: span 2; grid-row: span 2; }
-        .g-item { border-radius: 10px; overflow: hidden; cursor: zoom-in; position: relative; background: #f3f4f6; }
+        .g-item { border-radius: 10px; overflow: hidden; cursor: zoom-in; position: relative; background: #f1f5f9; }
         .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
         .g-item:hover img { transform: scale(1.07); }
         .g-item::after {
@@ -208,7 +209,7 @@
             position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
             font-size: 18px; color: white; background: rgba(0,0,0,0); opacity: 0; transition: all 0.25s;
         }
-        .g-item:hover::after { background: rgba(0,0,0,0.35); opacity: 1; }
+        .g-item:hover::after { background: rgba(15,23,42,0.38); opacity: 1; }
 
         /* ══ SIDEBAR ══ */
         .sidebar { display: flex; flex-direction: column; gap: 14px; }
@@ -222,7 +223,7 @@
             letter-spacing: 0.1em; color: var(--muted);
             display: flex; align-items: center; gap: 8px;
         }
-        .sidebar-card-head i { color: var(--orange); }
+        .sidebar-card-head i { color: var(--blue); }
         .sidebar-card-body { padding: 16px 18px; }
 
         /* info rows */
@@ -240,7 +241,7 @@
             font-size: 12px; font-weight: 800;
             padding: 7px 14px; border-radius: 999px; letter-spacing: 0.04em;
         }
-        .countdown-active  { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+        .countdown-active  { background: var(--blue-lt); color: var(--blue-dk); border: 1px solid var(--blue-bd); }
         .countdown-ended   { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 
         /* redes */
@@ -264,21 +265,21 @@
         /* CTA */
         .btn-cta-primary {
             display: flex; align-items: center; justify-content: center; gap: 9px;
-            width: 100%; background: var(--orange); color: white;
+            width: 100%; background: var(--blue); color: white;
             font-size: 14px; font-weight: 700; padding: 14px 20px;
             border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
             text-decoration: none; letter-spacing: 0.02em;
         }
-        .btn-cta-primary:hover { background: #c2410c; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
+        .btn-cta-primary:hover { background: var(--blue-dk); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
 
         .btn-cta-secondary {
             display: flex; align-items: center; justify-content: center; gap: 9px;
-            width: 100%; background: #1f2937; color: white;
+            width: 100%; background: #0f172a; color: white;
             font-size: 14px; font-weight: 700; padding: 14px 20px;
             border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
             text-decoration: none; letter-spacing: 0.02em;
         }
-        .btn-cta-secondary:hover { background: #111827; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .btn-cta-secondary:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
 
         /* ══ LIGHTBOX ══ */
         #lightbox {
@@ -300,7 +301,7 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: background 0.18s; z-index: 10001;
         }
-        .lb-btn:hover { background: rgba(234,88,12,0.65); }
+        .lb-btn:hover { background: rgba(37,99,235,0.65); }
         #lb-prev { left: 14px; } #lb-next { right: 14px; }
         #lb-close {
             position: fixed; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%;
@@ -316,32 +317,32 @@
             letter-spacing: 0.08em; z-index: 10001; display: flex; gap: 8px; align-items: center;
         }
         .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.18s; }
-        .lb-dot.on { background: var(--orange); transform: scale(1.35); }
+        .lb-dot.on { background: var(--blue); transform: scale(1.35); }
 
         /* ══ FOOTER ══ */
-        .footer-main { background: #1c1917; color: #a8a29e; border-top: 1px solid #292524; font-family: 'Instrument Sans', sans-serif; }
+        .footer-main { background: #0f172a; color: #94a3b8; border-top: 1px solid #1e293b; font-family: 'Instrument Sans', sans-serif; }
         .footer-main a { text-decoration: none; }
         .footer-main h4 { font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; margin: 0 0 16px; }
         .footer-main p  { margin: 0; }
         .footer-main ul { list-style: none; padding: 0; margin: 0; }
         .footer-main li { margin-bottom: 10px; }
-        .footer-main li a { color: #a8a29e; font-size: 14px; transition: color 0.2s; }
-        .footer-main li a:hover { color: #f97316; }
+        .footer-main li a { color: #94a3b8; font-size: 14px; transition: color 0.2s; }
+        .footer-main li a:hover { color: #60a5fa; }
         .footer-brand-name { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: 20px; color: #fff; }
-        .footer-brand-name span { color: #ea580c; }
+        .footer-brand-name span { color: #2563eb; }
         .footer-social-btn {
             width: 32px; height: 32px; border-radius: 50%;
-            background: #292524; display: flex; align-items: center; justify-content: center;
-            color: #a8a29e; font-size: 12px; transition: all 0.2s; text-decoration: none;
+            background: #1e293b; display: flex; align-items: center; justify-content: center;
+            color: #94a3b8; font-size: 12px; transition: all 0.2s; text-decoration: none;
         }
-        .footer-social-btn:hover { background: #ea580c; color: #fff; }
+        .footer-social-btn:hover { background: #2563eb; color: #fff; }
         .footer-destino {
-            color: #a8a29e; font-size: 14px; font-weight: 300;
+            color: #94a3b8; font-size: 14px; font-weight: 300;
             cursor: pointer; transition: color 0.2s; display: block;
         }
         .footer-destino:hover { color: #fff; }
-        .footer-bottom-link { font-size: 12px; color: #57534e; transition: color 0.2s; }
-        .footer-bottom-link:hover { color: #a8a29e; }
+        .footer-bottom-link { font-size: 12px; color: #475569; transition: color 0.2s; }
+        .footer-bottom-link:hover { color: #94a3b8; }
 
         /* ══ MOBILE ══ */
         @media (max-width: 640px) {
@@ -357,7 +358,10 @@
 </head>
 <body>
 
-@php $restaurante = $evento->restaurante; @endphp
+@php
+    $restaurante = $evento->restaurante ?? $evento->gastrobar;
+    $esGastrobar = !$evento->restaurante && $evento->gastrobar;
+@endphp
 
 {{-- ══ TOPBAR ══ --}}
 <header class="topbar">
@@ -394,7 +398,7 @@
                 <h1>{{ $evento->titulo }}</h1>
                 <div class="evt-meta">
                     <span class="evt-meta-item">
-                        <i class="fas fa-store"></i>
+                        <i class="{{ $esGastrobar ? 'fas fa-glass-martini-alt' : 'fas fa-store' }}"></i>
                         <strong>{{ $restaurante->nombre }}</strong>
                     </span>
                     <span style="color:var(--border);">·</span>
@@ -417,7 +421,7 @@
             @endphp
             <div class="evt-badges">
                 @if($isToday)
-                    <span class="badge badge-orange">
+                    <span class="badge badge-blue">
                         <i class="fas fa-circle" style="font-size:7px;"></i> Hoy
                     </span>
                 @elseif($isPast)
@@ -431,7 +435,7 @@
                 @endif
 
                 @if($evento->precio > 0)
-                    <span class="badge badge-orange">
+                    <span class="badge badge-blue">
                         <i class="fas fa-ticket-alt" style="font-size:9px;"></i>
                         C$ {{ number_format($evento->precio, 0) }}
                     </span>
@@ -441,7 +445,17 @@
                     </span>
                 @endif
 
-                @if($restaurante->especialidad)
+                @if($esGastrobar)
+                    <span class="badge badge-indigo">
+                        <i class="fas fa-glass-martini-alt" style="font-size:9px;"></i> Gastrobar
+                    </span>
+                @else
+                    <span class="badge badge-blue">
+                        <i class="fas fa-store" style="font-size:9px;"></i> Restaurante
+                    </span>
+                @endif
+
+                @if(!$esGastrobar && $restaurante->especialidad)
                     <span class="badge badge-gray">
                         <i class="fas fa-tag" style="font-size:9px;"></i> {{ $restaurante->especialidad }}
                     </span>
@@ -551,16 +565,17 @@
         <div class="section-card">
             <div class="section-head">
                 <div class="section-title">
-                    <i class="fas fa-store"></i> Establecimiento organizador
+                    <i class="{{ $esGastrobar ? 'fas fa-glass-martini-alt' : 'fas fa-store' }}"></i>
+                    Establecimiento organizador
                 </div>
-                <a href="{{ route('restaurantes.show', $restaurante) }}" class="btn-sm">
+                <a href="{{ $esGastrobar ? route('gastrobares.show', $restaurante) : route('restaurantes.show', $restaurante) }}" class="btn-sm">
                     Ver perfil <i class="fas fa-arrow-right" style="font-size:10px;"></i>
                 </a>
             </div>
             <div class="section-body">
                 <p class="desc-text">
                     Evento organizado por <strong>{{ $restaurante->nombre }}</strong>
-                    @if($restaurante->especialidad)
+                    @if(!$esGastrobar && $restaurante->especialidad)
                         , especialistas en <strong>{{ $restaurante->especialidad }}</strong>
                     @endif
                     , ubicado en {{ $restaurante->municipio?->nombre ?? $restaurante->departamento->nombre }},
@@ -579,13 +594,13 @@
             <div class="sidebar-card-head"><i class="far fa-calendar-alt"></i> Información</div>
             <div class="sidebar-card-body">
                 <div class="info-row">
-                    <span class="info-label"><i class="far fa-calendar-alt" style="color:#d97706;font-size:11px;"></i> Fecha</span>
+                    <span class="info-label"><i class="far fa-calendar-alt" style="color:var(--blue);font-size:11px;"></i> Fecha</span>
                     <span class="info-value" style="font-size:13px;">
                         {{ \Carbon\Carbon::parse($evento->fecha_evento)->translatedFormat('d \d\e F, Y') }}
                     </span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label"><i class="fas fa-ticket-alt" style="color:var(--orange);font-size:11px;"></i> Entrada</span>
+                    <span class="info-label"><i class="fas fa-ticket-alt" style="color:var(--blue);font-size:11px;"></i> Entrada</span>
                     <span class="info-value">
                         @if($evento->precio > 0)
                             C$ {{ number_format($evento->precio, 0) }}
@@ -595,11 +610,11 @@
                     </span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label"><i class="fas fa-building" style="color:#15803d;font-size:11px;"></i> Sede</span>
+                    <span class="info-label"><i class="fas fa-building" style="color:var(--blue);font-size:11px;"></i> Sede</span>
                     <span class="info-value" style="font-size:13px;">{{ $restaurante->nombre }}</span>
                 </div>
                 <div class="info-row" style="margin-bottom:0;">
-                    <span class="info-label"><i class="fas fa-map-marker-alt" style="color:var(--orange);font-size:11px;"></i> Lugar</span>
+                    <span class="info-label"><i class="fas fa-map-marker-alt" style="color:var(--blue);font-size:11px;"></i> Lugar</span>
                     <span class="info-value" style="font-size:13px;">
                         {{ $evento->municipio?->nombre ?? '—' }},
                         {{ $evento->departamento->nombre }}
@@ -628,7 +643,7 @@
                 <div class="sidebar-card-head"><i class="fas fa-envelope"></i> Contacto</div>
                 <div class="sidebar-card-body">
                     <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;color:#374151;word-break:break-all;">
-                        <i class="fas fa-envelope" style="color:var(--orange);margin-right:8px;"></i>
+                        <i class="fas fa-envelope" style="color:var(--blue);margin-right:8px;"></i>
                         {{ $restaurante->email }}
                     </div>
                 </div>
@@ -697,7 +712,7 @@
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
                     <span class="footer-brand-name">Gastro<span>Nicaragua</span></span>
                 </div>
-                <p style="color:#a8a29e;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
+                <p style="color:#94a3b8;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
                     La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
                     Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
                 </p>
@@ -713,8 +728,8 @@
                 <h4>Portal</h4>
                 <ul>
                     <li><a href="{{ route('home') }}">Inicio</a></li>
-                    <li><a href="{{ route('restaurantes.index') }}" style="color:#ea580c;font-weight:600;">Restaurantes</a></li>
-                    <li><a href="{{ route('gastrobares.index') }}" style="color:#a8a29e;" onmouseover="this.style.color='#a855f7'" onmouseout="this.style.color='#a8a29e'">Gastrobares</a></li>
+                    <li><a href="{{ route('restaurantes.index') }}">Restaurantes</a></li>
+                    <li><a href="{{ route('gastrobares.index') }}">Gastrobares</a></li>
                     <li><a href="{{ route('empleos.index') }}">Bolsa de Empleos</a></li>
                     <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 </ul>
@@ -726,7 +741,7 @@
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                     @foreach(['Masaya','Granada','León','San Juan del Sur','Estelí','Matagalpa'] as $destino)
                         <span class="footer-destino">
-                            <i class="fas fa-chevron-right" style="font-size:9px;color:#ea580c;margin-right:6px;"></i>{{ $destino }}
+                            <i class="fas fa-chevron-right" style="font-size:9px;color:#2563eb;margin-right:6px;"></i>{{ $destino }}
                         </span>
                     @endforeach
                 </div>
@@ -735,8 +750,8 @@
         </div>
 
         {{-- Línea inferior --}}
-        <div style="border-top:1px solid #292524;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
-            <p style="font-size:12px;color:#57534e;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+        <div style="border-top:1px solid #1e293b;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+            <p style="font-size:12px;color:#475569;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
             <div style="display:flex;gap:16px;">
                 <a href="#" class="footer-bottom-link">Política de Privacidad</a>
                 <a href="#" class="footer-bottom-link">Términos de Servicio</a>
@@ -758,7 +773,7 @@
 </div>
 
 <script>
-    // ── Countdown ────────────────────────────────────────
+    // ── Countdown ──
     function updateCountdowns() {
         document.querySelectorAll('.countdown').forEach(el => {
             const exp      = new Date(el.getAttribute('data-expire')).getTime();
@@ -778,36 +793,33 @@
     setInterval(updateCountdowns, 60000);
     updateCountdowns();
 
-    // ── Lightbox ─────────────────────────────────────────
+    // ── Lightbox ──
     const galeriaImages = @json($galeriaImages);
     let curIdx = 0, isHero = false;
-    const lb    = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
+    const lb     = document.getElementById('lightbox');
+    const lbImg  = document.getElementById('lightbox-img');
     const lbText = document.getElementById('lb-text');
     const lbDots = document.getElementById('lb-dots');
 
     function openLightbox(src, index) {
-        isHero   = false; curIdx = index;
+        isHero = false; curIdx = index;
         lbImg.src = src;
         lb.classList.add('active');
         document.body.style.overflow = 'hidden';
         updateLb();
     }
-
     function openHeroLightbox(src) {
-        isHero    = true;
+        isHero = true;
         lbImg.src = src;
         lb.classList.add('active');
         document.body.style.overflow = 'hidden';
         updateLb();
     }
-
     function closeLightbox() {
         lb.classList.remove('active');
         document.body.style.overflow = '';
         setTimeout(() => { lbImg.src = ''; }, 300);
     }
-
     function navLightbox(dir) {
         if (isHero || galeriaImages.length === 0) return;
         curIdx = (curIdx + dir + galeriaImages.length) % galeriaImages.length;
@@ -818,7 +830,6 @@
             updateLb();
         }, 160);
     }
-
     function updateLb() {
         const showNav = !isHero && galeriaImages.length > 1;
         document.getElementById('lb-prev').style.display = showNav ? 'flex' : 'none';
@@ -833,7 +844,6 @@
             lbDots.innerHTML   = '';
         }
     }
-
     function jumpLb(i) { curIdx = i; lbImg.src = galeriaImages[i]; updateLb(); }
     function handleLbClick(e) { if (e.target === lb) closeLightbox(); }
 

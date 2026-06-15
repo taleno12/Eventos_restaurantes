@@ -73,7 +73,7 @@
                     </span>
                     <input type="text" name="search" value="{{ request('search') }}"
                            class="form-control bg-light border-start-0 ps-0"
-                           placeholder="Buscar por título..."
+                           placeholder="Buscar por título, departamento o municipio..."
                            style="box-shadow: none;">
                     @if(request('tipo'))
                         <input type="hidden" name="tipo" value="{{ request('tipo') }}">
@@ -156,6 +156,12 @@
                                           style="font-size: 0.75rem;">
                                         {{ $evento->departamento->nombre ?? '—' }}
                                     </span>
+                                    @if($evento->municipio)
+                                        <span class="badge bg-light text-secondary border px-2 py-1 fw-medium ms-1"
+                                              style="font-size: 0.75rem;">
+                                            {{ $evento->municipio->nombre }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <small class="text-muted d-block ps-3" style="font-size: 0.8rem;">
                                     @if($evento->gastrobar_id)

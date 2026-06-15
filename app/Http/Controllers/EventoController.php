@@ -163,10 +163,20 @@ class EventoController extends Controller
     {
         $this->soloAdmin();
 
-        $query = Evento::with(['restaurante', 'gastrobar', 'departamento'])->latest();
+        $query = Evento::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])->latest();
 
         if ($request->filled('search')) {
-            $query->where('titulo', 'like', '%' . $request->search . '%');
+            $busqueda = $request->search;
+
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('titulo', 'like', '%' . $busqueda . '%')
+                  ->orWhereHas('departamento', function ($d) use ($busqueda) {
+                      $d->where('nombre', 'like', '%' . $busqueda . '%');
+                  })
+                  ->orWhereHas('municipio', function ($m) use ($busqueda) {
+                      $m->where('nombre', 'like', '%' . $busqueda . '%');
+                  });
+            });
         }
 
         if ($request->tipo === 'restaurante') {
@@ -175,7 +185,7 @@ class EventoController extends Controller
             $query->whereNotNull('gastrobar_id');
         }
 
-        $eventos = $query->paginate(10);
+        $eventos = $query->paginate(10)->withQueryString();
         return view('eventos.index', compact('eventos'));
     }
 
@@ -320,7 +330,7 @@ class EventoController extends Controller
 
     private function soloAdmin(): void
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@turismo.ni') {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
             abort(403, 'Acceso no autorizado.');
         }
     }

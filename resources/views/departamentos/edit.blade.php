@@ -17,11 +17,11 @@
         </a>
         <div>
             <h1 class="h3 mb-1 fw-bold text-dark">
-                <i class="bi bi-geo-alt-fill text-primary me-2"></i> Nuevo Departamento
+                <i class="bi bi-pencil-square text-primary me-2"></i> Editar Departamento
             </h1>
             <p class="text-muted mb-0 small">
                 <i class="bi bi-circle-fill text-secondary me-1" style="font-size:6px;vertical-align:middle;"></i>
-                Registra una nueva región geográfica en la plataforma Gastro.ni
+                Modifica la información de <strong>{{ $departamento->nombre }}</strong>
             </p>
         </div>
     </div>
@@ -47,10 +47,11 @@
     <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
 
-            <form action="{{ route('departamentos.store') }}" method="POST">
+            <form action="{{ route('departamentos.update', $departamento) }}" method="POST">
                 @csrf
+                @method('PUT')
 
-                {{-- ── Card principal ── --}}
+                {{-- ── Card: Información del departamento ── --}}
                 <div class="card border-0 shadow-sm rounded-3 mb-3 bg-white">
                     <div class="card-body p-4">
 
@@ -60,7 +61,7 @@
                         </p>
 
                         {{-- Nombre --}}
-                        <div class="mb-4">
+                        <div class="mb-2">
                             <label for="nombre" class="form-label fw-semibold text-dark">
                                 Nombre del Departamento <span class="text-danger">*</span>
                             </label>
@@ -71,7 +72,7 @@
                                 <input type="text"
                                        name="nombre"
                                        id="nombre"
-                                       value="{{ old('nombre') }}"
+                                       value="{{ old('nombre', $departamento->nombre) }}"
                                        placeholder="Ej: León, Masaya, Madriz..."
                                        maxlength="100"
                                        required
@@ -82,30 +83,57 @@
                             </div>
                         </div>
 
-                        {{-- Municipios --}}
-                        <div class="pt-3" style="border-top:1px solid #f1f5f9;">
-                            <label for="municipios_lista" class="form-label fw-semibold text-dark mb-1">
-                                Municipios Iniciales
-                                <span class="text-muted fw-normal small">(opcional)</span>
-                            </label>
-                            <p class="text-muted small mb-3">
-                                Escribe los municipios separados por comas para guardarlos en un solo paso.
-                            </p>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light text-secondary align-items-start pt-2">
-                                    <i class="bi bi-tags"></i>
-                                </span>
-                                <textarea name="municipios_lista"
-                                          id="municipios_lista"
-                                          rows="3"
-                                          placeholder="Ej: Somoto, Palacagüina, Telpaneca"
-                                          class="form-control"
-                                          style="resize:none;">{{ old('municipios_lista') }}</textarea>
-                            </div>
+                    </div>
+                </div>
+
+                {{-- ── Card: Agregar municipios ── --}}
+                <div class="card border-0 shadow-sm rounded-3 mb-3 bg-white">
+                    <div class="card-body p-4">
+
+                        <p class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size:0.72rem;letter-spacing:0.5px;">
+                            <i class="bi bi-tags-fill text-info"></i>
+                            Agregar Municipios
+                            <span class="text-muted fw-normal text-lowercase" style="letter-spacing:normal;">(opcional)</span>
+                        </p>
+                        <p class="text-muted small mb-3">
+                            Escribe municipios separados por comas para añadirlos. Los existentes no se modifican.
+                        </p>
+
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-secondary align-items-start pt-2">
+                                <i class="bi bi-pin-map"></i>
+                            </span>
+                            <textarea name="municipios_lista"
+                                      id="municipios_lista"
+                                      rows="3"
+                                      placeholder="Ej: Somoto, Palacagüina, Telpaneca"
+                                      class="form-control"
+                                      style="resize:none;">{{ old('municipios_lista') }}</textarea>
                         </div>
 
                     </div>
                 </div>
+
+                {{-- ── Card: Municipios actuales ── --}}
+                @if($departamento->municipios->count() > 0)
+                <div class="card border-0 shadow-sm rounded-3 mb-3 bg-white">
+                    <div class="card-body p-4">
+                        <p class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="font-size:0.72rem;letter-spacing:0.5px;">
+                            <i class="bi bi-pin-map-fill text-success"></i>
+                            Municipios Registrados ({{ $departamento->municipios->count() }})
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach($departamento->municipios as $municipio)
+                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                      style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;font-size:0.75rem;">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    {{ $municipio->nombre }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 {{-- ── Acciones ── --}}
                 <div class="d-flex align-items-center justify-content-between mt-4">
@@ -113,7 +141,7 @@
                         <i class="bi bi-chevron-left me-1"></i> Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm fw-semibold">
-                        <i class="bi bi-floppy me-1"></i> Guardar Departamento
+                        <i class="bi bi-floppy me-1"></i> Guardar Cambios
                     </button>
                 </div>
 

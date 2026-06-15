@@ -49,18 +49,22 @@
                 from { opacity:0; transform:translateY(28px); }
                 to   { opacity:1; transform:translateY(0); }
             }
+            @keyframes shimmer {
+                0%   { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+            }
 
             /* ── GLASS CARD (eventos) ── */
             .glass-card {
                 background: #ffffff;
-                border: 1px solid #f1f0ee;
+                border: 1px solid #eef2f7;
                 border-radius: 1.75rem;
                 transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
             }
             .glass-card:hover {
                 transform: translateY(-8px);
-                box-shadow: 0 32px 64px rgba(28, 25, 23, 0.10);
-                border-color: #fed7aa;
+                box-shadow: 0 32px 64px rgba(15, 23, 42, 0.10);
+                border-color: #bfdbfe;
             }
 
             .carousel-item { transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; }
@@ -70,13 +74,13 @@
             /* ── NAVBAR SEARCH ── */
             .search-box {
                 display: flex; align-items: stretch;
-                background: #f8f7f6; border: 1.5px solid #e7e5e4;
+                background: #f4f7fb; border: 1.5px solid #e2e8f0;
                 border-radius: 18px; overflow: hidden;
                 transition: border-color 0.2s, box-shadow 0.2s;
             }
             .search-box:focus-within {
-                border-color: #ea580c;
-                box-shadow: 0 0 0 3px rgba(234,88,12,0.10);
+                border-color: #2563eb;
+                box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
                 background: #fff;
             }
             .search-segment {
@@ -85,59 +89,59 @@
             }
             .search-segment + .search-segment::before {
                 content: ''; position: absolute; left: 0; top: 20%;
-                height: 60%; width: 1px; background: #e7e5e4;
+                height: 60%; width: 1px; background: #e2e8f0;
             }
             .search-segment label {
                 font-size: 9px; font-weight: 900; letter-spacing: 0.16em;
-                text-transform: uppercase; color: #a8a29e; margin-bottom: 2px;
+                text-transform: uppercase; color: #94a3b8; margin-bottom: 2px;
                 display: flex; align-items: center; gap: 4px; cursor: pointer;
             }
             .search-segment select,
             .search-segment input {
                 background: transparent; border: none; outline: none;
-                font-size: 13px; font-weight: 600; color: #1c1917;
+                font-size: 13px; font-weight: 600; color: #0f172a;
                 font-family: 'Instrument Sans', sans-serif; width: 100%; padding: 0; cursor: pointer;
             }
             .search-segment select option { font-weight: 500; }
-            .search-segment input::placeholder { color: #c4bfbb; font-weight: 500; }
+            .search-segment input::placeholder { color: #cbd5e1; font-weight: 500; }
             .search-segment select:disabled { opacity: 0.45; cursor: not-allowed; }
 
             .search-btn {
                 display: flex; align-items: center; gap: 7px;
-                background: #ea580c; color: white; border: none;
+                background: #2563eb; color: white; border: none;
                 padding: 0 20px; font-size: 13px; font-weight: 700;
                 cursor: pointer; transition: background 0.2s;
                 white-space: nowrap; border-radius: 0 16px 16px 0; flex-shrink: 0;
             }
-            .search-btn:hover { background: #c2410c; }
+            .search-btn:hover { background: #1d4ed8; }
 
             /* ── PANEL BÚSQUEDA MÓVIL ── */
             #mobileSearchPanel {
                 display: none;
                 position: absolute; top: 100%; left: 0; right: 0;
                 background: rgba(255,255,255,0.98); backdrop-filter: blur(12px);
-                border-top: 1px solid #e7e5e4; padding: 1rem 1.25rem;
-                z-index: 40; box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+                border-top: 1px solid #e2e8f0; padding: 1rem 1.25rem;
+                z-index: 40; box-shadow: 0 8px 24px rgba(15,23,42,0.08);
             }
             #mobileSearchPanel.open { display: block; }
 
             .nav-select-mobile {
-                background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
-                padding: 10px 14px; font-size: 13px; color: #1c1917; appearance: none;
+                background: #f4f7fb; border: 1.5px solid #e2e8f0; border-radius: 12px;
+                padding: 10px 14px; font-size: 13px; color: #0f172a; appearance: none;
                 cursor: pointer; transition: all 0.2s; outline: none; width: 100%;
                 font-family: 'Instrument Sans', sans-serif; font-weight: 600;
             }
-            .nav-select-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+            .nav-select-mobile:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
             .nav-select-mobile:disabled { opacity: 0.45; cursor: not-allowed; }
 
             .nav-input-mobile {
-                background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
-                padding: 10px 14px; font-size: 13px; color: #1c1917;
+                background: #f4f7fb; border: 1.5px solid #e2e8f0; border-radius: 12px;
+                padding: 10px 14px; font-size: 13px; color: #0f172a;
                 transition: all 0.2s; outline: none; width: 100%;
                 font-family: 'Instrument Sans', sans-serif; font-weight: 600;
             }
-            .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
-            .nav-input-mobile::placeholder { color: #c4bfbb; }
+            .nav-input-mobile:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
+            .nav-input-mobile::placeholder { color: #cbd5e1; }
 
             /* ── HERO RESPONSIVO ── */
             .hero-slide {
@@ -155,7 +159,7 @@
                 border: 1px solid rgba(255,255,255,0.2); flex: 1 1 auto; min-width: 0;
             }
             .hero-badge-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-            .hero-badge-icon.orange { background: #ea580c; }
+            .hero-badge-icon.orange { background: #2563eb; }
             .hero-badge-icon.white  { background: rgba(255,255,255,0.2); }
             .hero-badge p { margin: 0; line-height: 1.3; }
             .hero-badge .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(214,211,208,0.9); font-weight: 800; }
@@ -177,36 +181,36 @@
             .eventos-ghost-text {
                 font-family: 'Playfair Display', serif; font-weight: 900;
                 font-size: clamp(4rem, 15vw, 13rem); line-height: 1; color: transparent;
-                -webkit-text-stroke: 1.5px rgba(234,88,12,0.07); letter-spacing: -0.04em;
+                -webkit-text-stroke: 1.5px rgba(37,99,235,0.07); letter-spacing: -0.04em;
                 position: absolute; top: -1rem; left: -0.5rem;
                 pointer-events: none; user-select: none; white-space: nowrap; z-index: 0;
             }
             .eventos-pill {
                 display: inline-flex; align-items: center; gap: 8px;
-                background: #fff7ed; border: 1.5px solid #fed7aa;
-                color: #c2410c; font-size: 10px; font-weight: 800;
+                background: #eff6ff; border: 1.5px solid #bfdbfe;
+                color: #1d4ed8; font-size: 10px; font-weight: 800;
                 letter-spacing: 0.2em; text-transform: uppercase;
                 padding: 7px 20px; border-radius: 999px;
             }
             .eventos-pill .dot {
-                width: 7px; height: 7px; background: #ea580c; border-radius: 50%;
+                width: 7px; height: 7px; background: #2563eb; border-radius: 50%;
                 animation: pulse-dot 1.6s ease-in-out infinite; flex-shrink: 0;
             }
             .eventos-heading {
                 font-family: 'Playfair Display', serif; font-weight: 900;
                 font-size: clamp(1.8rem, 6vw, 4.5rem); line-height: 1.02;
-                letter-spacing: -0.035em; color: #1c1917; margin: 0;
+                letter-spacing: -0.035em; color: #0f172a; margin: 0;
             }
-            .eventos-heading em { font-style: italic; color: #ea580c; position: relative; display: inline-block; }
+            .eventos-heading em { font-style: italic; color: #2563eb; position: relative; display: inline-block; }
             .underline-svg {
                 position: absolute; bottom: -10px; left: 0; width: 100%; overflow: visible;
                 stroke-dasharray: 400; stroke-dashoffset: 400;
                 animation: draw-underline 1.3s cubic-bezier(0.4,0,0.2,1) 0.4s forwards;
             }
             .eventos-divider-icon {
-                width: 38px; height: 38px; background: #ea580c; border-radius: 50%;
+                width: 38px; height: 38px; background: #2563eb; border-radius: 50%;
                 display: flex; align-items: center; justify-content: center;
-                box-shadow: 0 0 0 8px rgba(234,88,12,0.08); flex-shrink: 0;
+                box-shadow: 0 0 0 8px rgba(37,99,235,0.08); flex-shrink: 0;
             }
 
             /* ── BADGE TIPO ESTABLECIMIENTO (eventos) ── */
@@ -220,7 +224,7 @@
                 display: inline-flex; align-items: center; gap: 5px;
                 font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
                 text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
-                background: #fff8e1; color: #b45309; border: 1px solid #fde68a;
+                background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe;
             }
 
             /* ══ CARD EVENTO — NUEVO DISEÑO PREMIUM ══ */
@@ -228,7 +232,7 @@
                 border-radius: 1.75rem;
                 overflow: hidden;
                 background: #fff;
-                border: 1px solid #f1f0ee;
+                border: 1px solid #eef2f7;
                 display: flex;
                 flex-direction: column;
                 cursor: pointer;
@@ -238,8 +242,8 @@
             }
             .event-card:hover {
                 transform: translateY(-8px);
-                box-shadow: 0 32px 64px rgba(28,25,23,0.10);
-                border-color: #fed7aa;
+                box-shadow: 0 32px 64px rgba(15,23,42,0.10);
+                border-color: #bfdbfe;
             }
 
             .event-card-img-top {
@@ -247,7 +251,7 @@
                 height: 200px;
                 overflow: hidden;
                 position: relative;
-                background: #e7e5e4;
+                background: #e2e8f0;
                 flex-shrink: 0;
             }
             @media (min-width: 640px) { .event-card-img-top { height: 220px; } }
@@ -262,19 +266,19 @@
                 position: absolute; top: 12px; left: 12px;
                 display: flex; align-items: center; gap: 6px;
                 background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
-                color: #1c1917; font-size: 10px; font-weight: 700;
+                color: #0f172a; font-size: 10px; font-weight: 700;
                 padding: 5px 12px; border-radius: 999px;
             }
-            .card-region-dot { width: 6px; height: 6px; background: #ea580c; border-radius: 50%; flex-shrink: 0; }
+            .card-region-dot { width: 6px; height: 6px; background: #2563eb; border-radius: 50%; flex-shrink: 0; }
             .card-featured-badge {
                 position: absolute; top: 12px; right: 12px;
-                background: #ea580c; color: #fff;
+                background: #2563eb; color: #fff;
                 font-size: 9px; font-weight: 800; letter-spacing: 0.18em;
                 text-transform: uppercase; padding: 5px 12px; border-radius: 999px;
             }
             .card-price-badge {
                 position: absolute; bottom: 12px; left: 12px;
-                background: rgba(28,25,23,0.88); backdrop-filter: blur(10px);
+                background: rgba(15,23,42,0.88); backdrop-filter: blur(10px);
                 color: #fff; font-size: 12px; font-weight: 800;
                 padding: 6px 14px; border-radius: 12px;
                 border: 1px solid rgba(255,255,255,0.1);
@@ -286,67 +290,91 @@
             }
             .card-specialty-tag {
                 font-size: 9px; font-weight: 800; letter-spacing: 0.2em;
-                text-transform: uppercase; color: #ea580c;
-                padding: 3px 10px; background: #fff7ed; border-radius: 6px;
+                text-transform: uppercase; color: #2563eb;
+                padding: 3px 10px; background: #eff6ff; border-radius: 6px;
                 display: inline-block; align-self: flex-start;
             }
             .card-title-new {
                 font-family: 'Playfair Display', serif; font-weight: 900;
-                font-size: 1.2rem; line-height: 1.18; color: #1c1917;
+                font-size: 1.2rem; line-height: 1.18; color: #0f172a;
                 letter-spacing: -0.02em;
                 transition: color 0.2s;
             }
-            .event-card:hover .card-title-new { color: #ea580c; }
+            .event-card:hover .card-title-new { color: #2563eb; }
             .card-desc-new {
-                font-size: 12.5px; color: #78716c; line-height: 1.65;
+                font-size: 12.5px; color: #64748b; line-height: 1.65;
                 display: -webkit-box; -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical; overflow: hidden;
             }
             .card-footer-new {
                 display: flex; align-items: center; justify-content: space-between;
-                padding-top: 12px; border-top: 1px solid #f4f3f1; margin-top: auto;
+                padding-top: 12px; border-top: 1px solid #f1f5f9; margin-top: auto;
             }
             .card-date-new {
                 display: flex; align-items: center; gap: 7px;
-                font-size: 11.5px; font-weight: 700; color: #57534e;
+                font-size: 11.5px; font-weight: 700; color: #475569;
             }
             .card-countdown-new {
-                background: #fff1f2; border: 1px solid #fecdd3;
-                color: #be123c; font-size: 10px; font-weight: 800;
+                background: #eff6ff; border: 1px solid #bfdbfe;
+                color: #1d4ed8; font-size: 10px; font-weight: 800;
                 padding: 5px 12px; border-radius: 10px; letter-spacing: 0.05em;
             }
 
             /* ══ CARRUSEL RESTAURANTES ══ */
             .rest-carousel-section {
-                background: #fff;
-                border-top: 1px solid #f1f0ee;
-                border-bottom: 1px solid #f1f0ee;
-                padding: 32px 0;
+                background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+                border-top: 1px solid #eef2f7;
+                border-bottom: 1px solid #eef2f7;
+                padding: 36px 0;
                 overflow: hidden;
+                position: relative;
             }
             .rest-carousel-header {
                 max-width: 1280px; margin: 0 auto;
                 padding: 0 1rem 24px;
                 display: flex; align-items: center; justify-content: space-between; gap: 12px;
+                position: relative; z-index: 1;
             }
             .rest-carousel-label {
                 display: inline-flex; align-items: center; gap: 8px;
                 font-size: 10px; font-weight: 800; letter-spacing: 0.2em;
-                text-transform: uppercase; color: #c2410c;
+                text-transform: uppercase; color: #1d4ed8;
             }
             .rest-carousel-label .dot {
-                width: 7px; height: 7px; background: #ea580c; border-radius: 50%;
+                width: 7px; height: 7px; background: #2563eb; border-radius: 50%;
                 animation: pulse-dot 1.6s ease-in-out infinite;
             }
             .rest-carousel-title {
                 font-family: 'Playfair Display', serif; font-weight: 900;
-                font-size: clamp(1.1rem, 3vw, 1.6rem); color: #1c1917; margin: 0;
+                font-size: clamp(1.1rem, 3vw, 1.6rem); color: #0f172a; margin: 0;
             }
-            .rest-carousel-title em { font-style: italic; color: #ea580c; }
+            .rest-carousel-title em { font-style: italic; color: #2563eb; }
+
+            .rest-carousel-badge {
+                display: inline-flex; align-items: center; gap: 6px;
+                background: linear-gradient(135deg, #2563eb, #1e3a8a);
+                color: #fff; font-size: 10px; font-weight: 800;
+                letter-spacing: 0.14em; text-transform: uppercase;
+                padding: 7px 16px; border-radius: 999px;
+                box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+                flex-shrink: 0;
+            }
+            .rest-carousel-badge i { font-size: 10px; }
 
             .rest-track-wrapper {
                 overflow: hidden; position: relative;
                 padding: 8px 0 16px 0;
+            }
+            .rest-track-wrapper::before,
+            .rest-track-wrapper::after {
+                content: ''; position: absolute; top: 0; bottom: 0; width: 64px;
+                z-index: 2; pointer-events: none;
+            }
+            .rest-track-wrapper::before {
+                left: 0; background: linear-gradient(to right, #f8fafc, transparent);
+            }
+            .rest-track-wrapper::after {
+                right: 0; background: linear-gradient(to left, #ffffff, transparent);
             }
             .rest-track {
                 display: flex; gap: 20px;
@@ -364,18 +392,18 @@
                 width: 160px; height: 110px;
                 border-radius: 16px;
                 overflow: hidden;
-                border: 2px solid #f1f0ee;
-                box-shadow: 0 2px 12px rgba(28,25,23,0.07);
+                border: 2px solid #eef2f7;
+                box-shadow: 0 2px 12px rgba(15,23,42,0.07);
                 transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
                             box-shadow 0.3s, border-color 0.3s;
-                background: linear-gradient(135deg, #fef3c7, #fed7aa);
+                background: linear-gradient(135deg, #dbeafe, #bfdbfe);
                 display: flex; align-items: center; justify-content: center;
                 position: relative;
             }
             .rest-item:hover .rest-rect {
                 transform: scale(1.05) translateY(-4px);
-                box-shadow: 0 16px 40px rgba(234,88,12,0.18);
-                border-color: #ea580c;
+                box-shadow: 0 16px 40px rgba(37,99,235,0.18);
+                border-color: #2563eb;
             }
             .rest-rect img {
                 width: 100%; height: 100%; object-fit: cover; display: block;
@@ -385,7 +413,7 @@
 
             .rest-rect-overlay {
                 position: absolute; inset: 0;
-                background: linear-gradient(to top, rgba(28,25,23,0.55) 0%, transparent 55%);
+                background: linear-gradient(to top, rgba(15,23,42,0.55) 0%, transparent 55%);
                 pointer-events: none;
             }
             .rest-rect-name {
@@ -404,33 +432,33 @@
                 align-items: center; justify-content: center; gap: 6px;
             }
             .rest-rect-placeholder span {
-                font-size: 10px; font-weight: 700; color: #ea580c;
+                font-size: 10px; font-weight: 700; color: #2563eb;
                 opacity: 0.7; text-align: center; padding: 0 8px;
                 white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
                 max-width: 100%;
             }
             .rest-item-name-below {
                 font-family: 'Instrument Sans', sans-serif;
-                font-weight: 700; font-size: 11.5px; color: #1c1917;
+                font-weight: 700; font-size: 11.5px; color: #0f172a;
                 text-align: center; margin-top: 8px;
                 max-width: 160px;
                 white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
                 transition: color 0.2s;
             }
-            .rest-item:hover .rest-item-name-below { color: #ea580c; }
+            .rest-item:hover .rest-item-name-below { color: #2563eb; }
         </style>
     </head>
-    <body class="bg-stone-50 text-stone-900">
+    <body class="bg-slate-50 text-slate-900">
 
         {{-- ══ NAVBAR ══ --}}
-        <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 sm:h-20 items-center gap-2 sm:gap-4">
 
                     {{-- Logo --}}
                     <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
-                        <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
-                            Gastro<span class="text-orange-600">Nicaragua</span>
+                        <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-slate-900">
+                            Gastro<span class="text-blue-600">Nicaragua</span>
                         </span>
                     </a>
 
@@ -441,7 +469,7 @@
                         {{-- 1. DESTINO --}}
                         <div class="search-segment" style="min-width:120px;">
                             <label for="search-departamento">
-                                <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i> Destino
+                                <i class="fas fa-map-marker-alt" style="color:#2563eb;"></i> Destino
                             </label>
                             <select id="search-departamento" name="departamento">
                                 <option value="">Todos los destinos</option>
@@ -457,7 +485,7 @@
                         {{-- 2. MUNICIPIO --}}
                         <div class="search-segment" style="min-width:110px;">
                             <label for="search-municipio">
-                                <i class="fas fa-city" style="color:#ea580c;"></i> Municipio
+                                <i class="fas fa-city" style="color:#2563eb;"></i> Municipio
                             </label>
                             <select id="search-municipio" name="municipio"
                                     {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
@@ -476,7 +504,7 @@
                         {{-- 3. LOCAL --}}
                         <div class="search-segment" style="min-width:140px;">
                             <label for="search-restaurante">
-                                <i class="fas fa-store" style="color:#ea580c;"></i> Local
+                                <i class="fas fa-store" style="color:#2563eb;"></i> Local
                             </label>
                             <select id="search-restaurante" name="restaurante_id" disabled>
                                 <option value="">Elige destino...</option>
@@ -498,43 +526,43 @@
                     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
 
                         <button id="mobileSearchToggle"
-                                class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
+                                class="md:hidden w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
                         </button>
 
                         {{-- Restaurantes --}}
                         <a href="{{ route('restaurantes.index') }}"
-                           class="flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline justify-center">
+                           class="flex items-center gap-1.5 border border-blue-200 text-blue-600 bg-blue-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm group no-underline justify-center">
                             <i class="fas fa-store text-xs"></i>
                             <span class="hidden lg:inline">Restaurantes</span>
                             @if(isset($totalRestaurantes) && $totalRestaurantes > 0)
-                                <span class="hidden lg:flex bg-orange-600 group-hover:bg-white group-hover:text-orange-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalRestaurantes }}</span>
+                                <span class="hidden lg:flex bg-blue-600 group-hover:bg-white group-hover:text-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalRestaurantes }}</span>
                             @endif
                         </a>
 
                         {{-- Gastrobares --}}
                         <a href="{{ route('gastrobares.index') }}"
-                           class="flex items-center gap-1.5 border border-purple-200 text-purple-600 bg-purple-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all shadow-sm group no-underline justify-center">
+                           class="flex items-center gap-1.5 border border-indigo-200 text-indigo-600 bg-indigo-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm group no-underline justify-center">
                             <i class="fas fa-cocktail text-xs"></i>
                             <span class="hidden lg:inline">Gastrobares</span>
                             @if(isset($totalGastrobares) && $totalGastrobares > 0)
-                                <span class="hidden lg:flex bg-purple-600 group-hover:bg-white group-hover:text-purple-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalGastrobares }}</span>
+                                <span class="hidden lg:flex bg-indigo-600 group-hover:bg-white group-hover:text-indigo-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalGastrobares }}</span>
                             @endif
                         </a>
 
                         {{-- Empleos --}}
                         <a href="{{ route('empleos.index') }}"
-                           class="flex items-center gap-1.5 border border-orange-200 text-orange-600 bg-orange-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm group no-underline justify-center">
+                           class="flex items-center gap-1.5 border border-blue-200 text-blue-600 bg-blue-50 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm group no-underline justify-center">
                             <i class="fas fa-briefcase text-xs"></i>
                             <span class="hidden lg:inline">Empleos</span>
                             @if(isset($totalEmpleos) && $totalEmpleos > 0)
-                                <span class="hidden lg:flex bg-orange-600 group-hover:bg-white group-hover:text-orange-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalEmpleos }}</span>
+                                <span class="hidden lg:flex bg-blue-600 group-hover:bg-white group-hover:text-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center transition-colors">{{ $totalEmpleos }}</span>
                             @endif
                         </a>
 
                         {{-- Contacto --}}
                         <a href="{{ route('contacto') }}"
-                           class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-stone-100 sm:bg-transparent text-stone-600 hover:text-orange-600 transition-colors no-underline"
+                           class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-slate-100 sm:bg-transparent text-slate-600 hover:text-blue-600 transition-colors no-underline"
                            title="Contacto">
                             <i class="fas fa-envelope text-sm sm:hidden"></i>
                             <span class="hidden sm:inline text-sm font-semibold">Contacto</span>
@@ -542,9 +570,9 @@
 
                         @if (Route::has('login'))
                             @auth
-                                @if(auth()->user()->email === 'admin@turismo.ni')
-                                    <a href="{{ url('/dashboard') }}"
-                                       class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-orange-50 sm:bg-transparent border border-orange-200 sm:border-0 text-orange-600 hover:text-orange-700 transition-colors no-underline"
+                                @if(in_array(auth()->user()->email, ['kevintaleno17@gmail.com', '15ulisesramirez@gmail.com']))
+                                    <a href="{{ route('dashboard') }}"
+                                       class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-blue-50 sm:bg-transparent border border-blue-200 sm:border-0 text-blue-600 hover:text-blue-700 transition-colors no-underline"
                                        title="Panel Admin">
                                         <i class="fas fa-chart-line text-sm sm:hidden"></i>
                                         <span class="hidden sm:inline text-sm font-semibold">Panel</span>
@@ -553,11 +581,11 @@
                                 <form method="POST" action="{{ route('logout') }}" class="inline">
                                     @csrf
                                     <button type="submit"
-                                            class="text-sm font-semibold text-stone-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-1 sm:px-2">Salir</button>
+                                            class="text-sm font-semibold text-slate-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-1 sm:px-2">Salir</button>
                                 </form>
                             @else
                                 <a href="{{ route('login') }}"
-                                   class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-1 sm:px-2">Ingresar</a>
+                                   class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors no-underline px-1 sm:px-2">Ingresar</a>
                             @endauth
                         @endif
                     </div>
@@ -570,8 +598,8 @@
 
                     {{-- 1. DESTINO --}}
                     <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-map-marker-alt text-blue-500"></i> Destino
                         </label>
                         <select id="search-departamento-mobile" name="departamento" class="nav-select-mobile">
                             <option value="">Todos los destinos</option>
@@ -583,8 +611,8 @@
 
                     {{-- 2. MUNICIPIO --}}
                     <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-city text-orange-500"></i> Municipio
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-city text-blue-500"></i> Municipio
                         </label>
                         <select id="search-municipio-mobile" name="municipio" class="nav-select-mobile"
                                 {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
@@ -602,8 +630,8 @@
 
                     {{-- 3. LOCAL --}}
                     <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-store text-orange-500"></i> Local
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-store text-blue-500"></i> Local
                         </label>
                         <select id="search-restaurante-mobile" name="restaurante_id" class="nav-select-mobile" disabled>
                             <option value="">Elige destino...</option>
@@ -614,7 +642,7 @@
                     </div>
 
                     <button type="submit"
-                            class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
+                            class="bg-blue-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
                         <i class="fas fa-search text-xs"></i> Filtrar Experiencias
                     </button>
                 </form>
@@ -645,12 +673,12 @@
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none sm:hidden"></div>
                                     </div>
                                     <div class="relative z-10 w-full px-4 sm:px-10 md:px-20 py-8 sm:py-0 {{ $key == 0 ? 'animate-slide-left' : '' }}">
-                                        <span class="bg-orange-600/90 backdrop-blur-sm text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-4 inline-block">
+                                        <span class="bg-blue-600/90 backdrop-blur-sm text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-4 inline-block">
                                             Evento Destacado
                                         </span>
                                         <h1 class="hero-title mb-2">
                                             <a href="{{ route('eventos.show', $evento->id) }}"
-                                               class="text-white hover:text-orange-400 transition-colors no-underline">
+                                               class="text-white hover:text-blue-400 transition-colors no-underline">
                                                 {{ $evento->titulo }}
                                             </a>
                                         </h1>
@@ -688,7 +716,7 @@
                     </button>
                 </div>
             @else
-                <div class="bg-stone-900 w-full h-[380px] flex items-center justify-center text-white">
+                <div class="bg-slate-900 w-full h-[380px] flex items-center justify-center text-white">
                     <h1 class="premium-title text-4xl">Gastro Nicaragua</h1>
                 </div>
             @endif
@@ -708,11 +736,9 @@
                         Nuestros <em>Restaurantes</em>
                     </h2>
                 </div>
-                <a href="{{ route('restaurantes.index') }}"
-                   class="hidden sm:inline-flex items-center gap-2 text-xs font-bold text-orange-600 hover:text-orange-700 no-underline border border-orange-200 bg-orange-50 hover:bg-orange-100 px-4 py-2 rounded-full transition-all">
-                    Ver todos
-                    <i class="fas fa-arrow-right text-[10px]"></i>
-                </a>
+                <span class="rest-carousel-badge">
+                    <i class="fas fa-crown"></i> Selección Premium
+                </span>
             </div>
 
             <div class="rest-track-wrapper" id="restWrapper">
@@ -727,7 +753,7 @@
                                 <span class="rest-rect-name">{{ $rest->nombre }}</span>
                             @else
                                 <div class="rest-rect-placeholder">
-                                    <i class="fas fa-utensils" style="font-size:1.6rem; color:#ea580c; opacity:0.5;"></i>
+                                    <i class="fas fa-utensils" style="font-size:1.6rem; color:#2563eb; opacity:0.5;"></i>
                                     <span>{{ $rest->nombre }}</span>
                                 </div>
                             @endif
@@ -746,31 +772,31 @@
 
             {{-- Filtros activos --}}
             @if(request('departamento') || request('municipio') || request('restaurante_id'))
-                <div class="mb-8 flex items-center gap-2 flex-wrap bg-stone-100 p-3 rounded-xl text-sm">
-                    <span class="text-stone-500 font-medium">Búsqueda activa:</span>
+                <div class="mb-8 flex items-center gap-2 flex-wrap bg-slate-100 p-3 rounded-xl text-sm">
+                    <span class="text-slate-500 font-medium">Búsqueda activa:</span>
                     @if(request('departamento'))
-                        <span class="bg-white text-stone-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
-                            <i class="fas fa-map-marker-alt text-orange-500" style="font-size:9px;"></i>
+                        <span class="bg-white text-slate-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-blue-500" style="font-size:9px;"></i>
                             {{ $departamentos->find(request('departamento'))?->nombre }}
-                            <a href="{{ request()->fullUrlWithoutQuery(['departamento', 'municipio', 'restaurante_id']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
+                            <a href="{{ request()->fullUrlWithoutQuery(['departamento', 'municipio', 'restaurante_id']) }}" class="text-slate-400 hover:text-red-600 no-underline">×</a>
                         </span>
                     @endif
                     @if(request('municipio'))
-                        <span class="bg-white text-stone-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
-                            <i class="fas fa-city text-orange-500" style="font-size:9px;"></i>
+                        <span class="bg-white text-slate-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
+                            <i class="fas fa-city text-blue-500" style="font-size:9px;"></i>
                             {{ $municipios->find(request('municipio'))?->nombre }}
-                            <a href="{{ request()->fullUrlWithoutQuery(['municipio']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
+                            <a href="{{ request()->fullUrlWithoutQuery(['municipio']) }}" class="text-slate-400 hover:text-red-600 no-underline">×</a>
                         </span>
                     @endif
                     @if(request('restaurante_id'))
-                        <span class="bg-white text-stone-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
-                            <i class="fas fa-store text-orange-500" style="font-size:9px;"></i>
+                        <span class="bg-white text-slate-800 px-3 py-1 rounded-md text-xs font-semibold shadow-sm flex items-center gap-2">
+                            <i class="fas fa-store text-blue-500" style="font-size:9px;"></i>
                             {{ $restaurantes->find(request('restaurante_id'))?->nombre }}
-                            <a href="{{ request()->fullUrlWithoutQuery(['restaurante_id']) }}" class="text-stone-400 hover:text-red-600 no-underline">×</a>
+                            <a href="{{ request()->fullUrlWithoutQuery(['restaurante_id']) }}" class="text-slate-400 hover:text-red-600 no-underline">×</a>
                         </span>
                     @endif
                     <a href="{{ route('home') }}"
-                       class="text-stone-400 hover:text-red-500 text-xs font-semibold no-underline flex items-center gap-1 ml-1">
+                       class="text-slate-400 hover:text-red-500 text-xs font-semibold no-underline flex items-center gap-1 ml-1">
                         <i class="fas fa-times-circle text-xs"></i> Limpiar todo
                     </a>
                 </div>
@@ -793,7 +819,7 @@
                             <svg class="underline-svg" style="position:absolute;bottom:-10px;left:0;width:100%;"
                                  height="14" viewBox="0 0 400 14" preserveAspectRatio="none">
                                 <path d="M2 11 Q100 3 200 9 Q300 15 398 6"
-                                      stroke="#ea580c" stroke-width="4" fill="none"
+                                      stroke="#2563eb" stroke-width="4" fill="none"
                                       stroke-linecap="round"
                                       stroke-dasharray="400" stroke-dashoffset="400"
                                       style="animation:draw-underline 1.3s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;"/>
@@ -803,29 +829,29 @@
                 </div>
 
                 <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-3 mt-8">
-                    <p style="color:#78716c; font-size:0.92rem; max-width:480px; line-height:1.75; margin:0;">
+                    <p style="color:#64748b; font-size:0.92rem; max-width:480px; line-height:1.75; margin:0;">
                         Experiencias culinarias únicas en los mejores restaurantes de Nicaragua.
                         Desde ceviches costeros hasta asados de montaña.
                     </p>
                     <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;padding-bottom:2px;">
                         <div style="text-align:right;">
-                            <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:2rem;color:#ea580c;line-height:1;">
+                            <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:2rem;color:#2563eb;line-height:1;">
                                 {{ method_exists($eventos,'total') ? $eventos->total() : $eventos->count() }}
                             </div>
-                            <div style="font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#a8a29e;line-height:1.4;">
+                            <div style="font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#94a3b8;line-height:1.4;">
                                 Experiencias<br>disponibles
                             </div>
                         </div>
-                        <div style="width:2px;height:40px;background:linear-gradient(to bottom,#ea580c,transparent);border-radius:1px;"></div>
+                        <div style="width:2px;height:40px;background:linear-gradient(to bottom,#2563eb,transparent);border-radius:1px;"></div>
                     </div>
                 </div>
 
                 <div class="relative z-10 flex items-center gap-4 mt-8">
-                    <div style="flex:1;height:1px;background:linear-gradient(to right,#e7e5e4,transparent);"></div>
+                    <div style="flex:1;height:1px;background:linear-gradient(to right,#e2e8f0,transparent);"></div>
                     <div class="eventos-divider-icon">
                         <i class="fas fa-utensils" style="color:#fff; font-size:13px;"></i>
                     </div>
-                    <div style="flex:1;height:1px;background:linear-gradient(to left,#e7e5e4,transparent);"></div>
+                    <div style="flex:1;height:1px;background:linear-gradient(to left,#e2e8f0,transparent);"></div>
                 </div>
             </div>
 
@@ -858,18 +884,18 @@
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
 
                                 @if($item->gastrobar_id ?? false)
-                                    <div style="width:36px;height:36px;background:#fff8e1;border:1px solid #fde68a;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fas fa-glass-martini-alt" style="color:#b45309;font-size:14px;"></i>
+                                    <div style="width:36px;height:36px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fas fa-glass-martini-alt" style="color:#4338ca;font-size:14px;"></i>
                                     </div>
                                 @else
-                                    <div style="width:36px;height:36px;background:#f5f5f4;border:1px solid #e7e5e4;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fas fa-store" style="color:#a8a29e;font-size:14px;"></i>
+                                    <div style="width:36px;height:36px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fas fa-store" style="color:#94a3b8;font-size:14px;"></i>
                                     </div>
                                 @endif
 
                                 <div style="flex:1;min-width:0;">
                                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                                        <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#ea580c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;">
+                                        <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#2563eb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;">
                                             @if($item->gastrobar_id ?? false)
                                                 {{ $item->gastrobar?->nombre ?? 'Gastrobar' }}
                                             @else
@@ -887,7 +913,7 @@
                                         @endif
                                     </div>
                                     @if($item->restaurante?->especialidad)
-                                        <span style="font-size:9px;color:#a8a29e;font-weight:600;">{{ $item->restaurante->especialidad }}</span>
+                                        <span style="font-size:9px;color:#94a3b8;font-weight:600;">{{ $item->restaurante->especialidad }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -903,7 +929,7 @@
 
                             <div class="card-footer-new">
                                 <div class="card-date-new">
-                                    <i class="far fa-calendar-alt" style="color:#a8a29e;font-size:13px;"></i>
+                                    <i class="far fa-calendar-alt" style="color:#94a3b8;font-size:13px;"></i>
                                     {{ \Carbon\Carbon::parse($item->fecha_evento)->translatedFormat('d M, Y') }}
                                 </div>
                                 <div class="card-countdown-new">
@@ -915,19 +941,19 @@
                     </article>
                 @empty
                     <div class="col-span-full py-16 flex flex-col items-center text-center max-w-lg mx-auto" data-aos="fade-up">
-                        <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 mb-6 border border-stone-200/40 shadow-sm relative">
+                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-6 border border-slate-200/40 shadow-sm relative">
                             <i class="fas fa-search text-2xl"></i>
-                            <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-orange-600 rounded-full flex items-center justify-center text-white text-[10px] shadow-md">
+                            <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px] shadow-md">
                                 <i class="fas fa-times"></i>
                             </div>
                         </div>
-                        <h3 class="premium-title text-2xl sm:text-3xl font-extrabold text-stone-900 mb-3 tracking-tight">Sin experiencias culinarias</h3>
-                        <p class="text-stone-500 text-base leading-relaxed mb-8 font-light">
+                        <h3 class="premium-title text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Sin experiencias culinarias</h3>
+                        <p class="text-slate-500 text-base leading-relaxed mb-8 font-light">
                             No encontramos eventos activos con los filtros seleccionados.
                         </p>
                         @if(request('departamento') || request('municipio') || request('restaurante_id'))
                             <a href="{{ route('home') }}"
-                               class="bg-stone-900 text-stone-50 text-xs font-bold tracking-wider uppercase px-6 py-3.5 rounded-xl no-underline hover:bg-orange-600 transition-all shadow-md active:scale-95 border-0 cursor-pointer flex items-center gap-2">
+                               class="bg-slate-900 text-slate-50 text-xs font-bold tracking-wider uppercase px-6 py-3.5 rounded-xl no-underline hover:bg-blue-600 transition-all shadow-md active:scale-95 border-0 cursor-pointer flex items-center gap-2">
                                 <i class="fas fa-undo text-[10px]"></i> Limpiar Filtros
                             </a>
                         @endif
@@ -942,50 +968,50 @@
         </main>
 
         {{-- ══ FOOTER ══ --}}
-        <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
+        <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
             <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
                     <div class="sm:col-span-2 lg:col-span-4 space-y-4">
                         <div class="flex items-center gap-2.5">
-                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
+                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
                         </div>
-                        <p class="text-stone-400 text-sm leading-relaxed font-light">
+                        <p class="text-slate-400 text-sm leading-relaxed font-light">
                             La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
                             Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
                         </p>
                         <div class="flex items-center gap-3 pt-1">
-                            <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
                         </div>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
                         <ul class="space-y-2.5 text-sm p-0 list-none m-0">
-                            <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
-                            <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Restaurantes</a></li>
-                            <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all inline-block no-underline">Gastrobares</a></li>
-                            <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
-                            <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
+                            <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
+                            <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
+                            <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                            <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                            <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
                         </ul>
                     </div>
                     <div class="lg:col-span-3 space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
-                        <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Masaya</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Granada</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>León</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>San Juan del Sur</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Estelí</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Matagalpa</span>
+                        <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
                         </div>
                     </div>
                 </div>
-                <div class="border-t border-stone-800 pt-6 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
                     <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
                     <div class="flex gap-4">
-                        <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Política de Privacidad</a>
-                        <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Términos de Servicio</a>
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
                     </div>
                 </div>
             </div>

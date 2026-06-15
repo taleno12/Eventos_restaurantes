@@ -357,6 +357,11 @@ class RestauranteController extends Controller
     {
         $restaurante->update(['activo' => !$restaurante->activo]);
 
+        // Sincronizar estado del usuario propietario
+        User::where('restaurante_id', $restaurante->id)
+            ->where('role', 'restaurante')
+            ->update(['estado' => $restaurante->activo ? 'activo' : 'suspendido']);
+
         return redirect()->back()->with('success',
             $restaurante->activo
                 ? 'Restaurante activado correctamente.'

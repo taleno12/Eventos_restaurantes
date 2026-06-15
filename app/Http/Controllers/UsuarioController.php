@@ -3,164 +3,127 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Trabajador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
-    // ── INDEX ─────────────────────────────────────────────────────
     public function index(Request $request)
     {
-        $query = User::query();
+        $rolActivo = $request->get('role', '');
 
-        if ($request->filled('buscar')) {
-            $b = $request->buscar;
-            $query->where(function ($q) use ($b) {
-                $q->where('name', 'like', "%$b%")
-                  ->orWhere('email', 'like', "%$b%");
-            });
-        }
-
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
-        }
-
-        $usuarios = $query->latest()->paginate(15)->withQueryString();
-
-        $totalUsuarios     = User::count();
+        // ── Métricas siempre ────────────────────────────────────
+        $totalUsuarios     = User::whereIn('role', ['admin','restaurante','gastrobar'])->count();
         $totalAdmins       = User::where('role', 'admin')->count();
         $totalRestaurantes = User::where('role', 'restaurante')->count();
         $totalGastrobares  = User::where('role', 'gastrobar')->count();
-        $totalClientes     = User::where('role', 'usuario')->count();
-        $totalHoy          = User::whereDate('created_at', today())->count();
+        $totalHoy          = User::whereIn('role', ['admin','restaurante','gastrobar'])
+                                 ->whereDate('created_at', today())->count();
+        $totalTrabajadores = Trabajador::count();
+
+        // ── Usuarios ────────────────────────────────────────────
+        $queryU = User::whereIn('role', ['admin','restaurante','gastrobar'])->latest();
+        if ($request->filled('buscar')) {
+            $b = $request->buscar;
+            $queryU->where(fn($q) => $q->where('name','like',"%$b%")->orWhere('email','like',"%$b%"));
+        }
+        if ($rolActivo && $rolActivo !== 'personal') {
+            $queryU->where('role', $rolActivo);
+        }
+        $usuarios = $queryU->paginate(15);
+
+        // ── Trabajadores (solo cuando role=personal) ────────────
+        $queryT = Trabajador::with('departamentos')->latest();
+        if ($rolActivo === 'personal' && $request->filled('buscar')) {
+            $b = $request->buscar;
+            $queryT->where(fn($q) => $q->where('nombre','like',"%$b%")
+                                       ->orWhere('apellido','like',"%$b%")
+                                       ->orWhere('cedula','like',"%$b%")
+                                       ->orWhere('cargo','like',"%$b%"));
+        }
+        $trabajadores = $queryT->paginate(15);
 
         return view('usuarios.index', compact(
-            'usuarios',
-            'totalUsuarios',
-            'totalAdmins',
-            'totalRestaurantes',
-            'totalGastrobares',
-            'totalClientes',
-            'totalHoy'
+            'usuarios','trabajadores',
+            'totalUsuarios','totalAdmins','totalRestaurantes',
+            'totalGastrobares','totalHoy','totalTrabajadores'
         ));
     }
 
-    // ── CREATE ────────────────────────────────────────────────────
     public function create()
     {
         return view('usuarios.create');
     }
 
-    // ── STORE ─────────────────────────────────────────────────────
     public function store(Request $request)
     {
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'role'     => 'required|in:admin,restaurante,gastrobar,usuario',
+            'password' => 'required|min:8|confirmed',
+            'role'     => 'required|in:admin,restaurante,gastrobar',
             'telefono' => 'nullable|string|max:20',
-        ], [
-            'name.required'      => 'El nombre es obligatorio.',
-            'email.required'     => 'El correo electrónico es obligatorio.',
-            'email.email'        => 'Ingresa un correo electrónico válido.',
-            'email.unique'       => 'Este correo ya está registrado en el sistema.',
-            'password.required'  => 'La contraseña es obligatoria.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'role.required'      => 'Debes seleccionar un rol.',
         ]);
 
         User::create([
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'password'          => Hash::make($request->password),
-            'role'              => $request->role,
-            'telefono'          => $request->telefono,
-            'email_verified_at' => now(), // activo por defecto al crearlo desde admin
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => $request->role,
+            'telefono' => $request->telefono,
         ]);
 
-        return redirect()->route('usuarios.index')
-                         ->with('success', 'Usuario creado correctamente.');
+        return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
     }
 
-    // ── SHOW ──────────────────────────────────────────────────────
-    public function show(User $user)
+    public function show(User $usuario)
     {
-        return view('usuarios.show', compact('user'));
+        $user = $usuario;
+        return view('usuarios.show', compact('usuario', 'user'));
     }
 
-    // ── EDIT ──────────────────────────────────────────────────────
-    public function edit(User $user)
+    public function edit(User $usuario)
     {
-        return view('usuarios.edit', compact('user'));
+        $user = $usuario;
+        return view('usuarios.edit', compact('usuario', 'user'));
     }
 
-    // ── UPDATE ────────────────────────────────────────────────────
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $usuario)
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $user->id,
-            'role'     => 'required|in:admin,restaurante,gastrobar,usuario',
+            'email'    => 'required|email|unique:users,email,'.$usuario->id,
+            'role'     => 'required|in:admin,restaurante,gastrobar',
             'telefono' => 'nullable|string|max:20',
-            'password' => 'nullable|string|min:8|confirmed',
-        ], [
-            'name.required'      => 'El nombre es obligatorio.',
-            'email.required'     => 'El correo electrónico es obligatorio.',
-            'email.email'        => 'Ingresa un correo electrónico válido.',
-            'email.unique'       => 'Este correo ya está en uso por otro usuario.',
-            'role.required'      => 'Debes seleccionar un rol.',
-            'password.min'       => 'La nueva contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
-        $datos = [
+        $usuario->update([
             'name'     => $request->name,
             'email'    => $request->email,
             'role'     => $request->role,
             'telefono' => $request->telefono,
-        ];
+        ]);
 
-        // Solo actualizar contraseña si se ingresó una nueva
         if ($request->filled('password')) {
-            $datos['password'] = Hash::make($request->password);
+            $request->validate(['password' => 'min:8|confirmed']);
+            $usuario->update(['password' => Hash::make($request->password)]);
         }
 
-        $user->update($datos);
-
-        return redirect()->route('usuarios.index')
-                         ->with('success', 'Usuario actualizado correctamente.');
+        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
-    // ── TOGGLE ACTIVO/INACTIVO ────────────────────────────────────
-    public function toggle(User $user)
+    public function destroy(User $usuario)
     {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'No puedes suspender tu propia cuenta.');
-        }
-
-        if ($user->email_verified_at) {
-            $user->update(['email_verified_at' => null]);
-            $msg = 'Usuario suspendido correctamente.';
-        } else {
-            $user->update(['email_verified_at' => now()]);
-            $msg = 'Usuario activado correctamente.';
-        }
-
-        return back()->with('success', $msg);
+        $usuario->delete();
+        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado.');
     }
 
-    // ── DESTROY ───────────────────────────────────────────────────
-    public function destroy(User $user)
+    public function toggle(User $usuario)
     {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'No puedes eliminar tu propia cuenta.');
-        }
-
-        $user->delete();
-
-        return redirect()->route('usuarios.index')
-                         ->with('success', 'Usuario eliminado correctamente.');
+        $nuevo = ($usuario->estado ?? 'activo') === 'activo' ? 'suspendido' : 'activo';
+        $usuario->update(['estado' => $nuevo]);
+        $msg = $nuevo === 'suspendido' ? 'Usuario suspendido.' : 'Usuario reactivado.';
+        return redirect()->back()->with('success', $msg);
     }
 }

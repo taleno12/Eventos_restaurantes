@@ -250,11 +250,18 @@ class EmpleoController extends Controller
         $search = $request->get('search');
 
         $empleos = Empleo::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
-            ->when($search, fn($q) => $q->where('titulo', 'like', "%$search%"))
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($q2) use ($search) {
+                    $q2->where('titulo', 'like', "%$search%")
+                       ->orWhereHas('departamento', fn($d) => $d->where('nombre', 'like', "%$search%"))
+                       ->orWhereHas('municipio', fn($m) => $m->where('nombre', 'like', "%$search%"));
+                });
+            })
             ->when($tipo === 'restaurante', fn($q) => $q->whereNotNull('restaurante_id')->whereNull('gastrobar_id'))
             ->when($tipo === 'gastrobar',   fn($q) => $q->whereNotNull('gastrobar_id'))
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $activas                = Empleo::where('activo', true)->count();
         $restaurantesConOfertas = Empleo::distinct('restaurante_id')

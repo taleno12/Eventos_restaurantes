@@ -13,9 +13,9 @@
 
         <style>
             :root {
-                --orange: #ea580c;
-                --dark: #0c0a09;
-                --cream: #faf9f6;
+                --blue: #2563eb;
+                --dark: #0f172a;
+                --cream: #f8fafc;
             }
 
             * { box-sizing: border-box; }
@@ -24,19 +24,19 @@
                 font-family: 'Instrument Sans', sans-serif;
                 overflow-x: hidden;
                 background: var(--cream);
-                color: #1c1917;
+                color: #0f172a;
             }
 
             .premium-title { font-family: 'Playfair Display', serif; }
 
             /* ══ SEARCH BOX ══ */
             .search-box {
-                display: flex; align-items: stretch; background: #f8f7f6;
-                border: 1.5px solid #e7e5e4; border-radius: 18px; overflow: hidden;
+                display: flex; align-items: stretch; background: #f4f7fb;
+                border: 1.5px solid #e2e8f0; border-radius: 18px; overflow: hidden;
                 transition: border-color 0.2s, box-shadow 0.2s;
             }
             .search-box:focus-within {
-                border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.10); background: #fff;
+                border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.10); background: #fff;
             }
             .search-segment {
                 display: flex; flex-direction: column; justify-content: center;
@@ -44,59 +44,59 @@
             }
             .search-segment + .search-segment::before {
                 content: ''; position: absolute; left: 0; top: 20%;
-                height: 60%; width: 1px; background: #e7e5e4;
+                height: 60%; width: 1px; background: #e2e8f0;
             }
             .search-segment label {
                 font-size: 9px; font-weight: 900; letter-spacing: 0.16em;
-                text-transform: uppercase; color: #a8a29e; margin-bottom: 2px;
+                text-transform: uppercase; color: #94a3b8; margin-bottom: 2px;
                 display: flex; align-items: center; gap: 4px; cursor: pointer;
             }
             .search-segment select,
             .search-segment input {
                 background: transparent; border: none; outline: none;
-                font-size: 13px; font-weight: 600; color: #1c1917;
+                font-size: 13px; font-weight: 600; color: #0f172a;
                 font-family: 'Instrument Sans', sans-serif; width: 100%; padding: 0; cursor: pointer;
             }
             .search-segment select option { font-weight: 500; }
-            .search-segment input::placeholder { color: #c4bfbb; font-weight: 500; }
+            .search-segment input::placeholder { color: #cbd5e1; font-weight: 500; }
             .search-segment select:disabled { opacity: 0.45; cursor: not-allowed; }
 
             .search-btn {
                 display: flex; align-items: center; gap: 7px;
-                background: #ea580c; color: white; border: none;
+                background: #2563eb; color: white; border: none;
                 padding: 0 20px; font-size: 13px; font-weight: 700;
                 cursor: pointer; transition: background 0.2s;
                 white-space: nowrap; border-radius: 0 16px 16px 0; flex-shrink: 0;
             }
-            .search-btn:hover { background: #c2410c; }
+            .search-btn:hover { background: #1d4ed8; }
 
             /* ── PANEL BÚSQUEDA MÓVIL ── */
             #mobileSearchPanel {
                 display: none;
                 position: absolute; top: 100%; left: 0; right: 0;
                 background: rgba(255,255,255,0.98); backdrop-filter: blur(12px);
-                border-top: 1px solid #e7e5e4; padding: 1rem 1.25rem;
-                z-index: 40; box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+                border-top: 1px solid #e2e8f0; padding: 1rem 1.25rem;
+                z-index: 40; box-shadow: 0 8px 24px rgba(15,23,42,0.08);
             }
             #mobileSearchPanel.open { display: block; }
 
             .nav-select-mobile {
-                background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
-                padding: 10px 14px; font-size: 13px; color: #1c1917; appearance: none;
+                background: #f4f7fb; border: 1.5px solid #e2e8f0; border-radius: 12px;
+                padding: 10px 14px; font-size: 13px; color: #0f172a; appearance: none;
                 cursor: pointer; transition: all 0.2s; outline: none; width: 100%;
                 font-family: 'Instrument Sans', sans-serif; font-weight: 600;
             }
-            .nav-select-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+            .nav-select-mobile:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
             .nav-select-mobile:disabled { opacity: 0.45; cursor: not-allowed; }
 
             .nav-input-mobile {
-                background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
-                padding: 10px 14px; font-size: 13px; color: #1c1917;
+                background: #f4f7fb; border: 1.5px solid #e2e8f0; border-radius: 12px;
+                padding: 10px 14px; font-size: 13px; color: #0f172a;
                 transition: all 0.2s; outline: none; width: 100%;
                 font-family: 'Instrument Sans', sans-serif; font-weight: 600;
             }
-            .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
-            .nav-input-mobile::placeholder { color: #c4bfbb; }
+            .nav-input-mobile:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
+            .nav-input-mobile::placeholder { color: #cbd5e1; }
 
             /* ══ HERO ══ */
             .hero-section {
@@ -115,9 +115,9 @@
             .hero-bg-overlay {
                 position: absolute; inset: 0;
                 background: linear-gradient(120deg,
-                    rgba(12,10,9,0.92) 0%,
-                    rgba(26,8,0,0.82) 45%,
-                    rgba(12,10,9,0.60) 100%);
+                    rgba(15,23,42,0.92) 0%,
+                    rgba(15,23,42,0.82) 45%,
+                    rgba(37,99,235,0.60) 100%);
             }
             .hero-inner {
                 position: relative; z-index: 10;
@@ -133,12 +133,12 @@
 
             .hero-badge {
                 display: inline-flex; align-items: center; gap: 8px;
-                background: rgba(234,88,12,0.18); border: 1px solid rgba(234,88,12,0.4);
-                color: #fb923c; font-size: 10px; font-weight: 800; letter-spacing: 0.2em;
+                background: rgba(37,99,235,0.18); border: 1px solid rgba(37,99,235,0.4);
+                color: #60a5fa; font-size: 10px; font-weight: 800; letter-spacing: 0.2em;
                 text-transform: uppercase; padding: 7px 18px; border-radius: 999px; margin-bottom: 24px;
             }
             .hero-badge-dot {
-                width: 6px; height: 6px; background: #fb923c; border-radius: 50%;
+                width: 6px; height: 6px; background: #60a5fa; border-radius: 50%;
                 animation: heroPulse 2s infinite;
             }
             @keyframes heroPulse {
@@ -153,11 +153,11 @@
             }
             .hero-title span {
                 color: transparent;
-                background: linear-gradient(90deg, #fb923c, #fbbf24);
+                background: linear-gradient(90deg, #60a5fa, #3b82f6);
                 -webkit-background-clip: text; background-clip: text;
             }
             .hero-sub {
-                color: #d6d3d1; font-size: 14px; line-height: 1.8;
+                color: #d1d5db; font-size: 14px; line-height: 1.8;
                 margin: 0 0 32px; max-width: 500px;
             }
 
@@ -165,7 +165,7 @@
             .hero-pill {
                 display: inline-flex; align-items: center; gap: 7px;
                 background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
-                color: #e7e5e4; font-size: 12px; font-weight: 600;
+                color: #e2e8f0; font-size: 12px; font-weight: 600;
                 padding: 7px 14px; border-radius: 999px;
             }
             .hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
@@ -182,7 +182,7 @@
             }
             .hero-stats-icon {
                 width: 56px; height: 56px;
-                background: #ea580c; border-radius: 18px;
+                background: #2563eb; border-radius: 18px;
                 display: flex; align-items: center; justify-content: center;
                 margin: 0 auto 18px;
             }
@@ -190,11 +190,11 @@
             .hero-stat-big-num {
                 font-family: 'Playfair Display', serif;
                 font-size: 3rem; font-weight: 900;
-                color: #fb923c; display: block; line-height: 1;
+                color: #60a5fa; display: block; line-height: 1;
             }
             .hero-stat-big-lbl {
                 font-size: 9px; font-weight: 800; letter-spacing: 0.2em;
-                text-transform: uppercase; color: #78716c;
+                text-transform: uppercase; color: #94a3b8;
                 margin-top: 6px; display: block;
             }
             .hero-stat-divider {
@@ -206,11 +206,11 @@
             .hero-stat-mini-num {
                 font-family: 'Playfair Display', serif;
                 font-size: 1.5rem; font-weight: 900;
-                color: #e7e5e4; display: block; line-height: 1;
+                color: #e2e8f0; display: block; line-height: 1;
             }
             .hero-stat-mini-lbl {
                 font-size: 9px; font-weight: 800; letter-spacing: 0.15em;
-                text-transform: uppercase; color: #57534e;
+                text-transform: uppercase; color: #64748b;
                 margin-top: 4px; display: block;
             }
 
@@ -227,19 +227,19 @@
             /* ── FILTER PILL ── */
             .filter-pill {
                 display: inline-flex; align-items: center; gap: 6px;
-                background: #fff7ed; border: 1.5px solid #fed7aa;
-                color: #c2410c; font-size: 11px; font-weight: 700;
+                background: #eff6ff; border: 1.5px solid #bfdbfe;
+                color: #1d4ed8; font-size: 11px; font-weight: 700;
                 padding: 5px 10px 5px 12px; border-radius: 999px;
             }
             .filter-pill a {
-                background: rgba(194,65,12,0.12); width: 16px; height: 16px;
+                background: rgba(29,78,216,0.12); width: 16px; height: 16px;
                 border-radius: 50%; display: flex; align-items: center; justify-content: center;
-                color: #c2410c; font-size: 12px; text-decoration: none; line-height: 1; flex-shrink: 0;
+                color: #1d4ed8; font-size: 12px; text-decoration: none; line-height: 1; flex-shrink: 0;
             }
 
             /* ── JOB CARD ── */
             .job-card {
-                background: white; border: 1px solid #f1f0ee; border-radius: 24px;
+                background: white; border: 1px solid #f1f5f9; border-radius: 24px;
                 padding: 28px; display: flex; flex-direction: column; gap: 20px;
                 transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
                 position: relative; overflow: hidden;
@@ -247,25 +247,25 @@
             }
             .job-card::before {
                 content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-                background: linear-gradient(90deg,#ea580c,#f59e0b);
+                background: linear-gradient(90deg,#2563eb,#3b82f6);
                 transform: scaleX(0); transform-origin: left;
                 transition: transform 0.35s ease;
             }
-            .job-card:hover { border-color: #fed7aa; transform: translateY(-4px); box-shadow: 0 20px 48px rgba(28,25,23,0.09); }
+            .job-card:hover { border-color: #bfdbfe; transform: translateY(-4px); box-shadow: 0 20px 48px rgba(15,23,42,0.09); }
             .job-card:hover::before { transform: scaleX(1); }
-            .job-card:hover .card-icon { background: #fff7ed; border-color: #fed7aa; }
-            .job-card:hover .card-icon i { color: #ea580c; }
-            .job-card:hover .card-title { color: #ea580c; }
+            .job-card:hover .card-icon { background: #eff6ff; border-color: #bfdbfe; }
+            .job-card:hover .card-icon i { color: #2563eb; }
+            .job-card:hover .card-title { color: #2563eb; }
 
             .card-icon {
-                width: 48px; height: 48px; background: #f5f5f4;
-                border: 1px solid #e7e5e4; border-radius: 14px;
+                width: 48px; height: 48px; background: #f1f5f9;
+                border: 1px solid #e2e8f0; border-radius: 14px;
                 display: flex; align-items: center; justify-content: center;
                 flex-shrink: 0; transition: all 0.3s;
             }
             .card-title {
                 font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800;
-                color: #1c1917; line-height: 1.25; transition: color 0.2s; margin: 0;
+                color: #0f172a; line-height: 1.25; transition: color 0.2s; margin: 0;
             }
 
             /* ── BADGE TIPO ESTABLECIMIENTO ── */
@@ -285,17 +285,17 @@
             /* ── PAGINACIÓN ── */
             .pag-btn {
                 width: 36px; height: 36px; border-radius: 50%;
-                border: 1.5px solid #e7e5e4; background: #fff;
+                border: 1.5px solid #e2e8f0; background: #fff;
                 display: inline-flex; align-items: center; justify-content: center;
-                font-size: 13px; font-weight: 600; color: #57534e;
+                font-size: 13px; font-weight: 600; color: #475569;
                 text-decoration: none; transition: all 0.2s;
             }
-            .pag-btn:hover { border-color: #ea580c; color: #ea580c; }
-            .pag-btn.active { background: #ea580c; border-color: #ea580c; color: #fff; }
-            .pag-btn.disabled { color: #d4cfc9; pointer-events: none; }
+            .pag-btn:hover { border-color: #2563eb; color: #2563eb; }
+            .pag-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+            .pag-btn.disabled { color: #cbd5e1; pointer-events: none; }
 
             /* ── FOOTER ── */
-            .site-footer { background: #0c0a09; border-top: 1px solid rgba(255,255,255,0.05); padding: 64px 2rem 32px; }
+            .site-footer { background: #0f172a; border-top: 1px solid rgba(255,255,255,0.05); padding: 64px 2rem 32px; }
             .footer-grid {
                 max-width: 1280px; margin: 0 auto;
                 display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px;
@@ -308,11 +308,11 @@
             .footer-social-link {
                 width: 34px; height: 34px; background: rgba(255,255,255,0.06);
                 border-radius: 50%; display: flex; align-items: center; justify-content: center;
-                color: #78716c; text-decoration: none; transition: all 0.2s;
+                color: #94a3b8; text-decoration: none; transition: all 0.2s;
             }
-            .footer-social-link:hover { background: rgba(234,88,12,0.2); color: #fb923c; }
-            .footer-link { color: #78716c; font-size: 13px; text-decoration: none; transition: color 0.2s; }
-            .footer-link:hover { color: #fb923c; }
+            .footer-social-link:hover { background: rgba(37,99,235,0.2); color: #60a5fa; }
+            .footer-link { color: #94a3b8; font-size: 13px; text-decoration: none; transition: color 0.2s; }
+            .footer-link:hover { color: #60a5fa; }
 
             @media (max-width: 900px) {
                 .hero-inner { flex-direction: column; align-items: flex-start; }
@@ -332,14 +332,14 @@
     <body>
 
         {{-- ══ NAVBAR ══ --}}
-        <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 sm:h-20 items-center gap-2 sm:gap-4">
 
                     {{-- Logo --}}
                     <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0 no-underline">
-                        <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-stone-900">
-                            Gastro<span class="text-orange-600">Nicaragua</span>
+                        <span class="text-base sm:text-xl font-bold tracking-tight premium-title italic text-slate-900">
+                            Gastro<span class="text-blue-600">Nicaragua</span>
                         </span>
                     </a>
 
@@ -350,7 +350,7 @@
                         {{-- 1. DESTINO --}}
                         <div class="search-segment" style="min-width:120px;">
                             <label for="search-departamento">
-                                <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i> Destino
+                                <i class="fas fa-map-marker-alt" style="color:#2563eb;"></i> Destino
                             </label>
                             <select id="search-departamento" name="departamento">
                                 <option value="">Todos</option>
@@ -366,7 +366,7 @@
                         {{-- 2. MUNICIPIO --}}
                         <div class="search-segment" style="min-width:120px;">
                             <label for="search-municipio">
-                                <i class="fas fa-city" style="color:#ea580c;"></i> Municipio
+                                <i class="fas fa-city" style="color:#2563eb;"></i> Municipio
                             </label>
                             <select id="search-municipio" name="municipio"
                                     {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
@@ -387,7 +387,7 @@
                         {{-- 3. PUESTO --}}
                         <div class="search-segment" style="min-width:120px;">
                             <label for="search-puesto">
-                                <i class="fas fa-search" style="color:#ea580c;"></i> Puesto
+                                <i class="fas fa-search" style="color:#2563eb;"></i> Puesto
                             </label>
                             <input type="text" id="search-puesto" name="search"
                                    value="{{ request('search') }}" placeholder="Mesero, cocinero...">
@@ -403,24 +403,24 @@
                     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
 
                         <button id="mobileSearchToggle"
-                                class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
+                                class="md:hidden w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition-colors border-0 cursor-pointer">
                             <i class="fas fa-search text-sm"></i>
                         </button>
 
                         <a href="{{ route('home') }}"
-                           class="flex items-center gap-1.5 border border-stone-200 text-stone-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
+                           class="flex items-center gap-1.5 border border-slate-200 text-slate-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm no-underline">
                             <i class="fas fa-home text-xs"></i>
                             <span class="hidden lg:inline">Inicio</span>
                         </a>
 
                         <a href="{{ route('empleos.index') }}"
-                           class="flex items-center gap-1.5 border border-orange-600 text-white bg-orange-600 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold shadow-sm no-underline justify-center">
+                           class="flex items-center gap-1.5 border border-blue-600 text-white bg-blue-600 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-full text-sm font-semibold shadow-sm no-underline justify-center">
                             <i class="fas fa-briefcase text-xs"></i>
                             <span class="hidden lg:inline">Empleos</span>
                         </a>
 
                         <a href="{{ route('contacto') }}"
-                           class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-stone-100 sm:bg-transparent text-stone-600 hover:text-orange-600 transition-colors no-underline"
+                           class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-slate-100 sm:bg-transparent text-slate-600 hover:text-blue-600 transition-colors no-underline"
                            title="Contacto">
                             <i class="fas fa-envelope text-sm sm:hidden"></i>
                             <span class="hidden sm:inline text-sm font-semibold">Contacto</span>
@@ -430,7 +430,7 @@
                             @auth
                                 @if(auth()->user()->email === 'admin@turismo.ni')
                                     <a href="{{ url('/dashboard') }}"
-                                       class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-orange-50 sm:bg-transparent border border-orange-200 sm:border-0 text-orange-600 hover:text-orange-700 transition-colors no-underline"
+                                       class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-blue-50 sm:bg-transparent border border-blue-200 sm:border-0 text-blue-600 hover:text-blue-700 transition-colors no-underline"
                                        title="Panel Admin">
                                         <i class="fas fa-chart-line text-sm sm:hidden"></i>
                                         <span class="hidden sm:inline text-sm font-semibold">Panel</span>
@@ -439,11 +439,11 @@
                                 <form method="POST" action="{{ route('logout') }}" class="inline">
                                     @csrf
                                     <button type="submit"
-                                            class="text-sm font-semibold text-stone-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-1 sm:px-2">Salir</button>
+                                            class="text-sm font-semibold text-slate-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-1 sm:px-2">Salir</button>
                                 </form>
                             @else
                                 <a href="{{ route('login') }}"
-                                   class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-1 sm:px-2">Ingresar</a>
+                                   class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors no-underline px-1 sm:px-2">Ingresar</a>
                             @endauth
                         @endif
                     </div>
@@ -455,8 +455,8 @@
                 <form action="{{ route('empleos.index') }}" method="GET" class="flex flex-col gap-3">
 
                     <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-map-marker-alt text-blue-500"></i> Destino
                         </label>
                         <select id="mob-departamento" name="departamento" class="nav-select-mobile">
                             <option value="">Todos los destinos</option>
@@ -470,8 +470,8 @@
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-city text-orange-500"></i> Municipio
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-city text-blue-500"></i> Municipio
                         </label>
                         <select id="mob-municipio" name="municipio" class="nav-select-mobile"
                                 {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
@@ -490,15 +490,15 @@
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                            <i class="fas fa-search text-orange-500"></i> Puesto
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-search text-blue-500"></i> Puesto
                         </label>
                         <input type="text" name="search" value="{{ request('search') }}"
                                class="nav-input-mobile" placeholder="Mesero, cocinero...">
                     </div>
 
                     <button type="submit"
-                            class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
+                            class="bg-blue-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
                         <i class="fas fa-search text-xs"></i> Buscar empleos
                     </button>
                 </form>
@@ -534,7 +534,7 @@
                             Salarios actualizados
                         </span>
                         <span class="hero-pill">
-                            <span class="hero-pill-dot" style="background:#fb923c;"></span>
+                            <span class="hero-pill-dot" style="background:#60a5fa;"></span>
                             Postulación directa
                         </span>
                     </div>
@@ -561,7 +561,7 @@
             </div>
 
             <span class="hero-brand-tag">Gastro Nicaragua</span>
-            <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#faf9f6);pointer-events:none;z-index:20;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#f8fafc);pointer-events:none;z-index:20;"></div>
         </section>
 
         {{-- ── MAIN ── --}}
@@ -569,8 +569,8 @@
 
             {{-- Filtros activos --}}
             @if(request('search') || request('departamento') || request('municipio'))
-                <div style="margin-bottom:32px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 20px;background:white;border:1px solid #e7e5e4;border-radius:16px;">
-                    <span style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#a8a29e;">Filtros:</span>
+                <div style="margin-bottom:32px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 20px;background:white;border:1px solid #e2e8f0;border-radius:16px;">
+                    <span style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#94a3b8;">Filtros:</span>
 
                     @if(request('departamento'))
                         <span class="filter-pill">
@@ -595,7 +595,7 @@
                     @endif
 
                     <a href="{{ route('empleos.index') }}"
-                       style="margin-left:auto;font-size:12px;color:#ea580c;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:4px;">
+                       style="margin-left:auto;font-size:12px;color:#2563eb;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:4px;">
                         <i class="fas fa-times-circle" style="font-size:10px;"></i> Limpiar todo
                     </a>
                 </div>
@@ -604,15 +604,15 @@
             {{-- Header sección --}}
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
                 <div>
-                    <p style="font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#ea580c;margin:0 0 4px;">
+                    <p style="font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#2563eb;margin:0 0 4px;">
                         <i class="fas fa-fire-alt" style="margin-right:4px;"></i> Vacantes disponibles
                     </p>
-                    <h2 class="premium-title" style="font-size:24px;font-weight:800;color:#1c1917;margin:0;">
+                    <h2 class="premium-title" style="font-size:24px;font-weight:800;color:#0f172a;margin:0;">
                         Ofertas de empleo
                     </h2>
                 </div>
                 @if($empleos->total() > 0)
-                    <span style="background:#fff7ed;border:1px solid #fed7aa;color:#c2410c;font-size:11px;font-weight:700;padding:6px 14px;border-radius:999px;">
+                    <span style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:11px;font-weight:700;padding:6px 14px;border-radius:999px;">
                         {{ $empleos->total() }} {{ $empleos->total() == 1 ? 'oferta' : 'ofertas' }}
                     </span>
                 @endif
@@ -632,17 +632,17 @@
                     {{-- Encabezado --}}
                     <div style="display:flex;align-items:flex-start;gap:14px;">
 
-                        <div class="card-icon" style="{{ $empleo->gastrobar_id ? 'background:#fff8e1;border-color:#fde68a;' : '' }}">
+                        <div class="card-icon" style="{{ $empleo->gastrobar_id ? 'background:#eff6ff;border-color:#bfdbfe;' : '' }}">
                             @if($empleo->gastrobar_id)
-                                <i class="fas fa-glass-martini-alt" style="color:#b45309;font-size:18px;"></i>
+                                <i class="fas fa-glass-martini-alt" style="color:#1d4ed8;font-size:18px;"></i>
                             @else
-                                <i class="fas fa-store" style="color:#a8a29e;font-size:18px;"></i>
+                                <i class="fas fa-store" style="color:#94a3b8;font-size:18px;"></i>
                             @endif
                         </div>
 
                         <div style="flex:1;min-width:0;">
                             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px;">
-                                <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#ea580c;">
+                                <span style="font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#2563eb;">
                                     @if($empleo->gastrobar_id)
                                         {{ $empleo->gastrobar?->nombre }}
                                     @else
@@ -663,13 +663,13 @@
                         </div>
                     </div>
 
-                    <p style="color:#78716c;font-size:13px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;">
+                    <p style="color:#64748b;font-size:13px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;">
                         {{ $empleo->descripcion }}
                     </p>
 
                     <div style="display:flex;flex-wrap:wrap;gap:8px;">
                         @if($empleo->tipo_contrato)
-                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:#f5f5f4;color:#57534e;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:#f1f5f9;color:#475569;">
                                 <i class="fas fa-clock" style="font-size:10px;"></i>
                                 {{ $empleo->tipo_contrato }}
                             </span>
@@ -681,7 +681,7 @@
                                 C$ {{ number_format($empleo->salario, 0) }}
                             </span>
                         @else
-                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:#f5f5f4;color:#78716c;border:1px solid #e7e5e4;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;">
                                 <i class="fas fa-handshake" style="font-size:10px;"></i>
                                 En entrevista
                             </span>
@@ -695,8 +695,8 @@
                         @endif
                     </div>
 
-                    <div style="padding-top:18px;border-top:1px solid #f5f5f4;margin-top:auto;">
-                        <div style="display:flex;align-items:center;gap:6px;color:#a8a29e;font-size:11px;font-weight:500;">
+                    <div style="padding-top:18px;border-top:1px solid #f1f5f9;margin-top:auto;">
+                        <div style="display:flex;align-items:center;gap:6px;color:#94a3b8;font-size:11px;font-weight:500;">
                             <i class="far fa-calendar-alt"></i>
                             {{ $empleo->created_at->diffForHumans() }}
                         </div>
@@ -709,14 +709,14 @@
                 @endif
 
             @empty
-                <div style="text-align:center;background:white;border:1px solid #e7e5e4;border-radius:28px;padding:64px 40px;max-width:480px;margin:0 auto;">
-                    <div style="width:72px;height:72px;background:#fafaf9;border:1px solid #e7e5e4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                        <i class="fas fa-briefcase" style="color:#d6d3d1;font-size:28px;"></i>
+                <div style="text-align:center;background:white;border:1px solid #e2e8f0;border-radius:28px;padding:64px 40px;max-width:480px;margin:0 auto;">
+                    <div style="width:72px;height:72px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                        <i class="fas fa-briefcase" style="color:#cbd5e1;font-size:28px;"></i>
                     </div>
-                    <h3 class="premium-title" style="font-size:22px;font-weight:800;color:#1c1917;margin-bottom:8px;">
+                    <h3 class="premium-title" style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px;">
                         No hay ofertas disponibles
                     </h3>
-                    <p style="color:#78716c;font-size:14px;line-height:1.7;margin:0 0 24px;">
+                    <p style="color:#64748b;font-size:14px;line-height:1.7;margin:0 0 24px;">
                         @if(request('search') || request('departamento') || request('municipio'))
                             No encontramos vacantes que coincidan con tus filtros. Intenta con otros términos.
                         @else
@@ -725,7 +725,7 @@
                     </p>
                     @if(request('search') || request('departamento') || request('municipio'))
                         <a href="{{ route('empleos.index') }}"
-                           style="display:inline-flex;align-items:center;gap:8px;background:#ea580c;color:white;padding:11px 24px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">
+                           style="display:inline-flex;align-items:center;gap:8px;background:#2563eb;color:white;padding:11px 24px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">
                             <i class="fas fa-times" style="font-size:11px;"></i> Limpiar filtros
                         </a>
                     @endif
@@ -759,7 +759,7 @@
 
                     @foreach($pages as $page)
                         @if($page === '…')
-                            <span style="color:#a8a29e;font-size:13px;padding:0 2px;">…</span>
+                            <span style="color:#94a3b8;font-size:13px;padding:0 2px;">…</span>
                         @else
                             <a href="{{ $empleos->url($page) }}"
                                class="pag-btn {{ $page == $current ? 'active' : '' }}">
@@ -780,52 +780,52 @@
             @endif
         </main>
 
-        {{-- ── FOOTER ── --}}
-        <footer class="site-footer">
-            <div class="footer-grid">
-                <div>
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                        <span class="premium-title" style="color:white;font-size:20px;font-style:italic;">
-                            Gastro<span style="color:#fb923c;">Nicaragua</span>
-                        </span>
+        {{-- ══ FOOTER ══ --}}
+        <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
+                    <div class="sm:col-span-2 lg:col-span-4 space-y-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed font-light">
+                            La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                            Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                        </p>
+                        <div class="flex items-center gap-3 pt-1">
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                        </div>
                     </div>
-                    <p style="color:#78716c;font-size:13px;line-height:1.75;max-width:280px;margin:0 0 24px;">
-                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                    </p>
-                    <div style="display:flex;gap:12px;">
-                        <a href="#" class="footer-social-link"><i class="fab fa-facebook-f" style="font-size:12px;"></i></a>
-                        <a href="#" class="footer-social-link"><i class="fab fa-instagram" style="font-size:12px;"></i></a>
-                        <a href="#" class="footer-social-link"><i class="fab fa-tiktok" style="font-size:12px;"></i></a>
+                    <div class="lg:col-span-2 space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
+                        <ul class="space-y-2.5 text-sm p-0 list-none m-0">
+                            <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
+                            <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
+                            <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                            <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                            <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-3 space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
+                        <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Portal</h4>
-                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;">
-                        <li><a href="{{ route('home') }}" class="footer-link">Inicio</a></li>
-                        <li><a href="{{ route('restaurantes.index') }}" class="footer-link">Restaurantes</a></li>
-                        <li><a href="{{ route('empleos.index') }}" style="color:#ea580c;font-size:13px;font-weight:600;text-decoration:none;">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="footer-link">Contacto</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="color:white;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 20px;">Destinos Destacados</h4>
-                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
-                        <li><a href="#" class="footer-link">› Masaya</a></li>
-                        <li><a href="#" class="footer-link">› Granada</a></li>
-                        <li><a href="#" class="footer-link">› León</a></li>
-                        <li><a href="#" class="footer-link">› San Juan del Sur</a></li>
-                        <li><a href="#" class="footer-link">› Estelí</a></li>
-                        <li><a href="#" class="footer-link">› Matagalpa</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p style="color:#57534e;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;margin:0;">
-                    © {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.
-                </p>
-                <div style="display:flex;gap:24px;">
-                    <a href="#" class="footer-link" style="font-size:11px;">Política de Privacidad</a>
-                    <a href="#" class="footer-link" style="font-size:11px;">Términos de Servicio</a>
+                <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
+                    </div>
                 </div>
             </div>
         </footer>

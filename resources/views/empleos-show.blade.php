@@ -602,59 +602,55 @@
         </div>
     </main>
 
-    {{-- ══ FOOTER ══ --}}
-    <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
-        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
-
-                <div class="sm:col-span-2 lg:col-span-4 space-y-4">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
+         {{-- ══ FOOTER ══ --}}
+        <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
+                    <div class="sm:col-span-2 lg:col-span-4 space-y-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed font-light">
+                            La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                            Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                        </p>
+                        <div class="flex items-center gap-3 pt-1">
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                        </div>
                     </div>
-                    <p class="text-stone-400 text-sm leading-relaxed font-light">
-                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                        Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
-                    </p>
-                    <div class="flex items-center gap-3 pt-1">
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                    <div class="lg:col-span-2 space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
+                        <ul class="space-y-2.5 text-sm p-0 list-none m-0">
+                            <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
+                            <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
+                            <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                            <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                            <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
+                        </ul>
                     </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
-                    <ul class="space-y-2.5 text-sm p-0 list-none m-0">
-                        <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
-                        <li><a href="{{ route('restaurantes.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Restaurantes</a></li>
-                        <li><a href="{{ route('gastrobares.index') }}" class="text-stone-400 hover:text-purple-400 transition-all inline-block no-underline">Gastrobares</a></li>
-                        <li><a href="{{ route('empleos.index') }}" class="text-orange-500 font-semibold hover:text-orange-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
-                    </ul>
-                </div>
-
-                <div class="lg:col-span-3 space-y-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Masaya</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Granada</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>León</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>San Juan del Sur</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Estelí</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Matagalpa</span>
+                    <div class="lg:col-span-3 space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
+                        <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-            <div class="border-t border-stone-800 pt-6 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
-                <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Política de Privacidad</a>
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Términos de Servicio</a>
+                <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
+                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

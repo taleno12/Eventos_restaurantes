@@ -18,7 +18,7 @@
             </p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('usuarios.edit', $user->id) }}" class="btn btn-warning px-4 rounded-pill shadow-sm fw-semibold text-dark">
+            <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-warning px-4 rounded-pill shadow-sm fw-semibold text-dark">
                 <i class="bi bi-pencil me-1"></i> Editar
             </a>
             <a href="{{ route('usuarios.index') }}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
@@ -45,16 +45,16 @@
             'gastrobar'   => ['label'=>'Gastrobar',    'bg'=>'#d1e7dd','color'=>'#0a3622','icon'=>'bi-cup-straw'],
             'usuario'     => ['label'=>'Cliente',      'bg'=>'#f8d7da','color'=>'#842029','icon'=>'bi-person-heart'],
         ];
-        $rc = $rolConfig[$user->role] ?? ['label'=>ucfirst($user->role),'bg'=>'#e2e8f0','color'=>'#4a5568','icon'=>'bi-person'];
-        $activo = !is_null($user->email_verified_at);
-        $iniciales = strtoupper(substr($user->name ?? 'U', 0, 2));
+        $rc = $rolConfig[$usuario->role] ?? ['label'=>ucfirst($usuario->role),'bg'=>'#e2e8f0','color'=>'#4a5568','icon'=>'bi-person'];
+        $activo = ($usuario->estado ?? 'activo') === 'activo';
+        $iniciales = strtoupper(substr($usuario->name ?? 'U', 0, 2));
         $colores = [
             'admin'       => ['bg'=>'#fff3cd','color'=>'#856404'],
             'restaurante' => ['bg'=>'#cfe2ff','color'=>'#0a3878'],
             'gastrobar'   => ['bg'=>'#d1e7dd','color'=>'#0a3622'],
             'usuario'     => ['bg'=>'#f8d7da','color'=>'#842029'],
         ];
-        $c = $colores[$user->role] ?? ['bg'=>'#e2e8f0','color'=>'#4a5568'];
+        $c = $colores[$usuario->role] ?? ['bg'=>'#e2e8f0','color'=>'#4a5568'];
     @endphp
 
     <div class="row g-4">
@@ -62,15 +62,13 @@
         {{-- ── Columna Izquierda: Perfil ── --}}
         <div class="col-12 col-lg-4">
             <div class="card border-0 shadow-sm rounded-3 bg-white overflow-hidden">
-                {{-- Banner superior --}}
                 <div style="height:80px;background:linear-gradient(135deg,#ffc107 0%,#fd7e14 100%);"></div>
 
                 <div class="card-body text-center px-4 pb-4" style="margin-top:-48px;">
-                    {{-- Avatar --}}
                     <div class="rounded-3 border border-4 border-white overflow-hidden bg-light d-inline-flex align-items-center justify-content-center shadow mb-3"
                          style="width:80px;height:80px;">
-                        @if(!empty($user->foto))
-                            <img src="{{ Storage::url($user->foto) }}" alt="{{ $user->name }}" class="w-100 h-100" style="object-fit:cover;">
+                        @if(!empty($usuario->foto))
+                            <img src="{{ Storage::url($usuario->foto) }}" alt="{{ $usuario->name }}" class="w-100 h-100" style="object-fit:cover;">
                         @else
                             <span class="fw-bold fs-4" style="color:{{ $c['color'] }};background:{{ $c['bg'] }};width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
                                 {{ $iniciales }}
@@ -78,19 +76,15 @@
                         @endif
                     </div>
 
-                    <h5 class="fw-bold text-dark text-uppercase mb-1">{{ $user->name }}</h5>
-                    <p class="text-muted small mb-2">{{ $user->email }}</p>
+                    <h5 class="fw-bold text-dark text-uppercase mb-1">{{ $usuario->name }}</h5>
+                    <p class="text-muted small mb-2">{{ $usuario->email }}</p>
 
-                    {{-- Rol --}}
                     <span class="badge px-3 py-1 fw-bold text-uppercase d-inline-flex align-items-center gap-1 mb-3"
                           style="background:{{ $rc['bg'] }};color:{{ $rc['color'] }};font-size:0.72rem;">
                         <i class="bi {{ $rc['icon'] }}" style="font-size:0.65rem;"></i>
                         {{ $rc['label'] }}
-                    </span>
+                    </span><br>
 
-                    <br>
-
-                    {{-- Estado --}}
                     @if($activo)
                         <span class="badge rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1"
                               style="background:#e6fffa;color:#047481;border:1px solid #b2f5ea;font-size:0.72rem;">
@@ -105,13 +99,12 @@
 
                     <hr class="my-3">
 
-                    {{-- Acciones rápidas --}}
                     <div class="d-grid gap-2">
-                        <a href="{{ route('usuarios.edit', $user->id) }}" class="btn btn-warning rounded-pill fw-semibold text-dark">
+                        <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-warning rounded-pill fw-semibold text-dark">
                             <i class="bi bi-pencil me-1"></i> Editar Usuario
                         </a>
 
-                        <form action="{{ route('usuarios.toggle', $user->id) }}" method="POST">
+                        <form action="{{ route('usuarios.toggle', $usuario->id) }}" method="POST">
                             @csrf @method('PATCH')
                             <button type="submit"
                                     class="btn w-100 rounded-pill fw-semibold {{ $activo ? 'btn-outline-danger' : 'btn-outline-success' }}"
@@ -121,8 +114,8 @@
                             </button>
                         </form>
 
-                        @if($user->id !== auth()->id())
-                        <form action="{{ route('usuarios.destroy', $user->id) }}" method="POST"
+                        @if($usuario->id !== auth()->id())
+                        <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST"
                               onsubmit="return confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger w-100 rounded-pill fw-semibold">
@@ -138,7 +131,6 @@
         {{-- ── Columna Derecha: Información ── --}}
         <div class="col-12 col-lg-8 d-flex flex-column gap-4">
 
-            {{-- Datos Personales --}}
             <div class="card border-0 shadow-sm rounded-3 bg-white">
                 <div class="card-body p-4">
                     <p class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.5px;">
@@ -147,17 +139,15 @@
                     <div class="row g-3">
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Nombre completo</label>
-                            <p class="fw-semibold text-dark mb-0">{{ $user->name }}</p>
+                            <p class="fw-semibold text-dark mb-0">{{ $usuario->name }}</p>
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Correo electrónico</label>
-                            <p class="fw-semibold text-dark mb-0">{{ $user->email }}</p>
+                            <p class="fw-semibold text-dark mb-0">{{ $usuario->email }}</p>
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Teléfono</label>
-                            <p class="fw-semibold text-dark mb-0">
-                                {{ $user->telefono ?? '—' }}
-                            </p>
+                            <p class="fw-semibold text-dark mb-0">{{ $usuario->telefono ?? '—' }}</p>
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Rol en el sistema</label>
@@ -167,7 +157,6 @@
                 </div>
             </div>
 
-            {{-- Información de Cuenta --}}
             <div class="card border-0 shadow-sm rounded-3 bg-white">
                 <div class="card-body p-4">
                     <p class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.5px;">
@@ -176,7 +165,7 @@
                     <div class="row g-3">
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">ID de usuario</label>
-                            <p class="fw-semibold text-dark mb-0">#{{ $user->id }}</p>
+                            <p class="fw-semibold text-dark mb-0">#{{ $usuario->id }}</p>
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Estado de cuenta</label>
@@ -191,25 +180,15 @@
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Fecha de registro</label>
                             <p class="fw-semibold text-dark mb-0">
-                                {{ $user->created_at->format('d/m/Y H:i') }}
-                                <small class="text-muted d-block" style="font-size:0.72rem;">{{ $user->created_at->diffForHumans() }}</small>
-                            </p>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label class="text-muted" style="font-size:0.75rem;">Email verificado</label>
-                            <p class="fw-semibold text-dark mb-0">
-                                @if($user->email_verified_at)
-                                    <span class="text-success"><i class="bi bi-patch-check-fill me-1"></i>{{ $user->email_verified_at->format('d/m/Y') }}</span>
-                                @else
-                                    <span class="text-muted">No verificado</span>
-                                @endif
+                                {{ $usuario->created_at->format('d/m/Y H:i') }}
+                                <small class="text-muted d-block" style="font-size:0.72rem;">{{ $usuario->created_at->diffForHumans() }}</small>
                             </p>
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="text-muted" style="font-size:0.75rem;">Última actualización</label>
                             <p class="fw-semibold text-dark mb-0">
-                                {{ $user->updated_at->format('d/m/Y H:i') }}
-                                <small class="text-muted d-block" style="font-size:0.72rem;">{{ $user->updated_at->diffForHumans() }}</small>
+                                {{ $usuario->updated_at->format('d/m/Y H:i') }}
+                                <small class="text-muted d-block" style="font-size:0.72rem;">{{ $usuario->updated_at->diffForHumans() }}</small>
                             </p>
                         </div>
                     </div>

@@ -28,19 +28,24 @@
         }
         .hero-icon { animation: heroFloat 4s ease-in-out infinite; }
 
-        .page-link { color: #ea580c; border-radius: 50%; margin: 0 3px; }
-        .page-item.active .page-link { background-color: #ea580c; border-color: #ea580c; }
+        @keyframes pulse-dot {
+            0%,100% { opacity:1; transform:scale(1); }
+            50%      { opacity:0.5; transform:scale(1.7); }
+        }
+
+        .page-link { color: #2563eb; border-radius: 50%; margin: 0 3px; }
+        .page-item.active .page-link { background-color: #2563eb; border-color: #2563eb; }
 
         /* ══ SEARCH BOX (desktop) ══ */
         .search-box {
             display: flex; align-items: stretch;
-            background: #f8f7f6; border: 1.5px solid #e7e5e4;
+            background: #f4f7fb; border: 1.5px solid #e2e8f0;
             border-radius: 18px; overflow: hidden;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         .search-box:focus-within {
-            border-color: #ea580c;
-            box-shadow: 0 0 0 3px rgba(234,88,12,0.10);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
             background: #fff;
         }
         .search-segment {
@@ -49,77 +54,77 @@
         }
         .search-segment + .search-segment::before {
             content: ''; position: absolute; left: 0; top: 20%;
-            height: 60%; width: 1px; background: #e7e5e4;
+            height: 60%; width: 1px; background: #e2e8f0;
         }
         .search-segment label {
             font-size: 9px; font-weight: 900; letter-spacing: 0.14em;
-            text-transform: uppercase; color: #a8a29e; margin-bottom: 2px;
+            text-transform: uppercase; color: #94a3b8; margin-bottom: 2px;
             display: flex; align-items: center; gap: 4px; cursor: pointer;
             white-space: nowrap;
         }
         .search-segment select,
         .search-segment input {
             background: transparent; border: none; outline: none;
-            font-size: 12px; font-weight: 600; color: #1c1917;
+            font-size: 12px; font-weight: 600; color: #0f172a;
             font-family: 'Instrument Sans', sans-serif; width: 100%; padding: 0; cursor: pointer;
         }
         .search-segment select option { font-weight: 500; }
-        .search-segment input::placeholder { color: #c4bfbb; font-weight: 500; }
+        .search-segment input::placeholder { color: #cbd5e1; font-weight: 500; }
         .search-segment select:disabled { opacity: 0.45; cursor: not-allowed; }
 
         .search-btn {
             display: flex; align-items: center; gap: 6px;
-            background: #ea580c; color: white; border: none;
+            background: #2563eb; color: white; border: none;
             padding: 0 18px; font-size: 13px; font-weight: 700;
             cursor: pointer; transition: background 0.2s;
             white-space: nowrap; border-radius: 0 16px 16px 0; flex-shrink: 0;
         }
-        .search-btn:hover { background: #c2410c; }
+        .search-btn:hover { background: #1d4ed8; }
 
         /* ══ PANEL BÚSQUEDA MÓVIL ══ */
         #mobileSearchPanel {
             display: none;
             position: absolute; top: 100%; left: 0; right: 0;
             background: rgba(255,255,255,0.98); backdrop-filter: blur(12px);
-            border-top: 1px solid #e7e5e4; padding: 1rem 1.25rem;
-            z-index: 40; box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-top: 1px solid #e2e8f0; padding: 1rem 1.25rem;
+            z-index: 40; box-shadow: 0 8px 24px rgba(15,23,42,0.08);
         }
         #mobileSearchPanel.open { display: block; }
 
         .nav-select-mobile {
-            background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
-            padding: 10px 14px; font-size: 13px; color: #1c1917; appearance: none;
+            background: #f4f7fb; border: 1.5px solid #e2e8f0; border-radius: 12px;
+            padding: 10px 14px; font-size: 13px; color: #0f172a; appearance: none;
             cursor: pointer; transition: all 0.2s; outline: none; width: 100%;
             font-family: 'Instrument Sans', sans-serif; font-weight: 600;
         }
-        .nav-select-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
+        .nav-select-mobile:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
         .nav-select-mobile:disabled { opacity: 0.45; cursor: not-allowed; }
 
         .nav-input-mobile {
-            background: #f8f7f6; border: 1.5px solid #e7e5e4; border-radius: 12px;
-            padding: 10px 14px; font-size: 13px; color: #1c1917;
+            background: #f4f7fb; border: 1.5px solid #e2e8f0; border-radius: 12px;
+            padding: 10px 14px; font-size: 13px; color: #0f172a;
             transition: all 0.2s; outline: none; width: 100%;
             font-family: 'Instrument Sans', sans-serif; font-weight: 600;
         }
-        .nav-input-mobile:focus { border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234,88,12,0.12); background: #fff; }
-        .nav-input-mobile::placeholder { color: #c4bfbb; }
+        .nav-input-mobile:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
+        .nav-input-mobile::placeholder { color: #cbd5e1; }
 
         /* ══ GLASS CARD ══ */
         .glass-card {
             background: #ffffff;
-            border: 1px solid #f1f0ee;
+            border: 1px solid #eef2f7;
             border-radius: 2rem;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .glass-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 30px 60px rgba(28, 25, 23, 0.08);
-            border-color: #ffedd5;
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08);
+            border-color: #bfdbfe;
         }
 
         .rest-card-img {
             height: 200px; overflow: hidden; border-radius: 1.8rem 1.8rem 0 0;
-            position: relative; background: #e7e5e4;
+            position: relative; background: #e2e8f0;
         }
         @media (min-width: 768px) {
             .rest-card-img { height: 100%; min-height: 220px; border-radius: 0 2rem 2rem 0; }
@@ -128,27 +133,27 @@
 
         .filter-pill {
             display: inline-flex; align-items: center; gap: 6px;
-            background: #fff7ed; border: 1.5px solid #fed7aa;
-            color: #c2410c; font-size: 11px; font-weight: 700;
+            background: #eff6ff; border: 1.5px solid #bfdbfe;
+            color: #1d4ed8; font-size: 11px; font-weight: 700;
             padding: 5px 10px 5px 12px; border-radius: 999px;
         }
         .filter-pill a {
-            background: rgba(194,65,12,0.12); width: 16px; height: 16px;
+            background: rgba(29,78,216,0.12); width: 16px; height: 16px;
             border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; color: #c2410c; font-size: 12px;
+            justify-content: center; color: #1d4ed8; font-size: 12px;
             text-decoration: none; line-height: 1; flex-shrink: 0;
         }
 
         .pag-btn {
             width: 36px; height: 36px; border-radius: 50%;
-            border: 1.5px solid #e7e5e4; background: #fff;
+            border: 1.5px solid #e2e8f0; background: #fff;
             display: inline-flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 600; color: #57534e;
+            font-size: 13px; font-weight: 600; color: #475569;
             text-decoration: none; transition: all 0.2s; cursor: pointer;
         }
-        .pag-btn:hover { border-color: #ea580c; color: #ea580c; }
-        .pag-btn.active { background: #ea580c; border-color: #ea580c; color: #fff; }
-        .pag-btn.disabled { color: #d4cfc9; pointer-events: none; }
+        .pag-btn:hover { border-color: #2563eb; color: #2563eb; }
+        .pag-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .pag-btn.disabled { color: #cbd5e1; pointer-events: none; }
 
         .social-btn {
             width: 32px; height: 32px; border-radius: 50%;
@@ -195,19 +200,60 @@
             0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.25); }
             50%      { box-shadow: 0 0 0 4px rgba(34,197,94,0.12); }
         }
+
+        /* ══ SECTION RESTAURANTES — HEADER ══ */
+        .rest-ghost-text {
+            font-family: 'Playfair Display', serif; font-weight: 900;
+            font-size: clamp(4rem, 15vw, 13rem); line-height: 1; color: transparent;
+            -webkit-text-stroke: 1.5px rgba(37,99,235,0.07); letter-spacing: -0.04em;
+            position: absolute; top: -1rem; left: -0.5rem;
+            pointer-events: none; user-select: none; white-space: nowrap; z-index: 0;
+        }
+        .rest-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #eff6ff; border: 1.5px solid #bfdbfe;
+            color: #1d4ed8; font-size: 10px; font-weight: 800;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            padding: 7px 20px; border-radius: 999px;
+        }
+        .rest-pill .dot {
+            width: 7px; height: 7px; background: #2563eb; border-radius: 50%;
+            animation: pulse-dot 1.6s ease-in-out infinite; flex-shrink: 0;
+        }
+        .rest-divider-icon {
+            width: 38px; height: 38px; background: #2563eb; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 0 8px rgba(37,99,235,0.08); flex-shrink: 0;
+        }
+
+        @keyframes draw-underline {
+            from { stroke-dashoffset: 400; }
+            to   { stroke-dashoffset: 0; }
+        }
+        .rest-heading {
+            font-family: 'Playfair Display', serif; font-weight: 900;
+            font-size: clamp(1.8rem, 6vw, 4.5rem); line-height: 1.02;
+            letter-spacing: -0.035em; color: #0f172a; margin: 0;
+        }
+        .rest-heading em { font-style: italic; color: #2563eb; position: relative; display: inline-block; }
+        .underline-svg {
+            position: absolute; bottom: -10px; left: 0; width: 100%; overflow: visible;
+            stroke-dasharray: 400; stroke-dashoffset: 400;
+            animation: draw-underline 1.3s cubic-bezier(0.4,0,0.2,1) 0.4s forwards;
+        }
     </style>
 </head>
-<body class="bg-stone-50/50 text-stone-900">
+<body class="bg-slate-50 text-slate-900">
 
     {{-- ══════════════ NAVBAR ══════════════ --}}
-    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex h-20 items-center gap-3">
 
                 {{-- Logo --}}
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 no-underline">
-                    <span class="text-xl font-bold tracking-tight premium-title italic text-stone-900 hidden lg:block">
-                        Gastro<span class="text-orange-600">Nicaragua</span>
+                    <span class="text-xl font-bold tracking-tight premium-title italic text-slate-900 hidden lg:block">
+                        Gastro<span class="text-blue-600">Nicaragua</span>
                     </span>
                 </a>
 
@@ -218,7 +264,7 @@
                     {{-- 1. DESTINO --}}
                     <div class="search-segment">
                         <label for="nav-departamento">
-                            <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:8px;"></i> Destino
+                            <i class="fas fa-map-marker-alt" style="color:#2563eb;font-size:8px;"></i> Destino
                         </label>
                         <select id="nav-departamento" name="departamento">
                             <option value="">Todos</option>
@@ -234,7 +280,7 @@
                     {{-- 2. MUNICIPIO --}}
                     <div class="search-segment">
                         <label for="nav-municipio">
-                            <i class="fas fa-city" style="color:#ea580c;font-size:8px;"></i> Municipio
+                            <i class="fas fa-city" style="color:#2563eb;font-size:8px;"></i> Municipio
                         </label>
                         <select id="nav-municipio" name="municipio"
                                 {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
@@ -253,7 +299,7 @@
                     {{-- 3. ESPECIALIDAD --}}
                     <div class="search-segment">
                         <label for="nav-especialidad">
-                            <i class="fas fa-utensils" style="color:#ea580c;font-size:8px;"></i> Especialidad
+                            <i class="fas fa-utensils" style="color:#2563eb;font-size:8px;"></i> Especialidad
                         </label>
                         <input type="text" id="nav-especialidad" name="especialidad"
                                value="{{ request('especialidad') }}" placeholder="Asados...">
@@ -262,7 +308,7 @@
                     {{-- 4. LOCAL (select dinámico) --}}
                     <div class="search-segment">
                         <label for="nav-search">
-                            <i class="fas fa-store" style="color:#ea580c;font-size:8px;"></i> Local
+                            <i class="fas fa-store" style="color:#2563eb;font-size:8px;"></i> Local
                         </label>
                         <select id="nav-search" name="search">
                             <option value="">Todos los locales</option>
@@ -279,23 +325,25 @@
                 <div class="flex items-center gap-2 shrink-0">
 
                     <button id="mobileSearchToggle"
-                            class="md:hidden w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors border-0 cursor-pointer">
+                            class="md:hidden w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition-colors border-0 cursor-pointer">
                         <i class="fas fa-search text-sm"></i>
                     </button>
 
                     <a href="{{ route('home') }}"
-                       class="flex items-center gap-1.5 border border-stone-200 text-stone-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all shadow-sm no-underline">
+                       class="flex items-center gap-1.5 border border-slate-200 text-slate-600 bg-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm no-underline">
                         <i class="fas fa-home text-xs"></i>
                         <span class="hidden lg:inline">Inicio</span>
                     </a>
+
                     <a href="{{ route('restaurantes.index') }}"
-                       class="flex items-center gap-1.5 border border-orange-600 text-white bg-orange-600 px-3 py-2 rounded-full text-sm font-semibold shadow-sm no-underline">
+                       class="flex items-center gap-1.5 border border-blue-600 text-white bg-blue-600 px-3 py-2 rounded-full text-sm font-semibold shadow-sm no-underline">
                         <i class="fas fa-store text-xs"></i>
                         <span class="hidden lg:inline">Restaurantes</span>
                     </a>
 
+
                     <a href="{{ route('contacto') }}"
-                       class="flex items-center justify-center w-9 h-9 rounded-full bg-stone-100 text-stone-600 hover:bg-orange-100 hover:text-orange-600 transition-colors no-underline lg:w-auto lg:h-auto lg:bg-transparent lg:rounded-none lg:px-2"
+                       class="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition-colors no-underline lg:w-auto lg:h-auto lg:bg-transparent lg:rounded-none lg:px-2"
                        title="Contacto">
                         <i class="fas fa-envelope text-sm lg:hidden"></i>
                         <span class="hidden lg:inline text-sm font-semibold">Contacto</span>
@@ -305,16 +353,16 @@
                         @auth
                             @if(auth()->user()->email === 'admin@turismo.ni')
                                 <a href="{{ url('/dashboard') }}"
-                                   class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-2 hidden lg:inline">Panel</a>
+                                   class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors no-underline px-2 hidden lg:inline">Panel</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}" class="inline m-0">
                                 @csrf
                                 <button type="submit"
-                                        class="text-sm font-semibold text-stone-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-2">Salir</button>
+                                        class="text-sm font-semibold text-slate-500 hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-2">Salir</button>
                             </form>
                         @else
                             <a href="{{ route('login') }}"
-                               class="text-sm font-semibold text-stone-600 hover:text-orange-600 transition-colors no-underline px-2">Ingresar</a>
+                               class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors no-underline px-2">Ingresar</a>
                         @endauth
                     @endif
                 </div>
@@ -327,8 +375,8 @@
 
                 {{-- 1. DESTINO --}}
                 <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-map-marker-alt text-orange-500"></i> Destino
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <i class="fas fa-map-marker-alt text-blue-500"></i> Destino
                     </label>
                     <select id="mob-departamento" name="departamento" class="nav-select-mobile">
                         <option value="">Todos los destinos</option>
@@ -343,8 +391,8 @@
 
                 {{-- 2. MUNICIPIO --}}
                 <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-city text-orange-500"></i> Municipio
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <i class="fas fa-city text-blue-500"></i> Municipio
                     </label>
                     <select id="mob-municipio" name="municipio" class="nav-select-mobile"
                             {{ (request('departamento') ?? $departamentoPredefinido) ? '' : 'disabled' }}>
@@ -362,8 +410,8 @@
 
                 {{-- 3. ESPECIALIDAD --}}
                 <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-utensils text-orange-500"></i> Especialidad
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <i class="fas fa-utensils text-blue-500"></i> Especialidad
                     </label>
                     <input type="text" id="mob-especialidad" name="especialidad" value="{{ request('especialidad') }}"
                            class="nav-input-mobile" placeholder="Asados, mariscos...">
@@ -371,8 +419,8 @@
 
                 {{-- 4. LOCAL (select dinámico) --}}
                 <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-                        <i class="fas fa-store text-orange-500"></i> Local
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <i class="fas fa-store text-blue-500"></i> Local
                     </label>
                     <select id="mob-search" name="search" class="nav-select-mobile">
                         <option value="">Todos los locales</option>
@@ -380,7 +428,7 @@
                 </div>
 
                 <button type="submit"
-                        class="bg-orange-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
+                        class="bg-blue-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2 border-0 cursor-pointer">
                     <i class="fas fa-search text-xs"></i> Buscar Restaurantes
                 </button>
             </form>
@@ -397,26 +445,26 @@
                         transform:scale(1.04);transition:transform 8s ease;">
             </div>
 
-            <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(12,10,9,0.88) 0%, rgba(12,10,9,0.72) 50%, rgba(180,60,0,0.45) 100%);"></div>
+            <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(9,9,50,0.92) 0%, rgba(9,9,50,0.75) 50%, rgba(37,99,235,0.40) 100%);"></div>
 
             <div class="absolute inset-0 opacity-[0.04]"
                  style="background-image:radial-gradient(circle, #fff 1px, transparent 1px);background-size:28px 28px;"></div>
 
             <div class="absolute top-0 right-0 w-[600px] h-[600px] opacity-20 pointer-events-none"
-                 style="background:radial-gradient(circle at 70% 30%, #ea580c 0%, transparent 65%);"></div>
+                 style="background:radial-gradient(circle at 70% 30%, #2563eb 0%, transparent 65%);"></div>
             <div class="absolute bottom-0 left-0 w-[400px] h-[400px] opacity-10 pointer-events-none"
-                 style="background:radial-gradient(circle at 20% 80%, #f97316 0%, transparent 60%);"></div>
+                 style="background:radial-gradient(circle at 20% 80%, #3b82f6 0%, transparent 60%);"></div>
 
             <div class="relative max-w-7xl mx-auto px-4 py-24 sm:py-28 flex flex-col md:flex-row items-center justify-between gap-12">
 
                 <div class="flex-1 max-w-2xl" data-aos="fade-right">
 
                     <div class="inline-flex items-center gap-2 mb-6"
-                         style="background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.4);
+                         style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);
                                 padding:6px 16px;border-radius:999px;">
-                        <span style="width:7px;height:7px;background:#ea580c;border-radius:50%;display:inline-block;
-                                     box-shadow:0 0 8px rgba(234,88,12,0.8);animation:pulse 2s infinite;"></span>
-                        <span style="color:#fb923c;font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">
+                        <span style="width:7px;height:7px;background:#2563eb;border-radius:50%;display:inline-block;
+                                     box-shadow:0 0 8px rgba(37,99,235,0.8);animation:pulse 2s infinite;"></span>
+                        <span style="color:#93c5fd;font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;">
                             <i class="fas fa-map-marker-alt mr-1" style="font-size:9px;"></i> Toda Nicaragua
                         </span>
                     </div>
@@ -424,7 +472,7 @@
                     <h1 class="premium-title mb-5 leading-tight"
                         style="font-size:clamp(2.8rem,5vw,4.2rem);font-weight:900;color:white;line-height:1.05;">
                         Nuestros<br>
-                        <span style="color:#f97316;font-style:italic;font-weight:400;">Restaurantes</span>
+                        <span style="color:#60a5fa;font-style:italic;font-weight:400;">Restaurantes</span>
                     </h1>
 
                     <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.8;max-width:520px;margin-bottom:32px;font-weight:300;">
@@ -448,12 +496,12 @@
                                      color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;
                                      padding:8px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;
                                      backdrop-filter:blur(8px);">
-                            <i class="fas fa-map-marker-alt" style="color:#ea580c;font-size:11px;"></i> Ubicación en mapa
+                            <i class="fas fa-map-marker-alt" style="color:#60a5fa;font-size:11px;"></i> Ubicación en mapa
                         </span>
                     </div>
 
                     <div style="display:flex;align-items:center;gap:12px;">
-                        <div style="height:1px;width:48px;background:linear-gradient(to right,#ea580c,transparent);"></div>
+                        <div style="height:1px;width:48px;background:linear-gradient(to right,#2563eb,transparent);"></div>
                         <span style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);">
                             Gastro Nicaragua
                         </span>
@@ -468,9 +516,9 @@
                                 box-shadow:0 24px 64px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1);
                                 min-width:220px;">
 
-                        <div style="width:80px;height:80px;background:linear-gradient(135deg,#ea580c,#f97316);
+                        <div style="width:80px;height:80px;background:linear-gradient(135deg,#2563eb,#3b82f6);
                                     border-radius:24px;display:flex;align-items:center;justify-content:center;
-                                    box-shadow:0 12px 32px rgba(234,88,12,0.5);
+                                    box-shadow:0 12px 32px rgba(37,99,235,0.5);
                                     animation:heroFloat 4s ease-in-out infinite;">
                             <i class="fas fa-utensils" style="color:white;font-size:32px;"></i>
                         </div>
@@ -489,12 +537,12 @@
 
                         <div style="display:flex;gap:20px;">
                             <div style="text-align:center;">
-                                <p style="color:#fb923c;font-size:18px;font-weight:900;line-height:1;">17</p>
+                                <p style="color:#93c5fd;font-size:18px;font-weight:900;line-height:1;">17</p>
                                 <p style="color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">Deptos.</p>
                             </div>
                             <div style="width:1px;background:rgba(255,255,255,0.08);"></div>
                             <div style="text-align:center;">
-                                <p style="color:#fb923c;font-size:18px;font-weight:900;line-height:1;">153</p>
+                                <p style="color:#93c5fd;font-size:18px;font-weight:900;line-height:1;">153</p>
                                 <p style="color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">Munic.</p>
                             </div>
                         </div>
@@ -507,24 +555,76 @@
 
             </div>
 
-            <div class="absolute bottom-0 left-0 right-0" style="height:80px;background:linear-gradient(to bottom,transparent,#fafaf9);"></div>
+            <div class="absolute bottom-0 left-0 right-0" style="height:80px;background:linear-gradient(to bottom,transparent,#f8fafc);"></div>
         </div>
     </section>
 
     <style>
         @keyframes pulse {
-            0%,100% { opacity:1; box-shadow:0 0 8px rgba(234,88,12,0.8); }
-            50%      { opacity:0.6; box-shadow:0 0 16px rgba(234,88,12,1); }
+            0%,100% { opacity:1; box-shadow:0 0 8px rgba(37,99,235,0.8); }
+            50%      { opacity:0.6; box-shadow:0 0 16px rgba(37,99,235,1); }
         }
     </style>
 
     {{-- ══════════════ MAIN ══════════════ --}}
     <main class="max-w-7xl mx-auto px-4 py-16">
 
+        {{-- ── SECTION HEADER PREMIUM ── --}}
+        <div class="relative mb-14 sm:mb-20" style="overflow:visible;">
+            <div class="rest-ghost-text" aria-hidden="true">Restaurantes</div>
+
+            <div class="relative z-10 mb-4">
+                <span class="rest-pill">
+                    <span class="dot"></span>
+                    Descubre · Explora · Disfruta
+                </span>
+            </div>
+
+            <div class="relative z-10">
+                <h2 class="rest-heading">
+                    Todos los&nbsp;<em>Restaurantes
+                        <svg class="underline-svg" style="position:absolute;bottom:-10px;left:0;width:100%;"
+                             height="14" viewBox="0 0 400 14" preserveAspectRatio="none">
+                            <path d="M2 11 Q100 3 200 9 Q300 15 398 6"
+                                  stroke="#2563eb" stroke-width="4" fill="none"
+                                  stroke-linecap="round"
+                                  stroke-dasharray="400" stroke-dashoffset="400"
+                                  style="animation:draw-underline 1.3s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;"/>
+                        </svg>
+                    </em>&nbsp;de Nicaragua
+                </h2>
+            </div>
+
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-3 mt-8">
+                <p style="color:#64748b;font-size:0.92rem;max-width:480px;line-height:1.75;margin:0;">
+                    Desde fritangas familiares hasta cocina gourmet — cada sabor auténtico de Nicaragua en un solo lugar.
+                </p>
+                <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;padding-bottom:2px;">
+                    <div style="text-align:right;">
+                        <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:2rem;color:#2563eb;line-height:1;">
+                            {{ $restaurantes->total() }}
+                        </div>
+                        <div style="font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#94a3b8;line-height:1.4;">
+                            Locales<br>disponibles
+                        </div>
+                    </div>
+                    <div style="width:2px;height:40px;background:linear-gradient(to bottom,#2563eb,transparent);border-radius:1px;"></div>
+                </div>
+            </div>
+
+            <div class="relative z-10 flex items-center gap-4 mt-8">
+                <div style="flex:1;height:1px;background:linear-gradient(to right,#e2e8f0,transparent);"></div>
+                <div class="rest-divider-icon">
+                    <i class="fas fa-utensils" style="color:#fff;font-size:13px;"></i>
+                </div>
+                <div style="flex:1;height:1px;background:linear-gradient(to left,#e2e8f0,transparent);"></div>
+            </div>
+        </div>
+
         {{-- Barra filtros activos + contador --}}
         <div class="mb-8 flex flex-wrap items-center gap-2">
             @if(request('departamento') || request('municipio') || request('especialidad') || request('search'))
-                <span class="text-stone-500 font-medium text-sm pl-1">Filtros:</span>
+                <span class="text-slate-500 font-medium text-sm pl-1">Filtros:</span>
 
                 @if(request('departamento'))
                     <span class="filter-pill">
@@ -556,14 +656,14 @@
                 @endif
 
                 <a href="{{ route('restaurantes.index') }}"
-                   class="text-stone-400 hover:text-red-500 text-xs font-semibold no-underline flex items-center gap-1 ml-1">
+                   class="text-slate-400 hover:text-red-500 text-xs font-semibold no-underline flex items-center gap-1 ml-1">
                     <i class="fas fa-times-circle text-xs"></i> Limpiar todo
                 </a>
             @endif
 
             <div class="ml-auto flex items-center gap-2">
-                <div style="height:1px;width:32px;background:linear-gradient(to right,#ea580c,transparent);"></div>
-                <span style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#a8a29e;">
+                <div style="height:1px;width:32px;background:linear-gradient(to right,#2563eb,transparent);"></div>
+                <span style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#94a3b8;">
                     {{ $restaurantes->total() }} local{{ $restaurantes->total() != 1 ? 'es' : '' }}
                 </span>
             </div>
@@ -641,8 +741,8 @@
                                 <div>
                                     <div class="flex items-center justify-between mb-2.5 gap-2">
                                         @if($restaurante->departamento)
-                                            <span class="bg-stone-100 text-stone-800 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">
-                                                <i class="fas fa-map-marker-alt text-orange-600 mr-1"></i>
+                                            <span class="bg-slate-100 text-slate-800 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">
+                                                <i class="fas fa-map-marker-alt text-blue-600 mr-1"></i>
                                                 {{ $restaurante->departamento->nombre }}
                                                 @if($restaurante->municipio)
                                                     · {{ $restaurante->municipio->nombre }}
@@ -650,24 +750,24 @@
                                             </span>
                                         @endif
                                         @if($restaurante->especialidad)
-                                            <span class="bg-orange-50 text-orange-700 text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider whitespace-nowrap">
+                                            <span class="bg-blue-50 text-blue-700 text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider whitespace-nowrap">
                                                 {{ $restaurante->especialidad }}
                                             </span>
                                         @endif
                                     </div>
 
-                                    <h3 class="premium-title text-xl sm:text-2xl font-bold text-stone-900 leading-tight mb-2">
+                                    <h3 class="premium-title text-xl sm:text-2xl font-bold text-slate-900 leading-tight mb-2">
                                         {{ $restaurante->nombre }}
                                     </h3>
 
                                     @if($restaurante->descripcion)
-                                        <p class="text-stone-500 text-sm leading-relaxed line-clamp-2 font-normal">
+                                        <p class="text-slate-500 text-sm leading-relaxed line-clamp-2 font-normal">
                                             {{ $restaurante->descripcion }}
                                         </p>
                                     @endif
                                 </div>
 
-                                <div class="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 mt-3">
+                                <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 mt-3">
 
                                     <div class="flex flex-col gap-1.5">
 
@@ -684,14 +784,14 @@
                                                 </span>
                                             @endif
 
-                                            <span class="text-xs text-stone-500 flex items-center gap-1.5">
-                                                <i class="fas fa-clock text-stone-400" style="font-size:10px;"></i>
+                                            <span class="text-xs text-slate-500 flex items-center gap-1.5">
+                                                <i class="fas fa-clock text-slate-400" style="font-size:10px;"></i>
                                                 {{ $aperturaFmt }} – {{ $cierreFmt }}
                                             </span>
 
                                             @if($diasLaboralesStr)
-                                                <span class="text-xs text-stone-400 flex items-center gap-1.5">
-                                                    <i class="fas fa-calendar-week text-stone-300" style="font-size:10px;"></i>
+                                                <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                                                    <i class="fas fa-calendar-week text-slate-300" style="font-size:10px;"></i>
                                                     {{ $diasLaboralesStr }}
                                                 </span>
                                             @endif
@@ -756,14 +856,14 @@
                                          class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center">
-                                        <i class="fas fa-utensils" style="font-size:2.5rem;color:#ea580c;opacity:0.3;"></i>
+                                        <i class="fas fa-utensils" style="font-size:2.5rem;color:#2563eb;opacity:0.3;"></i>
                                     </div>
                                 @endif
 
                                 @if(isset($restaurante->eventos_count) && $restaurante->eventos_count > 0)
                                     <div class="absolute bottom-3 left-3">
-                                        <div class="bg-stone-900/90 backdrop-blur-md text-white px-3 py-1 rounded-lg shadow-lg border border-white/10 font-bold text-xs">
-                                            <i class="fas fa-calendar-alt text-orange-400 mr-1"></i>
+                                        <div class="bg-slate-900/90 backdrop-blur-md text-white px-3 py-1 rounded-lg shadow-lg border border-white/10 font-bold text-xs">
+                                            <i class="fas fa-calendar-alt text-blue-400 mr-1"></i>
                                             {{ $restaurante->eventos_count }} evento{{ $restaurante->eventos_count != 1 ? 's' : '' }}
                                         </div>
                                     </div>
@@ -776,19 +876,19 @@
 
             @empty
                 <div class="col-span-full py-16 flex flex-col items-center text-center max-w-lg mx-auto" data-aos="fade-up">
-                    <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 mb-6 border border-stone-200/40 shadow-sm relative">
+                    <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-6 border border-slate-200/40 shadow-sm relative">
                         <i class="fas fa-store-slash text-2xl"></i>
-                        <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-orange-600 rounded-full flex items-center justify-center text-white text-[10px] shadow-md">
+                        <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px] shadow-md">
                             <i class="fas fa-times"></i>
                         </div>
                     </div>
-                    <h3 class="premium-title text-2xl sm:text-3xl font-extrabold text-stone-900 mb-3 tracking-tight">Sin resultados</h3>
-                    <p class="text-stone-500 text-base leading-relaxed mb-8 font-light">
+                    <h3 class="premium-title text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Sin resultados</h3>
+                    <p class="text-slate-500 text-base leading-relaxed mb-8 font-light">
                         No encontramos restaurantes con esos filtros.
                     </p>
                     @if(request('departamento') || request('municipio') || request('especialidad') || request('search'))
                         <a href="{{ route('restaurantes.index') }}"
-                           class="bg-stone-900 text-stone-50 text-xs font-bold tracking-wider uppercase px-6 py-3.5 rounded-xl no-underline hover:bg-orange-600 transition-all shadow-md active:scale-95 border-0 cursor-pointer flex items-center gap-2">
+                           class="bg-slate-900 text-slate-50 text-xs font-bold tracking-wider uppercase px-6 py-3.5 rounded-xl no-underline hover:bg-blue-600 transition-all shadow-md active:scale-95 border-0 cursor-pointer flex items-center gap-2">
                             <i class="fas fa-undo text-[10px]"></i> Limpiar Filtros
                         </a>
                     @endif
@@ -825,7 +925,7 @@
 
                 @foreach($pages as $page)
                     @if($page === '…')
-                        <span style="color:#a8a29e;font-size:13px;padding:0 2px;">…</span>
+                        <span style="color:#94a3b8;font-size:13px;padding:0 2px;">…</span>
                     @else
                         <a href="{{ $restaurantes->url($page) }}"
                            class="pag-btn {{ $page == $current ? 'active' : '' }}">
@@ -848,49 +948,51 @@
         @endif
     </main>
 
-    {{-- ══════════════ FOOTER ══════════════ --}}
-    <footer class="bg-stone-900 text-stone-300 border-t border-stone-800">
-        <div class="max-w-7xl mx-auto px-4 pt-16 pb-8 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-9 gap-10 mb-12">
-                <div class="lg:col-span-4 space-y-5">
+    {{-- ══ FOOTER ══ --}}
+    <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
+                <div class="sm:col-span-2 lg:col-span-4 space-y-4">
                     <div class="flex items-center gap-2.5">
-                        <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-orange-600">Nicaragua</span></span>
+                        <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
                     </div>
-                    <p class="text-stone-400 text-sm leading-relaxed font-light">
+                    <p class="text-slate-400 text-sm leading-relaxed font-light">
                         La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                        Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
                     </p>
-                    <div class="flex items-center gap-3 pt-2">
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 hover:bg-orange-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
+                    <div class="flex items-center gap-3 pt-1">
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="lg:col-span-2 space-y-4">
                     <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
                     <ul class="space-y-2.5 text-sm p-0 list-none m-0">
-                        <li><a href="{{ route('home') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Inicio</a></li>
-                        <li><a href="{{ route('restaurantes.index') }}" class="text-orange-500 font-semibold inline-block no-underline">Restaurantes</a></li>
-                        <li><a href="{{ route('empleos.index') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
-                        <li><a href="{{ route('contacto') }}" class="text-stone-400 hover:text-orange-500 transition-all inline-block no-underline">Contacto</a></li>
+                        <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
+                        <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
+                        <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                        <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                        <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="lg:col-span-3 space-y-4">
                     <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-stone-400 font-light">
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Masaya</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Granada</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>León</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>San Juan del Sur</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Estelí</span>
-                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-orange-600 mr-1.5"></i>Matagalpa</span>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-stone-800 pt-8 text-center text-xs text-stone-500 font-light flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
                 <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
                 <div class="flex gap-4">
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Política de Privacidad</a>
-                    <a href="#" class="text-stone-500 hover:text-stone-400 no-underline">Términos de Servicio</a>
+                    <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
+                    <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
                 </div>
             </div>
         </div>

@@ -42,7 +42,7 @@
         .panel-left {
             display: none;
             width: 42%;
-            background: #FF5500;
+            background: #2563eb;
             position: relative;
             overflow: hidden;
             flex-direction: column;
@@ -79,13 +79,13 @@
 
         .lp-logo { position: relative; display: flex; align-items: center; gap: 10px; }
         .lb { width: 38px; height: 38px; background: #000; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .lb span { color: #FF5500; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; }
+        .lb span { color: #2563eb; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; }
         .ln { font-family: 'Syne', sans-serif; font-weight: 700; color: #000; font-size: 0.82rem; letter-spacing: 0.04em; }
 
         .lp-hero { position: relative; }
         .badge {
             display: inline-block;
-            background: #000; color: #FF5500;
+            background: #000; color: #2563eb;
             font-size: 0.6rem; font-weight: 600;
             letter-spacing: 0.18em; text-transform: uppercase;
             padding: 0.3rem 0.7rem; border-radius: 999px;
@@ -121,7 +121,7 @@
         /* Mobile logo */
         .mobile-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; justify-content: center; }
         @media (min-width: 860px) { .mobile-logo { display: none; } }
-        .lb-m { width: 38px; height: 38px; background: #FF5500; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .lb-m { width: 38px; height: 38px; background: #2563eb; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .lb-m span { color: #000; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; }
         .ln-m { font-family: 'Syne', sans-serif; font-weight: 700; color: #fff; font-size: 0.82rem; letter-spacing: 0.04em; }
 
@@ -132,9 +132,9 @@
 
         /* alerts */
         .alert-error {
-            background: rgba(255,85,0,0.08); border: 1px solid rgba(255,85,0,0.2);
-            border-left: 3px solid #FF5500; border-radius: 10px;
-            color: #FF7733; font-size: 0.8rem; padding: 0.8rem 1rem; margin-bottom: 1.25rem;
+            background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.2);
+            border-left: 3px solid #2563eb; border-radius: 10px;
+            color: #60a5fa; font-size: 0.8rem; padding: 0.8rem 1rem; margin-bottom: 1.25rem;
         }
         .session-ok { font-size: 0.8rem; color: #4CAF50; margin-bottom: 1rem; text-align: center; }
 
@@ -152,26 +152,26 @@
             outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .field input::placeholder { color: #383838; }
-        .field input:focus { border-color: #FF5500; box-shadow: 0 0 0 3px rgba(255,85,0,0.14); }
-        .field-error { font-size: 0.73rem; color: #FF5500; margin-top: 0.35rem; }
+        .field input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.14); }
+        .field-error { font-size: 0.73rem; color: #2563eb; margin-top: 0.35rem; }
 
         /* remember / forgot row */
         .row-opts { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
         .remember { display: flex; align-items: center; gap: 0.45rem; cursor: pointer; }
-        .remember input { accent-color: #FF5500; width: 14px; height: 14px; }
+        .remember input { accent-color: #2563eb; width: 14px; height: 14px; }
         .remember span { font-size: 0.78rem; color: #666; }
-        .forgot { font-size: 0.78rem; color: #FF5500; text-decoration: none; }
-        .forgot:hover { color: #FF7733; }
+        .forgot { font-size: 0.78rem; color: #2563eb; text-decoration: none; }
+        .forgot:hover { color: #60a5fa; }
 
         /* main button */
         .btn-main {
-            width: 100%; background: #FF5500; color: #000;
+            width: 100%; background: #2563eb; color: #000;
             border: none; border-radius: 11px; padding: 0.95rem;
             font-family: 'Syne', sans-serif; font-weight: 700;
             font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
             cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
         }
-        .btn-main:hover { background: #FF6A1A; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,85,0,0.3); }
+        .btn-main:hover { background: #3b82f6; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(37,99,235,0.3); }
         .btn-main:active { transform: translateY(0); }
 
         /* divider */
@@ -199,7 +199,7 @@
             font-size: 0.85rem; text-align: center; text-decoration: none;
             transition: border-color 0.2s, color 0.2s;
         }
-        .btn-register:hover { border-color: #FF5500; color: #FF5500; }
+        .btn-register:hover { border-color: #2563eb; color: #2563eb; }
 
         /* back */
         .back-link {
@@ -207,7 +207,7 @@
             font-size: 0.7rem; color: #3A3A3A; letter-spacing: 0.08em;
             text-transform: uppercase; text-decoration: none; transition: color 0.2s;
         }
-        .back-link:hover { color: #FF5500; }
+        .back-link:hover { color: #2563eb; }
 
         /* ── LEFT PANEL TEXT ANIMATIONS ── */
         @keyframes slideInLeft {
@@ -307,7 +307,7 @@
 
                 <div class="fh fu d1">
                     <h1>Bienvenido</h1>
-                    <p>Ingresa tus credenciales para continuar.</p>
+                    <p>Accede con tu cuenta de Google para continuar.</p>
                 </div>
 
                 @if(session('status'))
@@ -318,51 +318,27 @@
                     <div class="alert-error fu d2">{{ session('error') }}</div>
                 @endif
 
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
+                <div class="fu d3" style="margin-bottom:1.5rem;">
+                    <p style="color:#666; font-size:0.85rem; line-height:1.6; text-align:center;">
+                        Accede a tu cuenta de <strong style="color:#2563eb;">GastroNicaragua</strong> usando tu cuenta de Google. Es rápido, seguro y no necesitas recordar contraseñas.
+                    </p>
+                </div>
 
-                    <div class="field fu d3">
-                        <label for="email">Correo institucional</label>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}"
-                               placeholder="admin@turismo.ni" required autofocus autocomplete="username"/>
-                        @error('email') <div class="field-error">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="field fu d4">
-                        <label for="password">Contraseña</label>
-                        <input id="password" type="password" name="password"
-                               placeholder="••••••••••••" required autocomplete="current-password"/>
-                        @error('password') <div class="field-error">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="row-opts fu d5">
-                        <label class="remember">
-                            <input type="checkbox" name="remember" id="remember_me">
-                            <span>Recordarme</span>
-                        </label>
-                        @if(Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="forgot">¿Olvidaste tu contraseña?</a>
-                        @endif
-                    </div>
-
-                    <div class="fu d6">
-                        <button type="submit" class="btn-main">Entrar al sistema</button>
-                    </div>
-                </form>
-
-                <div class="divider fu d7"><span>o continúa con</span></div>
-
-                <a href="{{ route('auth.google') }}" class="btn-google fu d7">
-                    <svg width="17" height="17" viewBox="0 0 24 24">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                <a href="{{ route('auth.google') }}" class="btn-google fu d4" style="background:#2563eb; border-color:#2563eb; color:#fff; font-weight:700; font-size:0.9rem; padding:1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#fff"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/>
                     </svg>
-                    Continuar con Google
+                    Entrar con Google
                 </a>
 
-                <a href="{{ route('register') }}" class="btn-register fu d8">¿No tienes cuenta? Crear cuenta</a>
+                <div class="divider fu d6"><span>únicamente</span></div>
+
+
+
+                <!-- Registro solo disponible mediante Google -->
 
                 <a href="/" class="back-link fu d8">← Volver a la galería</a>
 

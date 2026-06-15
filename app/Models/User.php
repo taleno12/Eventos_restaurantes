@@ -19,10 +19,12 @@ class User extends Authenticatable
         'departamento_id',
         'municipio_id',
         'role',
+        'estado',
         'restaurante_id',
         'gastrobar_id',
         'google_id',
         'avatar',
+        'telefono',
     ];
 
     protected $hidden = [

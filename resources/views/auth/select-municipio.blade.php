@@ -12,7 +12,7 @@
 
         body {
             font-family: 'Instrument Sans', sans-serif;
-            background: #0f0f0f;
+            background: #0f172a;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -26,7 +26,7 @@
             position: fixed;
             top: -40%; left: -20%;
             width: 80vw; height: 80vw;
-            background: radial-gradient(circle, rgba(232,93,4,0.12) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 60%);
             pointer-events: none; z-index: 0;
         }
         body::after {
@@ -34,7 +34,7 @@
             position: fixed;
             bottom: -30%; right: -20%;
             width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(232,93,4,0.07) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 60%);
             pointer-events: none; z-index: 0;
         }
 
@@ -53,17 +53,17 @@
         }
         .logo-box {
             width: 56px; height: 56px;
-            background: #e85d04; border-radius: 18px;
+            background: #2563eb; border-radius: 18px;
             display: flex; align-items: center; justify-content: center;
             transform: rotate(3deg);
-            box-shadow: 0 20px 40px rgba(232,93,4,0.3);
+            box-shadow: 0 20px 40px rgba(37,99,235,0.3);
             transition: transform 0.4s ease;
         }
         .logo-link:hover .logo-box { transform: rotate(0deg); }
         .logo-box i { color: white; font-size: 22px; }
         .logo-text {
             font-size: 11px; font-weight: 800;
-            letter-spacing: 0.4em; text-transform: uppercase; color: #555;
+            letter-spacing: 0.4em; text-transform: uppercase; color: #64748b;
         }
 
         /* Paso */
@@ -72,15 +72,15 @@
             animation: fadeDown 0.8s cubic-bezier(0.23,1,0.32,1) 0.05s both;
         }
         .step { width: 32px; height: 4px; border-radius: 2px; }
-        .step.done { background: #e85d04; }
-        .step.active { background: #e85d04; opacity: 0.5; }
-        .step.pending { background: #2a2a2a; }
-        .step-label { font-size: 10px; font-weight: 700; color: #444; letter-spacing: 0.15em; text-transform: uppercase; margin-left: 4px; }
+        .step.done { background: #2563eb; }
+        .step.active { background: #2563eb; opacity: 0.5; }
+        .step.pending { background: #334155; }
+        .step-label { font-size: 10px; font-weight: 700; color: #475569; letter-spacing: 0.15em; text-transform: uppercase; margin-left: 4px; }
 
         .card {
             width: 100%;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
+            background: #1e293b;
+            border: 1px solid #334155;
             border-radius: 32px;
             padding: 40px;
             animation: fadeUp 0.9s cubic-bezier(0.23,1,0.32,1) 0.1s both;
@@ -89,25 +89,25 @@
         .card-header { text-align: center; margin-bottom: 32px; }
         .icon-wrap {
             width: 56px; height: 56px;
-            background: rgba(232,93,4,0.1);
-            border: 1px solid rgba(232,93,4,0.2);
+            background: rgba(37,99,235,0.1);
+            border: 1px solid rgba(37,99,235,0.2);
             border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 20px;
         }
-        .icon-wrap i { color: #e85d04; font-size: 22px; }
+        .icon-wrap i { color: #2563eb; font-size: 22px; }
         .card-title {
             font-family: 'Playfair Display', serif;
             font-size: 28px; font-style: italic;
-            color: #fff; margin-bottom: 8px;
+            color: #f8fafc; margin-bottom: 8px;
         }
         .card-subtitle {
             font-size: 11px; font-weight: 800;
             letter-spacing: 0.25em; text-transform: uppercase;
-            color: #555; margin-bottom: 8px;
+            color: #64748b; margin-bottom: 8px;
         }
-        .card-subtitle span { color: #e85d04; }
-        .card-desc { font-size: 13px; color: #555; line-height: 1.6; }
+        .card-subtitle span { color: #2563eb; }
+        .card-desc { font-size: 13px; color: #64748b; line-height: 1.6; }
 
         /* Grid municipios */
         .mun-grid {
@@ -120,8 +120,8 @@
             padding-right: 4px;
         }
         .mun-grid::-webkit-scrollbar { width: 4px; }
-        .mun-grid::-webkit-scrollbar-track { background: #111; border-radius: 2px; }
-        .mun-grid::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        .mun-grid::-webkit-scrollbar-track { background: #0f172a; border-radius: 2px; }
+        .mun-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
 
         @media (max-width: 480px) {
             .mun-grid { grid-template-columns: repeat(2, 1fr); }
@@ -130,50 +130,50 @@
 
         .mun-card {
             cursor: pointer;
-            border: 1.5px solid #2a2a2a;
+            border: 1.5px solid #334155;
             border-radius: 14px;
             padding: 14px 10px;
             text-align: center;
-            background: #111;
+            background: #0f172a;
             font-size: 12px; font-weight: 700;
-            color: #888;
+            color: #94a3b8;
             position: relative;
             transition: all 0.2s cubic-bezier(0.165,0.84,0.44,1);
             user-select: none;
         }
         .mun-card i {
             display: block; font-size: 14px;
-            margin-bottom: 6px; color: #444;
+            margin-bottom: 6px; color: #475569;
             transition: color 0.2s;
         }
         .mun-card:hover {
-            border-color: #e85d04;
-            background: rgba(232,93,4,0.08);
-            color: #e85d04;
+            border-color: #2563eb;
+            background: rgba(37,99,235,0.08);
+            color: #2563eb;
             transform: translateY(-2px);
         }
-        .mun-card:hover i { color: #e85d04; }
+        .mun-card:hover i { color: #2563eb; }
         .mun-card.selected {
-            border-color: #e85d04;
-            background: #e85d04;
+            border-color: #2563eb;
+            background: #2563eb;
             color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(232,93,4,0.3);
+            box-shadow: 0 8px 24px rgba(37,99,235,0.3);
         }
         .mun-card.selected i { color: #fff; }
         .check-badge {
             display: none;
             position: absolute; top: -7px; right: -7px;
             width: 20px; height: 20px;
-            background: #fff; border: 2px solid #e85d04;
+            background: #fff; border: 2px solid #2563eb;
             border-radius: 50%;
             align-items: center; justify-content: center;
-            font-size: 9px; color: #e85d04; font-weight: 900;
+            font-size: 9px; color: #2563eb; font-weight: 900;
         }
         .mun-card.selected .check-badge { display: flex; }
 
         .btn-submit {
-            width: 100%; background: #e85d04; color: #fff;
+            width: 100%; background: #2563eb; color: #fff;
             border: none; border-radius: 14px; padding: 16px;
             font-size: 11px; font-weight: 800;
             letter-spacing: 0.2em; text-transform: uppercase;
@@ -183,9 +183,9 @@
         }
         .btn-submit.active { opacity: 1; pointer-events: all; }
         .btn-submit.active:hover {
-            background: #c44d00;
+            background: #1d4ed8;
             transform: translateY(-1px);
-            box-shadow: 0 12px 28px rgba(232,93,4,0.35);
+            box-shadow: 0 12px 28px rgba(37,99,235,0.35);
         }
 
         .skip-wrap {
@@ -194,12 +194,12 @@
         }
         .skip-link {
             font-size: 11px; font-weight: 600;
-            color: #444; text-decoration: none;
+            color: #475569; text-decoration: none;
             letter-spacing: 0.1em;
             transition: color 0.2s;
             display: inline-flex; align-items: center; gap: 6px;
         }
-        .skip-link:hover { color: #888; }
+        .skip-link:hover { color: #94a3b8; }
 
         @keyframes fadeDown {
             from { opacity: 0; transform: translateY(-16px); }

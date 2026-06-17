@@ -177,6 +177,95 @@
             }
             @media (min-width: 640px) { .hero-desc { -webkit-line-clamp: 4; } }
 
+            /* ── HERO UNDERLINE DRAW ── */
+            .hero-title-underline {
+                position: relative;
+                display: inline-block;
+            }
+            .hero-title-underline svg {
+                position: absolute;
+                bottom: -8px;
+                left: 0;
+                width: 100%;
+                height: 12px;
+                overflow: visible;
+            }
+            .hero-title-underline path {
+                stroke: #2563eb;
+                stroke-width: 3;
+                fill: none;
+                stroke-linecap: round;
+                stroke-dasharray: 300;
+                stroke-dashoffset: 300;
+                animation: draw-underline 1.2s cubic-bezier(0.4,0,0.2,1) 0.8s forwards;
+            }
+
+            /* ── HERO COUNTDOWN PILL (rediseño profesional) ── */
+            .hero-countdown {
+                display: inline-flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                background: rgba(15, 23, 42, 0.55);
+                backdrop-filter: blur(14px);
+                border: 1px solid rgba(255,255,255,0.16);
+                padding: 12px 18px;
+                border-radius: 14px;
+                margin-bottom: 20px;
+            }
+            .hero-countdown .count-eyebrow {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: rgba(255,255,255,0.65);
+            }
+            .hero-countdown .count-eyebrow i {
+                color: #60a5fa;
+                font-size: 11px;
+            }
+            .hero-countdown .count-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .hero-countdown .count-block {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-width: 38px;
+            }
+            .hero-countdown .count-number {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.5rem;
+                font-weight: 900;
+                color: #fff;
+                line-height: 1;
+                font-variant-numeric: tabular-nums;
+            }
+            .hero-countdown .count-label {
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: rgba(255,255,255,0.6);
+                line-height: 1.3;
+                margin-top: 2px;
+            }
+            .hero-countdown .count-divider {
+                width: 1px;
+                height: 28px;
+                background: rgba(255,255,255,0.18);
+            }
+            .hero-countdown.is-past {
+                background: rgba(37, 99, 235, 0.18);
+                border-color: rgba(96,165,250,0.35);
+            }
+            .hero-countdown.is-past .count-eyebrow i { color: #fff; }
+
             /* ══ SECTION EVENTOS — HEADER ══ */
             .eventos-ghost-text {
                 font-family: 'Playfair Display', serif; font-weight: 900;
@@ -350,16 +439,31 @@
             }
             .rest-carousel-title em { font-style: italic; color: #2563eb; }
 
-            .rest-carousel-badge {
-                display: inline-flex; align-items: center; gap: 6px;
-                background: linear-gradient(135deg, #2563eb, #1e3a8a);
-                color: #fff; font-size: 10px; font-weight: 800;
-                letter-spacing: 0.14em; text-transform: uppercase;
-                padding: 7px 16px; border-radius: 999px;
-                box-shadow: 0 8px 20px rgba(37,99,235,0.25);
-                flex-shrink: 0;
+            /* ── Indicador sutil de cantidad ── */
+            .rest-count-indicator {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 6px 14px;
+                background: #f1f5f9;
+                border-radius: 999px;
+                border: 1px solid #e2e8f0;
             }
-            .rest-carousel-badge i { font-size: 10px; }
+            .rest-count-indicator .count-num {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.1rem;
+                font-weight: 900;
+                color: #2563eb;
+                line-height: 1;
+            }
+            .rest-count-indicator .count-text {
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: #64748b;
+                line-height: 1.3;
+            }
 
             .rest-track-wrapper {
                 overflow: hidden; position: relative;
@@ -673,13 +777,38 @@
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none sm:hidden"></div>
                                     </div>
                                     <div class="relative z-10 w-full px-4 sm:px-10 md:px-20 py-8 sm:py-0 {{ $key == 0 ? 'animate-slide-left' : '' }}">
-                                        <span class="bg-blue-600/90 backdrop-blur-sm text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.2em] mb-4 inline-block">
-                                            Evento Destacado
-                                        </span>
+
+                                        {{-- CONTADOR DINÁMICO PROFESIONAL --}}
+                                        <div class="hero-countdown" data-event-date="{{ $evento->fecha_evento }}">
+                                            <div class="count-eyebrow">
+                                                <i class="far fa-clock"></i>
+                                                <span class="count-eyebrow-text">Faltan para el evento</span>
+                                            </div>
+                                            <div class="count-row">
+                                                <div class="count-block">
+                                                    <div class="count-number" id="heroDays{{ $key }}">--</div>
+                                                    <div class="count-label">Días</div>
+                                                </div>
+                                                <div class="count-divider"></div>
+                                                <div class="count-block">
+                                                    <div class="count-number" id="heroHours{{ $key }}">--</div>
+                                                    <div class="count-label">Horas</div>
+                                                </div>
+                                                <div class="count-divider"></div>
+                                                <div class="count-block">
+                                                    <div class="count-number" id="heroMins{{ $key }}">--</div>
+                                                    <div class="count-label">Min</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <h1 class="hero-title mb-2">
                                             <a href="{{ route('eventos.show', $evento->id) }}"
-                                               class="text-white hover:text-blue-400 transition-colors no-underline">
+                                               class="text-white hover:text-blue-400 transition-colors no-underline hero-title-underline">
                                                 {{ $evento->titulo }}
+                                                <svg viewBox="0 0 200 12" preserveAspectRatio="none">
+                                                    <path d="M2 8 Q50 2 100 6 Q150 10 198 4" />
+                                                </svg>
                                             </a>
                                         </h1>
                                         <p class="hero-desc">{{ Str::limit($evento->descripcion, 150) }}</p>
@@ -736,9 +865,13 @@
                         Nuestros <em>Restaurantes</em>
                     </h2>
                 </div>
-                <span class="rest-carousel-badge">
-                    <i class="fas fa-crown"></i> Selección Premium
-                </span>
+                {{-- INDICADOR CON SINGULAR/PLURAL DINÁMICO --}}
+                <div class="rest-count-indicator">
+                    <span class="count-num">{{ $restaurantes->count() }}</span>
+                    <span class="count-text">
+                        {{ $restaurantes->count() == 1 ? 'Lugar' : 'Lugares' }}<br>{{ $restaurantes->count() == 1 ? 'descubierto' : 'descubiertos' }}
+                    </span>
+                </div>
             </div>
 
             <div class="rest-track-wrapper" id="restWrapper">
@@ -1030,6 +1163,46 @@
                 });
                 bannerCarousel.cycle();
             }
+
+            // ── CONTADOR HERO EN TIEMPO REAL ──
+            function updateHeroCountdown() {
+                const countdowns = document.querySelectorAll('.hero-countdown');
+                countdowns.forEach(function(el, idx) {
+                    const dateStr = el.getAttribute('data-event-date');
+                    if (!dateStr) return;
+
+                    const target = new Date(dateStr);
+                    const now = new Date();
+                    const diff = target - now;
+
+                    const daysEl  = document.getElementById('heroDays' + idx);
+                    const hoursEl = document.getElementById('heroHours' + idx);
+                    const minsEl  = document.getElementById('heroMins' + idx);
+                    const labelEl = el.querySelector('.count-eyebrow-text');
+
+                    if (diff > 0) {
+                        el.classList.remove('is-past');
+                        if (labelEl) labelEl.textContent = 'Faltan para el evento';
+
+                        const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                        if (daysEl)  daysEl.textContent  = String(days).padStart(2, '0');
+                        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+                        if (minsEl)  minsEl.textContent  = String(mins).padStart(2, '0');
+                    } else {
+                        el.classList.add('is-past');
+                        if (labelEl) labelEl.textContent = 'Evento en curso';
+
+                        if (daysEl)  daysEl.textContent  = '00';
+                        if (hoursEl) hoursEl.textContent = '00';
+                        if (minsEl)  minsEl.textContent  = '00';
+                    }
+                });
+            }
+            updateHeroCountdown();
+            setInterval(updateHeroCountdown, 60000);
 
             // ── FILTRO CASCADA SIN ESPECIALIDAD ──
             const todosLosRestaurantes = @json($restaurantes->values());

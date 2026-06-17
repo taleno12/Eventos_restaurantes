@@ -7,6 +7,7 @@ use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Models\Restaurante;
 use App\Models\Gastrobar;
+use App\Models\SolicitudEmpleo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -143,6 +144,15 @@ class EmpleoController extends Controller
     {
         abort_unless($empleo->activo, 404);
 
+        // ── Verificar si ya aplicó con este email ─────────────────────────────
+        $yaAplico = SolicitudEmpleo::where('empleo_id', $empleo->id)
+            ->where('email', $request->input('email'))
+            ->exists();
+
+        if ($yaAplico) {
+            return back()->withInput()->with('error', 'Ya enviaste una solicitud para esta vacante. Solo puedes aplicar una vez.');
+        }
+
         $validated = $request->validate([
             'nombre'           => 'required|string|max:100',
             'apellido'         => 'required|string|max:100',
@@ -188,9 +198,11 @@ class EmpleoController extends Controller
             'restaurante'    => $nombreEstablecimiento,
         ];
 
+        // ── Guardar CV ────────────────────────────────────────────────────────
         $curriculumData   = null;
         $curriculumNombre = null;
         $curriculumMime   = null;
+        $curriculumPath   = null;
 
         if ($request->hasFile('curriculum') && $request->file('curriculum')->isValid()) {
             $archivo   = $request->file('curriculum');
@@ -206,9 +218,28 @@ class EmpleoController extends Controller
             $curriculumNombre = 'curriculum_' . str_replace(' ', '_', $validated['nombre']) . '.' . $extension;
             $curriculumMime   = $mimeTypes[$extension] ?? 'application/octet-stream';
 
-            $archivo->store('curriculos', 'local');
+            $curriculumPath = $archivo->store('curriculos', 'public');
         }
 
+        // ── Guardar solicitud en base de datos ────────────────────────────────
+        SolicitudEmpleo::create([
+            'empleo_id'      => $empleo->id,
+            'restaurante_id' => $empleo->restaurante_id,
+            'gastrobar_id'   => $empleo->gastrobar_id,
+            'nombre'         => $validated['nombre'],
+            'apellido'       => $validated['apellido'],
+            'email'          => $validated['email'],
+            'telefono'       => $validated['telefono'],
+            'edad'           => $validated['edad'],
+            'municipio'      => $validated['municipio'],
+            'experiencia'    => $validated['experiencia'] ?? null,
+            'disponibilidad' => $validated['disponibilidad'] ?? [],
+            'mensaje'        => $validated['mensaje'] ?? null,
+            'curriculum'     => $curriculumPath,
+            'estado'         => 'nueva',
+        ]);
+
+        // ── Enviar correos ────────────────────────────────────────────────────
         $emailEstablecimiento = $empleo->gastrobar->email
             ?? $empleo->restaurante->email
             ?? config('mail.from.address');
@@ -234,10 +265,10 @@ class EmpleoController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error enviando correo de aplicación: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Hubo un problema al enviar tu aplicación. Por favor intenta de nuevo.');
+            return back()->with('success', '¡Tu solicitud fue enviada al restaurante! (El correo de confirmación no pudo enviarse.)');
         }
 
-        return back()->with('success', '¡Tu aplicación fue enviada con éxito! Revisa tu correo para la confirmación.');
+        return back()->with('success', '¡Tu solicitud fue enviada al restaurante con éxito!');
     }
 
     // ─────────────────────────────────────────────────────────────────────────

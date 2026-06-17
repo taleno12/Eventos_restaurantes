@@ -375,6 +375,7 @@
                     </h5>
                     <div class="d-flex flex-column gap-2">
 
+                        {{-- WhatsApp --}}
                         <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
                              style="background:#f8fafc;border:1px solid #e2e8f0;">
                             <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">
@@ -392,6 +393,24 @@
                             @endif
                         </div>
 
+                        {{-- Teléfono --}}
+                        <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+                             style="background:#f8fafc;border:1px solid #e2e8f0;">
+                            <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">
+                                <i class="bi bi-telephone text-primary fs-5"></i> Teléfono
+                            </span>
+                            @if($restaurante->telefono)
+                                <a href="tel:{{ preg_replace('/[^0-9+]/', '', $restaurante->telefono) }}"
+                                   class="badge fw-semibold text-decoration-none"
+                                   style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:0.72rem;">
+                                    {{ $restaurante->telefono }} <i class="bi bi-telephone-fill ms-1" style="font-size:0.6rem;"></i>
+                                </a>
+                            @else
+                                <span class="badge bg-light text-muted border" style="font-size:0.7rem;">Ausente</span>
+                            @endif
+                        </div>
+
+                        {{-- Instagram --}}
                         <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
                              style="background:#f8fafc;border:1px solid #e2e8f0;">
                             <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">
@@ -408,6 +427,7 @@
                             @endif
                         </div>
 
+                        {{-- TikTok --}}
                         <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
                              style="background:#f8fafc;border:1px solid #e2e8f0;">
                             <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">
@@ -424,6 +444,7 @@
                             @endif
                         </div>
 
+                        {{-- Facebook --}}
                         <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
                              style="background:#f8fafc;border:1px solid #e2e8f0;">
                             <span class="d-flex align-items-center gap-2 fw-bold text-uppercase" style="font-size:0.75rem;">

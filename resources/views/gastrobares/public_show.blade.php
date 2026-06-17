@@ -289,15 +289,14 @@
         .social-fb { background: #dbeafe; color: #2563eb; border-color: #bfdbfe; }
         .social-fb:hover { background: #2563eb; color: white; box-shadow: 0 6px 18px rgba(37,99,235,0.35); }
 
-        .btn-wa-cta {
-            display: flex; align-items: center; justify-content: center; gap: 9px;
-            width: 100%; background: #22c55e; color: white;
-            font-size: 14px; font-weight: 700; padding: 14px 20px;
-            border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
-            text-decoration: none; letter-spacing: 0.02em;
-        }
-        .btn-wa-cta:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
-
+      .btn-tel-cta {
+         display: flex; align-items: center; justify-content: center; gap: 9px;
+          width: 100%; background: var(--blue); color: white;
+          font-size: 14px; font-weight: 700; padding: 14px 20px;
+          border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
+          text-decoration: none; letter-spacing: 0.02em;
+         }
+        .btn-tel-cta:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
         #lightbox {
             position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95);
             display: flex; align-items: center; justify-content: center;
@@ -531,12 +530,7 @@
                 <div class="stat-lbl">Tipo de cocina</div>
             </div>
         @endif
-        @if($gastrobar->telefono)
-            <div class="stat-item">
-                <div class="stat-val" style="font-size:13px;">{{ $gastrobar->telefono }}</div>
-                <div class="stat-lbl">Teléfono</div>
-            </div>
-        @endif
+
     </div>
 </div>
 
@@ -876,21 +870,14 @@
             </div>
         @endif
 
-        {{-- CTA WhatsApp --}}
-        @if(!empty($gastrobar->whatsapp))
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $gastrobar->whatsapp) }}"
-               target="_blank" class="btn-wa-cta">
-                <i class="fab fa-whatsapp" style="font-size:18px;"></i>
-                Contactar por WhatsApp
-            </a>
-        @else
-            <a href="mailto:{{ $gastrobar->email ?? 'contacto@gastronicaragua.com' }}" class="btn-wa-cta"
-               style="background:#1f2937;">
-                <i class="fas fa-envelope" style="font-size:16px;"></i>
-                Enviar consulta al local
-            </a>
-        @endif
-
+    {{-- CTA Teléfono --}}
+@if(!empty($gastrobar->telefono))
+    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $gastrobar->telefono) }}"
+       class="btn-tel-cta">
+        <i class="fas fa-phone" style="font-size:16px;"></i>
+        {{ $gastrobar->telefono }}
+    </a>
+@endif
     </aside>
 </div>
 

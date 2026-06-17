@@ -296,8 +296,25 @@
                                 </span>
                             </td>
                             <td class="py-3">
-                                @if(!empty($usuario->telefono))
-                                    <span class="text-dark small"><i class="bi bi-telephone text-muted me-1" style="font-size:0.75rem;"></i>{{ $usuario->telefono }}</span>
+                                @php
+                                    $telefonoMostrar = null;
+
+                                    // Si es propietario de restaurante, mostrar teléfono del restaurante
+                                    if ($usuario->role === 'restaurante' && $usuario->restaurante) {
+                                        $telefonoMostrar = $usuario->restaurante->telefono;
+                                    }
+                                    // Si es propietario de gastrobar, mostrar teléfono del gastrobar
+                                    elseif ($usuario->role === 'gastrobar' && $usuario->gastrobar) {
+                                        $telefonoMostrar = $usuario->gastrobar->telefono;
+                                    }
+                                    // Para admins u otros, usar teléfono del usuario directamente
+                                    else {
+                                        $telefonoMostrar = $usuario->telefono;
+                                    }
+                                @endphp
+
+                                @if(!empty($telefonoMostrar))
+                                    <span class="text-dark small"><i class="bi bi-telephone text-muted me-1" style="font-size:0.75rem;"></i>{{ $telefonoMostrar }}</span>
                                 @else
                                     <span class="text-muted small">—</span>
                                 @endif

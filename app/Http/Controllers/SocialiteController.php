@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Restaurante;
+use App\Models\Gastrobar;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -39,8 +41,9 @@ class SocialiteController extends Controller
                     'avatar'    => $googleUser->getAvatar(),
                 ]);
             } else {
-                // Usuario nuevo — verificar si su email esta registrado como restaurante
-                $restaurante = \App\Models\Restaurante::where('email', $googleUser->getEmail())->first();
+                // Usuario nuevo — verificar si su email esta registrado como restaurante o gastrobar
+                $restaurante = Restaurante::where('email', $googleUser->getEmail())->first();
+                $gastrobar   = Gastrobar::where('email', $googleUser->getEmail())->first();
 
                 // Si el email está en la lista de admins, asignar rol admin
                 $role = 'usuario';
@@ -48,6 +51,8 @@ class SocialiteController extends Controller
                     $role = 'admin';
                 } elseif ($restaurante) {
                     $role = 'restaurante';
+                } elseif ($gastrobar) {
+                    $role = 'gastrobar';
                 }
 
                 $user = User::create([
@@ -57,6 +62,7 @@ class SocialiteController extends Controller
                     'avatar'         => $googleUser->getAvatar(),
                     'role'           => $role,
                     'restaurante_id' => $restaurante?->id,
+                    'gastrobar_id'   => $gastrobar?->id,
                 ]);
             }
         }
@@ -66,13 +72,20 @@ class SocialiteController extends Controller
             $user->update(['role' => 'admin']);
         }
 
-        // Si ya existe pero no tiene rol de restaurante y su email coincide con uno
+        // Si ya existe pero no tiene rol de restaurante/gastrobar y su email coincide con uno
         if ($user->role === 'usuario') {
-            $restaurante = \App\Models\Restaurante::where('email', $user->email)->first();
+            $restaurante = Restaurante::where('email', $user->email)->first();
+            $gastrobar   = Gastrobar::where('email', $user->email)->first();
+
             if ($restaurante) {
                 $user->update([
                     'role'           => 'restaurante',
                     'restaurante_id' => $restaurante->id,
+                ]);
+            } elseif ($gastrobar) {
+                $user->update([
+                    'role'         => 'gastrobar',
+                    'gastrobar_id' => $gastrobar->id,
                 ]);
             }
         }
@@ -83,6 +96,7 @@ class SocialiteController extends Controller
         return match($user->role) {
             'admin'       => redirect()->route('dashboard'),
             'restaurante' => redirect()->route('restaurante.dashboard'),
+            'gastrobar'   => redirect()->route('gastrobar.dashboard'),
             default       => $user->departamento_id
                                 ? redirect()->route('home')
                                 : redirect()->route('usuario.departamento.show'),

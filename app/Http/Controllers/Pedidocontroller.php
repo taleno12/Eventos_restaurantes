@@ -86,4 +86,16 @@ class PedidoController extends Controller
         $pedido->load(['restaurante', 'items.plato']);
         return view('pedidos.show', compact('pedido'));
     }
+
+    // Eliminar pedido confirmado
+    public function destroy(Pedido $pedido)
+    {
+        abort_unless($pedido->user_id === Auth::id(), 403);
+        abort_unless($pedido->estado === 'confirmado', 403);
+
+        $pedido->delete();
+
+        return redirect()->route('pedidos.mis')
+            ->with('success', 'Pedido eliminado correctamente.');
+    }
 }

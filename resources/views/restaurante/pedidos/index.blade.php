@@ -72,8 +72,6 @@
     <div class="card border-0 shadow-sm rounded-3 mb-4">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
-
-                {{-- Buscador --}}
                 <div class="col-12 col-md-4">
                     <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
                         <i class="bi bi-search me-1"></i> Buscar
@@ -81,8 +79,6 @@
                     <input type="text" id="filtro-buscar" class="form-control form-control-sm rounded-pill"
                            placeholder="# pedido o cliente...">
                 </div>
-
-                {{-- Estado --}}
                 <div class="col-12 col-md-3">
                     <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
                         <i class="bi bi-funnel me-1"></i> Estado
@@ -96,8 +92,6 @@
                         <option value="entregado">Entregado</option>
                     </select>
                 </div>
-
-                {{-- Tipo --}}
                 <div class="col-12 col-md-3">
                     <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
                         <i class="bi bi-tag me-1"></i> Tipo
@@ -105,17 +99,14 @@
                     <select id="filtro-tipo" class="form-select form-select-sm rounded-pill">
                         <option value="">Todos</option>
                         <option value="mesa">Mesa</option>
-                        <option value="llevar">Para llevar</option>
+                        <option value="para_llevar">Para llevar</option>
                     </select>
                 </div>
-
-                {{-- Limpiar --}}
                 <div class="col-12 col-md-2 d-flex align-items-end">
                     <button id="btn-limpiar" class="btn btn-link btn-sm text-muted p-0" style="font-size:11px;display:none;">
                         <i class="bi bi-x-circle me-1"></i> Limpiar filtros
                     </button>
                 </div>
-
             </div>
             <div class="mt-2">
                 <span id="contador-resultados" class="text-muted" style="font-size:11px;"></span>
@@ -159,11 +150,12 @@
                     <tbody class="border-top-0">
                         @foreach($todosLosPedidos as $pedido)
                         <tr class="fila-pedido border-bottom"
-                            style="border-color:#edf2f7 !important;"
+                            style="border-color:#edf2f7 !important;cursor:pointer;"
                             data-id="{{ $pedido->id }}"
                             data-cliente="{{ strtolower($pedido->user->name) }}"
                             data-estado="{{ $pedido->estado }}"
-                            data-tipo="{{ $pedido->tipo }}">
+                            data-tipo="{{ $pedido->tipo }}"
+                            onclick="verDetalle({{ $pedido->id }})">
 
                             {{-- # --}}
                             <td class="ps-4 py-3">
@@ -183,11 +175,14 @@
                                 @endif
                             </td>
 
-                            {{-- Items --}}
+                            {{-- Items (resumen) --}}
                             <td class="py-3">
                                 @foreach($pedido->items as $item)
                                     <div class="text-muted" style="font-size:0.78rem;">
                                         {{ $item->cantidad }}x {{ $item->plato->nombre ?? 'Plato eliminado' }}
+                                        @if($item->notas)
+                                            <span class="text-primary" style="font-size:0.7rem;"> · {{ $item->notas }}</span>
+                                        @endif
                                     </div>
                                 @endforeach
                             </td>
@@ -231,7 +226,7 @@
                             </td>
 
                             {{-- Cambiar estado --}}
-                            <td class="py-3 text-center">
+                            <td class="py-3 text-center" onclick="event.stopPropagation()">
                                 @if($pedido->estado !== 'entregado' && $pedido->estado !== 'cancelado')
                                 <form method="POST" action="{{ route('restaurante.pedidos.estado', $pedido) }}">
                                     @csrf @method('PATCH')
@@ -271,12 +266,67 @@
 
 </div>
 
+{{-- ── Modal detalle pedido ── --}}
+<div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0" id="modal-titulo">Detalle del pedido</h5>
+                    <small class="text-muted" id="modal-meta"></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 py-3" id="modal-body">
+                <div class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Datos de pedidos en JSON para el modal --}}
+<script>
+window.__pedidos = {
+    @foreach($todosLosPedidos as $pedido)
+    "{{ $pedido->id }}": {
+        id: {{ $pedido->id }},
+        cliente: @json($pedido->user->name),
+        tipo: @json($pedido->tipo),
+        estado: @json($pedido->estado),
+        notas: @json($pedido->notas),
+        total: {{ $pedido->total }},
+        hora: @json($pedido->created_at->format('H:i d/m/Y')),
+        items: [
+            @foreach($pedido->items as $item)
+            {
+                nombre: @json($item->plato->nombre ?? 'Plato eliminado'),
+                cantidad: {{ $item->cantidad }},
+                precio_unitario: {{ $item->precio_unitario }},
+                subtotal: {{ $item->subtotal }},
+                opciones: @json($item->notas),
+            },
+            @endforeach
+        ],
+    },
+    @endforeach
+};
+
+const estadosInfo = @json(\App\Models\Pedido::ESTADOS);
+</script>
+
 <style>
     .table-hover tbody tr:hover { background-color: #f8fafc !important; }
     @keyframes pulse {
         0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.2); }
         50%      { box-shadow: 0 0 0 5px rgba(34,197,94,0.05); }
     }
+    .item-detalle-row { background: #f8fafc; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+    .item-nombre { font-size: 14px; font-weight: 700; color: #1a202c; }
+    .item-opciones { font-size: 12px; color: #3b82f6; margin-top: 3px; }
+    .item-precio { font-size: 13px; font-weight: 700; color: #2563eb; white-space: nowrap; }
+    .item-cantidad-badge { background: #e0e7ff; color: #3730a3; border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 800; }
 </style>
 
 @endsection
@@ -330,15 +380,67 @@ if (inputBuscar) {
     inputBuscar.addEventListener('input', filtrar);
     selectEstado.addEventListener('change', filtrar);
     selectTipo.addEventListener('change', filtrar);
-
     btnLimpiar.addEventListener('click', () => {
         inputBuscar.value  = '';
         selectEstado.value = '';
         selectTipo.value   = '';
         filtrar();
     });
-
     filtrar();
+}
+
+// ── Modal detalle ──
+function verDetalle(id) {
+    const p = window.__pedidos[id];
+    if (!p) return;
+
+    const estadoInfo = estadosInfo[p.estado] || { label: p.estado, color: '#6b7280' };
+    const tipoLabel  = p.tipo === 'mesa' ? '🍽 Mesa' : '🥡 Para llevar';
+
+    document.getElementById('modal-titulo').innerHTML =
+        `Pedido <span class="text-primary">#${String(p.id).padStart(4,'0')}</span>`;
+    document.getElementById('modal-meta').innerHTML =
+        `${p.cliente} · ${tipoLabel} · ${p.hora} &nbsp;
+         <span class="badge rounded-pill px-2 py-1 fw-semibold"
+               style="background:${estadoInfo.color}22;color:${estadoInfo.color};border:1px solid ${estadoInfo.color}44;font-size:11px;">
+             ${estadoInfo.label}
+         </span>`;
+
+    let itemsHtml = '';
+    p.items.forEach(item => {
+        itemsHtml += `
+        <div class="item-detalle-row d-flex align-items-start justify-content-between gap-3">
+            <div style="flex:1;min-width:0;">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="item-cantidad-badge">${item.cantidad}x</span>
+                    <span class="item-nombre">${item.nombre}</span>
+                </div>
+                ${item.opciones ? `<div class="item-opciones"><i class="bi bi-sliders me-1"></i>${item.opciones}</div>` : ''}
+            </div>
+            <div class="item-precio">C$ ${Number(item.subtotal).toLocaleString()}</div>
+        </div>`;
+    });
+
+    let notasHtml = '';
+    if (p.notas) {
+        notasHtml = `
+        <div class="mt-3 p-3 rounded-3" style="background:#fffbeb;border:1px solid #fde68a;">
+            <div class="fw-bold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#92400e;">
+                <i class="bi bi-sticky me-1"></i> Nota del cliente
+            </div>
+            <div style="font-size:13px;color:#78350f;">${p.notas}</div>
+        </div>`;
+    }
+
+    const totalHtml = `
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+            <span class="fw-bold text-dark">Total</span>
+            <span class="fw-black text-primary" style="font-size:1.1rem;">C$ ${Number(p.total).toLocaleString()}</span>
+        </div>`;
+
+    document.getElementById('modal-body').innerHTML = itemsHtml + notasHtml + totalHtml;
+
+    new bootstrap.Modal(document.getElementById('modalDetalle')).show();
 }
 </script>
 @endsection

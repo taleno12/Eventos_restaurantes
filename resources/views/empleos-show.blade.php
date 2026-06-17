@@ -13,10 +13,10 @@
 
     <style>
         :root {
-            --orange: #ea580c;
-            --orange-light: #fb923c;
-            --dark: #0c0a09;
-            --cream: #faf9f6;
+            --blue: #2563eb;
+            --blue-light: #3b82f6;
+            --dark: #0f172a;
+            --cream: #f8fafc;
         }
 
         * { box-sizing: border-box; }
@@ -24,7 +24,7 @@
         body {
             font-family: 'Instrument Sans', sans-serif;
             background: var(--cream);
-            color: #1c1917;
+            color: #0f172a;
             overflow-x: hidden;
         }
 
@@ -60,8 +60,8 @@
             50%       { transform: translateY(-8px); }
         }
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(234,88,12,0.3); }
-            50%       { box-shadow: 0 0 40px rgba(234,88,12,0.6); }
+            0%, 100% { box-shadow: 0 0 20px rgba(37,99,235,0.3); }
+            50%       { box-shadow: 0 0 40px rgba(37,99,235,0.6); }
         }
 
         .anim-fade-up   { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both; }
@@ -83,11 +83,11 @@
         /* ── RESTAURANT INFO BAR (estilo PedidosYa) ── */
         .resto-bar {
             background: #fff;
-            border-bottom: 1px solid #f0eeec;
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
             z-index: 40;
-            box-shadow: 0 2px 12px rgba(28,25,23,0.06);
+            box-shadow: 0 2px 12px rgba(15,23,42,0.06);
         }
         .resto-bar-inner {
             max-width: 1100px;
@@ -99,15 +99,15 @@
             align-items: center;
             gap: 16px;
             padding: 16px 0 14px;
-            border-bottom: 1px solid #f5f4f2;
+            border-bottom: 1px solid #f1f5f9;
         }
         .resto-logo {
             width: 64px; height: 64px;
             border-radius: 14px;
-            border: 1.5px solid #f0eeec;
+            border: 1.5px solid #e2e8f0;
             overflow: hidden;
             flex-shrink: 0;
-            background: #f5f4f2;
+            background: #f1f5f9;
             display: flex; align-items: center; justify-content: center;
         }
         .resto-logo img {
@@ -115,12 +115,12 @@
         }
         .resto-logo-placeholder {
             width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--orange), var(--orange-light));
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
             display: flex; align-items: center; justify-content: center;
         }
         .resto-info { flex: 1; min-width: 0; }
         .resto-name {
-            font-size: 18px; font-weight: 800; color: #1c1917;
+            font-size: 18px; font-weight: 800; color: #0f172a;
             line-height: 1.2; margin-bottom: 5px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
@@ -129,32 +129,32 @@
         }
         .resto-badge-tipo {
             display: inline-flex; align-items: center; gap: 5px;
-            background: #fff7ed; color: var(--orange);
-            border: 1.5px solid #fed7aa;
+            background: #eff6ff; color: var(--blue);
+            border: 1.5px solid #bfdbfe;
             font-size: 11px; font-weight: 700;
             padding: 3px 10px; border-radius: 999px;
         }
         .resto-reviews {
             display: flex; align-items: center; gap: 4px;
-            font-size: 12px; color: #78716c; font-weight: 600;
+            font-size: 12px; color: #64748b; font-weight: 600;
         }
         .resto-reviews i { color: #f59e0b; font-size: 11px; }
         .resto-location-pill {
             display: inline-flex; align-items: center; gap: 5px;
-            font-size: 12px; color: #78716c; font-weight: 500;
+            font-size: 12px; color: #64748b; font-weight: 500;
         }
-        .resto-location-pill i { color: var(--orange); font-size: 10px; }
+        .resto-location-pill i { color: var(--blue); font-size: 10px; }
         .resto-back-btn {
             display: inline-flex; align-items: center; gap: 6px;
-            border: 1.5px solid #e7e5e4; color: #78716c;
+            border: 1.5px solid #e2e8f0; color: #64748b;
             font-size: 12px; font-weight: 600;
             padding: 8px 16px; border-radius: 999px;
             text-decoration: none; transition: all 0.2s;
             white-space: nowrap; flex-shrink: 0;
         }
         .resto-back-btn:hover {
-            border-color: #1c1917; color: #1c1917;
-            background: #faf9f6;
+            border-color: #0f172a; color: #0f172a;
+            background: #f8fafc;
         }
 
         /* Tabs estilo PedidosYa */
@@ -169,17 +169,17 @@
         .resto-tab {
             padding: 14px 20px;
             font-size: 13px; font-weight: 700;
-            color: #a8a29e;
+            color: #94a3b8;
             border: none; background: transparent;
             border-bottom: 3px solid transparent;
             cursor: pointer; white-space: nowrap;
             transition: all 0.18s; font-family: 'Instrument Sans', sans-serif;
             letter-spacing: 0.01em;
         }
-        .resto-tab:hover { color: #1c1917; }
+        .resto-tab:hover { color: #0f172a; }
         .resto-tab.active {
-            color: #1c1917;
-            border-bottom-color: #1c1917;
+            color: #0f172a;
+            border-bottom-color: #0f172a;
         }
 
         /* ── MAIN LAYOUT ── */
@@ -191,47 +191,47 @@
 
         /* ── CARDS ── */
         .content-card {
-            background: white; border: 1px solid #f0eeec; border-radius: 24px;
+            background: white; border: 1px solid #e2e8f0; border-radius: 24px;
             padding: 32px; position: relative; overflow: hidden;
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
-        .content-card:hover { box-shadow: 0 12px 40px rgba(28,25,23,0.08); transform: translateY(-2px); }
+        .content-card:hover { box-shadow: 0 12px 40px rgba(15,23,42,0.08); transform: translateY(-2px); }
         .content-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, var(--orange), var(--orange-light), transparent);
+            background: linear-gradient(90deg, var(--blue), var(--blue-light), transparent);
             opacity: 0; transition: opacity 0.3s ease;
         }
         .content-card:hover::before { opacity: 1; }
         .card-header {
             display: flex; align-items: center; gap: 12px;
-            margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f5f4f2;
+            margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;
         }
         .card-icon-wrap {
-            width: 38px; height: 38px; background: #fff7ed; border: 1px solid #fed7aa;
+            width: 38px; height: 38px; background: #eff6ff; border: 1px solid #bfdbfe;
             border-radius: 12px; display: flex; align-items: center; justify-content: center;
             flex-shrink: 0; transition: all 0.3s ease;
         }
-        .content-card:hover .card-icon-wrap { background: var(--orange); border-color: var(--orange); }
+        .content-card:hover .card-icon-wrap { background: var(--blue); border-color: var(--blue); }
         .content-card:hover .card-icon-wrap i { color: white !important; }
-        .card-title-text { font-size: 15px; font-weight: 800; color: #1c1917; }
-        .card-body-text { color: #6b6560; font-size: 14px; line-height: 1.85; white-space: pre-line; }
-        .empty-text { color: #b5b0ab; font-size: 13px; font-style: italic; display: flex; align-items: center; gap: 8px; }
+        .card-title-text { font-size: 15px; font-weight: 800; color: #0f172a; }
+        .card-body-text { color: #475569; font-size: 14px; line-height: 1.85; white-space: pre-line; }
+        .empty-text { color: #94a3b8; font-size: 13px; font-style: italic; display: flex; align-items: center; gap: 8px; }
 
         /* ── SIDEBAR ── */
         .sidebar-sticky { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 20px; }
         .summary-card {
-            background: white; border: 1px solid #f0eeec; border-radius: 24px;
-            overflow: hidden; box-shadow: 0 4px 24px rgba(28,25,23,0.06); transition: box-shadow 0.3s ease;
+            background: white; border: 1px solid #e2e8f0; border-radius: 24px;
+            overflow: hidden; box-shadow: 0 4px 24px rgba(15,23,42,0.06); transition: box-shadow 0.3s ease;
         }
-        .summary-card:hover { box-shadow: 0 8px 40px rgba(28,25,23,0.1); }
+        .summary-card:hover { box-shadow: 0 8px 40px rgba(15,23,42,0.1); }
         .summary-card-header {
-            background: linear-gradient(135deg, #1c1917, #292524);
+            background: linear-gradient(135deg, #0f172a, #1e293b);
             padding: 20px 24px; position: relative; overflow: hidden;
         }
         .summary-card-header::after {
             content: ''; position: absolute; top: -40px; right: -40px;
             width: 120px; height: 120px;
-            background: radial-gradient(circle, rgba(234,88,12,0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(37,99,235,0.3) 0%, transparent 70%);
             pointer-events: none;
         }
         .summary-card-header-label {
@@ -242,27 +242,27 @@
         .summary-body { padding: 20px 24px; }
         .stat-row {
             display: flex; flex-direction: column; gap: 4px;
-            padding: 16px 0; border-bottom: 1px solid #f5f4f2; position: relative;
+            padding: 16px 0; border-bottom: 1px solid #f1f5f9; position: relative;
         }
         .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
-        .stat-label { font-size: 9px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #a8a29e; }
+        .stat-label { font-size: 9px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #94a3b8; }
         .stat-value-salary {
             font-size: 22px; font-weight: 900; color: #16a34a;
             letter-spacing: -0.02em; display: flex; align-items: center; gap: 6px;
         }
         .stat-value-salary.negociar {
             font-size: 18px;
-            background: linear-gradient(90deg, var(--orange), var(--orange-light));
+            background: linear-gradient(90deg, var(--blue), var(--blue-light));
             background-size: 200% auto;
             -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
             animation: shimmer 3s linear infinite;
         }
-        .stat-value { font-size: 14px; font-weight: 700; color: #1c1917; display: flex; align-items: center; gap: 6px; }
-        .stat-value-sm { font-size: 12px; font-weight: 600; color: #78716c; }
-        .social-section { padding: 20px 24px; border-top: 1px solid #f5f4f2; }
+        .stat-value { font-size: 14px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+        .stat-value-sm { font-size: 12px; font-weight: 600; color: #64748b; }
+        .social-section { padding: 20px 24px; border-top: 1px solid #f1f5f9; }
         .social-label {
             font-size: 9px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
-            color: #a8a29e; margin-bottom: 12px; display: block;
+            color: #94a3b8; margin-bottom: 12px; display: block;
         }
         .social-icons { display: flex; flex-wrap: wrap; gap: 10px; }
         .social-btn {
@@ -276,14 +276,14 @@
         .social-wa:hover  { background: #16a34a; color: white; border-color: #16a34a; box-shadow: 0 6px 20px rgba(22,163,74,0.35); }
         .social-ig  { background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; }
         .social-ig:hover  { background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); color: white; border-color: transparent; box-shadow: 0 6px 20px rgba(219,39,119,0.35); }
-        .social-tt  { background: #fafaf9; color: #1c1917; border: 1px solid #e7e5e4; }
-        .social-tt:hover  { background: #1c1917; color: white; border-color: #1c1917; box-shadow: 0 6px 20px rgba(28,25,23,0.35); }
+        .social-tt  { background: #fafaf9; color: #0f172a; border: 1px solid #e2e8f0; }
+        .social-tt:hover  { background: #0f172a; color: white; border-color: #0f172a; box-shadow: 0 6px 20px rgba(15,23,42,0.35); }
         .social-fb  { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
         .social-fb:hover  { background: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
-        .apply-section { padding: 20px 24px; border-top: 1px solid #f5f4f2; }
+        .apply-section { padding: 20px 24px; border-top: 1px solid #f1f5f9; }
         .btn-apply {
             width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: linear-gradient(135deg, #ea580c, #c2410c); color: white;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white;
             font-weight: 800; font-size: 14px; padding: 14px 24px; border-radius: 14px;
             border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
             position: relative; overflow: hidden; letter-spacing: 0.02em;
@@ -295,7 +295,7 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
             transition: left 0.5s ease;
         }
-        .btn-apply:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 32px rgba(234,88,12,0.45); animation: none; }
+        .btn-apply:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 32px rgba(37,99,235,0.45); animation: none; }
         .btn-apply:hover::before { left: 100%; }
         .btn-apply:active { transform: scale(0.98); }
 
@@ -346,7 +346,7 @@
             font-size: 14px; outline: none; box-sizing: border-box;
             font-family: 'Instrument Sans', sans-serif; transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .modal-input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.12); }
+        .modal-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
         .modal-input::placeholder { color: #4b5563; }
         .modal-label {
             display: block; font-size: 11px; font-weight: 700;
@@ -363,13 +363,12 @@
             .resto-name { font-size: 15px; }
             .resto-back-btn span { display: none; }
         }
-        @media (max-width: 580px) {
+       @media (max-width: 580px) {
             .modal-grid-2 { grid-template-columns: 1fr !important; }
-            .modal-grid-4 { grid-template-columns: 1fr 1fr !important; }
         }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-900">
+<body class="bg-slate-50 text-slate-900">
 
     {{-- ══ RESTAURANT BAR (estilo PedidosYa) ══ --}}
     @php
@@ -457,7 +456,7 @@
             <div id="descripcion" class="content-card anim-slide-r delay-2">
                 <div class="card-header">
                     <div class="card-icon-wrap">
-                        <i class="fas fa-align-left" style="color:#ea580c;font-size:14px;"></i>
+                        <i class="fas fa-align-left" style="color:#2563eb;font-size:14px;"></i>
                     </div>
                     <span class="card-title-text">Descripción de la vacante</span>
                 </div>
@@ -467,7 +466,7 @@
             <div id="requisitos" class="content-card anim-slide-r delay-3">
                 <div class="card-header">
                     <div class="card-icon-wrap">
-                        <i class="fas fa-clipboard-list" style="color:#ea580c;font-size:14px;"></i>
+                        <i class="fas fa-clipboard-list" style="color:#2563eb;font-size:14px;"></i>
                     </div>
                     <span class="card-title-text">Requisitos del puesto</span>
                 </div>
@@ -475,7 +474,7 @@
                     <p class="card-body-text">{{ $empleo->requisitos }}</p>
                 @else
                     <p class="empty-text">
-                        <i class="fas fa-info-circle" style="color:#d6d3d1;font-size:14px;"></i>
+                        <i class="fas fa-info-circle" style="color:#cbd5e1;font-size:14px;"></i>
                         El establecimiento no especificó requisitos adicionales para esta posición.
                     </p>
                 @endif
@@ -485,21 +484,21 @@
             <div id="detalle" class="content-card anim-slide-r delay-4">
                 <div class="card-header">
                     <div class="card-icon-wrap">
-                        <i class="fas fa-receipt" style="color:#ea580c;font-size:14px;"></i>
+                        <i class="fas fa-receipt" style="color:#2563eb;font-size:14px;"></i>
                     </div>
                     <span class="card-title-text">Detalles de la oferta</span>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:0;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f5f4f2;">
-                        <span style="font-size:13px;color:#78716c;font-weight:500;">Publicado</span>
-                        <span style="font-size:13px;font-weight:700;color:#1c1917;display:flex;align-items:center;gap:6px;">
-                            <i class="far fa-clock" style="color:#ea580c;font-size:11px;"></i>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:13px;color:#64748b;font-weight:500;">Publicado</span>
+                        <span style="font-size:13px;font-weight:700;color:#0f172a;display:flex;align-items:center;gap:6px;">
+                            <i class="far fa-clock" style="color:#2563eb;font-size:11px;"></i>
                             {{ $empleo->created_at->diffForHumans() }}
                         </span>
                     </div>
                     @if($empleo->fecha_limite)
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f5f4f2;">
-                        <span style="font-size:13px;color:#78716c;font-weight:500;">Fecha límite</span>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:13px;color:#64748b;font-weight:500;">Fecha límite</span>
                         <span style="font-size:13px;font-weight:700;color:#dc2626;display:flex;align-items:center;gap:6px;">
                             <i class="far fa-calendar-times" style="font-size:11px;"></i>
                             {{ \Carbon\Carbon::parse($empleo->fecha_limite)->translatedFormat('d \d\e M, Y') }}
@@ -507,9 +506,9 @@
                     </div>
                     @endif
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
-                        <span style="font-size:13px;color:#78716c;font-weight:500;">Establecimiento</span>
-                        <span style="font-size:13px;font-weight:700;color:#1c1917;display:flex;align-items:center;gap:6px;">
-                            <i class="{{ $esGastrobar ? 'fas fa-glass-martini-alt' : 'fas fa-store' }}" style="color:#ea580c;font-size:11px;"></i>
+                        <span style="font-size:13px;color:#64748b;font-weight:500;">Establecimiento</span>
+                        <span style="font-size:13px;font-weight:700;color:#0f172a;display:flex;align-items:center;gap:6px;">
+                            <i class="{{ $esGastrobar ? 'fas fa-glass-martini-alt' : 'fas fa-store' }}" style="color:#2563eb;font-size:11px;"></i>
                             {{ $establecimiento?->nombre }}
                         </span>
                     </div>
@@ -586,7 +585,7 @@
                             </a>
                         @endif
                         @if(empty($establecimiento?->whatsapp) && empty($establecimiento?->instagram) && empty($establecimiento?->tiktok) && empty($establecimiento?->facebook))
-                            <span style="font-size:12px;color:#b5b0ab;font-style:italic;">Sin redes configuradas.</span>
+                            <span style="font-size:12px;color:#94a3b8;font-style:italic;">Sin redes configuradas.</span>
                         @endif
                     </div>
                 </div>
@@ -659,7 +658,7 @@
         <div class="modal-inner">
             <div class="modal-header">
                 <div>
-                    <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fb923c;margin:0 0 4px;">
+                    <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#3b82f6;margin:0 0 4px;">
                         @if($empleo->gastrobar_id)
                             {{ $empleo->gastrobar?->nombre ?? 'Gastrobar' }}
                         @else
@@ -689,33 +688,43 @@
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="modal-grid-2">
                     <div>
-                        <label class="modal-label">Nombre <span style="color:#fb923c">*</span></label>
+                        <label class="modal-label">Nombre <span style="color:#3b82f6">*</span></label>
                         <input type="text" name="nombre" required placeholder="Tu nombre" class="modal-input">
                     </div>
                     <div>
-                        <label class="modal-label">Apellido <span style="color:#fb923c">*</span></label>
+                        <label class="modal-label">Apellido <span style="color:#3b82f6">*</span></label>
                         <input type="text" name="apellido" required placeholder="Tu apellido" class="modal-input">
                     </div>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="modal-grid-2">
+                   <div>
+    <label class="modal-label">Correo electrónico <span style="color:#3b82f6">*</span></label>
+    @auth
+        <input type="email" name="email" value="{{ auth()->user()->email }}"
+               class="modal-input" readonly
+               style="opacity:0.6;cursor:not-allowed;">
+        <p style="font-size:11px;color:#6b7280;margin:4px 0 0 2px;">
+            <i class="fas fa-lock" style="font-size:9px;margin-right:4px;"></i>
+            Correo vinculado a tu cuenta
+        </p>
+    @else
+        <input type="email" name="email" required placeholder="correo@ejemplo.com" class="modal-input">
+    @endauth
+</div>
                     <div>
-                        <label class="modal-label">Correo electrónico <span style="color:#fb923c">*</span></label>
-                        <input type="email" name="email" required placeholder="correo@ejemplo.com" class="modal-input">
-                    </div>
-                    <div>
-                        <label class="modal-label">Teléfono / WhatsApp <span style="color:#fb923c">*</span></label>
+                        <label class="modal-label">Teléfono / WhatsApp <span style="color:#3b82f6">*</span></label>
                         <input type="tel" name="telefono" required placeholder="+505 8888-0000" class="modal-input">
                     </div>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="modal-grid-2">
                     <div>
-                        <label class="modal-label">Edad <span style="color:#fb923c">*</span></label>
+                        <label class="modal-label">Edad <span style="color:#3b82f6">*</span></label>
                         <input type="number" name="edad" required min="18" max="70" placeholder="Ej: 23" class="modal-input">
                     </div>
                     <div>
-                        <label class="modal-label">Municipio donde vives <span style="color:#fb923c">*</span></label>
+                        <label class="modal-label">Municipio donde vives <span style="color:#3b82f6">*</span></label>
                         <input type="text" name="municipio" required placeholder="Ej: Masatepe" class="modal-input">
                     </div>
                 </div>
@@ -725,19 +734,7 @@
                     <textarea name="experiencia" rows="3" placeholder="Describe brevemente tu experiencia..." class="modal-input" style="resize:none;"></textarea>
                 </div>
 
-                <div>
-                    <label class="modal-label">Disponibilidad horaria <span style="color:#fb923c">*</span></label>
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;" class="modal-grid-4">
-                        @foreach(['Mañana', 'Tarde', 'Noche', 'Fines de semana'] as $turno)
-                        <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1.5px solid #333;cursor:pointer;transition:border-color 0.2s,background 0.2s;"
-                               onmouseover="this.style.borderColor='#f97316'"
-                               onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='#333'">
-                            <input type="checkbox" name="disponibilidad[]" value="{{ $turno }}" style="width:15px;height:15px;accent-color:#f97316;">
-                            <span style="font-size:12px;color:#d1d5db;font-weight:600;">{{ $turno }}</span>
-                        </label>
-                        @endforeach
-                    </div>
-                </div>
+
 
                 <div>
                     <label class="modal-label">
@@ -745,13 +742,13 @@
                     </label>
                     <label id="cvDropzone"
                            style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:110px;border-radius:12px;border:2px dashed #333;background:#252525;cursor:pointer;transition:all 0.2s;box-sizing:border-box;"
-                           onmouseover="this.style.borderColor='#f97316';this.style.background='#2a2a2a'"
+                           onmouseover="this.style.borderColor='#3b82f6';this.style.background='#2a2a2a'"
                            onmouseout="if(!cvTieneArchivo){this.style.borderColor='#333';this.style.background='#252525'}">
                         <div id="cvPlaceholder" style="text-align:center;">
                             <svg style="margin:0 auto 8px;color:#4b5563;width:28px;height:28px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <p style="font-size:13px;color:#6b7280;margin:0;">Arrastra tu CV aquí o <span style="color:#fb923c;font-weight:700;">selecciona archivo</span></p>
+                            <p style="font-size:13px;color:#6b7280;margin:0;">Arrastra tu CV aquí o <span style="color:#3b82f6;font-weight:700;">selecciona archivo</span></p>
                         </div>
                         <div id="cvSelected" style="display:none;text-align:center;">
                             <svg style="margin:0 auto 4px;color:#4ade80;width:26px;height:26px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -769,8 +766,8 @@
                 </div>
 
                 <button type="submit" id="submitBtn"
-                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;font-weight:800;font-size:15px;padding:15px 24px;border-radius:14px;border:none;cursor:pointer;transition:all 0.3s;font-family:'Instrument Sans',sans-serif;letter-spacing:0.02em;"
-                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(234,88,12,0.45)'"
+                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;font-weight:800;font-size:15px;padding:15px 24px;border-radius:14px;border:none;cursor:pointer;transition:all 0.3s;font-family:'Instrument Sans',sans-serif;letter-spacing:0.02em;"
+                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(37,99,235,0.45)'"
                         onmouseout="this.style.transform='';this.style.boxShadow=''">
                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>

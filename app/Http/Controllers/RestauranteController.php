@@ -130,10 +130,10 @@ class RestauranteController extends Controller
 
         $platos = \App\Models\Plato::where('restaurante_id', $restaurante->id)
             ->where('activo', true)
-            ->orderBy('categoria')
+            ->with('categoriaPlato')
             ->orderBy('orden')
             ->get()
-            ->groupBy('categoria');
+            ->groupBy(fn($plato) => $plato->categoriaPlato?->nombre ?? 'Sin categoría');
 
         return view('restaurantes.public_show', compact('restaurante', 'platos'));
     }
@@ -144,7 +144,13 @@ class RestauranteController extends Controller
             abort(404);
         }
 
-        $platos = $restaurante->platos()->where('activo', true)->get()->groupBy('categoria');
+        $platos = $restaurante->platos()
+            ->where('activo', true)
+            ->with(['categoriaPlato', 'opciones.valores'])
+            ->orderBy('orden')
+            ->get()
+            ->groupBy(fn($plato) => $plato->categoriaPlato?->nombre ?? 'Sin categoría');
+
         return view('restaurantes.ordenar', compact('restaurante', 'platos'));
     }
 
@@ -195,6 +201,7 @@ class RestauranteController extends Controller
             'tiktok'           => 'nullable|url|max:255',
             'facebook'         => 'nullable|url|max:255',
             'whatsapp'         => 'nullable|string|max:50',
+            'telefono'         => 'nullable|string|max:50',
             'descripcion'      => 'nullable|string',
             'imagen_principal'  => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'galeria'           => 'nullable|array|max:4',
@@ -208,13 +215,11 @@ class RestauranteController extends Controller
             'hora_cierre'       => 'nullable|date_format:H:i',
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email',
-            'propietario_password' => 'required|string|min:8|confirmed',
         ]);
 
         $restaurante = new Restaurante($request->except([
             'galeria', 'imagen_principal',
             'propietario_nombre', 'propietario_email',
-            'propietario_password', 'propietario_password_confirmation'
         ]));
 
         if ($request->hasFile('imagen_principal')) {
@@ -237,18 +242,18 @@ class RestauranteController extends Controller
         User::create([
             'name'           => $request->propietario_nombre,
             'email'          => $request->propietario_email,
-            'password'       => Hash::make($request->propietario_password),
+            'password'       => Hash::make(uniqid()),
             'role'           => 'restaurante',
             'restaurante_id' => $restaurante->id,
         ]);
 
         $this->enviarNotificacionFCM(
-            '🍽️ Nuevo restaurante',
+            'Nuevo restaurante',
             "¡{$restaurante->nombre} ya está en GastroNicaragua!"
         );
 
         return redirect()->route('admin.restaurantes.index')
-            ->with('success', 'Restaurante y usuario propietario creados correctamente.');
+            ->with('success', 'Restaurante y usuario propietario creados correctamente. El propietario accederá con su cuenta de Google.');
     }
 
     public function adminShow(Restaurante $restaurante)
@@ -280,6 +285,7 @@ class RestauranteController extends Controller
             'tiktok'          => 'nullable|url|max:255',
             'facebook'        => 'nullable|url|max:255',
             'whatsapp'        => 'nullable|string|max:50',
+            'telefono'        => 'nullable|string|max:50',
             'descripcion'     => 'nullable|string',
             'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'galeria'          => 'nullable|array|max:4',
@@ -293,13 +299,11 @@ class RestauranteController extends Controller
             'hora_cierre'      => 'nullable|date_format:H:i',
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
-            'propietario_password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $restaurante->fill($request->except([
             'galeria', 'imagen_principal',
             'propietario_nombre', 'propietario_email',
-            'propietario_password', 'propietario_password_confirmation'
         ]));
 
         if ($request->hasFile('imagen_principal')) {
@@ -325,9 +329,6 @@ class RestauranteController extends Controller
         if ($propietario) {
             $propietario->name  = $request->propietario_nombre;
             $propietario->email = $request->propietario_email;
-            if ($request->filled('propietario_password')) {
-                $propietario->password = Hash::make($request->propietario_password);
-            }
             $propietario->save();
         }
 
@@ -348,16 +349,10 @@ class RestauranteController extends Controller
             ->with('success', 'Restaurante eliminado correctamente.');
     }
 
-    /**
-     * Activa o desactiva un restaurante.
-     * Al desactivarlo, deja de aparecer en la vista pública junto con
-     * sus eventos y empleos, y se bloquea el acceso de su propietario.
-     */
     public function toggleActivo(Restaurante $restaurante)
     {
         $restaurante->update(['activo' => !$restaurante->activo]);
 
-        // Sincronizar estado del usuario propietario
         User::where('restaurante_id', $restaurante->id)
             ->where('role', 'restaurante')
             ->update(['estado' => $restaurante->activo ? 'activo' : 'suspendido']);

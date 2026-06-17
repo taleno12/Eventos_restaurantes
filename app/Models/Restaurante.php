@@ -78,6 +78,7 @@ class Restaurante extends Model
         'tiktok',
         'facebook',
         'whatsapp',
+        'telefono',
         'foto_portada',
         'activo',
         'direccion',

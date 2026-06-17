@@ -4,356 +4,367 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mis Pedidos — Gastro Nicaragua</title>
-    <link href="https://fonts.bunny.net/css?family=playfair-display:700,900|instrument-sans:400,500,600,700,800" rel="stylesheet"/>
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --orange:  #ea580c;
-            --orange2: #c2410c;
-            --border:  #e5e7eb;
-            --bg:      #f9fafb;
-            --text:    #111827;
-            --muted:   #6b7280;
-            --white:   #ffffff;
-            --shadow:  0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+            --blue:   #2563eb;
+            --border: #e5e7eb;
+            --bg:     #f4f4f5;
+            --text:   #111827;
+            --muted:  #6b7280;
+            --white:  #ffffff;
         }
-        html, body { height: 100%; }
         body {
             font-family: 'Instrument Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* ── TOPBAR ── */
-        .topbar {
+        /* ── NAVBAR ── */
+        nav {
             background: var(--white);
             border-bottom: 1px solid var(--border);
-            height: 60px;
+            height: 56px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 32px;
-            position: sticky; top: 0; z-index: 100;
+            padding: 0 24px;
+            position: sticky; top: 0; z-index: 10;
         }
-        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo-icon {
-            width: 34px; height: 34px; background: var(--orange);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+        .logo {
+            font-size: 17px; font-weight: 800; color: var(--text);
+            text-decoration: none; letter-spacing: -0.3px;
         }
-        .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-style: italic; font-weight: 700; font-size: 18px; color: var(--text);
+        .logo span { color: var(--blue); }
+        .nav-actions {
+            display: flex; align-items: center; gap: 8px;
         }
-        .logo-text span { color: var(--orange); }
-        .btn-volver {
-            display: inline-flex; align-items: center; gap: 7px;
-            font-size: 13px; font-weight: 600; color: var(--muted);
-            text-decoration: none; transition: color 0.18s;
+        .nav-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            padding: 7px 14px; border-radius: 999px;
+            transition: all 0.2s; white-space: nowrap;
         }
-        .btn-volver:hover { color: var(--orange); }
+        .nav-btn i { font-size: 11px; }
+        .nav-btn-home {
+            border: 1px solid var(--border); color: var(--muted); background: var(--white);
+        }
+        .nav-btn-home:hover { background: var(--text); color: var(--white); border-color: var(--text); }
+        .nav-btn-rest {
+            border: 1.5px solid var(--blue); color: #fff; background: var(--blue);
+        }
+        .nav-btn-rest:hover { background: #1d4ed8; border-color: #1d4ed8; }
+        .nav-btn-contact {
+            color: var(--muted); padding: 7px 10px;
+        }
+        .nav-btn-contact:hover { color: var(--blue); }
+        .nav-btn-login {
+            color: var(--muted); padding: 7px 10px;
+        }
+        .nav-btn-login:hover { color: var(--blue); }
+        .nav-btn-logout {
+            color: var(--muted); background: transparent; border: none;
+            font-family: inherit; font-size: 13px; font-weight: 600;
+            cursor: pointer; padding: 7px 10px;
+        }
+        .nav-btn-logout:hover { color: #ef4444; }
 
         /* ── WRAP ── */
         .wrap {
-            flex: 1;
-            width: 100%;
-            padding: 40px 40px 60px;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 36px 20px 64px;
         }
 
-        /* ── PAGE HEADER ── */
-        .page-header { margin-bottom: 28px; }
-        .page-title { font-size: 26px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
-        .page-sub { font-size: 13px; color: var(--muted); }
+        /* ── HEADER ── */
+        .page-h {
+            margin-bottom: 24px;
+        }
+        .page-h h1 {
+            font-size: 22px; font-weight: 800; color: var(--text);
+        }
+        .page-h p {
+            font-size: 13px; color: var(--muted); margin-top: 3px;
+        }
 
-        /* ── PEDIDO CARD ── */
-        .pedido-card {
+        /* ── PEDIDO ── */
+        .pedido {
             background: var(--white);
             border: 1px solid var(--border);
-            border-radius: 18px;
+            border-radius: 16px;
+            margin-bottom: 12px;
             overflow: hidden;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow);
-            transition: box-shadow 0.2s, transform 0.2s;
         }
-        .pedido-card:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.09); transform: translateY(-1px); }
 
-        /* header */
-        .pedido-head {
-            padding: 18px 22px 16px;
-            display: flex; align-items: flex-start; justify-content: space-between;
-            gap: 12px;
+        /* cabecera */
+        .pedido-top {
+            padding: 16px 18px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
         }
-        .pedido-num {
-            font-size: 16px; font-weight: 900; color: var(--text);
-            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-        }
-        .rest-link {
-            font-size: 13px; font-weight: 600; color: var(--orange);
+        .pedido-rest {
+            font-size: 15px; font-weight: 700; color: var(--text);
             text-decoration: none;
         }
-        .rest-link:hover { text-decoration: underline; }
-        .pedido-meta {
-            font-size: 12px; color: var(--muted); margin-top: 4px;
-            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        .pedido-rest:hover { color: var(--blue); }
+        .pedido-id {
+            font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px;
         }
-        .meta-dot { color: var(--border); }
 
-        .head-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
-        .estado-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 5px 13px; border-radius: 999px;
-            font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
-            border: 1.5px solid transparent;
+        /* acciones cabecera (badge + botón eliminar) */
+        .pedido-top-actions {
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
         }
-        .badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-        .pedido-total-head { font-size: 18px; font-weight: 900; color: var(--orange); }
 
-        /* progress */
-        .progress-wrap {
-            padding: 14px 22px 16px;
-            background: #f9fafb;
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 11px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; white-space: nowrap;
+        }
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+        /* botón eliminar */
+        .btn-eliminar {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 11px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; white-space: nowrap;
+            background: #fef2f2; color: #b91c1c;
+            border: 1.5px solid #fecaca;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.2s;
+        }
+        .btn-eliminar:hover { background: #b91c1c; color: #fff; border-color: #b91c1c; }
+        .btn-eliminar i { font-size: 10px; }
+
+        /* ítems */
+        .pedido-items {
             border-top: 1px solid var(--border);
+            padding: 4px 18px;
         }
-        .progress-track {
-            display: flex; align-items: flex-start;
+        .item {
+            display: flex; align-items: baseline; justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid #f3f4f6;
+            gap: 12px;
         }
-        .progress-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .step-top { display: flex; align-items: center; width: 100%; }
-        .step-circle {
-            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 900; transition: all 0.2s;
-            position: relative; z-index: 1;
-        }
-        .step-line { flex: 1; height: 3px; margin-top: 0; border-radius: 2px; }
-        .step-label {
-            font-size: 10px; font-weight: 700; text-align: center;
-            margin-top: 6px; line-height: 1.3; max-width: 60px;
-        }
-
-        /* items */
-        .pedido-items { padding: 4px 22px 4px; }
-        .item-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; border-bottom: 1px solid #f3f4f6;
-        }
-        .item-row:last-child { border-bottom: none; }
-        .item-left { display: flex; align-items: center; gap: 10px; }
+        .item:last-child { border-bottom: none; }
+        .item-info { display: flex; align-items: baseline; gap: 8px; }
         .item-qty {
-            width: 26px; height: 26px; border-radius: 8px;
-            background: #fff7ed; color: var(--orange);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 900; flex-shrink: 0;
+            font-size: 12px; font-weight: 800; color: var(--blue);
+            min-width: 18px;
         }
-        .item-name { font-size: 14px; font-weight: 600; color: var(--text); }
-        .item-price { font-size: 14px; font-weight: 800; color: var(--text); }
+        .item-name { font-size: 14px; font-weight: 500; color: var(--text); }
+        .item-opts {
+            font-size: 11px; color: var(--muted); margin-top: 2px; margin-left: 26px;
+        }
+        .item-price {
+            font-size: 13px; font-weight: 700; color: var(--text);
+            white-space: nowrap; flex-shrink: 0;
+        }
 
-        .notas-box {
-            margin: 4px 0 12px;
-            padding: 10px 14px;
+        /* nota del cliente */
+        .nota {
+            margin: 0 18px 12px;
+            padding: 9px 12px;
             background: #fffbeb;
             border: 1px solid #fde68a;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 12px; color: #92400e;
-            display: flex; align-items: flex-start; gap: 8px;
+            display: flex; gap: 8px; align-items: flex-start;
         }
 
-        /* footer */
+        /* pie */
         .pedido-foot {
-            padding: 14px 22px;
-            background: #fafaf9;
             border-top: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 18px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .foot-left { font-size: 12px; color: var(--muted); font-weight: 500; }
-        .foot-total { font-size: 15px; font-weight: 900; color: var(--text); }
-        .foot-total span { color: var(--orange); }
+        .foot-meta {
+            font-size: 12px; color: var(--muted);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .foot-meta i { font-size: 10px; color: var(--blue); }
+        .foot-total {
+            font-size: 15px; font-weight: 800; color: var(--text);
+        }
+        .foot-total span { color: var(--blue); }
 
         /* cancelado */
-        .cancelado-bar {
-            padding: 10px 22px;
+        .cancelado-strip {
             background: #fef2f2;
             border-top: 1px solid #fecaca;
-            font-size: 12px; color: #b91c1c;
-            font-weight: 700; display: flex; align-items: center; gap: 8px;
+            padding: 8px 18px;
+            font-size: 12px; font-weight: 600; color: #b91c1c;
+            display: flex; align-items: center; gap: 6px;
         }
 
         /* empty */
-        .empty-state {
-            background: var(--white); border: 1px solid var(--border);
-            border-radius: 18px; padding: 64px 24px; text-align: center;
-            box-shadow: var(--shadow);
+        .empty {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 56px 24px;
+            text-align: center;
         }
         .empty-icon {
-            width: 72px; height: 72px; border-radius: 50%;
-            background: #fff7ed; margin: 0 auto 18px;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: #eff6ff; margin: 0 auto 16px;
             display: flex; align-items: center; justify-content: center;
         }
-        .empty-icon i { font-size: 30px; color: var(--orange); }
-        .empty-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-        .empty-sub { font-size: 14px; color: var(--muted); margin-bottom: 22px; }
-        .btn-orange {
+        .empty-icon i { font-size: 24px; color: var(--blue); }
+        .empty h2 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+        .empty p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+        .btn-blue {
             display: inline-flex; align-items: center; gap: 8px;
-            background: var(--orange); color: white; text-decoration: none;
-            padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 800;
-            transition: all 0.2s;
+            background: var(--blue); color: white; text-decoration: none;
+            padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            transition: opacity 0.15s;
         }
-        .btn-orange:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(234,88,12,0.3); }
+        .btn-blue:hover { opacity: 0.88; }
 
-        /* pagination */
-        .pagination-wrap { margin-top: 24px; }
+        .pagination-wrap { margin-top: 20px; }
 
-        /* footer site */
-        footer {
-            background: #1c1917; color: #a8a29e;
-            border-top: 1px solid #292524;
-            padding: 28px 32px;
-            margin-top: auto;
-        }
-        .footer-inner {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-        }
-
-        @media (max-width: 600px) {
-            .topbar { padding: 0 16px; }
-            .wrap { padding: 24px 16px 48px; }
-            .topbar { padding: 0 16px; }
-            .pedido-head { flex-direction: column; }
-            .head-right { justify-content: flex-start; }
-            footer { padding: 20px 16px; }
+        @media (max-width: 640px) {
+            nav { padding: 0 14px; }
+            .nav-btn span { display: none; }
+            .nav-btn { padding: 7px 10px; }
+            .wrap { padding: 24px 14px 48px; }
         }
     </style>
 </head>
 <body>
 
-<header class="topbar">
-    <a href="{{ route('home') }}" class="logo">
-        <div class="logo-icon"><i class="fas fa-utensils" style="color:white;font-size:12px;"></i></div>
-        <span class="logo-text">Gastro<span>Nicaragua</span></span>
-    </a>
-    <a href="{{ route('home') }}" class="btn-volver">
-        <i class="fas fa-arrow-left" style="font-size:11px;"></i> Volver al inicio
-    </a>
-</header>
+<nav>
+    <a href="{{ route('home') }}" class="logo">Gastro<span>Nicaragua</span></a>
+
+    <div class="nav-actions">
+
+        <a href="{{ route('home') }}" class="nav-btn nav-btn-home">
+            <i class="fas fa-home"></i> <span>Inicio</span>
+        </a>
+
+        <a href="{{ route('restaurantes.index') }}" class="nav-btn nav-btn-rest">
+            <i class="fas fa-store"></i> <span>Restaurantes</span>
+        </a>
+
+
+        @if (Route::has('login'))
+            @auth
+                @if(auth()->user()->email === 'admin@turismo.ni')
+                    <a href="{{ url('/dashboard') }}" class="nav-btn nav-btn-login hidden sm:flex">
+                        <i class="fas fa-cog"></i> <span>Panel</span>
+                    </a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}" class="inline m-0">
+                    @csrf
+                    <button type="submit" class="nav-btn nav-btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> <span class="hidden sm:inline">Salir</span>
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="nav-btn nav-btn-login">
+                    <i class="fas fa-user"></i> <span class="hidden sm:inline">Ingresar</span>
+                </a>
+            @endauth
+        @endif
+
+    </div>
+</nav>
 
 <div class="wrap">
-    <div class="page-header">
-        <div class="page-title">Mis Pedidos</div>
-        <div class="page-sub">Historial y seguimiento de tus pedidos</div>
+
+    <div class="page-h">
+        <h1>Mis Pedidos</h1>
+        <p>Historial de tus pedidos realizados</p>
     </div>
 
     @if($pedidos->count() > 0)
         @foreach($pedidos as $pedido)
         @php
-            $estados     = \App\Models\Pedido::ESTADOS;
-            $info        = $estados[$pedido->estado];
-            $pasos       = ['pendiente','confirmado','en_preparacion','listo','entregado'];
-            $indexActual = array_search($pedido->estado, $pasos);
-            $cancelado   = $pedido->estado === 'cancelado';
+            $estados   = \App\Models\Pedido::ESTADOS;
+            $info      = $estados[$pedido->estado];
+            $cancelado = $pedido->estado === 'cancelado';
+            $confirmado = $pedido->estado === 'confirmado';
         @endphp
-        <div class="pedido-card">
 
-            {{-- HEAD --}}
-            <div class="pedido-head">
+        <div class="pedido">
+
+            {{-- Cabecera --}}
+            <div class="pedido-top">
                 <div>
-                    <div class="pedido-num">
-                        Pedido #{{ str_pad($pedido->id, 4, '0', STR_PAD_LEFT) }}
-                        <span style="font-weight:500;color:var(--muted);font-size:13px;">en</span>
-                        <a href="{{ route('restaurantes.show', $pedido->restaurante) }}" class="rest-link">
-                            {{ $pedido->restaurante->nombre }}
-                        </a>
-                    </div>
-                    <div class="pedido-meta">
-                        <i class="fas fa-clock" style="font-size:10px;color:var(--orange);"></i>
-                        {{ $pedido->created_at->format('d M Y, H:i') }}
-                        <span class="meta-dot">·</span>
-                        @if($pedido->tipo === 'mesa')
-                            <i class="fas fa-chair" style="font-size:10px;color:var(--orange);"></i> Mesa
-                        @else
-                            <i class="fas fa-bag-shopping" style="font-size:10px;color:var(--orange);"></i> Para llevar
-                        @endif
+                    <a href="{{ route('restaurantes.show', $pedido->restaurante) }}" class="pedido-rest">
+                        {{ $pedido->restaurante->nombre }}
+                    </a>
+                    <div class="pedido-id">
+                        #{{ str_pad($pedido->id, 4, '0', STR_PAD_LEFT) }}
+                        · {{ $pedido->created_at->format('d M Y, H:i') }}
                     </div>
                 </div>
-                <div class="head-right">
-                    <span class="estado-badge"
-                          style="background:{{ $info['color'] }}18;color:{{ $info['color'] }};border-color:{{ $info['color'] }}33;">
+
+                <div class="pedido-top-actions">
+                    <span class="badge"
+                          style="background:{{ $info['color'] }}18;color:{{ $info['color'] }};border:1.5px solid {{ $info['color'] }}30;">
                         <span class="badge-dot" style="background:{{ $info['color'] }};"></span>
                         {{ $info['label'] }}
                     </span>
-                    <span class="pedido-total-head">C$ {{ number_format($pedido->total, 0) }}</span>
+
+                    @if($confirmado)
+                    <form method="POST" action="{{ route('pedidos.destroy', $pedido) }}" class="inline m-0"
+                          onsubmit="return confirm('¿Eliminar este pedido?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-eliminar">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </form>
+                    @endif
                 </div>
             </div>
 
-            {{-- PROGRESS --}}
-            @if(!$cancelado)
-            <div class="progress-wrap">
-                <div class="progress-track">
-                    @foreach($pasos as $i => $paso)
-                    @php
-                        $pasado  = $i < $indexActual;
-                        $activo  = $i === $indexActual;
-                        $color   = ($pasado || $activo) ? $estados[$paso]['color'] : '#d1d5db';
-                        $lineColor = $i < $indexActual ? $estados[$paso]['color'] : '#e5e7eb';
-                    @endphp
-                    <div class="progress-step">
-                        <div class="step-top">
-                            <div class="step-circle"
-                                 style="background:{{ ($pasado||$activo) ? $color : '#f3f4f6' }};
-                                        color:{{ ($pasado||$activo) ? 'white' : '#9ca3af' }};
-                                        {{ $activo ? 'box-shadow:0 0 0 4px '.$color.'28;' : '' }}">
-                                @if($pasado)
-                                    <i class="fas fa-check" style="font-size:9px;"></i>
-                                @else
-                                    {{ $i + 1 }}
-                                @endif
-                            </div>
-                            @if($i < count($pasos) - 1)
-                                <div class="step-line" style="background:{{ $lineColor }};"></div>
-                            @endif
-                        </div>
-                        <div class="step-label" style="color:{{ ($pasado||$activo) ? $color : '#9ca3af' }};">
-                            {{ $estados[$paso]['label'] }}
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            @if($cancelado)
-            <div class="cancelado-bar">
-                <i class="fas fa-ban"></i> Este pedido fue cancelado
-            </div>
-            @endif
-
-            {{-- ITEMS --}}
+            {{-- Ítems --}}
             <div class="pedido-items">
                 @foreach($pedido->items as $item)
-                <div class="item-row">
-                    <div class="item-left">
-                        <div class="item-qty">{{ $item->cantidad }}</div>
-                        <div class="item-name">{{ $item->plato->nombre ?? 'Plato no disponible' }}</div>
+                <div class="item">
+                    <div>
+                        <div class="item-info">
+                            <span class="item-qty">{{ $item->cantidad }}×</span>
+                            <span class="item-name">{{ $item->plato->nombre ?? 'Plato no disponible' }}</span>
+                        </div>
+                        @if($item->notas)
+                        <div class="item-opts">{{ $item->notas }}</div>
+                        @endif
                     </div>
-                    <div class="item-price">C$ {{ number_format($item->subtotal, 0) }}</div>
+                    <span class="item-price">C$ {{ number_format($item->subtotal, 0) }}</span>
                 </div>
                 @endforeach
-
-                @if($pedido->notas)
-                <div class="notas-box">
-                    <i class="fas fa-sticky-note" style="color:#f59e0b;margin-top:1px;flex-shrink:0;"></i>
-                    <span>{{ $pedido->notas }}</span>
-                </div>
-                @endif
             </div>
 
-            {{-- FOOT --}}
+            {{-- Nota general --}}
+            @if($pedido->notas)
+            <div class="nota">
+                <i class="fas fa-sticky-note" style="color:#f59e0b;margin-top:1px;flex-shrink:0;font-size:11px;"></i>
+                {{ $pedido->notas }}
+            </div>
+            @endif
+
+            {{-- Cancelado --}}
+            @if($cancelado)
+            <div class="cancelado-strip">
+                <i class="fas fa-ban" style="font-size:11px;"></i> Pedido cancelado
+            </div>
+            @endif
+
+            {{-- Pie --}}
             <div class="pedido-foot">
-                <span class="foot-left">
-                    <i class="fas fa-utensils" style="font-size:10px;margin-right:4px;color:var(--orange);"></i>
-                    {{ $pedido->items->count() }} platillo{{ $pedido->items->count() !== 1 ? 's' : '' }}
-                </span>
-                <span class="foot-total">Total: <span>C$ {{ number_format($pedido->total, 0) }}</span></span>
+                <div class="foot-meta">
+                    @if($pedido->tipo === 'mesa')
+                        <i class="fas fa-chair"></i> Mesa
+                    @else
+                        <i class="fas fa-bag-shopping"></i> Para llevar
+                    @endif
+                    <span>· {{ $pedido->items->count() }} platillo{{ $pedido->items->count() !== 1 ? 's' : '' }}</span>
+                </div>
+                <div class="foot-total">C$ <span>{{ number_format($pedido->total, 0) }}</span></div>
             </div>
 
         </div>
@@ -362,25 +373,17 @@
         <div class="pagination-wrap">{{ $pedidos->links() }}</div>
 
     @else
-        <div class="empty-state">
+        <div class="empty">
             <div class="empty-icon"><i class="fas fa-bag-shopping"></i></div>
-            <div class="empty-title">Aún no tienes pedidos</div>
-            <div class="empty-sub">Explora los restaurantes y haz tu primer pedido</div>
-            <a href="{{ route('restaurantes.index') }}" class="btn-orange">
-                <i class="fas fa-utensils" style="font-size:12px;"></i> Ver restaurantes
+            <h2>Aún no tienes pedidos</h2>
+            <p>Explora los restaurantes y haz tu primer pedido</p>
+            <a href="{{ route('restaurantes.index') }}" class="btn-blue">
+                <i class="fas fa-utensils" style="font-size:11px;"></i> Ver restaurantes
             </a>
         </div>
     @endif
-</div>
 
-<footer>
-    <div class="footer-inner">
-        <span style="font-size:13px;font-style:italic;font-weight:700;color:#fff;">
-            Gastro<span style="color:#ea580c;">Nicaragua</span>
-        </span>
-        <span style="font-size:12px;color:#57534e;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</span>
-    </div>
-</footer>
+</div>
 
 </body>
 </html>

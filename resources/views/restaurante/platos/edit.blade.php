@@ -4,7 +4,6 @@
 @section('content')
 <div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-    {{-- ── Encabezado ── --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
@@ -22,7 +21,6 @@
         </a>
     </div>
 
-    {{-- Errores --}}
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
             <div class="d-flex align-items-start gap-2">
@@ -41,29 +39,27 @@
         <div class="row g-4 align-items-start">
 
             {{-- ── Columna izquierda ── --}}
-            <div class="col-12 col-lg-8">
+            <div class="col-12 col-lg-8 d-flex flex-column gap-4">
+
+                {{-- Info --}}
                 <div class="card border-0 shadow-sm rounded-3">
                     <div class="card-body p-4">
                         <h6 class="text-uppercase text-muted fw-bold mb-4" style="font-size:0.72rem;letter-spacing:0.12em;">
                             <i class="bi bi-info-circle text-primary me-1"></i> Información del plato
                         </h6>
 
-                        {{-- Nombre --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark small">Nombre del plato <span class="text-danger">*</span></label>
-                            <input type="text" name="nombre" class="form-control bg-light"
-                                   style="box-shadow:none;"
+                            <input type="text" name="nombre" class="form-control bg-light" style="box-shadow:none;"
                                    value="{{ old('nombre', $plato->nombre) }}" required>
                         </div>
 
-                        {{-- Descripción --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark small">Descripción</label>
                             <textarea name="descripcion" class="form-control bg-light"
                                       style="box-shadow:none;resize:none;" rows="3">{{ old('descripcion', $plato->descripcion) }}</textarea>
                         </div>
 
-                        {{-- Precio + Categoría --}}
                         <div class="row g-3">
                             <div class="col-12 col-sm-6">
                                 <label class="form-label fw-semibold text-dark small">Precio (C$) <span class="text-danger">*</span></label>
@@ -95,18 +91,92 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- ── Opciones ── --}}
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-uppercase text-muted fw-bold mb-0" style="font-size:0.72rem;letter-spacing:0.12em;">
+                                <i class="bi bi-list-check text-primary me-1"></i> Opciones del plato
+                            </h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" id="btn-agregar-opcion">
+                                + Agregar opción
+                            </button>
+                        </div>
+                        <p class="small text-muted mb-3">Ej: Tamaño (Individual / Familiar), Proteína (Pollo / Res)</p>
+
+                        <div id="lista-opciones">
+                            @foreach($plato->opciones as $oi => $opcion)
+                            <div class="opcion-item border rounded-3 p-3 mb-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold small">Opción #<span class="num-opcion">{{ $oi + 1 }}</span></span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2 btn-eliminar-opcion">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-12 col-sm-5">
+                                        <label class="form-label small fw-semibold">Nombre</label>
+                                        <input type="text" name="opciones[{{ $oi }}][nombre]"
+                                               class="form-control form-control-sm"
+                                               placeholder="Ej: Tamaño..."
+                                               value="{{ $opcion->nombre }}">
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <label class="form-label small fw-semibold">Tipo</label>
+                                        <select name="opciones[{{ $oi }}][tipo]" class="form-select form-select-sm">
+                                            <option value="radio" {{ $opcion->tipo === 'radio' ? 'selected' : '' }}>Elige uno</option>
+                                            <option value="checkbox" {{ $opcion->tipo === 'checkbox' ? 'selected' : '' }}>Elige varios</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 col-sm-3 d-flex align-items-end pb-1">
+                                        <div class="form-check">
+                                            <input type="checkbox" name="opciones[{{ $oi }}][requerido]" value="1"
+                                                   class="form-check-input"
+                                                   {{ $opcion->requerido ? 'checked' : '' }}>
+                                            <label class="form-check-label small">Requerido</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="valores-lista mb-2">
+                                    @foreach($opcion->valores as $vi => $valor)
+                                    <div class="valor-item d-flex gap-2 align-items-center mb-2">
+                                        <input type="text" name="opciones[{{ $oi }}][valores][{{ $vi }}][valor]"
+                                               class="form-control form-control-sm"
+                                               placeholder="Ej: Individual..."
+                                               value="{{ $valor->valor }}">
+                                        <div class="input-group input-group-sm" style="max-width:140px;">
+                                            <span class="input-group-text">C$</span>
+                                            <input type="number" name="opciones[{{ $oi }}][valores][{{ $vi }}][precio_extra]"
+                                                   class="form-control form-control-sm"
+                                                   min="0" step="0.01"
+                                                   value="{{ $valor->precio_extra }}">
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill btn-eliminar-valor">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 btn-agregar-valor">
+                                    + Agregar valor
+                                </button>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             {{-- ── Columna derecha ── --}}
             <div class="col-12 col-lg-4 d-flex flex-column gap-4">
 
-                {{-- Foto --}}
                 <div class="card border-0 shadow-sm rounded-3">
                     <div class="card-body p-4">
                         <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.12em;">
                             <i class="bi bi-image text-primary me-1"></i> Foto del plato
                         </h6>
-
                         @if($plato->imagen)
                         <div class="mb-3">
                             <p class="small text-muted fw-semibold mb-2">Foto actual</p>
@@ -114,7 +184,6 @@
                                  class="w-100 rounded-3 border" style="aspect-ratio:1;object-fit:cover;">
                         </div>
                         @endif
-
                         <label for="imagen-input" class="w-100 cursor-pointer">
                             <div class="rounded-3 bg-light d-flex flex-column align-items-center justify-content-center position-relative overflow-hidden"
                                  style="aspect-ratio:1;border:2px dashed #dee2e6;cursor:pointer;transition:border-color 0.2s;"
@@ -133,7 +202,6 @@
                     </div>
                 </div>
 
-                {{-- Estado + Guardar --}}
                 <div class="card border-0 shadow-sm rounded-3">
                     <div class="card-body p-4">
                         <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.12em;">
@@ -159,8 +227,7 @@
                     </div>
                 </div>
 
-                {{-- Zona de peligro --}}
-                <div class="card border-0 shadow-sm rounded-3" style="border-color:#fecaca !important;border:1px solid #fecaca;">
+                <div class="card border-0 shadow-sm rounded-3" style="border:1px solid #fecaca;">
                     <div class="card-body p-4">
                         <h6 class="text-uppercase fw-bold mb-3" style="font-size:0.72rem;letter-spacing:0.12em;color:#dc2626;">
                             <i class="bi bi-exclamation-triangle me-1"></i> Zona de peligro
@@ -177,7 +244,6 @@
         </div>
     </form>
 
-    {{-- Form delete oculto --}}
     <form id="form-delete-plato" method="POST"
           action="{{ route('restaurante.platos.destroy', $plato) }}" style="display:none;">
         @csrf @method('DELETE')
@@ -185,9 +251,55 @@
 
 </div>
 
-<style>
-    .cursor-pointer { cursor: pointer; }
-</style>
+{{-- Templates --}}
+<template id="tpl-opcion">
+    <div class="opcion-item border rounded-3 p-3 mb-3 bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold small">Opción #<span class="num-opcion"></span></span>
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2 btn-eliminar-opcion">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-12 col-sm-5">
+                <label class="form-label small fw-semibold">Nombre</label>
+                <input type="text" name="" class="form-control form-control-sm inp-nombre" placeholder="Ej: Tamaño...">
+            </div>
+            <div class="col-6 col-sm-4">
+                <label class="form-label small fw-semibold">Tipo</label>
+                <select name="" class="form-select form-select-sm inp-tipo">
+                    <option value="radio">Elige uno</option>
+                    <option value="checkbox">Elige varios</option>
+                </select>
+            </div>
+            <div class="col-6 col-sm-3 d-flex align-items-end pb-1">
+                <div class="form-check">
+                    <input type="checkbox" name="" value="1" class="form-check-input inp-requerido">
+                    <label class="form-check-label small">Requerido</label>
+                </div>
+            </div>
+        </div>
+        <div class="valores-lista mb-2"></div>
+        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 btn-agregar-valor">
+            + Agregar valor
+        </button>
+    </div>
+</template>
+
+<template id="tpl-valor">
+    <div class="valor-item d-flex gap-2 align-items-center mb-2">
+        <input type="text" name="" class="form-control form-control-sm inp-valor" placeholder="Ej: Individual...">
+        <div class="input-group input-group-sm" style="max-width:140px;">
+            <span class="input-group-text">C$</span>
+            <input type="number" name="" class="form-control form-control-sm inp-precio" placeholder="0" min="0" step="0.01" value="0">
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill btn-eliminar-valor">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
+</template>
+
+<style>.cursor-pointer { cursor: pointer; }</style>
 
 @endsection
 
@@ -205,5 +317,60 @@ document.getElementById('imagen-input').addEventListener('change', function () {
     };
     reader.readAsDataURL(file);
 });
+
+(function () {
+    let opcionIdx = {{ $plato->opciones->count() }};
+
+    function renumerar() {
+        document.querySelectorAll('#lista-opciones .opcion-item').forEach((el, i) => {
+            el.querySelector('.num-opcion').textContent = i + 1;
+        });
+    }
+
+    function agregarValor(opcionEl, oi) {
+        const vi  = opcionEl.querySelectorAll('.valor-item').length;
+        const tpl = document.getElementById('tpl-valor').content.cloneNode(true);
+        const item = tpl.querySelector('.valor-item');
+        item.querySelector('.inp-valor').name  = `opciones[${oi}][valores][${vi}][valor]`;
+        item.querySelector('.inp-precio').name = `opciones[${oi}][valores][${vi}][precio_extra]`;
+        item.querySelector('.btn-eliminar-valor').addEventListener('click', () => item.remove());
+        opcionEl.querySelector('.valores-lista').appendChild(item);
+    }
+
+    document.getElementById('btn-agregar-opcion').addEventListener('click', () => {
+        const oi  = opcionIdx++;
+        const tpl = document.getElementById('tpl-opcion').content.cloneNode(true);
+        const item = tpl.querySelector('.opcion-item');
+
+        item.querySelector('.inp-nombre').name    = `opciones[${oi}][nombre]`;
+        item.querySelector('.inp-tipo').name      = `opciones[${oi}][tipo]`;
+        item.querySelector('.inp-requerido').name = `opciones[${oi}][requerido]`;
+
+        item.querySelector('.btn-eliminar-opcion').addEventListener('click', () => {
+            item.remove(); renumerar();
+        });
+        item.querySelector('.btn-agregar-valor').addEventListener('click', () => {
+            agregarValor(item, oi);
+        });
+
+        document.getElementById('lista-opciones').appendChild(item);
+        renumerar();
+        agregarValor(item, oi);
+    });
+
+    document.getElementById('lista-opciones').addEventListener('click', e => {
+        if (e.target.closest('.btn-eliminar-opcion')) {
+            e.target.closest('.opcion-item').remove(); renumerar();
+        }
+        if (e.target.closest('.btn-eliminar-valor')) {
+            e.target.closest('.valor-item').remove();
+        }
+        if (e.target.closest('.btn-agregar-valor')) {
+            const opcionEl = e.target.closest('.opcion-item');
+            const oi = [...document.querySelectorAll('#lista-opciones .opcion-item')].indexOf(opcionEl);
+            agregarValor(opcionEl, oi);
+        }
+    });
+})();
 </script>
 @endsection

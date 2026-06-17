@@ -139,13 +139,22 @@
                     {{-- WhatsApp con selector de país --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">WhatsApp</label>
-                        {{-- Campo visible con intl-tel-input --}}
                         <input type="tel" id="whatsapp_input"
                                class="form-control bg-light" style="box-shadow:none;"
                                placeholder="8888-8888">
-                        {{-- Campo oculto que se envía al servidor con el número completo --}}
                         <input type="hidden" id="whatsapp_full" name="whatsapp" value="{{ old('whatsapp') }}">
                         <small class="text-muted">Selecciona tu país y escribe el número sin código.</small>
+                    </div>
+
+                    {{-- Teléfono --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Teléfono <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                            <input type="text" name="telefono" value="{{ old('telefono') }}"
+                                   placeholder="Ej: 2522-1234"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
                     </div>
 
                     {{-- Instagram --}}
@@ -192,8 +201,15 @@
                 </h6>
                 <p class="text-muted small mb-4">
                     <i class="bi bi-info-circle me-1"></i>
-                    Se creará un usuario con acceso al panel del restaurante.
+                    Se creará un usuario con acceso al panel del restaurante. El acceso es mediante <strong>Google (Gmail)</strong> — no requiere contraseña.
                 </p>
+
+                <div class="alert alert-info border-0 d-flex align-items-center gap-2 mb-4" style="background:#eff6ff; color:#1d4ed8;">
+                    <i class="bi bi-google fs-5"></i>
+                    <div class="small">
+                        <strong>Acceso con Google:</strong> El propietario iniciará sesión directamente con su cuenta de Gmail. No es necesario crear contraseña.
+                    </div>
+                </div>
 
                 <div class="row g-4">
 
@@ -210,43 +226,14 @@
 
                     {{-- Correo del Propietario --}}
                     <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">Correo del Propietario <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold text-dark small">Correo del Propietario (Gmail) <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
                             <input type="email" name="propietario_email" value="{{ old('propietario_email') }}" required
-                                   placeholder="correo@propietario.com"
+                                   placeholder="correo@gmail.com"
                                    class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
                         </div>
-                    </div>
-
-                    {{-- Contraseña con toggle --}}
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">Contraseña <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                            <input type="password" name="propietario_password" id="create_password" required minlength="8"
-                                   placeholder="Mínimo 8 caracteres"
-                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
-                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
-                                    onclick="togglePassword('create_password', this)" title="Mostrar/ocultar contraseña">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Confirmar Contraseña con toggle --}}
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" name="propietario_password_confirmation" id="create_password_confirm" required minlength="8"
-                                   placeholder="Repite la contraseña"
-                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
-                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
-                                    onclick="togglePassword('create_password_confirm', this)" title="Mostrar/ocultar contraseña">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
+                        <small class="text-muted">Debe ser una cuenta de Gmail válida para el acceso con Google.</small>
                     </div>
 
                 </div>
@@ -570,7 +557,6 @@
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
         });
 
-        // Si hay un valor old() precargado, mostrarlo en el campo visible
         const oldWhatsapp = document.getElementById('whatsapp_full').value;
         if (oldWhatsapp) {
             iti.setNumber('+' + oldWhatsapp);
@@ -580,8 +566,7 @@
         document.getElementById('form-restaurante').addEventListener('submit', function () {
             muniSelect.disabled = false;
 
-            // Guardar número completo en el campo oculto (sin + ni espacios)
-            const numeroCompleto = iti.getNumber(); // ej: +50588887777
+            const numeroCompleto = iti.getNumber();
             if (numeroCompleto) {
                 document.getElementById('whatsapp_full').value = numeroCompleto.replace('+', '').replace(/\s/g, '');
             }

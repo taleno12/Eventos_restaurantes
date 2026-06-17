@@ -262,24 +262,15 @@
         .social-fb { background: #dbeafe; color: #2563eb; border-color: #bfdbfe; }
         .social-fb:hover { background: #2563eb; color: white; box-shadow: 0 6px 18px rgba(37,99,235,0.35); }
 
-        /* CTA */
-        .btn-cta-primary {
+        /* CTA WhatsApp */
+        .btn-whatsapp {
             display: flex; align-items: center; justify-content: center; gap: 9px;
-            width: 100%; background: var(--blue); color: white;
+            width: 100%; background: #22c55e; color: white;
             font-size: 14px; font-weight: 700; padding: 14px 20px;
             border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
             text-decoration: none; letter-spacing: 0.02em;
         }
-        .btn-cta-primary:hover { background: var(--blue-dk); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
-
-        .btn-cta-secondary {
-            display: flex; align-items: center; justify-content: center; gap: 9px;
-            width: 100%; background: #0f172a; color: white;
-            font-size: 14px; font-weight: 700; padding: 14px 20px;
-            border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
-            text-decoration: none; letter-spacing: 0.02em;
-        }
-        .btn-cta-secondary:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .btn-whatsapp:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
 
         /* ══ LIGHTBOX ══ */
         #lightbox {
@@ -637,18 +628,7 @@
             </div>
         @endif
 
-        {{-- Contacto --}}
-        @if($restaurante->email)
-            <div class="sidebar-card">
-                <div class="sidebar-card-head"><i class="fas fa-envelope"></i> Contacto</div>
-                <div class="sidebar-card-body">
-                    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;color:#374151;word-break:break-all;">
-                        <i class="fas fa-envelope" style="color:var(--blue);margin-right:8px;"></i>
-                        {{ $restaurante->email }}
-                    </div>
-                </div>
-            </div>
-        @endif
+
 
         {{-- Redes sociales --}}
         @if(!empty($restaurante->whatsapp) || !empty($restaurante->instagram) || !empty($restaurante->tiktok) || !empty($restaurante->facebook))
@@ -681,23 +661,16 @@
             </div>
         @endif
 
-        {{-- CTAs --}}
-        <a href="mailto:{{ $restaurante->email ?? 'contacto@gastronicaragua.com' }}?subject=Consulta sobre evento: {{ $evento->titulo }}"
-           class="btn-cta-secondary">
-            <i class="fas fa-paper-plane" style="font-size:13px;"></i>
-            Consultar al local
-        </a>
-
-        @if(!empty($restaurante->whatsapp))
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $restaurante->whatsapp) }}?text={{ urlencode('Hola, me interesa el evento: ' . $evento->titulo) }}"
-               target="_blank"
-               style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:#22c55e;color:white;font-size:14px;font-weight:700;padding:14px 20px;border-radius:12px;text-decoration:none;transition:all 0.18s;letter-spacing:0.02em;"
-               onmouseover="this.style.background='#16a34a';this.style.transform='translateY(-1px)'"
-               onmouseout="this.style.background='#22c55e';this.style.transform='none'">
-                <i class="fab fa-whatsapp" style="font-size:18px;"></i>
-                Consultar por WhatsApp
-            </a>
-        @endif
+        {{-- SOLO WHATSAPP --}}
+ {{-- CTA Teléfono --}}
+@if(!empty($restaurante->telefono))
+    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $restaurante->telefono) }}"
+       class="btn-whatsapp"
+       style="background:var(--blue);">
+        <i class="fas fa-phone" style="font-size:16px;"></i>
+        {{ $restaurante->telefono }}
+    </a>
+@endif
 
     </aside>
 </div>

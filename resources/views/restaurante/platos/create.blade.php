@@ -51,13 +51,7 @@
                                value="{{ old('precio') }}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label fw-semibold" style="font-size:13px;">
-                            Categoría
-                            <a href="{{ route('restaurante.categorias.index') }}"
-                               class="ms-2 text-primary" style="font-size:11px;font-weight:500;" target="_blank">
-                                <i class="bi bi-plus-circle me-1"></i>Gestionar categorías
-                            </a>
-                        </label>
+                        <label class="form-label fw-semibold" style="font-size:13px;">Categoría</label>
                         <select name="categoria_id" class="form-select">
                             <option value="">Sin categoría</option>
                             @foreach($categorias as $cat)
@@ -69,6 +63,22 @@
                         </select>
                     </div>
                 </div>
+            </div>
+
+            {{-- ── Opciones del plato ── --}}
+            <div class="card card-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <div style="font-size:11px;font-weight:900;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">
+                        Opciones del plato
+                    </div>
+                    <button type="button" class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" id="btn-agregar-opcion">
+                        + Agregar opción
+                    </button>
+                </div>
+                <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">
+                    Ej: Tamaño (Individual / Familiar), Proteína (Pollo / Res), Extras (Con papas)
+                </p>
+                <div id="lista-opciones"></div>
             </div>
         </div>
 
@@ -112,6 +122,53 @@
         </div>
     </div>
 </form>
+
+{{-- Templates ocultos --}}
+<template id="tpl-opcion">
+    <div class="opcion-item" style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;background:var(--surface);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-size:13px;font-weight:700;">Opción #<span class="num-opcion"></span></span>
+            <button type="button" class="btn btn-ghost btn-eliminar-opcion" style="font-size:12px;color:#dc2626;padding:4px 10px;">
+                Eliminar
+            </button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:12px;align-items:end;">
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">Nombre</label>
+                <input type="text" name="" class="form-control inp-nombre" placeholder="Ej: Tamaño, Proteína...">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">Tipo</label>
+                <select name="" class="form-select inp-tipo">
+                    <option value="radio">Elige uno</option>
+                    <option value="checkbox">Elige varios</option>
+                </select>
+            </div>
+            <div style="padding-bottom:4px;">
+                <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+                    <input type="checkbox" name="" value="1" class="inp-requerido" style="accent-color:var(--orange);">
+                    Requerido
+                </label>
+            </div>
+        </div>
+        <div class="valores-lista" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn btn-ghost btn-agregar-valor" style="font-size:12px;padding:6px 12px;">
+            + Agregar valor
+        </button>
+    </div>
+</template>
+
+<template id="tpl-valor">
+    <div class="valor-item" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <input type="text" name="" class="form-control inp-valor" placeholder="Ej: Individual, Familiar..." style="flex:1;">
+        <div style="display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;width:130px;">
+            <span style="padding:0 8px;font-size:12px;color:var(--muted);background:var(--surface-2);">C$</span>
+            <input type="number" name="" class="form-control inp-precio" placeholder="0" min="0" step="0.01" value="0"
+                   style="border:none;border-radius:0;width:80px;">
+        </div>
+        <button type="button" class="btn btn-ghost btn-eliminar-valor" style="padding:4px 10px;font-size:12px;color:#dc2626;">✕</button>
+    </div>
+</template>
 @endsection
 
 @section('scripts')
@@ -128,5 +185,61 @@ document.getElementById('imagen-input').addEventListener('change', function () {
     };
     reader.readAsDataURL(file);
 });
+
+// ── Opciones ──
+(function () {
+    let opcionIdx = 0;
+
+    function renumerar() {
+        document.querySelectorAll('#lista-opciones .opcion-item').forEach((el, i) => {
+            el.querySelector('.num-opcion').textContent = i + 1;
+        });
+    }
+
+    function agregarValor(opcionEl, oi) {
+        const vi  = opcionEl.querySelectorAll('.valor-item').length;
+        const tpl = document.getElementById('tpl-valor').content.cloneNode(true);
+        const item = tpl.querySelector('.valor-item');
+        item.querySelector('.inp-valor').name  = `opciones[${oi}][valores][${vi}][valor]`;
+        item.querySelector('.inp-precio').name = `opciones[${oi}][valores][${vi}][precio_extra]`;
+        item.querySelector('.btn-eliminar-valor').addEventListener('click', () => item.remove());
+        opcionEl.querySelector('.valores-lista').appendChild(item);
+    }
+
+    document.getElementById('btn-agregar-opcion').addEventListener('click', () => {
+        const oi  = opcionIdx++;
+        const tpl = document.getElementById('tpl-opcion').content.cloneNode(true);
+        const item = tpl.querySelector('.opcion-item');
+
+        item.querySelector('.inp-nombre').name    = `opciones[${oi}][nombre]`;
+        item.querySelector('.inp-tipo').name      = `opciones[${oi}][tipo]`;
+        item.querySelector('.inp-requerido').name = `opciones[${oi}][requerido]`;
+
+        item.querySelector('.btn-eliminar-opcion').addEventListener('click', () => {
+            item.remove(); renumerar();
+        });
+        item.querySelector('.btn-agregar-valor').addEventListener('click', () => {
+            agregarValor(item, oi);
+        });
+
+        document.getElementById('lista-opciones').appendChild(item);
+        renumerar();
+        agregarValor(item, oi);
+    });
+
+    document.getElementById('lista-opciones').addEventListener('click', e => {
+        if (e.target.closest('.btn-eliminar-opcion')) {
+            e.target.closest('.opcion-item').remove(); renumerar();
+        }
+        if (e.target.closest('.btn-eliminar-valor')) {
+            e.target.closest('.valor-item').remove();
+        }
+        if (e.target.closest('.btn-agregar-valor')) {
+            const opcionEl = e.target.closest('.opcion-item');
+            const oi = [...document.querySelectorAll('#lista-opciones .opcion-item')].indexOf(opcionEl);
+            agregarValor(opcionEl, oi);
+        }
+    });
+})();
 </script>
 @endsection

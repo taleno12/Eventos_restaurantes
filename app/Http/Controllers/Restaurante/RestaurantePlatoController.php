@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Restaurante;
 
 use App\Http\Controllers\Controller;
 use App\Models\Plato;
+use App\Models\PlatoOpcion;
+use App\Models\PlatoOpcionValor;
 use App\Models\CategoriaPlato;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +60,10 @@ class RestaurantePlatoController extends Controller
             $validated['imagen'] = $request->file('imagen')->store('platos', 'public');
         }
 
-        Plato::create($validated);
+        $plato = Plato::create($validated);
+
+        // Guardar opciones
+        $this->guardarOpciones($plato, $request);
 
         return redirect()->route('restaurante.platos.index')
             ->with('success', '¡Plato añadido al menú!');
@@ -70,6 +75,8 @@ class RestaurantePlatoController extends Controller
         abort_unless($plato->restaurante_id === $restaurante->id, 403);
 
         $categorias = $restaurante->categoriasPlato()->ordenadas()->get();
+        $plato->load('opciones.valores');
+
         return view('restaurante.platos.edit', compact('restaurante', 'plato', 'categorias'));
     }
 
@@ -99,6 +106,11 @@ class RestaurantePlatoController extends Controller
 
         $plato->update($validated);
 
+        // Reemplazar opciones
+        $plato->opciones()->each(fn($op) => $op->valores()->delete());
+        $plato->opciones()->delete();
+        $this->guardarOpciones($plato, $request);
+
         return redirect()->route('restaurante.platos.index')
             ->with('success', 'Plato actualizado correctamente.');
     }
@@ -123,5 +135,33 @@ class RestaurantePlatoController extends Controller
         $plato->update(['activo' => !$plato->activo]);
 
         return back()->with('success', $plato->activo ? 'Plato activado.' : 'Plato desactivado.');
+    }
+
+    private function guardarOpciones(Plato $plato, Request $request)
+    {
+        $opciones = $request->input('opciones', []);
+
+        foreach ($opciones as $i => $opcionData) {
+            if (empty($opcionData['nombre'])) continue;
+
+            $opcion = PlatoOpcion::create([
+                'plato_id'  => $plato->id,
+                'nombre'    => $opcionData['nombre'],
+                'tipo'      => $opcionData['tipo'] ?? 'radio',
+                'requerido' => isset($opcionData['requerido']) ? 1 : 0,
+                'orden'     => $i,
+            ]);
+
+            foreach ($opcionData['valores'] ?? [] as $j => $valorData) {
+                if (empty($valorData['valor'])) continue;
+
+                PlatoOpcionValor::create([
+                    'opcion_id'    => $opcion->id,
+                    'valor'        => $valorData['valor'],
+                    'precio_extra' => $valorData['precio_extra'] ?? 0,
+                    'orden'        => $j,
+                ]);
+            }
+        }
     }
 }

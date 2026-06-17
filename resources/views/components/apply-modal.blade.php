@@ -4,8 +4,9 @@
 <button
     type="button"
     onclick="abrirModalAplicar()"
-    class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 text-base cursor-pointer border-0"
-    style="outline: none;"
+    class="w-full flex items-center justify-center gap-2 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 text-base cursor-pointer border-0"
+    style="outline: none; background:#2563eb;"
+    onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'"
 >
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
@@ -14,7 +15,6 @@
 </button>
 
 <!-- ===== MODAL ===== -->
-{{-- display:none puro en style, sin depender de Tailwind --}}
 <div id="applyModal"
      style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,0.80); backdrop-filter:blur(4px);">
 
@@ -24,7 +24,7 @@
         <!-- Header -->
         <div style="position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:1.25rem 1.5rem; border-bottom:1px solid #2e2e2e; background:#1a1a1a;">
             <div>
-                <p style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#fb923c; margin:0 0 4px;">
+                <p style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#60a5fa; margin:0 0 4px;">
                     {{ $empleo->restaurante->nombre ?? 'Restaurante' }}
                 </p>
                 <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0;">
@@ -58,21 +58,21 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
                 <div>
                     <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                        Nombre <span style="color:#fb923c">*</span>
+                        Nombre <span style="color:#60a5fa">*</span>
                     </label>
                     <input type="text" name="nombre" required placeholder="Tu nombre"
                            value="{{ old('nombre') }}"
                            style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none;"
-                           onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">
+                           onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">
                 </div>
                 <div>
                     <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                        Apellido <span style="color:#fb923c">*</span>
+                        Apellido <span style="color:#60a5fa">*</span>
                     </label>
                     <input type="text" name="apellido" required placeholder="Tu apellido"
                            value="{{ old('apellido') }}"
                            style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none;"
-                           onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">
+                           onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">
                 </div>
             </div>
 
@@ -80,21 +80,21 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
                 <div>
                     <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                        Correo electrónico <span style="color:#fb923c">*</span>
+                        Correo electrónico <span style="color:#60a5fa">*</span>
                     </label>
                     <input type="email" name="email" required placeholder="correo@ejemplo.com"
                            value="{{ old('email') }}"
                            style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none;"
-                           onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">
+                           onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">
                 </div>
                 <div>
                     <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                        Teléfono / WhatsApp <span style="color:#fb923c">*</span>
+                        Teléfono / WhatsApp <span style="color:#60a5fa">*</span>
                     </label>
                     <input type="tel" name="telefono" required placeholder="+505 8888-0000"
                            value="{{ old('telefono') }}"
                            style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none;"
-                           onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">
+                           onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">
                 </div>
             </div>
 
@@ -102,21 +102,21 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
                 <div>
                     <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                        Edad <span style="color:#fb923c">*</span>
+                        Edad <span style="color:#60a5fa">*</span>
                     </label>
                     <input type="number" name="edad" required min="18" max="70" placeholder="Ej: 23"
                            value="{{ old('edad') }}"
                            style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none;"
-                           onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">
+                           onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">
                 </div>
                 <div>
                     <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                        Municipio donde vives <span style="color:#fb923c">*</span>
+                        Municipio donde vives <span style="color:#60a5fa">*</span>
                     </label>
                     <input type="text" name="municipio" required placeholder="Ej: Masatepe"
                            value="{{ old('municipio') }}"
                            style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none;"
-                           onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">
+                           onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">
                 </div>
             </div>
 
@@ -128,24 +128,7 @@
                 <textarea name="experiencia" rows="3"
                           placeholder="Describe brevemente tu experiencia en el área..."
                           style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none; resize:none;"
-                          onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">{{ old('experiencia') }}</textarea>
-            </div>
-
-            <!-- Disponibilidad -->
-            <div>
-                <label style="display:block; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
-                    Disponibilidad horaria
-                </label>
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px;">
-                    @foreach(['Mañana', 'Tarde', 'Noche', 'Fines de semana'] as $turno)
-                    <label style="display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; border:1px solid #333; cursor:pointer;">
-                        <input type="checkbox" name="disponibilidad[]" value="{{ $turno }}"
-                               {{ in_array($turno, old('disponibilidad', [])) ? 'checked' : '' }}
-                               style="width:16px; height:16px; accent-color:#f97316;">
-                        <span style="font-size:12px; color:#d1d5db;">{{ $turno }}</span>
-                    </label>
-                    @endforeach
-                </div>
+                          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">{{ old('experiencia') }}</textarea>
             </div>
 
             <!-- Currículum -->
@@ -156,13 +139,13 @@
                 <label id="cvDropzone"
                        for="cvInput"
                        style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:120px; border-radius:8px; border:2px dashed #333; background:#252525; cursor:pointer; transition:border-color 0.2s;"
-                       onmouseover="this.style.borderColor='#f97316'" onmouseout="if(!cvTienArchivo) this.style.borderColor='#333'">
+                       onmouseover="this.style.borderColor='#2563eb'" onmouseout="if(!cvTienArchivo) this.style.borderColor='#333'">
                     <div id="cvPlaceholder" style="text-align:center;">
                         <svg style="margin:0 auto 8px; color:#4b5563; width:32px; height:32px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                   d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <p style="font-size:13px; color:#6b7280; margin:0;">Arrastra tu CV aquí o <span style="color:#fb923c;">selecciona archivo</span></p>
+                        <p style="font-size:13px; color:#6b7280; margin:0;">Arrastra tu CV aquí o <span style="color:#60a5fa;">selecciona archivo</span></p>
                     </div>
                     <div id="cvSelected" style="display:none; text-align:center;">
                         <svg style="margin:0 auto 4px; color:#4ade80; width:28px; height:28px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,13 +166,13 @@
                 <textarea name="mensaje" rows="2"
                           placeholder="¿Algo más que quieras contarle al empleador?"
                           style="width:100%; padding:12px 14px; border-radius:8px; background:#252525; border:1px solid #333; color:#fff; font-size:14px; outline:none; resize:none;"
-                          onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#333'">{{ old('mensaje') }}</textarea>
+                          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#333'">{{ old('mensaje') }}</textarea>
             </div>
 
-            <!-- Botón Submit — sin ID, sin JS que lo deshabilite -->
+            <!-- Botón Submit -->
             <button type="submit"
-                    style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:#f97316; color:#fff; font-weight:800; font-size:15px; padding:14px 24px; border-radius:12px; border:none; cursor:pointer;"
-                    onmouseover="this.style.background='#ea6c00'" onmouseout="this.style.background='#f97316'">
+                    style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:#2563eb; color:#fff; font-weight:800; font-size:15px; padding:14px 24px; border-radius:12px; border:none; cursor:pointer;"
+                    onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
@@ -210,9 +193,6 @@
         #applyModal .modal-card > form > div[style*="grid-template-columns:1fr 1fr"] {
             grid-template-columns: 1fr !important;
         }
-        #applyModal .modal-card > form > div[style*="grid-template-columns:1fr 1fr 1fr 1fr"] {
-            grid-template-columns: 1fr 1fr !important;
-        }
     }
 </style>
 
@@ -231,12 +211,10 @@
         document.body.style.overflow = '';
     }
 
-    // Cerrar al hacer clic en el fondo oscuro
     document.getElementById('applyModal').addEventListener('click', function(e) {
         if (e.target === this) cerrarModalAplicar();
     });
 
-    // Cerrar con Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') cerrarModalAplicar();
     });
@@ -251,7 +229,6 @@
         }
     }
 
-    // Reabrir modal si hay errores de validación
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', function() {
             abrirModalAplicar();

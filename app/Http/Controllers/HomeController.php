@@ -28,19 +28,25 @@ class HomeController extends Controller
             : $municipioPredefinido;
 
         // ── Eventos destacados para el hero ──
-        $eventosDestacados = Evento::with(['restaurante', 'departamento'])
-        ->where('is_destacado', true)
-        ->where('fecha_evento', '>=', now())
-        ->latest()
-        ->take(5)
-        ->get();
+        $eventosDestacadosQuery = Evento::with(['restaurante', 'departamento'])
+            ->where('is_destacado', true)
+            ->where('fecha_evento', '>=', now());
 
+        if ($deptoFiltro) {
+            $eventosDestacadosQuery->where('departamento_id', $deptoFiltro);
+        }
 
-        // ── Query principal de eventos con filtros ──
-        $idsDestacados = $eventosDestacados->pluck('id');
+        if ($munFiltro) {
+            $eventosDestacadosQuery->where('municipio_id', $munFiltro);
+        }
 
+        $eventosDestacados = $eventosDestacadosQuery
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // ── Query principal de eventos (incluye destacados también) ──
         $query = Evento::with(['restaurante', 'departamento', 'municipio'])
-            ->whereNotIn('id', $idsDestacados)
             ->where('fecha_evento', '>=', now());
 
         if ($deptoFiltro) {
@@ -63,10 +69,22 @@ class HomeController extends Controller
 
         $eventos = $query->orderBy('fecha_evento', 'asc')->paginate(12);
 
-        // ── Datos para los filtros ──
+        // ── Restaurantes para el carrusel ──
+        $restaurantesQuery = Restaurante::orderBy('nombre');
+
+        if ($deptoFiltro) {
+            $restaurantesQuery->where('departamento_id', $deptoFiltro);
+        }
+
+        if ($munFiltro) {
+            $restaurantesQuery->where('municipio_id', $munFiltro);
+        }
+
+        $restaurantes = $restaurantesQuery->get();
+
+        // ── Datos para los filtros (siempre completos) ──
         $departamentos = Departamento::orderBy('nombre')->get();
         $municipios    = Municipio::orderBy('nombre')->get();
-        $restaurantes  = Restaurante::orderBy('nombre')->get();
 
         return view('welcome', compact(
             'eventosDestacados',

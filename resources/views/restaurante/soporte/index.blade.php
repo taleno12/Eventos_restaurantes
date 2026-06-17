@@ -63,13 +63,17 @@
                 <div style="width:64px;height:64px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 6px 20px rgba(34,197,94,0.35);">
                     <i class="bi bi-whatsapp" style="color:white;font-size:28px;"></i>
                 </div>
-                <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px;">Soporte GastroNicaragua</div>
-                <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">+505 8376 7512</div>
-                <a href="https://wa.me/50583767512" target="_blank"
-                   style="display:inline-flex;align-items:center;gap:8px;background:#22c55e;color:white;text-decoration:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;transition:background 0.2s;"
-                   onmouseover="this.style.background='#16a34a'" onmouseout="this.style.background='#22c55e'">
-                    <i class="bi bi-chat-dots-fill"></i> Chatear ahora
-                </a>
+                <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:10px;">Soporte GastroNicaragua</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="font-size:13px;color:var(--muted);">
+                        <i class="bi bi-whatsapp" style="color:#22c55e;margin-right:6px;"></i>
+                        WhatsApp: <span style="font-weight:700;color:var(--text);">+505 8376 7512</span>
+                    </div>
+                    <div style="font-size:13px;color:var(--muted);">
+                        <i class="bi bi-telephone-fill" style="color:#22c55e;margin-right:6px;"></i>
+                        Teléfono: <span style="font-weight:700;color:var(--text);">+505 8540 6068</span>
+                    </div>
+                </div>
             </div>
         </div>
 

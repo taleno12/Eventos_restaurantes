@@ -4,52 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property int $id
- * @property int|null $restaurante_id
- * @property int|null $gastrobar_id
- * @property int $departamento_id
- * @property int $municipio_id
- * @property string $titulo
- * @property string $descripcion
- * @property string|null $requisitos
- * @property string|null $tipo_contrato
- * @property numeric|null $salario
- * @property \Illuminate\Support\Carbon|null $fecha_limite
- * @property bool $activo
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Departamento $departamento
- * @property-read \App\Models\Municipio $municipio
- * @property-read \App\Models\Restaurante|null $restaurante
- * @property-read \App\Models\Gastrobar|null $gastrobar
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo activas()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo deEntidadesActivas()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereActivo($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereDepartamentoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereDescripcion($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereFechaLimite($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereGastrobarId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereMunicipioId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereRequisitos($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereRestauranteId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereSalario($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereTipoContrato($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereTitulo($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Empleo whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class Empleo extends Model
 {
     protected $fillable = [
         'restaurante_id',
-        'gastrobar_id',    // ← nuevo
+        'gastrobar_id',
         'departamento_id',
         'municipio_id',
         'titulo',
@@ -72,7 +33,6 @@ class Empleo extends Model
         return $this->belongsTo(Restaurante::class);
     }
 
-    // ← nueva relación
     public function gastrobar(): BelongsTo
     {
         return $this->belongsTo(Gastrobar::class);
@@ -88,7 +48,11 @@ class Empleo extends Model
         return $this->belongsTo(Municipio::class);
     }
 
-    // Scope para ofertas activas (útil en la vista pública)
+    public function solicitudes(): HasMany
+    {
+        return $this->hasMany(SolicitudEmpleo::class);
+    }
+
     public function scopeActivas($query)
     {
         return $query->where('activo', true)
@@ -98,9 +62,6 @@ class Empleo extends Model
                      });
     }
 
-    /**
-     * Solo empleos cuyo restaurante o gastrobar esté activo (no desactivado por el admin)
-     */
     public function scopeDeEntidadesActivas($query)
     {
         return $query->where(function ($q) {

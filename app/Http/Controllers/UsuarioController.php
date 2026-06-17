@@ -23,7 +23,10 @@ class UsuarioController extends Controller
         $totalTrabajadores = Trabajador::count();
 
         // ── Usuarios ────────────────────────────────────────────
-        $queryU = User::whereIn('role', ['admin','restaurante','gastrobar'])->latest();
+        $queryU = User::whereIn('role', ['admin','restaurante','gastrobar'])
+                      ->with(['restaurante', 'gastrobar'])  // ← CARGAR RELACIONES
+                      ->latest();
+
         if ($request->filled('buscar')) {
             $b = $request->buscar;
             $queryU->where(fn($q) => $q->where('name','like',"%$b%")->orWhere('email','like',"%$b%"));

@@ -273,6 +273,17 @@
                         </div>
                     </div>
 
+                    {{-- Teléfono --}}
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold text-dark small">Teléfono <span class="text-muted fw-normal">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                            <input type="text" name="telefono" value="{{ old('telefono') }}"
+                                   placeholder="Ej: 2522-1234"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                    </div>
+
                     {{-- Instagram --}}
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold text-dark small">Instagram <span class="text-muted fw-normal">(opcional)</span></label>
@@ -317,8 +328,15 @@
                 </h6>
                 <p class="text-muted small mb-4">
                     <i class="bi bi-info-circle me-1"></i>
-                    Se creará un usuario con acceso al panel del gastrobar.
+                    El acceso al panel es mediante <strong>Google (Gmail)</strong> — no requiere contraseña.
                 </p>
+
+                <div class="alert alert-info border-0 d-flex align-items-center gap-2 mb-4" style="background:#eff6ff; color:#1d4ed8;">
+                    <i class="bi bi-google fs-5"></i>
+                    <div class="small">
+                        <strong>Acceso con Google:</strong> El propietario iniciará sesión directamente con su cuenta de Gmail. No es necesario crear contraseña.
+                    </div>
+                </div>
 
                 <div class="row g-4">
 
@@ -335,43 +353,14 @@
 
                     {{-- Correo del Propietario --}}
                     <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">Correo del Propietario <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold text-dark small">Correo del Propietario (Gmail) <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
                             <input type="email" name="propietario_email" value="{{ old('propietario_email') }}" required
-                                   placeholder="correo@propietario.com"
+                                   placeholder="correo@gmail.com"
                                    class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
                         </div>
-                    </div>
-
-                    {{-- Contraseña con toggle --}}
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">Contraseña <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                            <input type="password" name="propietario_password" id="gb_password" required minlength="8"
-                                   placeholder="Mínimo 8 caracteres"
-                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
-                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
-                                    onclick="togglePassword('gb_password', this)" title="Mostrar/ocultar contraseña">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Confirmar Contraseña con toggle --}}
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold text-dark small">Confirmar Contraseña <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" name="propietario_password_confirmation" id="gb_password_confirm" required minlength="8"
-                                   placeholder="Repite la contraseña"
-                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
-                            <button type="button" class="input-group-text bg-light border-start-0 text-muted"
-                                    onclick="togglePassword('gb_password_confirm', this)" title="Mostrar/ocultar contraseña">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
+                        <small class="text-muted">Debe ser una cuenta de Gmail válida para el acceso con Google.</small>
                     </div>
 
                 </div>
@@ -553,18 +542,6 @@
 </style>
 
 <script>
-    function togglePassword(inputId, btn) {
-        const input = document.getElementById(inputId);
-        const icon  = btn.querySelector('i');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.replace('bi-eye', 'bi-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.replace('bi-eye-slash', 'bi-eye');
-        }
-    }
-
     // ── Preview Portada ──
     document.getElementById('imagen').addEventListener('change', function () {
         const file = this.files[0];

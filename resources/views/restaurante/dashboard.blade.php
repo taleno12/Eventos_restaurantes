@@ -16,7 +16,7 @@
         <div style="font-size:17px;font-weight:800;color:var(--text);">{{ $restaurante->nombre }}</div>
         <div style="font-size:12px;color:var(--muted);">{{ auth()->user()->email }}</div>
     </div>
-    <span style="margin-left:auto;background:#fff7ed;border:1px solid #fed7aa;color:#c2410c;font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:5px 12px;border-radius:999px;">
+    <span style="margin-left:auto;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:5px 12px;border-radius:999px;">
         Restaurante
     </span>
 </div>
@@ -32,7 +32,7 @@
 {{-- Stats --}}
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px;">
     <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-        <div class="metric-icon orange"><i class="bi bi-calendar-check-fill"></i></div>
+        <div class="metric-icon blue"><i class="bi bi-calendar-check-fill"></i></div>
         <div>
             <div class="metric-value">{{ $totalEventos }}</div>
             <div class="metric-label">Eventos totales</div>
@@ -46,7 +46,7 @@
         </div>
     </div>
     <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-        <div class="metric-icon purple"><i class="bi bi-images"></i></div>
+        <div class="metric-icon blue"><i class="bi bi-images"></i></div>
         <div>
             <div class="metric-value">{{ $restaurante->imagenes?->count() ?? 0 }}</div>
             <div class="metric-label">Fotos en galería</div>
@@ -59,36 +59,36 @@
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:28px;">
     <a href="{{ route('restaurante.eventos.create') }}"
        style="background:white;border:1px solid var(--card-border);border-radius:12px;padding:16px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:flex-start;gap:10px;transition:all 0.2s;font-weight:700;font-size:13px;"
-       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#fff7ed'"
+       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#eff6ff'"
        onmouseout="this.style.borderColor='var(--card-border)';this.style.background='white'">
-        <div style="width:34px;height:34px;background:#fff7ed;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
+        <div style="width:34px;height:34px;background:#eff6ff;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
             <i class="bi bi-plus-circle-fill"></i>
         </div>
         Nuevo evento
     </a>
     <a href="{{ route('restaurante.empleos.create') }}"
        style="background:white;border:1px solid var(--card-border);border-radius:12px;padding:16px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:flex-start;gap:10px;transition:all 0.2s;font-weight:700;font-size:13px;"
-       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#fff7ed'"
+       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#eff6ff'"
        onmouseout="this.style.borderColor='var(--card-border)';this.style.background='white'">
-        <div style="width:34px;height:34px;background:#fff7ed;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
+        <div style="width:34px;height:34px;background:#eff6ff;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
             <i class="bi bi-plus-circle-fill"></i>
         </div>
         Nueva oferta
     </a>
     <a href="{{ route('restaurante.galeria.index') }}"
        style="background:white;border:1px solid var(--card-border);border-radius:12px;padding:16px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:flex-start;gap:10px;transition:all 0.2s;font-weight:700;font-size:13px;"
-       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#fff7ed'"
+       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#eff6ff'"
        onmouseout="this.style.borderColor='var(--card-border)';this.style.background='white'">
-        <div style="width:34px;height:34px;background:#fff7ed;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
+        <div style="width:34px;height:34px;background:#eff6ff;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
             <i class="bi bi-camera-fill"></i>
         </div>
         Subir fotos
     </a>
     <a href="{{ route('restaurante.perfil.edit') }}"
        style="background:white;border:1px solid var(--card-border);border-radius:12px;padding:16px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;align-items:flex-start;gap:10px;transition:all 0.2s;font-weight:700;font-size:13px;"
-       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#fff7ed'"
+       onmouseover="this.style.borderColor='var(--primary)';this.style.background='#eff6ff'"
        onmouseout="this.style.borderColor='var(--card-border)';this.style.background='white'">
-        <div style="width:34px;height:34px;background:#fff7ed;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
+        <div style="width:34px;height:34px;background:#eff6ff;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:15px;">
             <i class="bi bi-pencil-fill"></i>
         </div>
         Editar perfil
@@ -101,7 +101,7 @@
 @forelse($eventosProximos as $evento)
     <div style="background:white;border:1px solid var(--card-border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;transition:border-color 0.2s;"
          onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--card-border)'">
-        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:50px;">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:50px;">
             <div style="font-size:20px;font-weight:800;color:var(--primary);line-height:1;">{{ \Carbon\Carbon::parse($evento->fecha_evento)->format('d') }}</div>
             <div style="font-size:10px;color:var(--muted);text-transform:uppercase;">{{ \Carbon\Carbon::parse($evento->fecha_evento)->translatedFormat('M') }}</div>
         </div>

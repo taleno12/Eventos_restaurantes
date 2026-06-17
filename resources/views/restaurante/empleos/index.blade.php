@@ -76,7 +76,7 @@
                             <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Salario</th>
                             <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Fecha límite</th>
                             <th class="py-3 text-secondary border-0 text-center" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Estado</th>
-                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;width:120px;">Acciones</th>
+                            <th class="text-end pe-4 py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;width:140px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="border-top-0">
@@ -145,10 +145,25 @@
                             {{-- Acciones --}}
                             <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end align-items-center gap-2">
+
+                                    {{-- Solicitudes --}}
+                                    @php $nuevas = $empleo->solicitudes()->where('estado', 'nueva')->count(); @endphp
+                                    <a href="{{ route('restaurante.solicitudes.index', $empleo) }}"
+                                       class="text-secondary p-1 action-icon-solicitudes position-relative" title="Ver solicitudes">
+                                        <i class="bi bi-people fs-5"></i>
+                                        @if($nuevas > 0)
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                                  style="font-size:0.6rem;">{{ $nuevas }}</span>
+                                        @endif
+                                    </a>
+
+                                    {{-- Editar --}}
                                     <a href="{{ route('restaurante.empleos.edit', $empleo) }}"
                                        class="text-secondary p-1 action-icon-edit" title="Editar">
                                         <i class="bi bi-pencil fs-5"></i>
                                     </a>
+
+                                    {{-- Eliminar --}}
                                     <form method="POST" action="{{ route('restaurante.empleos.destroy', $empleo) }}"
                                           class="d-inline m-0"
                                           onsubmit="return confirm('¿Eliminar esta oferta?')">
@@ -187,9 +202,10 @@
 </div>
 
 <style>
-    .action-icon-edit:hover   { color: #ffc107 !important; }
-    .action-icon-delete:hover { color: #dc3545 !important; }
-    .table-hover tbody tr:hover { background-color: #f8fafc !important; }
+    .action-icon-solicitudes:hover { color: #2563eb !important; }
+    .action-icon-edit:hover        { color: #ffc107 !important; }
+    .action-icon-delete:hover      { color: #dc3545 !important; }
+    .table-hover tbody tr:hover    { background-color: #f8fafc !important; }
 </style>
 
 @endsection

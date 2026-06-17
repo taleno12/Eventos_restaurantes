@@ -2,21 +2,17 @@
 @section('title', 'Mi Perfil')
 
 @section('content')
+
+{{-- Leaflet CSS --}}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
 <div class="page-header">
     <div>
         <div class="page-title">Mi Perfil</div>
         <div class="page-sub">Información pública de {{ $restaurante->nombre }}</div>
     </div>
-    <a href="{{ route('restaurantes.show', $restaurante) }}" target="_blank" class="btn-secondary-panel">
-        <i class="bi bi-box-arrow-up-right"></i> Ver página pública
-    </a>
 </div>
 
-@if(session('success'))
-    <div class="panel-alert panel-alert-success">
-        <i class="bi bi-check-circle-fill fs-5"></i> {{ session('success') }}
-    </div>
-@endif
 @if($errors->any())
     <div class="panel-alert panel-alert-error">
         <i class="bi bi-exclamation-circle-fill fs-5"></i>
@@ -76,9 +72,12 @@
 
             {{-- Ubicación --}}
             <div class="panel-card">
-                <div class="card-header">Ubicación</div>
-                <div class="card-body" style="display:flex;flex-direction:column;gap:14px;">
+                <div class="card-header">
+                    <i class="bi bi-geo-alt-fill me-1" style="color:var(--primary);"></i> Ubicación
+                </div>
+                <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
 
+                    {{-- Departamento / Municipio --}}
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
                             <label class="form-label fw-semibold" style="font-size:13px;">Departamento *</label>
@@ -104,30 +103,73 @@
                         </div>
                     </div>
 
+                    {{-- Buscador de dirección --}}
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">Dirección exacta <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
-                        <input type="text" name="direccion" class="form-control"
-                               placeholder="Ej: De la Iglesia 2 cuadras al norte, casa esquinera"
-                               value="{{ old('direccion', $restaurante->direccion) }}">
+                        <label class="form-label fw-semibold" style="font-size:13px;">Buscar Dirección en el mapa</label>
+                        <div class="d-flex gap-2">
+                            <div class="input-group flex-1">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" id="direccion-buscar"
+                                       placeholder="Ej: Restaurante La Terraza, Masaya, Nicaragua"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                            <button type="button" id="btn-buscar-mapa"
+                                    class="btn btn-warning fw-semibold px-3 text-dark" style="white-space:nowrap;">
+                                <i class="bi bi-search me-1"></i> Buscar
+                            </button>
+                        </div>
+                        <p class="small text-muted mt-1 mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Si no encuentra la dirección exacta, haz clic directamente en el mapa para colocar el pin.
+                        </p>
                     </div>
 
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-                        <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Latitud <span style="color:var(--muted);font-weight:400;">(GPS)</span></label>
-                            <input type="number" name="latitud" class="form-control"
-                                   step="any" placeholder="Ej: 11.9789"
-                                   value="{{ old('latitud', $restaurante->latitud) }}">
-                        </div>
-                        <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Longitud <span style="color:var(--muted);font-weight:400;">(GPS)</span></label>
-                            <input type="number" name="longitud" class="form-control"
-                                   step="any" placeholder="Ej: -86.0937"
-                                   value="{{ old('longitud', $restaurante->longitud) }}">
+                    {{-- Dirección exacta --}}
+                    <div>
+                        <label class="form-label fw-semibold" style="font-size:13px;">
+                            Dirección exacta
+                            <span style="color:var(--muted);font-weight:400;">(se actualiza al hacer clic en el mapa)</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0" style="color:#f97316;"><i class="bi bi-pin-map-fill"></i></span>
+                            <input type="text" name="direccion" id="direccion"
+                                   value="{{ old('direccion', $restaurante->direccion) }}"
+                                   placeholder="La dirección aparecerá aquí..."
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
                         </div>
                     </div>
-                    <p style="font-size:11px;color:var(--muted);">
-                        <i class="bi bi-info-circle"></i>
-                        Para obtener coordenadas: busca tu local en Google Maps → clic derecho → copia las coordenadas.
+
+                    {{-- Coordenadas --}}
+                    <div>
+                        <label class="form-label fw-semibold" style="font-size:13px;">
+                            Coordenadas
+                            <span style="color:var(--muted);font-weight:400;">(latitud, longitud — o haz clic en el mapa)</span>
+                        </label>
+                        <div class="d-flex gap-2 align-items-start">
+                            <div class="input-group flex-1">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-compass"></i></span>
+                                <input type="text" id="coordenadas-input"
+                                       placeholder="Ej: 12.865400, -85.207200"
+                                       value="{{ old('latitud', $restaurante->latitud) && old('longitud', $restaurante->longitud) ? old('latitud', $restaurante->latitud) . ', ' . old('longitud', $restaurante->longitud) : (($restaurante->latitud && $restaurante->longitud) ? $restaurante->latitud . ', ' . $restaurante->longitud : '') }}"
+                                       class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                            </div>
+                            <button type="button" id="btn-ir-coordenadas"
+                                    class="btn btn-outline-warning fw-semibold text-dark" style="white-space:nowrap;">
+                                <i class="bi bi-crosshair me-1"></i> Ir
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Campos ocultos --}}
+                    <input type="hidden" id="latitud"  name="latitud"  value="{{ old('latitud', $restaurante->latitud) }}">
+                    <input type="hidden" id="longitud" name="longitud" value="{{ old('longitud', $restaurante->longitud) }}">
+
+                    {{-- Mapa --}}
+                    <div id="mapa-restaurante" class="w-100 rounded-3 border shadow-sm" style="height:320px;"></div>
+
+                    <p id="mapa-coords-info" class="small text-muted mb-0 d-none">
+                        <i class="bi bi-crosshair text-warning me-1"></i>
+                        Coordenadas guardadas: <span id="coords-display" class="font-monospace text-dark ms-1"></span>
                     </p>
 
                 </div>
@@ -273,8 +315,9 @@
 @endsection
 
 @section('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// Preview portada
+// ── Preview portada ──
 document.getElementById('portada-input').addEventListener('change', function () {
     const file = this.files[0];
     if (!file) return;
@@ -288,7 +331,7 @@ document.getElementById('portada-input').addEventListener('change', function () 
     reader.readAsDataURL(file);
 });
 
-// Municipios dinámicos
+// ── Municipios dinámicos ──
 const selectDep = document.getElementById('select-dep');
 const selectMun = document.getElementById('select-mun');
 const currentMun = {{ $restaurante->municipio_id ?? 'null' }};
@@ -309,5 +352,172 @@ selectDep.addEventListener('change', function () {
             });
         });
 });
+
+// ── Mapa interactivo ──
+(function () {
+    const defaultLat = 12.8654;
+    const defaultLng = -85.2072;
+
+    const savedLat = document.getElementById('latitud').value;
+    const savedLng = document.getElementById('longitud').value;
+
+    const initLat  = savedLat ? parseFloat(savedLat) : defaultLat;
+    const initLng  = savedLng ? parseFloat(savedLng) : defaultLng;
+    const initZoom = savedLat ? 16 : 7;
+
+    const mapa = L.map('mapa-restaurante').setView([initLat, initLng], initZoom);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mapa);
+
+    const iconoNaranja = L.divIcon({
+        html: '<div style="background:#ffc107;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 20],
+        className: ''
+    });
+
+    let marker = null;
+
+    if (savedLat && savedLng) {
+        marker = L.marker([initLat, initLng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+        actualizarInfo(initLat, initLng);
+        marker.on('dragend', function () {
+            const pos = marker.getLatLng();
+            actualizarCoordenadas(pos.lat, pos.lng);
+            geocodeInverso(pos.lat, pos.lng);
+        });
+    }
+
+    mapa.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+            marker.on('dragend', function () {
+                const pos = marker.getLatLng();
+                actualizarCoordenadas(pos.lat, pos.lng);
+                geocodeInverso(pos.lat, pos.lng);
+            });
+        }
+        actualizarCoordenadas(lat, lng);
+        geocodeInverso(lat, lng);
+    });
+
+    // Buscar dirección
+    document.getElementById('btn-buscar-mapa').addEventListener('click', buscarDireccion);
+    document.getElementById('direccion-buscar').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); buscarDireccion(); }
+    });
+
+    // Ir a coordenadas
+    document.getElementById('btn-ir-coordenadas').addEventListener('click', irACoordenadas);
+    document.getElementById('coordenadas-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); irACoordenadas(); }
+    });
+
+    function irACoordenadas() {
+        const valor = document.getElementById('coordenadas-input').value.trim();
+        const partes = valor.split(',');
+        if (partes.length !== 2) {
+            alert('Ingresa las coordenadas en formato: latitud, longitud\nEj: 12.865400, -85.207200');
+            return;
+        }
+        const lat = parseFloat(partes[0].trim());
+        const lng = parseFloat(partes[1].trim());
+        if (isNaN(lat) || isNaN(lng)) {
+            alert('Coordenadas inválidas. Ejemplo: 12.865400, -85.207200');
+            return;
+        }
+        mapa.setView([lat, lng], 17);
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+            marker.on('dragend', function () {
+                const pos = marker.getLatLng();
+                actualizarCoordenadas(pos.lat, pos.lng);
+                geocodeInverso(pos.lat, pos.lng);
+            });
+        }
+        actualizarCoordenadas(lat, lng);
+        geocodeInverso(lat, lng);
+    }
+
+    function buscarDireccion() {
+        const query = document.getElementById('direccion-buscar').value.trim();
+        if (!query) return;
+
+        const btn = document.getElementById('btn-buscar-mapa');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
+        btn.disabled = true;
+
+        const queryFinal = query.toLowerCase().includes('nicaragua') ? query : query + ', Nicaragua';
+
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryFinal)}&limit=1&countrycodes=ni`, {
+            headers: { 'Accept-Language': 'es' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+            btn.disabled = false;
+
+            if (data.length === 0) {
+                alert('No se encontró esa dirección. Intenta ser más específico o haz clic directamente en el mapa.');
+                return;
+            }
+
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            mapa.setView([lat, lng], 17);
+
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { icon: iconoNaranja, draggable: true }).addTo(mapa);
+                marker.on('dragend', function () {
+                    const pos = marker.getLatLng();
+                    actualizarCoordenadas(pos.lat, pos.lng);
+                    geocodeInverso(pos.lat, pos.lng);
+                });
+            }
+
+            actualizarCoordenadas(lat, lng);
+            document.getElementById('direccion').value = data[0].display_name;
+        })
+        .catch(() => {
+            btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar';
+            btn.disabled = false;
+            alert('Error al buscar. Verifica tu conexión e intenta de nuevo.');
+        });
+    }
+
+    function geocodeInverso(lat, lng) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`, {
+            headers: { 'Accept-Language': 'es' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.display_name) {
+                document.getElementById('direccion').value = data.display_name;
+            }
+        })
+        .catch(() => {});
+    }
+
+    function actualizarCoordenadas(lat, lng) {
+        document.getElementById('latitud').value  = lat.toFixed(7);
+        document.getElementById('longitud').value = lng.toFixed(7);
+        document.getElementById('coordenadas-input').value = `${lat.toFixed(7)}, ${lng.toFixed(7)}`;
+        actualizarInfo(lat, lng);
+    }
+
+    function actualizarInfo(lat, lng) {
+        document.getElementById('mapa-coords-info').classList.remove('d-none');
+        document.getElementById('coords-display').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+})();
 </script>
 @endsection

@@ -309,15 +309,15 @@
         .hor-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); display: flex; align-items: center; gap: 6px; }
         .hor-value { font-size: 14px; font-weight: 800; color: var(--text); }
 
-        /* CTA WhatsApp */
-        .btn-wa-cta {
+        /* CTAs de contacto */
+        .btn-tel-cta {
             display: flex; align-items: center; justify-content: center; gap: 9px;
-            width: 100%; background: #22c55e; color: white;
+            width: 100%; background: var(--blue); color: white;
             font-size: 14px; font-weight: 700; padding: 14px 20px;
             border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
             text-decoration: none; letter-spacing: 0.02em;
         }
-        .btn-wa-cta:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
+        .btn-tel-cta:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
 
         /* ══ LIGHTBOX ══ */
         #lightbox {
@@ -379,7 +379,7 @@
 <body>
 
 {{-- ══ TOPBAR ══ --}}
-<header class="topbar">
+<<header class="topbar">
     <div class="topbar-inner">
         <a href="{{ route('home') }}" class="topbar-logo">
             Gastro<span class="dot">Nicaragua</span>
@@ -694,17 +694,17 @@
                                         @endfor
                                     </div>
                                     <input type="hidden" name="rating" id="rating-input" value="">
-                                    @error('rating')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
+                                    @error('rating')<<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
                                 </div>
                                 <div style="margin-bottom:10px;">
                                     <label class="form-label">Título <span style="color:#d1d5db;font-weight:400;">(opcional)</span></label>
                                     <input type="text" name="title" value="{{ old('title') }}" class="form-input" placeholder="Ej: Excelente experiencia" maxlength="100">
-                                    @error('title')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
+                                    @error('title')<<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
                                 </div>
                                 <div style="margin-bottom:14px;">
                                     <label class="form-label">Comentario <span style="color:#d1d5db;font-weight:400;">(opcional)</span></label>
                                     <textarea name="body" rows="3" class="form-input form-textarea" placeholder="Cuéntanos tu experiencia..." maxlength="1000">{{ old('body') }}</textarea>
-                                    @error('body')<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
+                                    @error('body')<<p style="color:#dc2626;font-size:12px;margin-top:4px;">{{ $message }}</p>@enderror
                                 </div>
                                 <button type="submit" class="btn-ordenar" style="font-size:13px;padding:9px 22px;">
                                     <i class="fas fa-paper-plane" style="font-size:11px;"></i> Publicar reseña
@@ -875,19 +875,25 @@
             </div>
         </div>
 
-        {{-- CTA WhatsApp --}}
-        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $restaurante->whatsapp ?? '') }}"
-           target="_blank" class="btn-wa-cta"
-           style="{{ empty($restaurante->whatsapp) ? 'pointer-events:none;opacity:0.45;' : '' }}">
-            <i class="fab fa-whatsapp" style="font-size:18px;"></i>
-            Contactar por WhatsApp
-        </a>
+        {{-- ══ BOTONES DE CONTACTO ══ --}}
+        <div style="display:flex;flex-direction:column;gap:10px;">
+
+            {{-- Teléfono --}}
+            @if(!empty($restaurante->telefono))
+                <a href="tel:{{ preg_replace('/[^0-9+]/', '', $restaurante->telefono) }}"
+                   class="btn-tel-cta">
+                    <i class="fas fa-phone" style="font-size:16px;"></i>
+                    {{ $restaurante->telefono }}
+                </a>
+            @endif
+
+        </div>
 
     </aside>
 </div>
 
 {{-- ══ FOOTER CSS PURO (sin Tailwind) ══ --}}
-<footer style="background:#0f172a;color:#cbd5e1;border-top:1px solid #1e293b;">
+<<footer style="background:#0f172a;color:#cbd5e1;border-top:1px solid #1e293b;">
     <div style="max-width:1280px;margin:0 auto;padding:48px 1.5rem 32px;">
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:40px;">
 
@@ -1050,7 +1056,7 @@
         });
         L.marker([{{ $restaurante->latitud }}, {{ $restaurante->longitud }}], { icon: icono })
             .addTo(mapa)
-            .bindPopup(`<strong style="font-size:13px;">{{ $restaurante->nombre }}</strong><br><span style="font-size:12px;color:#6b7280;">{{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}</span>`, { maxWidth: 200 })
+            .bindPopup(`<<strong style="font-size:13px;">{{ $restaurante->nombre }}</strong><br><span style="font-size:12px;color:#6b7280;">{{ $restaurante->municipio->nombre }}, {{ $restaurante->departamento->nombre }}</span>`, { maxWidth: 200 })
             .openPopup();
     });
     @endif

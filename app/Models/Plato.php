@@ -39,6 +39,11 @@ class Plato extends Model
         return $this->hasMany(PedidoItem::class);
     }
 
+    public function opciones(): HasMany
+    {
+        return $this->hasMany(PlatoOpcion::class)->orderBy('orden');
+    }
+
     public function scopeActivos($query)
     {
         return $query->where('activo', true);

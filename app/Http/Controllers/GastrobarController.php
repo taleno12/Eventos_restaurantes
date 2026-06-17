@@ -100,6 +100,7 @@ class GastrobarController extends Controller
         $request->validate([
             'nombre'               => 'required|string|max:100',
             'email'                => 'nullable|email|max:150',
+            'telefono'             => 'nullable|string|max:50',   // ← AGREGADO
             'tipo_cocina'          => 'nullable|string|max:100',
             'tipo_bar'             => 'nullable|string|max:100',
             'descripcion'          => 'nullable|string|max:500',
@@ -123,13 +124,11 @@ class GastrobarController extends Controller
             'galeria.*'            => 'nullable|image|max:3072',
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email',
-            'propietario_password' => 'required|string|min:8|confirmed',
         ]);
 
         $data = $request->except([
             'imagen_principal', 'galeria',
             'propietario_nombre', 'propietario_email',
-            'propietario_password', 'propietario_password_confirmation',
         ]);
 
         if ($request->hasFile('imagen_principal')) {
@@ -149,10 +148,11 @@ class GastrobarController extends Controller
 
         $gastrobar = Gastrobar::create($data);
 
+        // Crear usuario propietario con acceso por Google (sin contraseña)
         User::create([
             'name'         => $request->propietario_nombre,
             'email'        => $request->propietario_email,
-            'password'     => Hash::make($request->propietario_password),
+            'password'     => Hash::make(uniqid()), // Contraseña temporal (no se usa)
             'role'         => 'gastrobar',
             'gastrobar_id' => $gastrobar->id,
         ]);
@@ -163,7 +163,7 @@ class GastrobarController extends Controller
         );
 
         return redirect()->route('admin.gastrobares.index')
-            ->with('success', 'Gastrobar y usuario propietario creados correctamente.');
+            ->with('success', 'Gastrobar y usuario propietario creados correctamente. El propietario accederá con su cuenta de Google.');
     }
 
     public function adminShow(Gastrobar $gastrobar)
@@ -202,6 +202,7 @@ class GastrobarController extends Controller
         $request->validate([
             'nombre'               => 'required|string|max:100',
             'email'                => 'nullable|email|max:150',
+            'telefono'             => 'nullable|string|max:50',   // ← AGREGADO
             'tipo_cocina'          => 'nullable|string|max:100',
             'tipo_bar'             => 'nullable|string|max:100',
             'descripcion'          => 'nullable|string|max:500',
@@ -225,13 +226,11 @@ class GastrobarController extends Controller
             'galeria.*'            => 'nullable|image|max:3072',
             'propietario_nombre'   => 'required|string|max:255',
             'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
-            'propietario_password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $data = $request->except([
             'imagen_principal', 'galeria',
             'propietario_nombre', 'propietario_email',
-            'propietario_password', 'propietario_password_confirmation',
         ]);
 
         if ($request->hasFile('imagen_principal')) {
@@ -262,9 +261,6 @@ class GastrobarController extends Controller
         if ($propietario) {
             $propietario->name  = $request->propietario_nombre;
             $propietario->email = $request->propietario_email;
-            if ($request->filled('propietario_password')) {
-                $propietario->password = Hash::make($request->propietario_password);
-            }
             $propietario->save();
         }
 

@@ -377,6 +377,12 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
             ->name('perfil.update');
         Route::resource('eventos', \App\Http\Controllers\Restaurante\RestauranteEventoController::class);
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
+
+        // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
+        Route::get('empleos/{empleo}/solicitudes',         [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'index'])->name('solicitudes.index');
+        Route::patch('solicitudes/{solicitud}/estado',     [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'updateEstado'])->name('solicitudes.estado');
+        Route::delete('solicitudes/{solicitud}',           [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
+
         Route::get('/galeria',           [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])->name('galeria.index');
         Route::post('/galeria',          [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])->name('galeria.store');
         Route::delete('/galeria/{foto}', [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'destroy'])->name('galeria.destroy');
@@ -450,8 +456,9 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
-    Route::get('/mis-pedidos',          [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
-    Route::get('/mis-pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
+    Route::get('/mis-pedidos',                        [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
+    Route::get('/mis-pedidos/{pedido}',               [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
+    Route::delete('/mis-pedidos/{pedido}',            [App\Http\Controllers\PedidoController::class, 'destroy'])->name('pedidos.destroy');
 });
 
 // ── EVENTOS PÚBLICOS ──────────────────────────────────────────────────────────

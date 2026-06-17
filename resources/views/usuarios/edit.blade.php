@@ -59,6 +59,16 @@
             'usuario'     => ['bg'=>'#f8d7da','color'=>'#842029'],
         ];
         $c = $colores[$usuario->role] ?? ['bg'=>'#e2e8f0','color'=>'#4a5568'];
+
+        // Determinar el teléfono a mostrar según el rol
+        $telefonoMostrar = null;
+        if ($usuario->role === 'restaurante' && $usuario->restaurante) {
+            $telefonoMostrar = $usuario->restaurante->telefono;
+        } elseif ($usuario->role === 'gastrobar' && $usuario->gastrobar) {
+            $telefonoMostrar = $usuario->gastrobar->telefono;
+        } else {
+            $telefonoMostrar = $usuario->telefono;
+        }
     @endphp
 
     <div class="row g-4">
@@ -142,15 +152,32 @@
                                 @enderror
                             </div>
                             <div class="col-12 col-sm-6">
-                                <label class="form-label fw-semibold small">Teléfono</label>
+                                <label class="form-label fw-semibold small">
+                                    @if($usuario->role === 'restaurante' || $usuario->role === 'gastrobar')
+                                        Teléfono del {{ $usuario->role === 'restaurante' ? 'Restaurante' : 'Gastrobar' }}
+                                        <span class="text-muted fw-normal">(desde el panel de {{ $usuario->role }})</span>
+                                    @else
+                                        Teléfono
+                                    @endif
+                                </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
-                                    <input type="text" name="telefono" value="{{ old('telefono', $usuario->telefono) }}"
+                                    <input type="text" name="telefono" value="{{ old('telefono', $telefonoMostrar) }}"
                                            class="form-control border-start-0 @error('telefono') is-invalid @enderror"
                                            placeholder="Ej: 8888-8888"
                                            autocomplete="off"
-                                           style="box-shadow:none;">
+                                           style="box-shadow:none;"
+                                           @if($usuario->role === 'restaurante' || $usuario->role === 'gastrobar') readonly @endif>
                                 </div>
+                                @if($usuario->role === 'restaurante' || $usuario->role === 'gastrobar')
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Edita el teléfono desde
+                                        <a href="{{ $usuario->role === 'restaurante' ? route('admin.restaurantes.edit', $usuario->restaurante_id) : route('admin.gastrobares.edit', $usuario->gastrobar_id) }}" class="text-warning fw-semibold">
+                                            el panel de {{ $usuario->role }}
+                                        </a>
+                                    </small>
+                                @endif
                                 @error('telefono')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror

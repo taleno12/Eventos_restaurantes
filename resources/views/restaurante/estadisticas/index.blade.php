@@ -16,21 +16,21 @@
 {{-- Stats rápidas --}}
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
     <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-        <div class="metric-icon orange"><i class="bi bi-bag-check-fill"></i></div>
+        <div class="metric-icon" style="background:#fff7ed;color:#ea580c;"><i class="bi bi-bag-check-fill"></i></div>
         <div>
             <div class="metric-value">{{ $totalPedidos }}</div>
             <div class="metric-label">Pedidos completados</div>
         </div>
     </div>
     <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-        <div class="metric-icon green"><i class="bi bi-currency-dollar"></i></div>
+        <div class="metric-icon" style="background:#f0fdf4;color:#16a34a;"><i class="bi bi-currency-dollar"></i></div>
         <div>
             <div class="metric-value" style="font-size:20px;">C$ {{ number_format($totalIngresos, 0) }}</div>
             <div class="metric-label">Ingresos totales</div>
         </div>
     </div>
     <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-        <div class="metric-icon blue"><i class="bi bi-egg-fried"></i></div>
+        <div class="metric-icon" style="background:#eff6ff;color:#2563eb;"><i class="bi bi-egg-fried"></i></div>
         <div>
             <div class="metric-value">{{ $totalPlatos }}</div>
             <div class="metric-label">Platillos vendidos</div>
@@ -126,7 +126,7 @@
                     <td style="text-align:right;">
                         <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
                             <div style="width:80px;height:6px;background:#f0f1f4;border-radius:999px;overflow:hidden;">
-                                <div style="height:100%;width:{{ $porcentaje }}%;background:var(--primary);border-radius:999px;transition:width 1s ease;"></div>
+                                <div style="height:100%;width:{{ $porcentaje }}%;background:#2563eb;border-radius:999px;transition:width 1s ease;"></div>
                             </div>
                             <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:36px;">{{ $porcentaje }}%</span>
                         </div>
@@ -151,8 +151,8 @@
     const vendidos = @json($cantidadesPlatos);
 
     const colores = [
-        '#f97316', '#fb923c', '#fdba74', '#fcd34d', '#86efac',
-        '#67e8f9', '#93c5fd', '#c4b5fd', '#f9a8d4', '#d1d5db'
+        '#ea580c', '#16a34a', '#2563eb', '#9333ea', '#db2777',
+        '#0891b2', '#ca8a04', '#dc2626', '#059669', '#4f46e5'
     ];
 
     new Chart(document.getElementById('chart-barras'), {

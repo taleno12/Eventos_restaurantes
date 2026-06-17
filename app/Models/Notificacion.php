@@ -17,6 +17,10 @@ class Notificacion extends Model
         'pago_id',
         'leida',
         'fecha_evento',
+        'user_id',
+        'icono',
+        'color',
+        'url',
     ];
 
     protected $casts = [
@@ -36,12 +40,23 @@ class Notificacion extends Model
         return $this->belongsTo(Pago::class);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     // ── SCOPES ────────────────────────────────────────────────────
 
     public function scopeNoLeidas($query)
     {
         return $query->where('leida', false);
     }
+
+    public function scopeDelUsuario($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
 
     // ── HELPERS ───────────────────────────────────────────────────
 

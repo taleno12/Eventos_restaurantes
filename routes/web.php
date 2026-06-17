@@ -424,6 +424,12 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
                 'restaurante' => \Illuminate\Support\Facades\Auth::user()->restaurante,
             ]);
         })->name('info.index');
+
+        //rutas del pago creo
+        Route::get('/notificaciones', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'index'])->name('notificaciones.index');
+        Route::post('/notificaciones/{notificacion}/leer', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'marcarLeida'])->name('notificaciones.leer');
+        Route::post('/notificaciones/leer-todas', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.leer-todas');
+        Route::get('/notificaciones-count', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'contarNoLeidas'])->name('notificaciones.count');
     });
 
 // ── PANEL DEL GASTROBAR ───────────────────────────────────────────────────────

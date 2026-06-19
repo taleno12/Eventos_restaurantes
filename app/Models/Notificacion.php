@@ -69,12 +69,16 @@ class Notificacion extends Model
             'contrato_por_vencer' => 'bi-hourglass-split',
             'contrato_vencido'    => 'bi-exclamation-triangle-fill',
             'pago_pendiente'      => 'bi-cash-coin',
+            'mensaje_admin'       => 'bi-megaphone-fill',
             default               => 'bi-bell',
         };
     }
 
     /**
      * Color (clase Bootstrap) según el tipo de notificación.
+     * Nota: 'warning' se usa para mensaje_admin porque funciona bien
+     * tanto en la vista admin (clases Bootstrap) como en la vista del
+     * restaurante (cae al estilo naranja por defecto).
      */
     public function getColorAttribute(): string
     {
@@ -82,6 +86,7 @@ class Notificacion extends Model
             'contrato_por_vencer' => 'warning',
             'contrato_vencido'    => 'danger',
             'pago_pendiente'      => 'info',
+            'mensaje_admin'       => 'warning',
             default               => 'secondary',
         };
     }

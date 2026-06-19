@@ -48,7 +48,6 @@ class PagoController extends Controller
                                 ->latest()
                                 ->get();
 
-        // Departamentos para el filtro en cascada del modal "Registrar Pago"
         $departamentos = Departamento::orderBy('nombre')->get();
 
         $totalRecaudado  = Pago::pagados()->sum('monto');
@@ -73,7 +72,6 @@ class PagoController extends Controller
     }
 
     // ── AJAX: MUNICIPIOS POR DEPARTAMENTO ──────────────────────────
-    // GET /pagos/ajax/municipios/{departamento}
 
     public function municipiosPorDepartamento(Departamento $departamento)
     {
@@ -85,7 +83,6 @@ class PagoController extends Controller
     }
 
     // ── AJAX: CONTRATOS POR MUNICIPIO ───────────────────────────────
-    // GET /pagos/ajax/contratos?municipio_id=##
 
     public function contratosPorMunicipio(Request $request)
     {
@@ -139,6 +136,23 @@ class PagoController extends Controller
 
         Pago::create($validated);
 
+        // ── Actualizar membresia_vence_en en el restaurante o gastrobar ──
+        if ($validated['estado'] === 'pagado' && !empty($validated['periodo_fin'])) {
+            $contrato = Contrato::with(['restaurante', 'gastrobar'])->find($validated['contrato_id']);
+
+            if ($contrato->restaurante_id && $contrato->restaurante) {
+                $contrato->restaurante->update([
+                    'membresia_vence_en' => $validated['periodo_fin'],
+                    'membresia_plan'     => $contrato->plan,
+                ]);
+            } elseif ($contrato->gastrobar_id && $contrato->gastrobar) {
+                $contrato->gastrobar->update([
+                    'membresia_vence_en' => $validated['periodo_fin'],
+                    'membresia_plan'     => $contrato->plan,
+                ]);
+            }
+        }
+
         return redirect()->route('pagos.index')
                          ->with('success', 'Pago registrado correctamente.');
     }
@@ -171,6 +185,23 @@ class PagoController extends Controller
         ]);
 
         $pago->update(['estado' => $request->estado]);
+
+        // ── Si se confirma el pago, actualizar membresia_vence_en ──
+        if ($request->estado === 'pagado' && $pago->periodo_fin) {
+            $contrato = $pago->contrato()->with(['restaurante', 'gastrobar'])->first();
+
+            if ($contrato->restaurante_id && $contrato->restaurante) {
+                $contrato->restaurante->update([
+                    'membresia_vence_en' => $pago->periodo_fin,
+                    'membresia_plan'     => $contrato->plan,
+                ]);
+            } elseif ($contrato->gastrobar_id && $contrato->gastrobar) {
+                $contrato->gastrobar->update([
+                    'membresia_vence_en' => $pago->periodo_fin,
+                    'membresia_plan'     => $contrato->plan,
+                ]);
+            }
+        }
 
         return back()->with('success', 'Estado del pago actualizado.');
     }

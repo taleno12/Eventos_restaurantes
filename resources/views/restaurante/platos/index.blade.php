@@ -2,15 +2,15 @@
 @section('title', 'Menú')
 
 @section('content')
-<div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<div class="container-fluid px-4 py-4">
 
-    {{-- ── Encabezado ── --}}
+    {{-- Encabezado --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
+            <h1 class="h3 mb-1 fw-bold" style="color:var(--text);">
                 <i class="bi bi-egg-fried text-primary me-2"></i> Menú
             </h1>
-            <p class="text-muted mb-0 small">
+            <p class="mb-0 small" style="color:var(--muted);">
                 <i class="bi bi-circle-fill text-secondary me-1" style="font-size:6px;vertical-align:middle;"></i>
                 Platos de {{ $restaurante->nombre }}
             </p>
@@ -18,7 +18,7 @@
         <div class="d-flex align-items-center gap-2">
             <a href="{{ route('restaurante.categorias.index') }}"
                class="btn btn-light border fw-semibold rounded-pill px-3"
-               style="font-size:13px;">
+               style="font-size:13px;background:var(--card-bg);color:var(--text);border-color:var(--card-border) !important;">
                 <i class="bi bi-tags me-1 text-primary"></i> Categorías
             </a>
             <a href="{{ route('restaurante.platos.create') }}" class="btn btn-primary px-4 rounded-pill shadow-sm fw-semibold">
@@ -27,24 +27,24 @@
         </div>
     </div>
 
-    {{-- ── Barra de filtros ── --}}
+    {{-- Barra de filtros --}}
     @if(!$platos->isEmpty() || (isset($categorias) && $categorias->isNotEmpty()))
-    <div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card border-0 shadow-sm rounded-3 mb-4" style="background:var(--card-bg) !important;">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
 
-                {{-- Buscador por nombre --}}
+                {{-- Buscador --}}
                 <div class="col-12 col-md-4">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-search me-1"></i> Buscar
                     </label>
                     <input type="text" id="filtro-nombre" class="form-control form-control-sm rounded-pill"
                            placeholder="Nombre del plato...">
                 </div>
 
-                {{-- Filtro por categoría --}}
+                {{-- Categoría --}}
                 <div class="col-12 col-md-3">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-tag me-1"></i> Categoría
                     </label>
                     <select id="filtro-categoria" class="form-select form-select-sm rounded-pill">
@@ -58,18 +58,18 @@
                     </select>
                 </div>
 
-                {{-- Filtro por precio máximo --}}
+                {{-- Precio --}}
                 <div class="col-12 col-md-3">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-currency-dollar me-1"></i> Precio máx. (C$)
                     </label>
                     <input type="number" id="filtro-precio" class="form-control form-control-sm rounded-pill"
                            placeholder="Ej: 150" min="0" step="1">
                 </div>
 
-                {{-- Filtro estado --}}
+                {{-- Estado --}}
                 <div class="col-12 col-md-2">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-toggle-on me-1"></i> Estado
                     </label>
                     <select id="filtro-estado" class="form-select form-select-sm rounded-pill">
@@ -81,10 +81,10 @@
 
             </div>
 
-            {{-- Contador resultados --}}
+            {{-- Contador --}}
             <div class="mt-2 d-flex align-items-center justify-content-between">
-                <span id="contador-resultados" class="text-muted" style="font-size:11px;"></span>
-                <button id="btn-limpiar" class="btn btn-link btn-sm text-muted p-0" style="font-size:11px;display:none;">
+                <span id="contador-resultados" style="font-size:11px;color:var(--muted);"></span>
+                <button id="btn-limpiar" class="btn btn-link btn-sm p-0" style="font-size:11px;display:none;color:var(--muted);">
                     <i class="bi bi-x-circle me-1"></i> Limpiar filtros
                 </button>
             </div>
@@ -94,10 +94,10 @@
 
     {{-- Estado vacío total --}}
     @if($platos->isEmpty())
-    <div class="card border-0 shadow-sm rounded-3 bg-white">
-        <div class="card-body text-center text-muted py-5">
-            <i class="bi bi-egg-fried d-block display-6 text-muted mb-3"></i>
-            <span class="fs-6 d-block mb-2">No tienes platos en tu menú aún.</span>
+    <div class="card border-0 shadow-sm rounded-3" style="background:var(--card-bg) !important;">
+        <div class="card-body text-center py-5" style="color:var(--muted);">
+            <i class="bi bi-egg-fried d-block display-6 mb-3" style="opacity:0.4;"></i>
+            <span class="fs-6 d-block mb-2" style="color:var(--text);">No tienes platos en tu menú aún.</span>
             <a href="{{ route('restaurante.platos.create') }}" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold">
                 <i class="bi bi-plus-lg me-1"></i> Añadir primer plato
             </a>
@@ -107,10 +107,10 @@
     @else
 
     {{-- Estado vacío de filtros --}}
-    <div id="sin-resultados" class="card border-0 shadow-sm rounded-3 bg-white" style="display:none;">
-        <div class="card-body text-center text-muted py-5">
-            <i class="bi bi-search d-block display-6 text-muted mb-3"></i>
-            <span class="fs-6 d-block mb-2">Ningún plato coincide con los filtros.</span>
+    <div id="sin-resultados" class="card border-0 shadow-sm rounded-3" style="display:none;background:var(--card-bg) !important;">
+        <div class="card-body text-center py-5" style="color:var(--muted);">
+            <i class="bi bi-search d-block display-6 mb-3" style="opacity:0.4;"></i>
+            <span class="fs-6 d-block mb-2" style="color:var(--text);">Ningún plato coincide con los filtros.</span>
             <button id="btn-limpiar-2" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
                 <i class="bi bi-x-circle me-1"></i> Limpiar filtros
             </button>
@@ -125,8 +125,8 @@
             <span class="fw-black text-primary text-uppercase" style="font-size:11px;letter-spacing:0.18em;">
                 {{ $categoria ?: 'Sin categoría' }}
             </span>
-            <div class="flex-grow-1" style="height:1px;background:#e2e8f0;"></div>
-            <span class="text-muted contador-cat" style="font-size:11px;">
+            <div class="flex-grow-1" style="height:1px;background:var(--card-border);"></div>
+            <span class="contador-cat" style="font-size:11px;color:var(--muted);">
                 {{ $items->count() }} plato{{ $items->count() !== 1 ? 's' : '' }}
             </span>
         </div>
@@ -139,28 +139,28 @@
                  data-categoria="{{ $categoria }}"
                  data-precio="{{ $plato->precio }}"
                  data-activo="{{ $plato->activo ? '1' : '0' }}">
-                <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 card-plato">
+                <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 card-plato" style="background:var(--card-bg) !important;">
                     {{-- Imagen --}}
-                    <div class="position-relative" style="aspect-ratio:16/9;overflow:hidden;background:#f1f5f9;">
+                    <div class="position-relative" style="aspect-ratio:16/9;overflow:hidden;background:var(--hover-bg);">
                         @if($plato->imagen)
                             <img src="{{ asset('storage/'.$plato->imagen) }}"
                                  class="w-100 h-100" style="object-fit:cover;">
                         @else
                             <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-                                <i class="bi bi-egg-fried text-muted" style="font-size:32px;"></i>
+                                <i class="bi bi-egg-fried" style="font-size:32px;color:var(--muted);"></i>
                             </div>
                         @endif
-                        {{-- Badge activo/inactivo --}}
+                        {{-- Badge --}}
                         <div class="position-absolute top-0 end-0 p-2">
                             @if($plato->activo)
                                 <span class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-1"
-                                      style="background-color:#e6fffa;color:#047481;border:1px solid #b2f5ea;font-size:0.7rem;">
-                                    <span class="bg-success rounded-circle" style="width:5px;height:5px;"></span> Activo
+                                      style="background-color:rgba(22,163,74,0.1);color:#22c55e;border:1px solid rgba(22,163,74,0.2);font-size:0.7rem;">
+                                    <span class="rounded-circle" style="width:5px;height:5px;background:#22c55e;"></span> Activo
                                 </span>
                             @else
-                                <span class="badge rounded-pill bg-danger fw-semibold d-inline-flex align-items-center gap-1"
-                                      style="font-size:0.7rem;">
-                                    <span class="rounded-circle bg-white" style="width:5px;height:5px;opacity:0.7;"></span> Inactivo
+                                <span class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-1"
+                                      style="font-size:0.7rem;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);">
+                                    <span class="rounded-circle" style="width:5px;height:5px;background:#ef4444;"></span> Inactivo
                                 </span>
                             @endif
                         </div>
@@ -169,23 +169,23 @@
                     {{-- Info --}}
                     <div class="card-body pb-2">
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
-                            <span class="fw-bold text-dark" style="font-size:14px;">{{ $plato->nombre }}</span>
-                            <span class="text-primary fw-black text-nowrap" style="font-size:15px;">
+                            <span class="fw-bold" style="font-size:14px;color:var(--text);">{{ $plato->nombre }}</span>
+                            <span class="fw-black text-nowrap" style="font-size:15px;color:var(--primary);">
                                 C$ {{ number_format($plato->precio, 0) }}
                             </span>
                         </div>
                         @if($plato->descripcion)
-                            <p class="text-muted mb-0" style="font-size:12px;line-height:1.5;">
+                            <p class="mb-0" style="font-size:12px;line-height:1.5;color:var(--muted);">
                                 {{ Str::limit($plato->descripcion, 70) }}
                             </p>
                         @endif
                     </div>
 
                     {{-- Acciones --}}
-                    <div class="card-footer bg-white border-top d-flex gap-2 px-3 py-2">
+                    <div class="card-footer border-top d-flex gap-2 px-3 py-2" style="background:var(--card-bg) !important;border-color:var(--card-border) !important;">
                         <form method="POST" action="{{ route('restaurante.platos.toggle', $plato) }}" class="flex-grow-1">
                             @csrf @method('PATCH')
-                            <button type="submit" class="btn btn-light btn-sm w-100 fw-semibold" style="font-size:11px;">
+                            <button type="submit" class="btn btn-sm w-100 fw-semibold" style="font-size:11px;background:var(--hover-bg);color:var(--text);border:1px solid var(--card-border);">
                                 @if($plato->activo)
                                     <i class="bi bi-eye-slash me-1"></i> Ocultar
                                 @else
@@ -194,11 +194,11 @@
                             </button>
                         </form>
                         <a href="{{ route('restaurante.platos.edit', $plato) }}"
-                           class="btn btn-light btn-sm px-3 action-icon-edit" title="Editar">
+                           class="btn btn-sm px-3 action-icon-edit" title="Editar" style="background:var(--hover-bg);color:var(--muted);border:1px solid var(--card-border);">
                             <i class="bi bi-pencil"></i>
                         </a>
                         <button type="submit" form="form-delete-plato-{{ $plato->id }}"
-                                class="btn btn-light btn-sm px-3 action-icon-delete" title="Eliminar">
+                                class="btn btn-sm px-3 action-icon-delete" title="Eliminar" style="background:var(--hover-bg);color:var(--muted);border:1px solid var(--card-border);">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -221,7 +221,7 @@
 
 <style>
     .card-plato { transition: box-shadow 0.2s, transform 0.2s; }
-    .card-plato:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important; transform: translateY(-2px); }
+    .card-plato:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important; transform: translateY(-2px); }
     .action-icon-edit:hover   { color: #ffc107 !important; }
     .action-icon-delete:hover { color: #dc3545 !important; }
 </style>

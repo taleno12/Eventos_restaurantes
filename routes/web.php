@@ -66,8 +66,9 @@ Route::get('/restaurantes/{restaurante}',            [RestauranteController::cla
 Route::get('/restaurantes/{restaurante}/ordenar',    [RestauranteController::class, 'ordenar'])->name('restaurantes.ordenar');
 
 // ── GASTROBARES PÚBLICOS ─────────────────────────────────────────────────────
-Route::get('/gastrobares',             [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
-Route::get('/gastrobares/{gastrobar}', [GastrobarController::class, 'publicShow'])->name('gastrobares.show');
+Route::get('/gastrobares',                        [GastrobarController::class, 'publicIndex'])->name('gastrobares.index');
+Route::get('/gastrobares/{gastrobar}',            [GastrobarController::class, 'publicShow'])->name('gastrobares.show');
+Route::get('/gastrobares/{gastrobar}/ordenar',    [GastrobarController::class, 'ordenar'])->name('gastrobares.ordenar');
 
 // ── EMPLEOS PÚBLICOS ─────────────────────────────────────────────────────────
 Route::get('/empleos',                   [EmpleoController::class, 'publicIndex'])->name('empleos.index');
@@ -190,7 +191,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::delete('/evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])->name('evento.imagenes.destroy');
     });
 
-
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
     Route::resource('departamentos', DepartamentoController::class);
 
@@ -234,21 +234,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             ->name('ajax.establecimientos');
     });
 
+    // ── SOPORTE ADMIN ─────────────────────────────────────────────────────────
     Route::get('/soporte', function () {
         return view('soporte.index');
     })->name('soporte.index');
 
     Route::get('/configuracion', function () {
         return view('configuracion.index', [
-            // ── Restaurantes ──────────────────────────────────────────
             'totalRestaurantes'    => Restaurante::count(),
             'restaurantesActivos'  => Restaurante::where('activo', true)->count(),
-
-            // ── Gastrobares ───────────────────────────────────────────
             'totalGastrobares'     => Gastrobar::count(),
             'gastrobaresActivos'   => Gastrobar::where('activo', true)->count(),
-
-            // ── Contratos / Membresías ────────────────────────────────
             'contratosActivos'     => Contrato::where('estado', 'activo')->count(),
             'contratosPendientes'  => Contrato::where('estado', 'pendiente')->count(),
             'contratosVencidos'    => Contrato::where('estado', 'vencido')->count(),
@@ -257,8 +253,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
                 ->count(),
             'contratosPremium'     => Contrato::where('estado', 'activo')->where('plan', 'premium')->count(),
             'contratosBasico'      => Contrato::where('estado', 'activo')->where('plan', 'basico')->count(),
-
-            // ── Usuarios ──────────────────────────────────────────────
             'totalUsuarios'        => User::count(),
             'usuariosAdmin'        => User::where('role', 'admin')->count(),
             'usuariosRestaurante'  => User::where('role', 'restaurante')->count(),
@@ -326,6 +320,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // ── NOTIFICACIONES ────────────────────────────────────────────────────────
     Route::prefix('notificaciones')->name('notificaciones.')->group(function () {
         Route::get('/',                       [NotificacionController::class, 'index'])->name('index');
+        Route::post('/',                      [NotificacionController::class, 'store'])->name('store');
         Route::patch('/marcar-todas',         [NotificacionController::class, 'marcarTodasLeidas'])->name('marcarTodasLeidas');
         Route::patch('/{notificacion}/leer',  [NotificacionController::class, 'marcarLeida'])->name('marcarLeida');
         Route::delete('/{notificacion}',      [NotificacionController::class, 'destroy'])->name('destroy');
@@ -379,9 +374,9 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
-        Route::get('empleos/{empleo}/solicitudes',         [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'index'])->name('solicitudes.index');
-        Route::patch('solicitudes/{solicitud}/estado',     [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'updateEstado'])->name('solicitudes.estado');
-        Route::delete('solicitudes/{solicitud}',           [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
+        Route::get('empleos/{empleo}/solicitudes',     [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'index'])->name('solicitudes.index');
+        Route::patch('solicitudes/{solicitud}/estado', [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'updateEstado'])->name('solicitudes.estado');
+        Route::delete('solicitudes/{solicitud}',       [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
 
         Route::get('/galeria',           [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'index'])->name('galeria.index');
         Route::post('/galeria',          [\App\Http\Controllers\Restaurante\RestauranteGaleriaController::class, 'store'])->name('galeria.store');
@@ -412,20 +407,17 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
             return view('restaurante.soporte.index', [
                 'restaurante' => \Illuminate\Support\Facades\Auth::user()->restaurante,
             ]);
-        })->name('soporte.index');
+        })->name('soporte');
 
-        //reviews
         Route::get('/resenas', [\App\Http\Controllers\Restaurante\RestauranteReviewController::class, 'index'])
             ->name('reviews.index');
 
-        //info
         Route::get('/informacion', function () {
             return view('restaurante.info.index', [
                 'restaurante' => \Illuminate\Support\Facades\Auth::user()->restaurante,
             ]);
         })->name('info.index');
 
-        //rutas del pago creo
         Route::get('/notificaciones', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'index'])->name('notificaciones.index');
         Route::post('/notificaciones/{notificacion}/leer', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'marcarLeida'])->name('notificaciones.leer');
         Route::post('/notificaciones/leer-todas', [\App\Http\Controllers\Restaurante\RestauranteNotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.leer-todas');
@@ -452,21 +444,67 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 
         Route::resource('eventos', \App\Http\Controllers\Gastrobar\GastrobarEventoController::class);
         Route::resource('empleos', \App\Http\Controllers\Gastrobar\GastrobarEmpleoController::class);
+
+        // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
+        Route::get('empleos/{empleo}/solicitudes',     [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'index'])->name('solicitudes.index');
+        Route::patch('solicitudes/{solicitud}/estado', [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'updateEstado'])->name('solicitudes.estado');
+        Route::delete('solicitudes/{solicitud}',       [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
+
         Route::get('/galeria',           [\App\Http\Controllers\Gastrobar\GastrobarGaleriaController::class, 'index'])->name('galeria.index');
         Route::post('/galeria',          [\App\Http\Controllers\Gastrobar\GastrobarGaleriaController::class, 'store'])->name('galeria.store');
         Route::delete('/galeria/{foto}', [\App\Http\Controllers\Gastrobar\GastrobarGaleriaController::class, 'destroy'])->name('galeria.destroy');
+
+        // ── PLATOS / MENU ─────────────────────────────────────────
+        Route::resource('platos', \App\Http\Controllers\Gastrobar\GastrobarPlatoController::class);
+        Route::patch('platos/{plato}/toggle', [\App\Http\Controllers\Gastrobar\GastrobarPlatoController::class, 'toggleActivo'])
+            ->name('platos.toggle');
+
+        // ── CATEGORÍAS DE PLATOS ──────────────────────────────────
+        Route::post('categorias/reorder', [\App\Http\Controllers\Gastrobar\CategoriaController::class, 'reorder'])->name('categorias.reorder');
+        Route::resource('categorias', \App\Http\Controllers\Gastrobar\CategoriaController::class)->only(['index', 'store', 'update', 'destroy']);
+
+        // ── PEDIDOS ───────────────────────────────────────────────
+        Route::get('/pedidos',                              [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'index'])->name('pedidos.index');
+        Route::get('/pedidos/{pedidoGastrobar}',            [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'show'])->name('pedidos.show');
+        Route::patch('/pedidos/{pedidoGastrobar}/estado',   [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'cambiarEstado'])->name('pedidos.estado');
+        Route::get('/pedidos-polling',                      [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'polling'])->name('pedidos.polling');
+
         Route::get('/estadisticas', [\App\Http\Controllers\Gastrobar\GastrobarEstadisticasController::class, 'index'])
             ->name('estadisticas.index');
+
+        // ── SOPORTE ───────────────────────────────────────────────
+        Route::get('/soporte', function () {
+            return view('gastrobar.soporte.index', [
+                'gastrobar' => \Illuminate\Support\Facades\Auth::user()->gastrobar,
+            ]);
+        })->name('soporte');
+
+        // ── RESEÑAS ───────────────────────────────────────────────
+        Route::get('/resenas', [\App\Http\Controllers\Gastrobar\GastrobarReviewPanelController::class, 'index'])
+            ->name('reviews.index');
+
+        // ── INFORMACIÓN ───────────────────────────────────────────
+        Route::get('/informacion', function () {
+            return view('gastrobar.info.index', [
+                'gastrobar' => \Illuminate\Support\Facades\Auth::user()->gastrobar,
+            ]);
+        })->name('info.index');
+
+        // ── NOTIFICACIONES ────────────────────────────────────────
+        Route::get('/notificaciones', [\App\Http\Controllers\Gastrobar\GastrobarNotificacionController::class, 'index'])->name('notificaciones.index');
+        Route::post('/notificaciones/{notificacion}/leer', [\App\Http\Controllers\Gastrobar\GastrobarNotificacionController::class, 'marcarLeida'])->name('notificaciones.leer');
+        Route::post('/notificaciones/leer-todas', [\App\Http\Controllers\Gastrobar\GastrobarNotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.leer-todas');
+        Route::get('/notificaciones-count', [\App\Http\Controllers\Gastrobar\GastrobarNotificacionController::class, 'contarNoLeidas'])->name('notificaciones.count');
     });
 
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
+    Route::post('/gastrobares/{gastrobar}/pedido',    [App\Http\Controllers\PedidoGastrobarController::class, 'store'])->name('pedidos.gastrobar.store'); // ← ESTA LÍNEA
     Route::get('/mis-pedidos',                        [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
     Route::get('/mis-pedidos/{pedido}',               [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
     Route::delete('/mis-pedidos/{pedido}',            [App\Http\Controllers\PedidoController::class, 'destroy'])->name('pedidos.destroy');
 });
-
 // ── EVENTOS PÚBLICOS ──────────────────────────────────────────────────────────
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])
     ->name('eventos.show')

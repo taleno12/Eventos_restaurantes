@@ -288,11 +288,11 @@
                     <i class="bi bi-people"></i>
                     <span>Usuarios del Sistema</span>
                 </a>
-                <a href="{{ route('notificaciones.index') }}"
+            <a href="{{ route('notificaciones.index') }}"
                    class="nav-item {{ request()->routeIs('notificaciones.*') ? 'active' : '' }}">
                     <i class="bi bi-bell"></i>
                     <span>Notificaciones</span>
-                    @php $totalNoLeidas = \App\Models\Notificacion::noLeidas()->count(); @endphp
+                    @php $totalNoLeidas = \App\Models\Notificacion::noLeidas()->where('user_id', auth()->id())->count(); @endphp
                     @if($totalNoLeidas > 0)
                         <span class="nav-badge" style="background:rgba(220,38,38,0.18);color:#fc8181;border-color:rgba(220,38,38,0.25);">
                             {{ $totalNoLeidas }}

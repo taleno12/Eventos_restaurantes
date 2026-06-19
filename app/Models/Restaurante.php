@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $hora_cierre
  * @property int $departamento_id
  * @property int|null $municipio_id
+ * @property string|null $membresia_vence_en
+ * @property string|null $membresia_plan
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Departamento $departamento
@@ -87,11 +89,14 @@ class Restaurante extends Model
         'dias_laborales',
         'hora_apertura',
         'hora_cierre',
+        'membresia_vence_en',
+        'membresia_plan',
     ];
 
     protected $casts = [
         'dias_laborales' => 'array',
         'activo' => 'boolean',
+        'membresia_vence_en' => 'date',
     ];
 
     /**

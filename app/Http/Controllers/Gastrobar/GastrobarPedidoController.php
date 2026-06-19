@@ -1,0 +1,120 @@
+<?php
+
+namespace App\Http\Controllers\Gastrobar;
+
+use App\Http\Controllers\Controller;
+use App\Models\PedidoGastrobar;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class GastrobarPedidoController extends Controller
+{
+    private function gastrobar()
+    {
+        return Auth::user()->gastrobar;
+    }
+
+    public function index()
+    {
+        $gastrobar = $this->gastrobar();
+
+        // Ya no es necesario excluir 'cancelado': los cancelados se eliminan físicamente
+        $pedidos = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+            ->with(['user', 'items.plato'])
+            ->orderByRaw("FIELD(estado, 'pendiente', 'confirmado', 'en_preparacion', 'listo', 'entregado')")
+            ->latest()
+            ->get()
+            ->groupBy('estado');
+
+        $totalHoy = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+            ->whereDate('created_at', today())
+            ->count();
+
+        $pendientes = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+            ->where('estado', 'pendiente')
+            ->count();
+
+        $ingresoHoy = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+            ->whereDate('created_at', today())
+            ->whereIn('estado', ['confirmado','en_preparacion','listo','entregado'])
+            ->sum('total');
+
+        return view('gastrobar.pedidos.index', compact(
+            'gastrobar', 'pedidos', 'totalHoy', 'pendientes', 'ingresoHoy'
+        ));
+    }
+
+    public function show(PedidoGastrobar $pedidoGastrobar)
+    {
+        $gastrobar = $this->gastrobar();
+        abort_unless($pedidoGastrobar->gastrobar_id === $gastrobar->id, 403);
+        $pedidoGastrobar->load(['user', 'items.plato']);
+        return view('gastrobar.pedidos.show', compact('gastrobar', 'pedidoGastrobar'));
+    }
+
+    public function cambiarEstado(Request $request, PedidoGastrobar $pedidoGastrobar)
+    {
+        $gastrobar = $this->gastrobar();
+        abort_unless($pedidoGastrobar->gastrobar_id === $gastrobar->id, 403);
+
+        $request->validate([
+            'estado' => 'required|in:pendiente,confirmado,en_preparacion,listo,entregado,cancelado'
+        ]);
+
+        // ── CANCELADO: eliminación real, no solo cambio de estado ──
+        if ($request->estado === 'cancelado') {
+            $pedidoGastrobar->delete();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success'   => true,
+                    'estado'    => 'cancelado',
+                    'eliminado' => true,
+                ]);
+            }
+
+            return redirect()->route('gastrobar.pedidos.index')
+                ->with('success', 'Pedido cancelado y eliminado correctamente.');
+        }
+
+        $pedidoGastrobar->update(['estado' => $request->estado]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success'   => true,
+                'estado'    => $request->estado,
+                'eliminado' => false,
+            ]);
+        }
+
+        return back()->with('success', 'Estado actualizado.');
+    }
+
+    public function polling(Request $request)
+    {
+        $gastrobar = $this->gastrobar();
+        $desde = $request->get('desde', now()->subMinutes(1)->toISOString());
+
+        $nuevos = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+            ->where('created_at', '>=', $desde)
+            ->with(['user', 'items.plato'])
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'         => $p->id,
+                    'estado'     => $p->estado,
+                    'total'      => $p->total,
+                    'user'       => $p->user->name,
+                    'tipo'       => $p->tipo,
+                    'created_at' => $p->created_at->format('H:i'),
+                    'items'      => $p->items->map(fn($i) => [
+                        'nombre'   => $i->plato->nombre,
+                        'cantidad' => $i->cantidad,
+                        'subtotal' => $i->subtotal,
+                    ]),
+                ];
+            });
+
+        return response()->json(['pedidos' => $nuevos, 'timestamp' => now()->toISOString()]);
+    }
+}

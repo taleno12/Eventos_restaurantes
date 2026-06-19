@@ -107,10 +107,23 @@
                                 @endif
                             </td>
                             <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
+                                <div class="d-flex justify-content-end align-items-center gap-2">
+
+                                    @php $nuevas = $empleo->solicitudes()->where('estado', 'nueva')->count(); @endphp
+                                    <a href="{{ route('gastrobar.solicitudes.index', $empleo) }}"
+                                       class="action-btn position-relative" title="Ver solicitudes"
+                                       style="color:var(--muted);">
+                                        <i class="bi bi-people fs-5"></i>
+                                        @if($nuevas > 0)
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                                                  style="font-size:0.6rem;background:#ef4444 !important;">{{ $nuevas }}</span>
+                                        @endif
+                                    </a>
+
                                     <a href="{{ route('gastrobar.empleos.edit', $empleo) }}" class="action-btn action-btn-edit" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+
                                     <form method="POST" action="{{ route('gastrobar.empleos.destroy', $empleo) }}"
                                           onsubmit="return confirm('¿Eliminar esta oferta?')">
                                         @csrf @method('DELETE')

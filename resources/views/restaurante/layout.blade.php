@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 
 <head>
     <meta charset="utf-8">
@@ -23,6 +23,9 @@
             padding: 0;
         }
 
+        /* ════════════════════════════════════════
+           TEMA CLARO (default)
+        ════════════════════════════════════════ */
         :root {
             --sidebar-w: 255px;
             --topbar-h: 60px;
@@ -33,9 +36,43 @@
             --sidebar-bg: #ffffff;
             --sidebar-border: #e8eaed;
             --text: #1a1d23;
-            --muted: #8b92a5;
+            --muted: #4a5568;
             --card-bg: #ffffff;
             --card-border: #e8eaed;
+            --input-bg: #fafbfc;
+            --input-border: #e2e5ec;
+            --hover-bg: #f5f6fa;
+            --table-header: #fafbfc;
+            --table-hover: #f8f9fc;
+            --badge-gray-bg: #f5f6fa;
+            --badge-gray-text: #5a6175;
+            --shadow: rgba(0, 0, 0, 0.04);
+            --overlay-bg: rgba(15, 18, 26, 0.4);
+        }
+
+        /* ════════════════════════════════════════
+           TEMA OSCURO
+        ════════════════════════════════════════ */
+        [data-theme="dark"] {
+            --primary: #3b82f6;
+            --primary-light: #1e3a5f;
+            --primary-border: #1e40af;
+            --bg: #0f172a;
+            --sidebar-bg: #1e293b;
+            --sidebar-border: #334155;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --input-bg: #0f172a;
+            --input-border: #334155;
+            --hover-bg: #334155;
+            --table-header: #1e293b;
+            --table-hover: #334155;
+            --badge-gray-bg: #334155;
+            --badge-gray-text: #cbd5e1;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --overlay-bg: rgba(0, 0, 0, 0.6);
         }
 
         body {
@@ -43,6 +80,51 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            font-size: 14px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* ── Toggle tema en sidebar ── */
+        .theme-toggle-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            color: var(--muted);
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            margin-bottom: 2px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .theme-toggle-nav:hover {
+            color: var(--text);
+            background: var(--hover-bg);
+        }
+
+        .theme-toggle-nav i {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--badge-gray-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--muted);
+            flex-shrink: 0;
+            transition: all 0.18s;
+        }
+
+        .theme-toggle-nav:hover i {
+            background: var(--hover-bg);
+            color: var(--text);
         }
 
         /* ── Sidebar ── */
@@ -57,9 +139,9 @@
             display: flex;
             flex-direction: column;
             z-index: 1040;
-            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1), background 0.3s;
             overflow-y: auto;
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
+            box-shadow: 2px 0 12px var(--shadow);
         }
 
         @media (max-width: 991px) {
@@ -131,7 +213,7 @@
             align-items: center;
             gap: 10px;
             padding: 9px 12px;
-            color: #5a6175;
+            color: var(--muted);
             font-size: 13.5px;
             font-weight: 600;
             border-radius: 10px;
@@ -150,33 +232,33 @@
             width: 32px;
             height: 32px;
             border-radius: 8px;
-            background: #f1f3f8;
+            background: var(--badge-gray-bg);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            color: #8b92a5;
+            color: var(--muted);
             flex-shrink: 0;
             transition: all 0.18s;
         }
 
         .nav-link:hover {
             color: var(--text);
-            background: #f5f6fa;
+            background: var(--hover-bg);
         }
 
         .nav-link:hover i {
-            background: #e8eaed;
-            color: #5a6175;
+            background: var(--hover-bg);
+            color: var(--text);
         }
 
         .nav-link.active {
-            color: #1d4ed8;
+            color: var(--primary);
             background: var(--primary-light);
         }
 
         .nav-link.active i {
-            background: #bfdbfe;
+            background: var(--primary-border);
             color: var(--primary);
         }
 
@@ -214,16 +296,16 @@
         }
 
         .nav-link-danger {
-            color: #dc2626 !important;
+            color: #ef4444 !important;
         }
 
         .nav-link-danger i {
-            color: #dc2626 !important;
-            background: #fef2f2 !important;
+            color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.1) !important;
         }
 
         .nav-link-danger:hover {
-            background: #fef2f2 !important;
+            background: rgba(239, 68, 68, 0.1) !important;
         }
 
         /* ── Topbar (móvil) ── */
@@ -234,13 +316,13 @@
             left: 0;
             right: 0;
             height: var(--topbar-h);
-            background: white;
+            background: var(--sidebar-bg);
             border-bottom: 1px solid var(--sidebar-border);
             z-index: 1039;
             align-items: center;
             padding: 0 16px;
             gap: 12px;
-            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 8px var(--shadow);
         }
 
         @media (max-width: 991px) {
@@ -250,7 +332,7 @@
         }
 
         .hamburger {
-            background: #f5f6fa;
+            background: var(--hover-bg);
             border: 1px solid var(--sidebar-border);
             color: var(--text);
             width: 36px;
@@ -264,7 +346,7 @@
         }
 
         .hamburger:hover {
-            background: #e8eaed;
+            background: var(--card-border);
         }
 
         /* ── Overlay ── */
@@ -272,7 +354,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 18, 26, 0.4);
+            background: var(--overlay-bg);
             z-index: 1038;
             backdrop-filter: blur(3px);
         }
@@ -312,7 +394,7 @@
         }
 
         .page-sub {
-            font-size: 12.5px;
+            font-size: 13px;
             color: var(--muted);
             margin-top: 2px;
             font-weight: 500;
@@ -323,7 +405,8 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 14px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 4px var(--shadow);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .panel-card .card-body {
@@ -344,16 +427,16 @@
 
         /* ── Metric cards ── */
         .metric-card {
-            background: white;
+            background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 14px;
             padding: 18px 20px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            transition: box-shadow 0.2s, transform 0.2s;
+            box-shadow: 0 1px 4px var(--shadow);
+            transition: box-shadow 0.2s, transform 0.2s, background 0.3s;
         }
 
         .metric-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
             transform: translateY(-1px);
         }
 
@@ -369,23 +452,23 @@
         }
 
         .metric-icon.orange {
-            background: #eff6ff;
+            background: var(--primary-light);
             color: var(--primary);
         }
 
         .metric-icon.green {
-            background: #f0fdf4;
-            color: #16a34a;
+            background: rgba(22, 163, 74, 0.1);
+            color: #22c55e;
         }
 
         .metric-icon.blue {
-            background: #eff6ff;
-            color: #2563eb;
+            background: var(--primary-light);
+            color: var(--primary);
         }
 
         .metric-icon.purple {
-            background: #faf5ff;
-            color: #9333ea;
+            background: rgba(147, 51, 234, 0.1);
+            color: #a855f7;
         }
 
         .metric-label {
@@ -427,8 +510,8 @@
         }
 
         .btn-secondary-panel {
-            background: white;
-            color: #5a6175;
+            background: var(--card-bg);
+            color: var(--muted);
             border: 1px solid var(--card-border);
             border-radius: 10px;
             padding: 8px 16px;
@@ -442,14 +525,14 @@
         }
 
         .btn-secondary-panel:hover {
-            background: #f5f6fa;
+            background: var(--hover-bg);
             color: var(--text);
         }
 
         .btn-danger-panel {
             background: transparent;
-            color: #dc2626;
-            border: 1px solid #fecaca;
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
             border-radius: 10px;
             padding: 8px 16px;
             font-size: 13px;
@@ -463,20 +546,21 @@
         }
 
         .btn-danger-panel:hover {
-            background: #fef2f2;
-            color: #b91c1c;
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
         }
 
         /* ── Form overrides ── */
         .form-control,
         .form-select {
-            background: #fafbfc !important;
-            border: 1px solid #e2e5ec !important;
+            background: var(--input-bg) !important;
+            border: 1px solid var(--input-border) !important;
             color: var(--text) !important;
             border-radius: 10px !important;
             font-size: 13.5px !important;
             font-family: inherit !important;
             padding: 9px 14px !important;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
         }
 
         .form-control:focus,
@@ -486,12 +570,13 @@
         }
 
         .form-control::placeholder {
-            color: #b0b7c8 !important;
+            color: var(--muted) !important;
+            opacity: 0.6;
         }
 
         .input-group-text {
-            background: #f5f6fa !important;
-            border-color: #e2e5ec !important;
+            background: var(--input-bg) !important;
+            border-color: var(--input-border) !important;
             color: var(--muted) !important;
         }
 
@@ -508,15 +593,15 @@
         }
 
         .panel-alert-success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #15803d;
+            background: rgba(22, 163, 74, 0.1);
+            border: 1px solid rgba(22, 163, 74, 0.2);
+            color: #22c55e;
         }
 
         .panel-alert-error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
 
         /* ── Table ── */
@@ -535,14 +620,16 @@
             padding: 10px 16px;
             border-bottom: 1px solid var(--card-border);
             text-align: left;
-            background: #fafbfc;
+            background: var(--table-header);
+            transition: background 0.3s;
         }
 
         .panel-table td {
             padding: 13px 16px;
-            border-bottom: 1px solid #f0f1f4;
+            border-bottom: 1px solid var(--card-border);
             color: var(--text);
             vertical-align: middle;
+            transition: color 0.3s;
         }
 
         .panel-table tr:last-child td {
@@ -550,7 +637,7 @@
         }
 
         .panel-table tbody tr:hover td {
-            background: #fafbfc;
+            background: var(--table-hover);
         }
 
         /* ── Badges ── */
@@ -566,33 +653,33 @@
         }
 
         .badge-green {
-            background: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
+            background: rgba(22, 163, 74, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(22, 163, 74, 0.2);
         }
 
         .badge-red {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .badge-orange {
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
         }
 
         .badge-gray {
-            background: #f5f6fa;
-            color: #5a6175;
-            border: 1px solid #e2e5ec;
+            background: var(--badge-gray-bg);
+            color: var(--badge-gray-text);
+            border: 1px solid var(--card-border);
         }
 
         .badge-blue {
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
         }
 
         /* ── Action icon buttons ── */
@@ -608,31 +695,31 @@
             cursor: pointer;
             text-decoration: none;
             transition: all 0.15s;
-            background: white;
+            background: var(--card-bg);
             color: var(--muted);
         }
 
         .action-btn:hover {
             color: var(--text);
-            background: #f5f6fa;
+            background: var(--hover-bg);
         }
 
         .action-btn-view:hover {
-            color: #2563eb;
-            background: #eff6ff;
-            border-color: #bfdbfe;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary-border);
         }
 
         .action-btn-edit:hover {
-            color: #2563eb;
-            background: #eff6ff;
-            border-color: #bfdbfe;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary-border);
         }
 
         .action-btn-delete:hover {
-            color: #dc2626;
-            background: #fef2f2;
-            border-color: #fecaca;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         /* ── Empty state ── */
@@ -664,8 +751,15 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #d1d5db;
+            background: var(--muted);
             border-radius: 4px;
+            opacity: 0.5;
+        }
+
+        /* ── Animaciones ── */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
         }
     </style>
 
@@ -715,7 +809,7 @@
         ->count();
 
         $notifReviews = \App\Models\Review::where('restaurante_id', $restaurante->id)
-        ->where('created_at', '>=', now()->subDays(7))
+        ->where('vista', false)
         ->count();
         @endphp
 
@@ -771,9 +865,8 @@
                 <i class="bi bi-bar-chart-fill"></i>
                 Estadísticas
             </a>
-
-            <a href="{{ route('restaurante.soporte.index') }}"
-                class="nav-link {{ request()->routeIs('restaurante.soporte.*') ? 'active' : '' }}">
+<a href="{{ route('restaurante.soporte') }}"
+                class="nav-link {{ request()->routeIs('restaurante.soporte') ? 'active' : '' }}">
                 <i class="bi bi-headset"></i>
                 Soporte
             </a>
@@ -812,6 +905,13 @@
                 <i class="bi bi-shop-window"></i>
                 Mi Perfil
             </a>
+
+            {{-- Toggle modo oscuro integrado en el menú --}}
+            <div class="nav-section">Preferencias</div>
+            <button class="theme-toggle-nav" onclick="toggleTheme()" id="themeToggleBtn">
+                <i class="bi bi-moon-fill" id="themeIconNav"></i>
+                <span id="themeText">Modo oscuro</span>
+            </button>
 
         </nav>
 
@@ -852,6 +952,7 @@
     {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ── Sidebar móvil ──
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const hamburger = document.getElementById('hamburger');
@@ -863,6 +964,38 @@
             sidebar.classList.remove('open');
             overlay.classList.remove('open');
         });
+
+        // ── Tema claro/oscuro ──
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIconNav');
+            const text = document.getElementById('themeText');
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+
+            if (next === 'dark') {
+                icon.className = 'bi bi-sun-fill';
+                text.textContent = 'Modo claro';
+            } else {
+                icon.className = 'bi bi-moon-fill';
+                text.textContent = 'Modo oscuro';
+            }
+        }
+
+        // Cargar tema guardado
+        (function() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            const icon = document.getElementById('themeIconNav');
+            const text = document.getElementById('themeText');
+            if (saved === 'dark') {
+                icon.className = 'bi bi-sun-fill';
+                text.textContent = 'Modo claro';
+            }
+        })();
     </script>
 
     @yield('scripts')

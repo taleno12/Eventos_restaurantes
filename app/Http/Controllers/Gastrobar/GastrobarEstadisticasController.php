@@ -3,84 +3,58 @@
 namespace App\Http\Controllers\Gastrobar;
 
 use App\Http\Controllers\Controller;
-use App\Models\Empleo;
-use App\Models\Evento;
-use App\Models\GastrobarFoto;
+use App\Models\PedidoGastrobar;
+use App\Models\PedidoGastrobarItem;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GastrobarEstadisticasController extends Controller
 {
-    private function gastrobar()
-    {
-        return Auth::user()->gastrobar;
-    }
-
     public function index()
     {
-        $gastrobar = $this->gastrobar();
+        $gastrobar = Auth::user()->gastrobar;
         $desde     = now()->subDays(30)->startOfDay();
 
-        // Reseñas
-        $totalReviews  = $gastrobar->reviews()->count();
-        $avgRating     = $totalReviews > 0
-            ? round($gastrobar->reviews()->avg('rating'), 1)
-            : 0;
-        $reviewsRecientes = $gastrobar->reviews()->where('created_at', '>=', $desde)->count();
-
-        $distribucionRating = [];
-        for ($i = 5; $i >= 1; $i--) {
-            $distribucionRating[$i] = $gastrobar->reviews()->where('rating', $i)->count();
-        }
-
-        // Eventos
-        $totalEventos    = Evento::where('gastrobar_id', $gastrobar->id)->count();
-        $eventosProximos = Evento::where('gastrobar_id', $gastrobar->id)
-            ->where('fecha_evento', '>=', now()->toDateString())
-            ->count();
-        $eventosRecientes = Evento::where('gastrobar_id', $gastrobar->id)
+        // IDs de pedidos del gastrobar en los últimos 30 días
+        $pedidoIds = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+            ->whereIn('estado', ['confirmado', 'en_preparacion', 'listo', 'entregado'])
             ->where('created_at', '>=', $desde)
-            ->count();
+            ->pluck('id');
 
-        // Empleos
-        $totalEmpleos    = Empleo::where('gastrobar_id', $gastrobar->id)->count();
-        $empleosActivos  = Empleo::where('gastrobar_id', $gastrobar->id)
-            ->where('activo', true)->count();
-
-        // Fotos
-        $totalFotos = GastrobarFoto::where('gastrobar_id', $gastrobar->id)->count();
-
-        // Reseñas recientes para tabla
-        $recentReviews = $gastrobar->reviews()
-            ->with('user')
-            ->latest()
-            ->take(5)
+        // Platos más vendidos con categoría
+        $platosMasVendidos = PedidoGastrobarItem::whereIn('pedido_gastrobar_items.pedido_gastrobar_id', $pedidoIds)
+            ->join('platos', 'pedido_gastrobar_items.plato_id', '=', 'platos.id')
+            ->leftJoin('categorias_plato', 'platos.categoria_id', '=', 'categorias_plato.id')
+            ->select(
+                'platos.id',
+                'platos.nombre',
+                'platos.imagen',
+                DB::raw('COALESCE(categorias_plato.nombre, "Sin categoría") as categoria'),
+                DB::raw('SUM(pedido_gastrobar_items.cantidad) as total_vendido'),
+                DB::raw('SUM(pedido_gastrobar_items.subtotal) as total_ingresos')
+            )
+            ->groupBy('platos.id', 'platos.nombre', 'platos.imagen', 'categorias_plato.nombre')
+            ->orderByDesc('total_vendido')
+            ->limit(10)
             ->get();
 
-        // Arrays para gráfico de reseñas
-        $labelsRating    = ['5 ★', '4 ★', '3 ★', '2 ★', '1 ★'];
-        $cantidadRating  = [
-            $distribucionRating[5],
-            $distribucionRating[4],
-            $distribucionRating[3],
-            $distribucionRating[2],
-            $distribucionRating[1],
-        ];
+        // Totales
+        $totalPedidos  = $pedidoIds->count();
+        $totalIngresos = PedidoGastrobar::whereIn('id', $pedidoIds)->sum('total');
+        $totalPlatos   = PedidoGastrobarItem::whereIn('pedido_gastrobar_id', $pedidoIds)->sum('cantidad');
+
+        // Arrays para gráficos
+        $nombresPlatos    = $platosMasVendidos->pluck('nombre')->toArray();
+        $cantidadesPlatos = $platosMasVendidos->pluck('total_vendido')->map(fn($v) => (int)$v)->toArray();
 
         return view('gastrobar.estadisticas.index', compact(
             'gastrobar',
-            'totalReviews',
-            'avgRating',
-            'reviewsRecientes',
-            'distribucionRating',
-            'totalEventos',
-            'eventosProximos',
-            'eventosRecientes',
-            'totalEmpleos',
-            'empleosActivos',
-            'totalFotos',
-            'recentReviews',
-            'labelsRating',
-            'cantidadRating'
+            'platosMasVendidos',
+            'totalPedidos',
+            'totalIngresos',
+            'totalPlatos',
+            'nombresPlatos',
+            'cantidadesPlatos'
         ));
     }
 }

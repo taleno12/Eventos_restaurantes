@@ -102,6 +102,15 @@
             padding: 16px 18px;
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
         }
+        .pedido-rest-wrap {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tipo-tag {
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+            padding: 2px 7px; border-radius: 6px; flex-shrink: 0;
+        }
+        .tipo-tag-restaurante { background: #eff6ff; color: #2563eb; }
+        .tipo-tag-gastrobar   { background: #f5f3ff; color: #7c3aed; }
         .pedido-rest {
             font-size: 15px; font-weight: 700; color: var(--text);
             text-decoration: none;
@@ -244,7 +253,7 @@
         </a>
 
         <a href="{{ route('restaurantes.index') }}" class="nav-btn nav-btn-rest">
-            <i class="fas fa-store"></i> <span>Restaurantes</span>
+            <i class="fas fa-utensils"></i> <span>Explorar</span>
         </a>
 
 
@@ -281,10 +290,14 @@
     @if($pedidos->count() > 0)
         @foreach($pedidos as $pedido)
         @php
-            $estados   = \App\Models\Pedido::ESTADOS;
-            $info      = $estados[$pedido->estado];
-            $cancelado = $pedido->estado === 'cancelado';
-            $confirmado = $pedido->estado === 'confirmado';
+            $esGastrobar = $pedido->tipo_negocio === 'gastrobar';
+            $estados     = $esGastrobar ? \App\Models\PedidoGastrobar::ESTADOS : \App\Models\Pedido::ESTADOS;
+            $info        = $estados[$pedido->estado];
+            $cancelado   = $pedido->estado === 'cancelado';
+            $confirmado  = $pedido->estado === 'confirmado';
+            $rutaShow    = $esGastrobar
+                ? route('gastrobares.show', $pedido->establecimiento)
+                : route('restaurantes.show', $pedido->establecimiento);
         @endphp
 
         <div class="pedido">
@@ -292,9 +305,14 @@
             {{-- Cabecera --}}
             <div class="pedido-top">
                 <div>
-                    <a href="{{ route('restaurantes.show', $pedido->restaurante) }}" class="pedido-rest">
-                        {{ $pedido->restaurante->nombre }}
-                    </a>
+                    <div class="pedido-rest-wrap">
+                        <span class="tipo-tag {{ $esGastrobar ? 'tipo-tag-gastrobar' : 'tipo-tag-restaurante' }}">
+                            {{ $esGastrobar ? 'Gastrobar' : 'Restaurante' }}
+                        </span>
+                        <a href="{{ $rutaShow }}" class="pedido-rest">
+                            {{ $pedido->establecimiento->nombre }}
+                        </a>
+                    </div>
                     <div class="pedido-id">
                         #{{ str_pad($pedido->id, 4, '0', STR_PAD_LEFT) }}
                         · {{ $pedido->created_at->format('d M Y, H:i') }}
@@ -308,7 +326,7 @@
                         {{ $info['label'] }}
                     </span>
 
-                    @if($confirmado)
+                    @if($confirmado && !$esGastrobar)
                     <form method="POST" action="{{ route('pedidos.destroy', $pedido) }}" class="inline m-0"
                           onsubmit="return confirm('¿Eliminar este pedido?')">
                         @csrf
@@ -359,8 +377,10 @@
                 <div class="foot-meta">
                     @if($pedido->tipo === 'mesa')
                         <i class="fas fa-chair"></i> Mesa
-                    @else
+                    @elseif(in_array($pedido->tipo, ['para_llevar', 'retiro']))
                         <i class="fas fa-bag-shopping"></i> Para llevar
+                    @else
+                        <i class="fas fa-motorcycle"></i> Envío
                     @endif
                     <span>· {{ $pedido->items->count() }} platillo{{ $pedido->items->count() !== 1 ? 's' : '' }}</span>
                 </div>
@@ -376,9 +396,9 @@
         <div class="empty">
             <div class="empty-icon"><i class="fas fa-bag-shopping"></i></div>
             <h2>Aún no tienes pedidos</h2>
-            <p>Explora los restaurantes y haz tu primer pedido</p>
+            <p>Explora los restaurantes y gastrobares y haz tu primer pedido</p>
             <a href="{{ route('restaurantes.index') }}" class="btn-blue">
-                <i class="fas fa-utensils" style="font-size:11px;"></i> Ver restaurantes
+                <i class="fas fa-utensils" style="font-size:11px;"></i> Explorar
             </a>
         </div>
     @endif

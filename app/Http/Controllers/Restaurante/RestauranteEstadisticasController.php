@@ -21,17 +21,19 @@ class RestauranteEstadisticasController extends Controller
             ->where('created_at', '>=', $desde)
             ->pluck('id');
 
-        // Platos más vendidos: cantidad total vendida y total en C$
-        $platosMasVendidos = PedidoItem::whereIn('pedido_id', $pedidoIds)
+        // Platos más vendidos: JOIN con categorias_plato para traer el nombre real
+        $platosMasVendidos = PedidoItem::whereIn('pedido_items.pedido_id', $pedidoIds)
             ->join('platos', 'pedido_items.plato_id', '=', 'platos.id')
+            ->leftJoin('categorias_plato', 'platos.categoria_id', '=', 'categorias_plato.id')
             ->select(
+                'platos.id',
                 'platos.nombre',
                 'platos.imagen',
-                'platos.categoria',
+                DB::raw('COALESCE(categorias_plato.nombre, "Sin categoría") as categoria'),
                 DB::raw('SUM(pedido_items.cantidad) as total_vendido'),
                 DB::raw('SUM(pedido_items.subtotal) as total_ingresos')
             )
-            ->groupBy('platos.id', 'platos.nombre', 'platos.imagen', 'platos.categoria')
+            ->groupBy('platos.id', 'platos.nombre', 'platos.imagen', 'categorias_plato.nombre')
             ->orderByDesc('total_vendido')
             ->limit(10)
             ->get();
@@ -41,10 +43,8 @@ class RestauranteEstadisticasController extends Controller
         $totalIngresos = Pedido::whereIn('id', $pedidoIds)->sum('total');
         $totalPlatos   = PedidoItem::whereIn('pedido_id', $pedidoIds)->sum('cantidad');
 
-
-
-        // Preparar arrays para los gráficos (para evitar errores en Blade)
-        $nombresPlatos   = $platosMasVendidos->pluck('nombre')->toArray();
+        // Preparar arrays para los gráficos
+        $nombresPlatos    = $platosMasVendidos->pluck('nombre')->toArray();
         $cantidadesPlatos = $platosMasVendidos->pluck('total_vendido')->map(fn($v) => (int)$v)->toArray();
 
         return view('restaurante.estadisticas.index', compact(

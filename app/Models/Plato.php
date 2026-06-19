@@ -10,11 +10,13 @@ class Plato extends Model
 {
     protected $fillable = [
         'restaurante_id',
+        'gastrobar_id',
         'nombre',
         'descripcion',
         'precio',
         'imagen',
         'categoria_id',
+        'categoria',
         'activo',
         'orden',
     ];
@@ -27,6 +29,11 @@ class Plato extends Model
     public function restaurante(): BelongsTo
     {
         return $this->belongsTo(Restaurante::class);
+    }
+
+    public function gastrobar(): BelongsTo
+    {
+        return $this->belongsTo(Gastrobar::class);
     }
 
     public function categoriaPlato(): BelongsTo

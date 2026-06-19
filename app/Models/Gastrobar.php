@@ -17,7 +17,7 @@ class Gastrobar extends Model
     protected $fillable = [
         'nombre',
         'email',
-        'telefono',        // ← agregado
+        'telefono',
         'tipo_cocina',
         'tipo_bar',
         'descripcion',
@@ -32,7 +32,6 @@ class Gastrobar extends Model
         'direccion',
         'latitud',
         'longitud',
-        'telefono',
         'whatsapp',
         'instagram',
         'facebook',
@@ -84,6 +83,21 @@ class Gastrobar extends Model
         return $this->hasMany(Empleo::class);
     }
 
+    public function pedidos(): HasMany
+    {
+        return $this->hasMany(PedidoGastrobar::class);
+    }
+
+    public function platos(): HasMany
+    {
+        return $this->hasMany(Plato::class);
+    }
+
+    public function categoriasPlato(): HasMany
+    {
+        return $this->hasMany(CategoriaPlato::class);
+    }
+
     /**
      * Un gastrobar TIENE UN propietario (usuario con rol 'gastrobar')
      */
@@ -116,9 +130,6 @@ class Gastrobar extends Model
 
     // ── SCOPES ──────────────────────────────────────────────────
 
-    /**
-     * Solo gastrobares activos (no desactivados por el admin)
-     */
     public function scopeActivos($query)
     {
         return $query->where('activo', true);

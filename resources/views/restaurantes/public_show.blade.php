@@ -379,7 +379,7 @@
 <body>
 
 {{-- ══ TOPBAR ══ --}}
-<<header class="topbar">
+<header class="topbar">
     <div class="topbar-inner">
         <a href="{{ route('home') }}" class="topbar-logo">
             Gastro<span class="dot">Nicaragua</span>
@@ -406,7 +406,6 @@
         </div>
     </div>
 </header>
-
 {{-- ══ HERO BANNER ══ --}}
 @php
     $bgUrl = '';
@@ -892,103 +891,7 @@
     </aside>
 </div>
 
-{{-- ══ FOOTER CSS PURO (sin Tailwind) ══ --}}
-<<footer style="background:#0f172a;color:#cbd5e1;border-top:1px solid #1e293b;">
-    <div style="max-width:1280px;margin:0 auto;padding:48px 1.5rem 32px;">
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:40px;">
-
-            {{-- Columna marca --}}
-            <div style="max-width:380px;">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                    <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;color:#fff;">
-                        Gastro<span style="color:#3b82f6;">Nicaragua</span>
-                    </span>
-                </div>
-                <p style="color:#94a3b8;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
-                    La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                    Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
-                </p>
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                </div>
-            </div>
-
-            {{-- Columna Portal --}}
-            <div>
-                <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:16px;">Portal</h4>
-                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-                    <li><a href="{{ route('home') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Inicio</a></li>
-                    <li><a href="{{ route('restaurantes.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Restaurantes</a></li>
-                    <li><a href="{{ route('gastrobares.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#818cf8';" onmouseout="this.style.color='#94a3b8';">Gastrobares</a></li>
-                    <li><a href="{{ route('empleos.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Bolsa de Empleos</a></li>
-                    <li><a href="{{ route('contacto') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Contacto</a></li>
-                </ul>
-            </div>
-
-            {{-- Columna Destinos --}}
-            <div>
-                <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:16px;">Destinos Destacados</h4>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Masaya
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Granada
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>León
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>San Juan del Sur
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Estelí
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;margin-right:6px;"></i>Matagalpa
-                    </span>
-                </div>
-            </div>
-
-        </div>
-
-        {{-- Línea inferior --}}
-        <div style="border-top:1px solid #1e293b;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
-            <p style="font-size:12px;color:#64748b;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-            <div style="display:flex;gap:16px;">
-                <a href="#" style="font-size:12px;color:#64748b;text-decoration:none;transition:color 0.2s;"
-                   onmouseover="this.style.color='#94a3b8';" onmouseout="this.style.color='#64748b';">Política de Privacidad</a>
-                <a href="#" style="font-size:12px;color:#64748b;text-decoration:none;transition:color 0.2s;"
-                   onmouseover="this.style.color='#94a3b8';" onmouseout="this.style.color='#64748b';">Términos de Servicio</a>
-            </div>
-        </div>
-    </div>
-</footer>
+@include('partials.footer')
 
 {{-- ══ LIGHTBOX ══ --}}
 <div id="lightbox" onclick="handleLbClick(event)">

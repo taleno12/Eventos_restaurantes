@@ -2,85 +2,85 @@
 @section('title', 'Pedidos')
 
 @section('content')
-<div class="container-fluid px-4 py-4" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<div class="container-fluid px-4 py-4">
 
-    {{-- ── Encabezado ── --}}
+    {{-- Encabezado --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
+            <h1 class="h3 mb-1 fw-bold" style="color:var(--text);">
                 <i class="bi bi-bag text-primary me-2"></i> Pedidos
             </h1>
-            <p class="text-muted mb-0 small">
+            <p class="mb-0 small" style="color:var(--muted);">
                 <i class="bi bi-circle-fill text-secondary me-1" style="font-size:6px;vertical-align:middle;"></i>
                 Gestión en tiempo real de {{ $restaurante->nombre }}
             </p>
         </div>
         <div id="live-indicator" class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
-             style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);font-size:11px;font-weight:700;color:#16a34a;">
+             style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);font-size:11px;font-weight:700;color:#22c55e;">
             <span style="width:7px;height:7px;background:#22c55e;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
             En vivo
         </div>
     </div>
 
-    {{-- ── Métricas ── --}}
+    {{-- Métricas --}}
     <div class="row g-3 mb-4">
         <div class="col-12 col-sm-4">
-            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+            <div class="card border-0 shadow-sm rounded-3 p-3" style="background:var(--card-bg) !important;">
                 <div class="d-flex align-items-center gap-3">
                     <div class="rounded-3 d-flex align-items-center justify-content-center fs-4"
                          style="width:50px;height:50px;background:rgba(245,158,11,0.12);color:#f59e0b;flex-shrink:0;">
                         <i class="bi bi-clock"></i>
                     </div>
                     <div>
-                        <p class="text-uppercase text-muted fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;">Pendientes</p>
-                        <h3 class="fw-black text-dark mb-0" style="font-size:1.5rem;">{{ $pendientes }}</h3>
+                        <p class="text-uppercase fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;color:var(--muted);">Pendientes</p>
+                        <h3 class="fw-black mb-0" style="font-size:1.5rem;color:var(--text);" id="metrica-pendientes">{{ $pendientes }}</h3>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-4">
-            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+            <div class="card border-0 shadow-sm rounded-3 p-3" style="background:var(--card-bg) !important;">
                 <div class="d-flex align-items-center gap-3">
                     <div class="rounded-3 d-flex align-items-center justify-content-center fs-4"
                          style="width:50px;height:50px;background:rgba(34,197,94,0.12);color:#22c55e;flex-shrink:0;">
                         <i class="bi bi-receipt"></i>
                     </div>
                     <div>
-                        <p class="text-uppercase text-muted fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;">Pedidos hoy</p>
-                        <h3 class="fw-black text-dark mb-0" style="font-size:1.5rem;">{{ $totalHoy }}</h3>
+                        <p class="text-uppercase fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;color:var(--muted);">Pedidos hoy</p>
+                        <h3 class="fw-black mb-0" style="font-size:1.5rem;color:var(--text);" id="metrica-total-hoy">{{ $totalHoy }}</h3>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-4">
-            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+            <div class="card border-0 shadow-sm rounded-3 p-3" style="background:var(--card-bg) !important;">
                 <div class="d-flex align-items-center gap-3">
                     <div class="rounded-3 d-flex align-items-center justify-content-center fs-4"
                          style="width:50px;height:50px;background:rgba(249,115,22,0.12);color:#f97316;flex-shrink:0;">
                         <i class="bi bi-coin"></i>
                     </div>
                     <div>
-                        <p class="text-uppercase text-muted fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;">Ingresos hoy</p>
-                        <h3 class="fw-black text-dark mb-0" style="font-size:1.5rem;">C$ {{ number_format($ingresoHoy, 0) }}</h3>
+                        <p class="text-uppercase fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;color:var(--muted);">Ingresos hoy</p>
+                        <h3 class="fw-black mb-0" style="font-size:1.5rem;color:var(--text);" id="metrica-ingreso-hoy">C$ {{ number_format($ingresoHoy, 0) }}</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- ── Filtros ── --}}
-    <div class="card border-0 shadow-sm rounded-3 mb-4">
+    {{-- Filtros --}}
+    <div class="card border-0 shadow-sm rounded-3 mb-4" style="background:var(--card-bg) !important;">
         <div class="card-body py-3">
             <div class="row g-2 align-items-end">
                 <div class="col-12 col-md-4">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-search me-1"></i> Buscar
                     </label>
                     <input type="text" id="filtro-buscar" class="form-control form-control-sm rounded-pill"
                            placeholder="# pedido o cliente...">
                 </div>
                 <div class="col-12 col-md-3">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-funnel me-1"></i> Estado
                     </label>
                     <select id="filtro-estado" class="form-select form-select-sm rounded-pill">
@@ -93,29 +93,29 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-3">
-                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;">
+                    <label class="form-label fw-semibold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">
                         <i class="bi bi-tag me-1"></i> Tipo
                     </label>
                     <select id="filtro-tipo" class="form-select form-select-sm rounded-pill">
                         <option value="">Todos</option>
-                        <option value="mesa">Mesa</option>
-                        <option value="para_llevar">Para llevar</option>
+                        <option value="envio">Envío</option>
+                        <option value="retiro">Retiro en el local</option>
                     </select>
                 </div>
                 <div class="col-12 col-md-2 d-flex align-items-end">
-                    <button id="btn-limpiar" class="btn btn-link btn-sm text-muted p-0" style="font-size:11px;display:none;">
+                    <button id="btn-limpiar" class="btn btn-link btn-sm p-0" style="font-size:11px;display:none;color:var(--muted);">
                         <i class="bi bi-x-circle me-1"></i> Limpiar filtros
                     </button>
                 </div>
             </div>
             <div class="mt-2">
-                <span id="contador-resultados" class="text-muted" style="font-size:11px;"></span>
+                <span id="contador-resultados" style="font-size:11px;color:var(--muted);"></span>
             </div>
         </div>
     </div>
 
-    {{-- ── Tabla de pedidos ── --}}
-    <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
+    {{-- Tabla de pedidos --}}
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden" style="background:var(--card-bg) !important;">
         <div class="card-body p-0">
 
             @php
@@ -128,60 +128,61 @@
             @endphp
 
             @if($todosLosPedidos->count() > 0)
-            <div id="sin-resultados" class="text-center text-muted py-5" style="display:none;">
+            <div id="sin-resultados" class="text-center py-5" style="display:none;color:var(--muted);">
                 <i class="bi bi-search d-block display-6 mb-3" style="opacity:0.3;"></i>
-                <span class="fs-6 d-block">Ningún pedido coincide con los filtros.</span>
+                <span class="fs-6 d-block" style="color:var(--text);">Ningún pedido coincide con los filtros.</span>
             </div>
 
             <div class="table-responsive">
                 <table class="table table-hover mb-0 align-middle" id="tabla-pedidos">
-                    <thead class="bg-light border-bottom">
+                    <thead class="border-bottom" style="background:var(--table-header) !important;">
                         <tr>
-                            <th class="ps-4 py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">#</th>
-                            <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Cliente</th>
-                            <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Items</th>
-                            <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Total</th>
-                            <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Tipo</th>
-                            <th class="py-3 text-secondary border-0 text-center" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Estado</th>
-                            <th class="py-3 text-secondary border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Hora</th>
-                            <th class="py-3 text-secondary border-0 text-center" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;">Cambiar estado</th>
+                            <th class="ps-4 py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">#</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Cliente</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Items</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Total</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Tipo</th>
+                            <th class="py-3 border-0 text-center" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Estado</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Hora</th>
+                            <th class="py-3 border-0 text-center" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Cambiar estado</th>
                         </tr>
                     </thead>
                     <tbody class="border-top-0">
                         @foreach($todosLosPedidos as $pedido)
                         <tr class="fila-pedido border-bottom"
-                            style="border-color:#edf2f7 !important;cursor:pointer;"
+                            style="border-color:var(--card-border) !important;cursor:pointer;"
                             data-id="{{ $pedido->id }}"
                             data-cliente="{{ strtolower($pedido->user->name) }}"
                             data-estado="{{ $pedido->estado }}"
                             data-tipo="{{ $pedido->tipo }}"
+                            data-total="{{ $pedido->total }}"
                             onclick="verDetalle({{ $pedido->id }})">
 
                             {{-- # --}}
                             <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center">
                                     <div class="bg-primary rounded-pill me-3" style="width:4px;height:32px;"></div>
-                                    <span class="fw-bold text-dark" style="font-size:0.85rem;">#{{ str_pad($pedido->id, 4, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="fw-bold" style="font-size:0.85rem;color:var(--text) !important;">#{{ str_pad($pedido->id, 4, '0', STR_PAD_LEFT) }}</span>
                                 </div>
                             </td>
 
                             {{-- Cliente --}}
                             <td class="py-3">
-                                <span class="fw-semibold text-dark d-block" style="font-size:0.875rem;">{{ $pedido->user->name }}</span>
+                                <span class="fw-semibold d-block" style="font-size:0.875rem;color:var(--text) !important;">{{ $pedido->user->name }}</span>
                                 @if($pedido->notas)
-                                    <small class="text-muted d-block" style="font-size:0.72rem;">
+                                    <small class="d-block" style="font-size:0.72rem;color:var(--muted) !important;">
                                         <i class="bi bi-sticky text-warning me-1"></i>{{ Str::limit($pedido->notas, 40) }}
                                     </small>
                                 @endif
                             </td>
 
-                            {{-- Items (resumen) --}}
+                            {{-- Items --}}
                             <td class="py-3">
                                 @foreach($pedido->items as $item)
-                                    <div class="text-muted" style="font-size:0.78rem;">
+                                    <div style="font-size:0.78rem;color:var(--muted) !important;">
                                         {{ $item->cantidad }}x {{ $item->plato->nombre ?? 'Plato eliminado' }}
                                         @if($item->notas)
-                                            <span class="text-primary" style="font-size:0.7rem;"> · {{ $item->notas }}</span>
+                                            <span style="font-size:0.7rem;color:var(--primary);"> · {{ $item->notas }}</span>
                                         @endif
                                     </div>
                                 @endforeach
@@ -189,21 +190,17 @@
 
                             {{-- Total --}}
                             <td class="py-3">
-                                <span class="badge text-primary bg-primary bg-opacity-10 border border-primary border-opacity-20 px-2 py-1 fw-bold" style="font-size:0.78rem;">
+                                <span class="badge px-2 py-1 fw-bold" style="font-size:0.78rem;background:var(--primary-light) !important;color:var(--primary) !important;border:1px solid var(--primary-border) !important;">
                                     C$ {{ number_format($pedido->total, 0) }}
                                 </span>
                             </td>
 
                             {{-- Tipo --}}
                             <td class="py-3">
-                                @if($pedido->tipo === 'mesa')
-                                    <span class="badge text-secondary bg-secondary bg-opacity-10 border border-secondary border-opacity-20 px-2 py-1 fw-semibold" style="font-size:0.72rem;">
-                                        🍽 Mesa
-                                    </span>
+                                @if($pedido->tipo === 'envio')
+                                    <span class="badge px-2 py-1 fw-semibold" style="font-size:0.72rem;background:var(--badge-gray-bg) !important;color:var(--badge-gray-text) !important;border:1px solid var(--card-border) !important;">🛵 Envío</span>
                                 @else
-                                    <span class="badge text-secondary bg-secondary bg-opacity-10 border border-secondary border-opacity-20 px-2 py-1 fw-semibold" style="font-size:0.72rem;">
-                                        🥡 Para llevar
-                                    </span>
+                                    <span class="badge px-2 py-1 fw-semibold" style="font-size:0.72rem;background:var(--badge-gray-bg) !important;color:var(--badge-gray-text) !important;border:1px solid var(--card-border) !important;">🏬 Retiro en el local</span>
                                 @endif
                             </td>
 
@@ -221,17 +218,17 @@
 
                             {{-- Hora --}}
                             <td class="py-3">
-                                <span class="text-muted small">{{ $pedido->created_at->format('H:i') }}</span>
-                                <span class="text-muted d-block" style="font-size:0.7rem;">{{ $pedido->created_at->format('d/m') }}</span>
+                                <span class="small" style="color:var(--muted) !important;">{{ $pedido->created_at->format('H:i') }}</span>
+                                <span class="d-block" style="font-size:0.7rem;color:var(--muted) !important;">{{ $pedido->created_at->format('d/m') }}</span>
                             </td>
 
                             {{-- Cambiar estado --}}
                             <td class="py-3 text-center" onclick="event.stopPropagation()">
-                                @if($pedido->estado !== 'entregado' && $pedido->estado !== 'cancelado')
-                                <form method="POST" action="{{ route('restaurante.pedidos.estado', $pedido) }}">
+                                @if($pedido->estado !== 'entregado')
+                                <form method="POST" action="{{ route('restaurante.pedidos.estado', $pedido) }}" class="form-estado">
                                     @csrf @method('PATCH')
-                                    <select name="estado" onchange="this.form.submit()"
-                                            class="form-select form-select-sm rounded-pill"
+                                    <select name="estado"
+                                            class="form-select form-select-sm rounded-pill select-estado"
                                             style="font-size:11px;font-weight:700;min-width:130px;">
                                         @foreach($estadosInfo as $key => $est)
                                             @if($key !== 'cancelado' || $pedido->estado === 'pendiente')
@@ -243,9 +240,7 @@
                                     </select>
                                 </form>
                                 @else
-                                    <span class="text-muted small">
-                                        {{ $pedido->estado === 'entregado' ? '✓ Completado' : '✗ Cancelado' }}
-                                    </span>
+                                    <span class="small" style="color:var(--muted) !important;">✓ Completado</span>
                                 @endif
                             </td>
 
@@ -256,9 +251,9 @@
             </div>
 
             @else
-            <div class="text-center text-muted py-5">
-                <i class="bi bi-bag d-block display-6 text-muted mb-3"></i>
-                <span class="fs-6 d-block mb-2">No hay pedidos registrados aún.</span>
+            <div class="text-center py-5" style="color:var(--muted);">
+                <i class="bi bi-bag d-block display-6 mb-3" style="opacity:0.3;"></i>
+                <span class="fs-6 d-block mb-2" style="color:var(--text);">No hay pedidos registrados aún.</span>
             </div>
             @endif
         </div>
@@ -266,14 +261,14 @@
 
 </div>
 
-{{-- ── Modal detalle pedido ── --}}
+{{-- Modal detalle pedido --}}
 <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="background:var(--card-bg) !important;">
             <div class="modal-header border-0 pb-0 px-4 pt-4">
                 <div>
-                    <h5 class="modal-title fw-bold mb-0" id="modal-titulo">Detalle del pedido</h5>
-                    <small class="text-muted" id="modal-meta"></small>
+                    <h5 class="modal-title fw-bold mb-0" id="modal-titulo" style="color:var(--text);">Detalle del pedido</h5>
+                    <small style="color:var(--muted);" id="modal-meta"></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -286,7 +281,7 @@
     </div>
 </div>
 
-{{-- Datos de pedidos en JSON para el modal --}}
+{{-- Datos de pedidos en JSON --}}
 <script>
 window.__pedidos = {
     @foreach($todosLosPedidos as $pedido)
@@ -317,16 +312,37 @@ const estadosInfo = @json(\App\Models\Pedido::ESTADOS);
 </script>
 
 <style>
-    .table-hover tbody tr:hover { background-color: #f8fafc !important; }
+    /* Forzar fondo oscuro en tabla Bootstrap */
+    #tabla-pedidos.table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: var(--text) !important;
+        --bs-table-border-color: var(--card-border) !important;
+    }
+    #tabla-pedidos thead th {
+        background-color: var(--table-header) !important;
+        color: var(--muted) !important;
+        border-bottom-color: var(--card-border) !important;
+    }
+    #tabla-pedidos tbody td {
+        color: var(--text) !important;
+        background-color: var(--card-bg) !important;
+        border-bottom-color: var(--card-border) !important;
+    }
+    #tabla-pedidos tbody tr:hover td {
+        background-color: var(--table-hover) !important;
+    }
+    .fila-pedido {
+        background-color: var(--card-bg) !important;
+    }
     @keyframes pulse {
         0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.2); }
         50%      { box-shadow: 0 0 0 5px rgba(34,197,94,0.05); }
     }
-    .item-detalle-row { background: #f8fafc; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
-    .item-nombre { font-size: 14px; font-weight: 700; color: #1a202c; }
-    .item-opciones { font-size: 12px; color: #3b82f6; margin-top: 3px; }
-    .item-precio { font-size: 13px; font-weight: 700; color: #2563eb; white-space: nowrap; }
-    .item-cantidad-badge { background: #e0e7ff; color: #3730a3; border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 800; }
+    .item-detalle-row { background: var(--table-hover); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+    .item-nombre { font-size: 14px; font-weight: 700; color: var(--text); }
+    .item-opciones { font-size: 12px; color: var(--primary); margin-top: 3px; }
+    .item-precio { font-size: 13px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+    .item-cantidad-badge { background: var(--primary-light); color: var(--primary); border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 800; }
 </style>
 
 @endsection
@@ -389,16 +405,87 @@ if (inputBuscar) {
     filtrar();
 }
 
+// ── ELIMINAR PEDIDO AL CANCELAR (sin recargar) ──
+document.querySelectorAll('.select-estado').forEach(select => {
+    select.addEventListener('change', function(e) {
+        if (this.value === 'cancelado') {
+            e.preventDefault();
+
+            const fila = this.closest('.fila-pedido');
+            const form = this.closest('.form-estado');
+            const totalPedido = parseFloat(fila.dataset.total) || 0;
+            const eraPendiente = fila.dataset.estado === 'pendiente';
+
+            fila.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            fila.style.opacity = '0';
+            fila.style.transform = 'translateX(-30px)';
+            fila.style.height = fila.offsetHeight + 'px';
+
+            setTimeout(() => {
+                fila.style.height = '0';
+                fila.style.padding = '0';
+                fila.style.overflow = 'hidden';
+            }, 300);
+
+            setTimeout(() => {
+                fila.remove();
+
+                actualizarMetricas(eraPendiente, totalPedido);
+
+                const visibles = document.querySelectorAll('.fila-pedido').length;
+                if (sinRes) sinRes.style.display = visibles === 0 ? 'block' : 'none';
+                if (contador) {
+                    contador.textContent = visibles > 0
+                        ? `${visibles} pedido${visibles !== 1 ? 's' : ''} encontrado${visibles !== 1 ? 's' : ''}`
+                        : '';
+                }
+
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+            }, 600);
+        }
+    });
+});
+
+function actualizarMetricas(eraPendiente, totalPedido) {
+    if (eraPendiente) {
+        const badgePendientes = document.getElementById('metrica-pendientes');
+        if (badgePendientes) {
+            const actual = parseInt(badgePendientes.textContent) || 0;
+            if (actual > 0) badgePendientes.textContent = actual - 1;
+        }
+    }
+
+    const badgeTotal = document.getElementById('metrica-total-hoy');
+    if (badgeTotal) {
+        const actual = parseInt(badgeTotal.textContent) || 0;
+        if (actual > 0) badgeTotal.textContent = actual - 1;
+    }
+
+    const badgeIngreso = document.getElementById('metrica-ingreso-hoy');
+    if (badgeIngreso && totalPedido > 0) {
+        const textoActual = badgeIngreso.textContent.replace(/[^\d]/g, '');
+        const actual = parseInt(textoActual) || 0;
+        const nuevo = Math.max(0, actual - totalPedido);
+        badgeIngreso.textContent = `C$ ${nuevo.toLocaleString()}`;
+    }
+}
+
 // ── Modal detalle ──
 function verDetalle(id) {
     const p = window.__pedidos[id];
     if (!p) return;
 
     const estadoInfo = estadosInfo[p.estado] || { label: p.estado, color: '#6b7280' };
-    const tipoLabel  = p.tipo === 'mesa' ? '🍽 Mesa' : '🥡 Para llevar';
+    const tipoLabel  = p.tipo === 'envio' ? '🛵 Envío' : '🏬 Retiro en el local';
 
     document.getElementById('modal-titulo').innerHTML =
-        `Pedido <span class="text-primary">#${String(p.id).padStart(4,'0')}</span>`;
+        `Pedido <span style="color:var(--primary);">#${String(p.id).padStart(4,'0')}</span>`;
     document.getElementById('modal-meta').innerHTML =
         `${p.cliente} · ${tipoLabel} · ${p.hora} &nbsp;
          <span class="badge rounded-pill px-2 py-1 fw-semibold"
@@ -424,18 +511,18 @@ function verDetalle(id) {
     let notasHtml = '';
     if (p.notas) {
         notasHtml = `
-        <div class="mt-3 p-3 rounded-3" style="background:#fffbeb;border:1px solid #fde68a;">
-            <div class="fw-bold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#92400e;">
+        <div class="mt-3 p-3 rounded-3" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
+            <div class="fw-bold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#f59e0b;">
                 <i class="bi bi-sticky me-1"></i> Nota del cliente
             </div>
-            <div style="font-size:13px;color:#78350f;">${p.notas}</div>
+            <div style="font-size:13px;color:var(--text);">${p.notas}</div>
         </div>`;
     }
 
     const totalHtml = `
-        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-            <span class="fw-bold text-dark">Total</span>
-            <span class="fw-black text-primary" style="font-size:1.1rem;">C$ ${Number(p.total).toLocaleString()}</span>
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top" style="border-color:var(--card-border) !important;">
+            <span class="fw-bold" style="color:var(--text);">Total</span>
+            <span class="fw-black" style="font-size:1.1rem;color:var(--primary);">C$ ${Number(p.total).toLocaleString()}</span>
         </div>`;
 
     document.getElementById('modal-body').innerHTML = itemsHtml + notasHtml + totalHtml;

@@ -173,6 +173,17 @@
 
         .desc-text { font-size: 14.5px; color: #475569; line-height: 1.8; }
 
+        /* ── NUEVO: btn-ordenar ── */
+        .btn-ordenar {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--blue); color: white;
+            font-size: 14px; font-weight: 700; padding: 10px 24px;
+            border-radius: 999px; border: none; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+            transition: all 0.18s; white-space: nowrap; text-decoration: none;
+        }
+        .btn-ordenar:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.4); }
+
         .gallery-grid {
             display: grid; grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: 110px; gap: 8px;
@@ -289,14 +300,15 @@
         .social-fb { background: #dbeafe; color: #2563eb; border-color: #bfdbfe; }
         .social-fb:hover { background: #2563eb; color: white; box-shadow: 0 6px 18px rgba(37,99,235,0.35); }
 
-      .btn-tel-cta {
-         display: flex; align-items: center; justify-content: center; gap: 9px;
-          width: 100%; background: var(--blue); color: white;
-          font-size: 14px; font-weight: 700; padding: 14px 20px;
-          border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
-          text-decoration: none; letter-spacing: 0.02em;
-         }
+        .btn-tel-cta {
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            width: 100%; background: var(--blue); color: white;
+            font-size: 14px; font-weight: 700; padding: 14px 20px;
+            border-radius: 12px; border: none; cursor: pointer; transition: all 0.18s;
+            text-decoration: none; letter-spacing: 0.02em;
+        }
         .btn-tel-cta:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
+
         #lightbox {
             position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95);
             display: flex; align-items: center; justify-content: center;
@@ -362,13 +374,22 @@
             <a href="{{ route('gastrobares.index') }}" class="btn-sm">
                 <i class="fas fa-arrow-left" style="font-size:10px;"></i> Volver
             </a>
-            @auth
-                @if(auth()->user()->email === 'admin@turismo.ni')
-                    <a href="{{ route('admin.gastrobares.edit', $gastrobar) }}" class="btn-sm primary">
-                        <i class="fas fa-cog" style="font-size:10px;"></i> Administrar
-                    </a>
-                @endif
-            @else
+           @auth
+    {{-- ── NUEVO: Mis Pedidos ── --}}
+    <a href="{{ route('pedidos.mis') }}" class="btn-sm">
+        <i class="fas fa-bag-shopping" style="font-size:10px;"></i> Mis Pedidos
+    </a>
+    @if(auth()->user()->gastrobar && auth()->user()->gastrobar->id === $gastrobar->id)
+        <a href="{{ route('gastrobar.dashboard') }}" class="btn-sm primary">
+            <i class="fas fa-chart-pie" style="font-size:10px;"></i> Mi Panel
+        </a>
+    @endif
+    @if(auth()->user()->email === 'admin@turismo.ni')
+        <a href="{{ route('admin.gastrobares.edit', $gastrobar) }}" class="btn-sm primary">
+            <i class="fas fa-cog" style="font-size:10px;"></i> Administrar
+        </a>
+    @endif
+@else
                 <a href="{{ route('login') }}" class="btn-sm primary">
                     <i class="fas fa-sign-in-alt" style="font-size:10px;"></i> Ingresar
                 </a>
@@ -530,7 +551,6 @@
                 <div class="stat-lbl">Tipo de cocina</div>
             </div>
         @endif
-
     </div>
 </div>
 
@@ -555,6 +575,12 @@
         <div class="section-card">
             <div class="section-head">
                 <div class="section-title"><i class="fas fa-align-left"></i> Sobre el gastrobar</div>
+                {{-- ── NUEVO: Ordenar ahora ── --}}
+                @if(isset($platos) && !$platos->isEmpty())
+                    <a href="{{ route('gastrobares.ordenar', $gastrobar) }}" class="btn-ordenar">
+                        <i class="fas fa-cocktail" style="font-size:11px;"></i> Ordenar ahora
+                    </a>
+                @endif
             </div>
             <div class="section-body">
                 <p class="desc-text">
@@ -870,114 +896,19 @@
             </div>
         @endif
 
-    {{-- CTA Teléfono --}}
-@if(!empty($gastrobar->telefono))
-    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $gastrobar->telefono) }}"
-       class="btn-tel-cta">
-        <i class="fas fa-phone" style="font-size:16px;"></i>
-        {{ $gastrobar->telefono }}
-    </a>
-@endif
+        {{-- CTA Teléfono --}}
+        @if(!empty($gastrobar->telefono))
+            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $gastrobar->telefono) }}" class="btn-tel-cta">
+                <i class="fas fa-phone" style="font-size:16px;"></i>
+                {{ $gastrobar->telefono }}
+            </a>
+        @endif
+
     </aside>
 </div>
 
-{{-- ══ FOOTER CSS PURO (sin Tailwind) - IGUAL AL DE EVENTOS ══ --}}
-<footer style="background:#0f172a;color:#cbd5e1;border-top:1px solid #1e293b;">
-    <div style="max-width:1280px;margin:0 auto;padding:48px 1.5rem 32px;">
-        <div style="display:grid;grid-template-columns:1.5fr 1fr 1.5fr;gap:64px;margin-bottom:40px;align-items:start;">
+  @include('partials.footer')
 
-            {{-- Columna marca --}}
-            <div>
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                    <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;color:#fff;">
-                        Gastro<span style="color:#3b82f6;">Nicaragua</span>
-                    </span>
-                </div>
-                <p style="color:#94a3b8;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;max-width:320px;">
-                    La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                    Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
-                </p>
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#1e293b';this.style.color='#94a3b8';">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                </div>
-            </div>
-
-            {{-- Columna Portal --}}
-            <div>
-                <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:20px;">Portal</h4>
-                <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;">
-                    <li><a href="{{ route('home') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Inicio</a></li>
-                    <li><a href="{{ route('restaurantes.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Restaurantes</a></li>
-                    <li><a href="{{ route('gastrobares.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#818cf8';" onmouseout="this.style.color='#94a3b8';">Gastrobares</a></li>
-                    <li><a href="{{ route('empleos.index') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Bolsa de Empleos</a></li>
-                    <li><a href="{{ route('contacto') }}" style="color:#94a3b8;font-size:14px;text-decoration:none;transition:color 0.2s;"
-                           onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#94a3b8';">Contacto</a></li>
-                </ul>
-            </div>
-
-            {{-- Columna Destinos --}}
-            <div>
-                <h4 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:20px;">Destinos Destacados</h4>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;">
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:6px;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;"></i>Masaya
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:6px;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;"></i>Granada
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:6px;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;"></i>León
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:6px;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;"></i>San Juan del Sur
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:6px;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;"></i>Estelí
-                    </span>
-                    <span style="color:#94a3b8;font-size:14px;font-weight:300;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:6px;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#94a3b8';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#3b82f6;"></i>Matagalpa
-                    </span>
-                </div>
-            </div>
-
-        </div>
-
-        {{-- Línea inferior --}}
-        <div style="border-top:1px solid #1e293b;padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
-            <p style="font-size:12px;color:#64748b;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-            <div style="display:flex;gap:24px;">
-                <a href="#" style="font-size:12px;color:#64748b;text-decoration:none;transition:color 0.2s;"
-                   onmouseover="this.style.color='#94a3b8';" onmouseout="this.style.color='#64748b';">Política de Privacidad</a>
-                <a href="#" style="font-size:12px;color:#64748b;text-decoration:none;transition:color 0.2s;"
-                   onmouseover="this.style.color='#94a3b8';" onmouseout="this.style.color='#64748b';">Términos de Servicio</a>
-            </div>
-        </div>
-    </div>
-</footer>
 {{-- ══ LIGHTBOX ══ --}}
 <div id="lightbox" onclick="handleLbClick(event)">
     <button id="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>

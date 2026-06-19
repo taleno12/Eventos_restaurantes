@@ -12,6 +12,11 @@ class RestauranteReviewController extends Controller
     {
         $restaurante = Auth::user()->restaurante;
 
+        // Marcar todas las reseñas como vistas al entrar
+        Review::where('restaurante_id', $restaurante->id)
+            ->where('vista', false)
+            ->update(['vista' => true]);
+
         $reviews = Review::where('restaurante_id', $restaurante->id)
             ->with('user')
             ->latest()

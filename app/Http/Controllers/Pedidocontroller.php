@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pedido;
 use App\Models\PedidoItem;
+use App\Models\PedidoGastrobar;
 use App\Models\Plato;
 use App\Models\Restaurante;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class PedidoController extends Controller
             'items.*.id'    => 'required|exists:platos,id',
             'items.*.cantidad' => 'required|integer|min:1|max:20',
             'notas'         => 'nullable|string|max:500',
-            'tipo'          => 'required|in:mesa,para_llevar',
+            'tipo'          => 'required|in:envio,retiro',
         ]);
 
         // Verificar que todos los platos pertenecen a este restaurante y están activos
@@ -68,13 +69,42 @@ class PedidoController extends Controller
             ->with('pedido_success', '¡Tu pedido fue enviado! El restaurante lo confirmará en breve.');
     }
 
-    // Historial de pedidos del usuario
+    // Historial de pedidos del usuario (restaurante + gastrobar unificados)
     public function misPedidos()
     {
-        $pedidos = Pedido::where('user_id', Auth::id())
+        $pedidosRestaurante = Pedido::where('user_id', Auth::id())
             ->with(['restaurante', 'items.plato'])
-            ->latest()
-            ->paginate(10);
+            ->get()
+            ->map(function ($p) {
+                $p->tipo_negocio = 'restaurante';
+                $p->establecimiento = $p->restaurante;
+                return $p;
+            });
+
+        $pedidosGastrobar = PedidoGastrobar::where('user_id', Auth::id())
+            ->with(['gastrobar', 'items.plato'])
+            ->get()
+            ->map(function ($p) {
+                $p->tipo_negocio = 'gastrobar';
+                $p->establecimiento = $p->gastrobar;
+                return $p;
+            });
+
+        $todos = $pedidosRestaurante->concat($pedidosGastrobar)
+            ->sortByDesc('created_at')
+            ->values();
+
+        $page    = request()->get('page', 1);
+        $perPage = 10;
+        $items   = $todos->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $pedidos = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $todos->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
 
         return view('pedidos.mis-pedidos', compact('pedidos'));
     }

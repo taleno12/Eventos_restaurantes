@@ -15,155 +15,129 @@
         </div>
     </div>
 
-    {{-- Stats rápidas --}}
+    {{-- 3 métricas principales --}}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
         <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-            <div class="metric-icon yellow"><i class="bi bi-star-fill"></i></div>
+            <div class="metric-icon" style="background:#fff7ed;color:#ea580c;">
+                <i class="bi bi-bag-check-fill"></i>
+            </div>
             <div>
-                <div class="metric-value">{{ $avgRating > 0 ? $avgRating : '—' }}</div>
-                <div class="metric-label">Calificación promedio</div>
+                <div class="metric-value">{{ $totalPedidos }}</div>
+                <div class="metric-label">Pedidos completados</div>
             </div>
         </div>
         <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-            <div class="metric-icon purple"><i class="bi bi-chat-square-text"></i></div>
+            <div class="metric-icon" style="background:#f0fdf4;color:#16a34a;">
+                <i class="bi bi-currency-dollar"></i>
+            </div>
             <div>
-                <div class="metric-value">{{ $totalReviews }}</div>
-                <div class="metric-label">Reseñas totales</div>
+                <div class="metric-value" style="font-size:20px;">C$ {{ number_format($totalIngresos, 0) }}</div>
+                <div class="metric-label">Ingresos totales</div>
             </div>
         </div>
         <div class="metric-card" style="display:flex;align-items:center;gap:14px;">
-            <div class="metric-icon blue"><i class="bi bi-calendar-event"></i></div>
+            <div class="metric-icon" style="background:#eff6ff;color:#2563eb;">
+                <i class="bi bi-egg-fried"></i>
+            </div>
             <div>
-                <div class="metric-value">{{ $totalEventos }}</div>
-                <div class="metric-label">Eventos publicados</div>
+                <div class="metric-value">{{ $totalPlatos }}</div>
+                <div class="metric-label">Platillos vendidos</div>
             </div>
         </div>
     </div>
 
-    @if($totalReviews === 0 && $totalEventos === 0 && $totalEmpleos === 0)
+    @if($platosMasVendidos->isEmpty())
     <div class="panel-card">
         <div class="card-body">
             <div class="empty-state">
                 <i class="bi bi-bar-chart" style="font-size:40px;display:block;margin-bottom:12px;opacity:0.25;"></i>
                 <p style="font-size:14px;font-weight:700;margin-bottom:6px;">Sin datos aún</p>
-                <p style="font-size:13px;color:var(--muted);">Cuando publiques eventos, empleos o recibas reseñas, aquí verás las estadísticas.</p>
+                <p style="font-size:13px;color:var(--muted);">Cuando recibas pedidos completados, aquí verás qué platos se venden más.</p>
             </div>
         </div>
     </div>
     @else
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;margin-bottom:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
 
-        {{-- Gráfico dona reseñas --}}
+        {{-- Gráfico de barras --}}
         <div class="panel-card">
-            <div class="card-header"><i class="bi bi-star me-1"></i> Distribución de reseñas</div>
+            <div class="card-header">Platos más vendidos — unidades</div>
             <div class="card-body">
-                @if($totalReviews > 0)
-                    <div class="text-center mb-3">
-                        <div style="font-size:3rem;font-weight:900;color:var(--primary);line-height:1;">{{ $avgRating }}</div>
-                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#718096;margin-top:4px;">de 5 estrellas</div>
-                        <div class="mt-1">
-                            @for($i = 1; $i <= 5; $i++)
-                                <span style="color:{{ $i <= round($avgRating) ? '#f6c90e' : '#e2e8f0' }};font-size:20px;">★</span>
-                            @endfor
-                        </div>
-                    </div>
-                    <canvas id="chart-dona" height="220"></canvas>
-                @else
-                    <div class="empty-state">
-                        <i class="bi bi-star"></i>
-                        <p>Aún no tienes reseñas.</p>
-                    </div>
-                @endif
+                <canvas id="chart-barras" height="280"></canvas>
             </div>
         </div>
 
-        {{-- Gráfico barras actividad --}}
+        {{-- Gráfico de dona --}}
         <div class="panel-card">
-            <div class="card-header"><i class="bi bi-bar-chart me-1"></i> Resumen de actividad</div>
-            <div class="card-body">
-                <canvas id="chart-barras" height="220"></canvas>
+            <div class="card-header">Distribución de ventas</div>
+            <div class="card-body" style="display:flex;align-items:center;justify-content:center;">
+                <canvas id="chart-dona" height="280"></canvas>
             </div>
         </div>
 
     </div>
 
-    {{-- Tarjetas de resumen --}}
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
-        <div style="background:#f7f5ff;border:1px solid #e9d5ff;border-radius:12px;padding:16px;text-align:center;">
-            <i class="bi bi-calendar-event" style="font-size:24px;color:var(--primary);display:block;margin-bottom:8px;"></i>
-            <div style="font-size:22px;font-weight:800;color:#2d3748;">{{ $totalEventos }}</div>
-            <div style="font-size:11px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Eventos</div>
-            <div style="font-size:12px;color:#48bb78;font-weight:600;margin-top:4px;">{{ $eventosProximos }} próximos</div>
-        </div>
-        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:16px;text-align:center;">
-            <i class="bi bi-briefcase" style="font-size:24px;color:#f59e0b;display:block;margin-bottom:8px;"></i>
-            <div style="font-size:22px;font-weight:800;color:#2d3748;">{{ $totalEmpleos }}</div>
-            <div style="font-size:11px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Empleos</div>
-            <div style="font-size:12px;color:#48bb78;font-weight:600;margin-top:4px;">{{ $empleosActivos }} activos</div>
-        </div>
-        <div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:12px;padding:16px;text-align:center;">
-            <i class="bi bi-images" style="font-size:24px;color:#48bb78;display:block;margin-bottom:8px;"></i>
-            <div style="font-size:22px;font-weight:800;color:#2d3748;">{{ $totalFotos }}</div>
-            <div style="font-size:11px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Fotos</div>
-            <div style="font-size:12px;color:#718096;font-weight:600;margin-top:4px;">
-                <a href="{{ route('gastrobar.galeria.index') }}" style="color:var(--primary);">Gestionar →</a>
-            </div>
-        </div>
-        <div style="background:#fff5f5;border:1px solid #fed7d7;border-radius:12px;padding:16px;text-align:center;">
-            <i class="bi bi-chat-square-heart" style="font-size:24px;color:#fc8181;display:block;margin-bottom:8px;"></i>
-            <div style="font-size:22px;font-weight:800;color:#2d3748;">{{ $totalReviews }}</div>
-            <div style="font-size:11px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Reseñas</div>
-            <div style="font-size:12px;color:#718096;font-weight:600;margin-top:4px;">
-                Promedio: {{ $avgRating > 0 ? $avgRating . ' ★' : '—' }}
-            </div>
-        </div>
-    </div>
-
-    {{-- Tabla reseñas recientes --}}
-    @if($recentReviews->count() > 0)
-    <div class="panel-card">
-        <div class="card-header"><i class="bi bi-chat-square-text me-1"></i> Reseñas recientes</div>
+    {{-- Tabla ranking --}}
+    <div class="panel-card" style="margin-top:20px;">
+        <div class="card-header">Ranking completo</div>
         <div style="overflow-x:auto;">
             <table class="panel-table">
                 <thead>
                     <tr>
-                        <th class="ps-4">Usuario</th>
-                        <th>Calificación</th>
-                        <th>Título</th>
-                        <th>Comentario</th>
-                        <th>Fecha</th>
+                        <th style="width:40px;">#</th>
+                        <th>Plato</th>
+                        <th>Categoría</th>
+                        <th style="text-align:right;">Unidades vendidas</th>
+                        <th style="text-align:right;">Ingresos generados</th>
+                        <th style="text-align:right;">% del total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($recentReviews as $review)
+                    @foreach($platosMasVendidos as $i => $plato)
+                    @php $porcentaje = $totalPlatos > 0 ? round(($plato->total_vendido / $totalPlatos) * 100, 1) : 0; @endphp
                     <tr>
-                        <td class="ps-4">
-                            <div class="fw-bold" style="font-size:13px;color:#2d3748;">{{ $review->user->name }}</div>
+                        <td>
+                            @if($i === 0)
+                                <span style="font-size:18px;">🥇</span>
+                            @elseif($i === 1)
+                                <span style="font-size:18px;">🥈</span>
+                            @elseif($i === 2)
+                                <span style="font-size:18px;">🥉</span>
+                            @else
+                                <span style="font-size:13px;font-weight:700;color:var(--muted);">{{ $i + 1 }}</span>
+                            @endif
                         </td>
                         <td>
-                            <div style="display:flex;gap:2px;">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <span style="color:{{ $i <= $review->rating ? '#f6c90e' : '#e2e8f0' }};font-size:14px;">★</span>
-                                @endfor
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:#f5f6fa;flex-shrink:0;">
+                                    @if($plato->imagen)
+                                        <img src="{{ asset('storage/'.$plato->imagen) }}" style="width:100%;height:100%;object-fit:cover;">
+                                    @else
+                                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                                            <i class="bi bi-egg-fried" style="color:#c4bdb8;font-size:14px;"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <span style="font-weight:700;color:var(--text);">{{ $plato->nombre }}</span>
                             </div>
                         </td>
                         <td>
-                            @if($review->title)
-                                <span class="fw-semibold" style="font-size:13px;">{{ $review->title }}</span>
-                            @else
-                                <span class="text-muted small">—</span>
-                            @endif
+                            <span class="panel-badge badge-gray">{{ $plato->categoria }}</span>
                         </td>
-                        <td>
-                            @if($review->body)
-                                <span style="font-size:12px;color:#718096;">{{ Str::limit($review->body, 80) }}</span>
-                            @else
-                                <span class="text-muted small">—</span>
-                            @endif
+                        <td style="text-align:right;font-weight:800;font-size:15px;color:var(--text);">
+                            {{ number_format($plato->total_vendido) }}
                         </td>
-                        <td style="white-space:nowrap;">
-                            <span class="small text-muted">{{ $review->created_at->diffForHumans() }}</span>
+                        <td style="text-align:right;font-weight:700;color:#16a34a;">
+                            C$ {{ number_format($plato->total_ingresos, 0) }}
+                        </td>
+                        <td style="text-align:right;">
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+                                <div style="width:80px;height:6px;background:#f0f1f4;border-radius:999px;overflow:hidden;">
+                                    <div style="height:100%;width:{{ $porcentaje }}%;background:#2563eb;border-radius:999px;transition:width 1s ease;"></div>
+                                </div>
+                                <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:36px;">{{ $porcentaje }}%</span>
+                            </div>
                         </td>
                     </tr>
                     @endforeach
@@ -171,28 +145,64 @@
             </table>
         </div>
     </div>
-    @endif
 
     @endif
+
 </div>
 @endsection
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+@if($platosMasVendidos->count() > 0)
 <script>
+const labels   = @json($nombresPlatos);
+const vendidos = @json($cantidadesPlatos);
+
 const colores = [
-    '#f97316','#fb923c','#fdba74','#fcd34d','#86efac',
-    '#67e8f9','#93c5fd','#c4b5fd','#f9a8d4','#d1d5db'
+    '#ea580c','#16a34a','#2563eb','#9333ea','#db2777',
+    '#0891b2','#ca8a04','#dc2626','#059669','#4f46e5'
 ];
 
-@if($totalReviews > 0)
+new Chart(document.getElementById('chart-barras'), {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Unidades vendidas',
+            data: vendidos,
+            backgroundColor: colores.slice(0, labels.length),
+            borderRadius: 8,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x} unidades` } }
+        },
+        scales: {
+            x: {
+                grid: { color: '#f0f1f4' },
+                ticks: { color: '#8b92a5', font: { size: 11, weight: '600' } }
+            },
+            y: {
+                grid: { display: false },
+                ticks: { color: '#1a1d23', font: { size: 12, weight: '700' } }
+            }
+        }
+    }
+});
+
 new Chart(document.getElementById('chart-dona'), {
     type: 'doughnut',
     data: {
-        labels: @json($labelsRating),
+        labels: labels,
         datasets: [{
-            data: @json($cantidadRating),
-            backgroundColor: ['#f97316','#fb923c','#fdba74','#fcd34d','#d1d5db'],
+            data: vendidos,
+            backgroundColor: colores.slice(0, labels.length),
             borderWidth: 2,
             borderColor: '#ffffff',
             hoverOffset: 8,
@@ -212,54 +222,10 @@ new Chart(document.getElementById('chart-dona'), {
                     usePointStyle: true
                 }
             },
-            tooltip: {
-                callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} reseñas` }
-            }
-        }
-    }
-});
-@endif
-
-new Chart(document.getElementById('chart-barras'), {
-    type: 'bar',
-    data: {
-        labels: ['Reseñas', 'Eventos', 'Ev. próximos', 'Empleos', 'Emp. activos', 'Fotos'],
-        datasets: [{
-            label: 'Total',
-            data: [
-                {{ $totalReviews }},
-                {{ $totalEventos }},
-                {{ $eventosProximos }},
-                {{ $totalEmpleos }},
-                {{ $empleosActivos }},
-                {{ $totalFotos }}
-            ],
-            backgroundColor: colores,
-            borderRadius: 8,
-            borderSkipped: false,
-        }]
-    },
-    options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: { label: ctx => ` ${ctx.parsed.x}` }
-            }
-        },
-        scales: {
-            x: {
-                grid: { color: '#f0f1f4' },
-                ticks: { color: '#8b92a5', font: { size: 11, weight: '600' } }
-            },
-            y: {
-                grid: { display: false },
-                ticks: { color: '#1a1d23', font: { size: 12, weight: '700' } }
-            }
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} uds` } }
         }
     }
 });
 </script>
+@endif
 @endsection

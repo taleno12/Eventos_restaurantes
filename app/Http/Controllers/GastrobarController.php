@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Gastrobar;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Models\Plato;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -100,7 +101,7 @@ class GastrobarController extends Controller
         $request->validate([
             'nombre'               => 'required|string|max:100',
             'email'                => 'nullable|email|max:150',
-            'telefono'             => 'nullable|string|max:50',   // ← AGREGADO
+            'telefono'             => 'nullable|string|max:50',
             'tipo_cocina'          => 'nullable|string|max:100',
             'tipo_bar'             => 'nullable|string|max:100',
             'descripcion'          => 'nullable|string|max:500',
@@ -148,11 +149,10 @@ class GastrobarController extends Controller
 
         $gastrobar = Gastrobar::create($data);
 
-        // Crear usuario propietario con acceso por Google (sin contraseña)
         User::create([
             'name'         => $request->propietario_nombre,
             'email'        => $request->propietario_email,
-            'password'     => Hash::make(uniqid()), // Contraseña temporal (no se usa)
+            'password'     => Hash::make(uniqid()),
             'role'         => 'gastrobar',
             'gastrobar_id' => $gastrobar->id,
         ]);
@@ -202,7 +202,7 @@ class GastrobarController extends Controller
         $request->validate([
             'nombre'               => 'required|string|max:100',
             'email'                => 'nullable|email|max:150',
-            'telefono'             => 'nullable|string|max:50',   // ← AGREGADO
+            'telefono'             => 'nullable|string|max:50',
             'tipo_cocina'          => 'nullable|string|max:100',
             'tipo_bar'             => 'nullable|string|max:100',
             'descripcion'          => 'nullable|string|max:500',
@@ -334,19 +334,36 @@ class GastrobarController extends Controller
         }
 
         $gastrobar->load(['departamento', 'municipio', 'fotos']);
-        return view('gastrobares.public_show', compact('gastrobar'));
+
+        $platos = Plato::where('gastrobar_id', $gastrobar->id)
+            ->where('activo', true)
+            ->orderBy('orden')
+            ->get()
+            ->groupBy(fn($p) => $p->categoria ?? 'Sin categoría');
+
+        return view('gastrobares.public_show', compact('gastrobar', 'platos'));
     }
 
-    /**
-     * Activa o desactiva un gastrobar.
-     * Al desactivarlo deja de aparecer en la vista pública junto con
-     * sus eventos y empleos, y se bloquea el acceso de su propietario.
-     */
+    public function ordenar(Gastrobar $gastrobar)
+    {
+        if (!$gastrobar->activo) {
+            abort(404);
+        }
+
+        $platos = Plato::where('gastrobar_id', $gastrobar->id)
+            ->where('activo', true)
+            ->with(['opciones.valores'])
+            ->orderBy('orden')
+            ->get()
+            ->groupBy(fn($p) => $p->categoria ?? 'Sin categoría');
+
+        return view('gastrobares.ordenar', compact('gastrobar', 'platos'));
+    }
+
     public function toggleActivo(Gastrobar $gastrobar)
     {
         $gastrobar->update(['activo' => !$gastrobar->activo]);
 
-        // Sincronizar estado del usuario propietario
         User::where('gastrobar_id', $gastrobar->id)
             ->where('role', 'gastrobar')
             ->update(['estado' => $gastrobar->activo ? 'activo' : 'suspendido']);

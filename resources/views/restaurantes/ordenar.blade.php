@@ -382,12 +382,12 @@ window.__platosOpciones = {!! json_encode(
                         <label class="notas-label">Tipo de pedido</label>
                         <div class="tipo-grid" style="margin-bottom:14px;">
                             <label class="tipo-opt">
-                                <input type="radio" name="tipo" value="mesa" checked>
-                                <i class="fas fa-chair" style="color:var(--blue);font-size:12px;"></i> Mesa
+                                <input type="radio" name="tipo" value="envio">
+                                <i class="fas fa-motorcycle" style="color:var(--blue);font-size:12px;"></i> Envío
                             </label>
                             <label class="tipo-opt">
-                                <input type="radio" name="tipo" value="para_llevar">
-                                <i class="fas fa-bag-shopping" style="color:var(--blue);font-size:12px;"></i> Para llevar
+                                <input type="radio" name="tipo" value="retiro" checked>
+                                <i class="fas fa-store" style="color:var(--blue);font-size:12px;"></i> Retiro en el local
                             </label>
                         </div>
                         <label class="notas-label">Notas <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></label>
@@ -461,61 +461,7 @@ window.__platosOpciones = {!! json_encode(
     </div>
 </div>
 @endauth
-
-{{-- FOOTER --}}
-<footer>
-    <div style="max-width:1200px;margin:0 auto;padding:48px 24px 32px;">
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;margin-bottom:32px;">
-            <div>
-                <div style="margin-bottom:14px;">
-                    <span style="font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:20px;color:#fff;">
-                        Gastro<span style="color:#2563eb;">Nicaragua</span>
-                    </span>
-                </div>
-                <p style="color:#a8a29e;font-size:14px;line-height:1.7;font-weight:300;margin-bottom:16px;">
-                    La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                </p>
-                <div style="display:flex;gap:10px;">
-                    @foreach(['facebook-f','instagram','tiktok'] as $red)
-                    <a href="#" style="width:32px;height:32px;border-radius:50%;background:#292524;display:flex;align-items:center;justify-content:center;color:#a8a29e;font-size:12px;transition:all 0.2s;"
-                       onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
-                       onmouseout="this.style.background='#292524';this.style.color='#a8a29e';">
-                        <i class="fab fa-{{ $red }}"></i>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-            <div>
-                <h4 style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:14px;">Portal</h4>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    @foreach([['home','Inicio'],['restaurantes.index','Restaurantes'],['gastrobares.index','Gastrobares'],['empleos.index','Empleos'],['contacto','Contacto']] as [$ruta, $label])
-                    <a href="{{ route($ruta) }}" style="color:#a8a29e;font-size:14px;transition:color 0.2s;"
-                       onmouseover="this.style.color='#60a5fa';" onmouseout="this.style.color='#a8a29e';">{{ $label }}</a>
-                    @endforeach
-                </div>
-            </div>
-            <div>
-                <h4 style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:14px;">Destinos</h4>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                    @foreach(['Masaya','Granada','León','San Juan del Sur','Estelí','Matagalpa'] as $d)
-                    <span style="color:#a8a29e;font-size:13px;font-weight:300;cursor:pointer;transition:color 0.2s;"
-                          onmouseover="this.style.color='#fff';" onmouseout="this.style.color='#a8a29e';">
-                        <i class="fas fa-chevron-right" style="font-size:9px;color:#2563eb;margin-right:5px;"></i>{{ $d }}
-                    </span>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        <div style="border-top:1px solid #292524;padding-top:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
-            <p style="font-size:12px;color:#57534e;margin:0;">&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-            <div style="display:flex;gap:16px;">
-                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;" onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Política de Privacidad</a>
-                <a href="#" style="font-size:12px;color:#57534e;transition:color 0.2s;" onmouseover="this.style.color='#a8a29e';" onmouseout="this.style.color='#57534e';">Términos de Servicio</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
+@include('partials.footer')
 <script>
 // ── CARRITO ──
 let carrito = {};

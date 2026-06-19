@@ -564,6 +564,59 @@
         </div>
     </div>
 
+    {{-- ── Enviar Notificación al Restaurante ── --}}
+    @if($restaurante->propietario)
+    <div class="card border-0 shadow-sm rounded-3 bg-white mt-4">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-4 pb-2 border-bottom d-flex align-items-center gap-2"
+                style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;color:#2d3748;">
+                <i class="bi bi-bell text-primary"></i> Enviar Notificación al Restaurante
+            </h5>
+
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-1"></i> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('notificaciones.store') }}">
+                @csrf
+                <input type="hidden" name="user_id" value="{{ $restaurante->propietario->id }}">
+
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Tipo</label>
+                        <select name="tipo" class="form-select" required>
+                            <option value="mensaje_admin">Mensaje general</option>
+                            <option value="contrato_por_vencer">Contrato por vencer</option>
+                            <option value="contrato_vencido">Contrato vencido</option>
+                            <option value="pago_pendiente">Pago pendiente</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Enlace (opcional)</label>
+                        <input type="text" name="url" class="form-control" placeholder="/mi-restaurante/contratos">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold text-muted mb-1">Título</label>
+                        <input type="text" name="titulo" class="form-control" placeholder="Ej: Tu contrato vence pronto" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold text-muted mb-1">Mensaje</label>
+                        <textarea name="mensaje" class="form-control" rows="3" placeholder="Detalle del aviso..." required></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn fw-semibold text-white" style="background:#ea580c;border-color:#ea580c;">
+                            <i class="bi bi-send-fill me-1"></i> Enviar Notificación
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
     {{-- ── Barra de Acciones ── --}}
     <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between border-top pt-4 mt-4 gap-3">
         <a href="{{ route('admin.restaurantes.index') }}"

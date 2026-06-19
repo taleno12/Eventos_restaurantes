@@ -84,7 +84,7 @@
                         <i class="bi bi-funnel me-1"></i> Estado
                     </label>
                     <select id="filtro-estado" class="form-select form-select-sm rounded-pill">
-                        <option value="">Todos</option>
+                        <option value="">Todos (activos)</option>
                         <option value="pendiente">Pendiente</option>
                         <option value="confirmado">Confirmado</option>
                         <option value="en_preparacion">En preparación</option>
@@ -149,8 +149,8 @@
                     </thead>
                     <tbody class="border-top-0">
                         @foreach($todosLosPedidos as $pedido)
-                        <tr class="fila-pedido border-bottom"
-                            style="border-color:var(--card-border) !important;cursor:pointer;"
+                        <tr class="fila-pedido border-bottom {{ $pedido->estado === 'entregado' ? 'fila-entregado' : '' }}"
+                            style="border-color:var(--card-border) !important;cursor:pointer; {{ $pedido->estado === 'entregado' ? 'opacity:0.6;' : '' }}"
                             data-id="{{ $pedido->id }}"
                             data-cliente="{{ strtolower($pedido->user->name) }}"
                             data-estado="{{ $pedido->estado }}"
@@ -240,7 +240,9 @@
                                     </select>
                                 </form>
                                 @else
-                                    <span class="small" style="color:var(--muted) !important;">✓ Completado</span>
+                                    <span class="small fw-semibold" style="color:var(--muted) !important;">
+                                        <i class="bi bi-check-circle-fill text-success me-1"></i> Completado
+                                    </span>
                                 @endif
                             </td>
 
@@ -308,7 +310,7 @@ window.__pedidos = {
     @endforeach
 };
 
-const estadosInfo = @json(\App\Models\Pedido::ESTADOS);
+window.estadosInfo = @json(\App\Models\Pedido::ESTADOS);
 </script>
 
 <style>
@@ -333,6 +335,9 @@ const estadosInfo = @json(\App\Models\Pedido::ESTADOS);
     }
     .fila-pedido {
         background-color: var(--card-bg) !important;
+    }
+    .fila-entregado {
+        background-color: rgba(34, 197, 94, 0.05) !important;
     }
     @keyframes pulse {
         0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.2); }
@@ -377,6 +382,12 @@ if (inputBuscar) {
 
         let visibles = 0;
         document.querySelectorAll('.fila-pedido').forEach(fila => {
+            // Ocultar entregados por defecto, a menos que se filtre explícitamente por "entregado"
+            if (fila.dataset.estado === 'entregado' && estado !== 'entregado') {
+                fila.style.display = 'none';
+                return;
+            }
+
             const coincideId      = buscar === '' || ('#' + fila.dataset.id.padStart(4,'0')).includes(buscar);
             const coincideCliente = buscar === '' || fila.dataset.cliente.includes(buscar);
             const coincideEstado  = estado === '' || fila.dataset.estado === estado;
@@ -405,16 +416,20 @@ if (inputBuscar) {
     filtrar();
 }
 
-// ── ELIMINAR PEDIDO AL CANCELAR (sin recargar) ──
+// ── CAMBIAR ESTADO ──
 document.querySelectorAll('.select-estado').forEach(select => {
     select.addEventListener('change', function(e) {
-        if (this.value === 'cancelado') {
-            e.preventDefault();
+        e.preventDefault();
 
-            const fila = this.closest('.fila-pedido');
-            const form = this.closest('.form-estado');
+        const fila = this.closest('.fila-pedido');
+        const form = this.closest('.form-estado');
+        const nuevoEstado = this.value;
+        const estadoAnterior = fila.dataset.estado;
+
+        if (nuevoEstado === 'cancelado') {
+            // ── Cancelado: elimina la fila con animación ──
             const totalPedido = parseFloat(fila.dataset.total) || 0;
-            const eraPendiente = fila.dataset.estado === 'pendiente';
+            const eraPendiente = estadoAnterior === 'pendiente';
 
             fila.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             fila.style.opacity = '0';
@@ -448,6 +463,107 @@ document.querySelectorAll('.select-estado').forEach(select => {
                 });
 
             }, 600);
+
+        } else {
+            // ── Cualquier otro estado (incluido "entregado"): enviar al backend ──
+            const formData = new FormData(form);
+            this.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    this.disabled = false;
+                    console.log('Respuesta del servidor:', data);
+
+                    if (!data || !data.success) {
+                        console.error('No se pudo actualizar el estado del pedido.');
+                        this.value = estadoAnterior;
+                        return;
+                    }
+
+                    fila.dataset.estado = nuevoEstado;
+
+                    // Actualizar el badge visual de "Estado" en la fila
+                    const info = window.estadosInfo[nuevoEstado];
+                    if (info) {
+                        const celdaEstado = fila.children[5]; // columna "Estado"
+                        const badgeEstado = celdaEstado ? celdaEstado.querySelector('.badge') : null;
+                        if (badgeEstado) {
+                            badgeEstado.style.backgroundColor = info.color + '22';
+                            badgeEstado.style.color = info.color;
+                            badgeEstado.style.borderColor = info.color + '44';
+                            badgeEstado.innerHTML =
+                                `<span class="rounded-circle" style="width:5px;height:5px;background:${info.color};"></span> ${info.label}`;
+                        }
+                    }
+
+                    // Si el pedido estaba pendiente y ahora no lo está, restar del contador de pendientes
+                    if (estadoAnterior === 'pendiente' && nuevoEstado !== 'pendiente') {
+                        const badgePendientes = document.getElementById('metrica-pendientes');
+                        if (badgePendientes) {
+                            const actual = parseInt(badgePendientes.textContent) || 0;
+                            if (actual > 0) badgePendientes.textContent = actual - 1;
+                        }
+                    }
+
+                    // Si pasó a "entregado", reemplazar el select por "Completado" y aplicar estilo
+                    if (nuevoEstado === 'entregado') {
+                        const celdaCambiar = fila.children[7]; // columna "Cambiar estado"
+                        if (celdaCambiar) {
+                            celdaCambiar.innerHTML = `
+                                <span class="small fw-semibold" style="color:var(--muted) !important;">
+                                    <i class="bi bi-check-circle-fill text-success me-1"></i> Completado
+                                </span>
+                            `;
+                        }
+
+                        // Aplicar estilo visual de entregado
+                        fila.style.opacity = '0.6';
+                        fila.classList.add('fila-entregado');
+
+                        // Ocultar después de un delay si no se está filtrando por entregados
+                        const filtroEstadoActual = document.getElementById('filtro-estado').value;
+                        if (filtroEstadoActual !== 'entregado') {
+                            setTimeout(() => {
+                                fila.style.transition = 'all 0.5s ease';
+                                fila.style.opacity = '0';
+                                fila.style.transform = 'translateX(30px)';
+
+                                setTimeout(() => {
+                                    fila.style.display = 'none';
+                                    const visibles = Array.from(document.querySelectorAll('.fila-pedido')).filter(f => f.style.display !== 'none').length;
+                                    if (sinRes) sinRes.style.display = visibles === 0 ? 'block' : 'none';
+                                    if (contador) {
+                                        contador.textContent = visibles > 0
+                                            ? `${visibles} pedido${visibles !== 1 ? 's' : ''} encontrado${visibles !== 1 ? 's' : ''}`
+                                            : '';
+                                    }
+                                }, 500);
+                            }, 800);
+                        }
+                    } else {
+                        // Quitar la opción "cancelado" del select si ya no aplica
+                        const opcionCancelado = this.querySelector('option[value="cancelado"]');
+                        if (opcionCancelado && nuevoEstado !== 'pendiente') {
+                            opcionCancelado.remove();
+                        }
+                    }
+
+                    // Refrescar también los datos del modal de detalle
+                    if (window.__pedidos && window.__pedidos[fila.dataset.id]) {
+                        window.__pedidos[fila.dataset.id].estado = nuevoEstado;
+                    }
+                })
+                .catch(err => {
+                    this.disabled = false;
+                    this.value = estadoAnterior;
+                    console.error('Error al actualizar estado:', err);
+                    alert('Error al actualizar el estado. Inténtalo de nuevo.');
+                });
         }
     });
 });
@@ -481,7 +597,7 @@ function verDetalle(id) {
     const p = window.__pedidos[id];
     if (!p) return;
 
-    const estadoInfo = estadosInfo[p.estado] || { label: p.estado, color: '#6b7280' };
+    const estadoInfo = window.estadosInfo[p.estado] || { label: p.estado, color: '#6b7280' };
     const tipoLabel  = p.tipo === 'envio' ? '🛵 Envío' : '🏬 Retiro en el local';
 
     document.getElementById('modal-titulo').innerHTML =

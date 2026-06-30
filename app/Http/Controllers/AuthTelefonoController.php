@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthTelefonoController extends Controller
 {
+    // Telefonos autorizados para acceder al panel de admin
+    private $adminPhones = [
+        '83767512',
+        '85406068',
+    ];
+
     // ───────────────────────────────
     // REGISTRO
     // ───────────────────────────────
@@ -63,6 +69,11 @@ class AuthTelefonoController extends Controller
 
         if (!$user || !$user->password || !Hash::check($request->password, $user->password)) {
             return back()->withErrors(['telefono' => 'Telefono o contrasena incorrectos.'])->withInput();
+        }
+
+        // Si el usuario tiene rol admin, verificar que su telefono este en la lista autorizada
+        if ($user->role === 'admin' && !in_array($user->telefono, $this->adminPhones)) {
+            return back()->withErrors(['telefono' => 'Este numero no tiene permisos de administrador.'])->withInput();
         }
 
         Auth::login($user, true);

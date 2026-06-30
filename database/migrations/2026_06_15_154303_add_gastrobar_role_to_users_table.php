@@ -7,11 +7,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('admin','restaurante','usuario','gastrobar') NOT NULL DEFAULT 'usuario'");
+        // En PostgreSQL la columna role es varchar, no ENUM
+        // El valor 'gastrobar' ya es válido sin modificar el tipo
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('admin','restaurante','usuario') NOT NULL DEFAULT 'usuario'");
+        //
     }
 };

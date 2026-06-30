@@ -674,7 +674,7 @@
 
                         @if (Route::has('login'))
                             @auth
-                                @if(in_array(auth()->user()->email, ['kevintaleno17@gmail.com', '15ulisesramirez@gmail.com']))
+                                @if(auth()->user()->role === 'admin')
                                     <a href="{{ route('dashboard') }}"
                                        class="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-2 rounded-full sm:rounded-none bg-blue-50 sm:bg-transparent border border-blue-200 sm:border-0 text-blue-600 hover:text-blue-700 transition-colors no-underline"
                                        title="Panel Admin">
@@ -1134,7 +1134,7 @@
                         <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
-                            <span class=                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>

@@ -55,13 +55,9 @@
             border: 1.5px solid var(--blue); color: #fff; background: var(--blue);
         }
         .nav-btn-rest:hover { background: #1d4ed8; border-color: #1d4ed8; }
-        .nav-btn-contact {
-            color: var(--muted); padding: 7px 10px;
-        }
+        .nav-btn-contact { color: var(--muted); padding: 7px 10px; }
         .nav-btn-contact:hover { color: var(--blue); }
-        .nav-btn-login {
-            color: var(--muted); padding: 7px 10px;
-        }
+        .nav-btn-login { color: var(--muted); padding: 7px 10px; }
         .nav-btn-login:hover { color: var(--blue); }
         .nav-btn-logout {
             color: var(--muted); background: transparent; border: none;
@@ -77,16 +73,18 @@
             padding: 36px 20px 64px;
         }
 
+        /* ── FLASH ── */
+        .flash-success {
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;
+            padding: 10px 16px; margin-bottom: 16px;
+            font-size: 13px; font-weight: 600; color: #15803d;
+            display: flex; align-items: center; gap: 8px;
+        }
+
         /* ── HEADER ── */
-        .page-h {
-            margin-bottom: 24px;
-        }
-        .page-h h1 {
-            font-size: 22px; font-weight: 800; color: var(--text);
-        }
-        .page-h p {
-            font-size: 13px; color: var(--muted); margin-top: 3px;
-        }
+        .page-h { margin-bottom: 24px; }
+        .page-h h1 { font-size: 22px; font-weight: 800; color: var(--text); }
+        .page-h p  { font-size: 13px; color: var(--muted); margin-top: 3px; }
 
         /* ── PEDIDO ── */
         .pedido {
@@ -120,7 +118,7 @@
             font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px;
         }
 
-        /* acciones cabecera (badge + botón eliminar) */
+        /* acciones cabecera */
         .pedido-top-actions {
             display: flex; align-items: center; gap: 8px; flex-shrink: 0;
         }
@@ -158,18 +156,10 @@
         }
         .item:last-child { border-bottom: none; }
         .item-info { display: flex; align-items: baseline; gap: 8px; }
-        .item-qty {
-            font-size: 12px; font-weight: 800; color: var(--blue);
-            min-width: 18px;
-        }
+        .item-qty  { font-size: 12px; font-weight: 800; color: var(--blue); min-width: 18px; }
         .item-name { font-size: 14px; font-weight: 500; color: var(--text); }
-        .item-opts {
-            font-size: 11px; color: var(--muted); margin-top: 2px; margin-left: 26px;
-        }
-        .item-price {
-            font-size: 13px; font-weight: 700; color: var(--text);
-            white-space: nowrap; flex-shrink: 0;
-        }
+        .item-opts { font-size: 11px; color: var(--muted); margin-top: 2px; margin-left: 26px; }
+        .item-price { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; flex-shrink: 0; }
 
         /* nota del cliente */
         .nota {
@@ -193,12 +183,10 @@
             display: flex; align-items: center; gap: 10px;
         }
         .foot-meta i { font-size: 10px; color: var(--blue); }
-        .foot-total {
-            font-size: 15px; font-weight: 800; color: var(--text);
-        }
+        .foot-total { font-size: 15px; font-weight: 800; color: var(--text); }
         .foot-total span { color: var(--blue); }
 
-        /* cancelado */
+        /* strip cancelado */
         .cancelado-strip {
             background: #fef2f2;
             border-top: 1px solid #fecaca;
@@ -222,7 +210,7 @@
         }
         .empty-icon i { font-size: 24px; color: var(--blue); }
         .empty h2 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
-        .empty p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+        .empty p  { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
         .btn-blue {
             display: inline-flex; align-items: center; gap: 8px;
             background: var(--blue); color: white; text-decoration: none;
@@ -247,15 +235,12 @@
     <a href="{{ route('home') }}" class="logo">Gastro<span>Nicaragua</span></a>
 
     <div class="nav-actions">
-
         <a href="{{ route('home') }}" class="nav-btn nav-btn-home">
             <i class="fas fa-home"></i> <span>Inicio</span>
         </a>
-
         <a href="{{ route('restaurantes.index') }}" class="nav-btn nav-btn-rest">
             <i class="fas fa-utensils"></i> <span>Explorar</span>
         </a>
-
 
         @if (Route::has('login'))
             @auth
@@ -276,7 +261,6 @@
                 </a>
             @endauth
         @endif
-
     </div>
 </nav>
 
@@ -287,6 +271,12 @@
         <p>Historial de tus pedidos realizados</p>
     </div>
 
+    @if(session('success'))
+        <div class="flash-success">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+
     @if($pedidos->count() > 0)
         @foreach($pedidos as $pedido)
         @php
@@ -294,7 +284,6 @@
             $estados     = $esGastrobar ? \App\Models\PedidoGastrobar::ESTADOS : \App\Models\Pedido::ESTADOS;
             $info        = $estados[$pedido->estado];
             $cancelado   = $pedido->estado === 'cancelado';
-            $confirmado  = $pedido->estado === 'confirmado';
             $rutaShow    = $esGastrobar
                 ? route('gastrobares.show', $pedido->establecimiento)
                 : route('restaurantes.show', $pedido->establecimiento);
@@ -326,11 +315,15 @@
                         {{ $info['label'] }}
                     </span>
 
-                    @if($confirmado && !$esGastrobar)
-                    <form method="POST" action="{{ route('pedidos.destroy', $pedido) }}" class="inline m-0"
-                          onsubmit="return confirm('¿Eliminar este pedido?')">
+                    {{-- Botón eliminar: solo si está cancelado --}}
+                    @if($cancelado)
+                    <form method="POST"
+                          action="{{ route('pedidos.destroy', $pedido->id) }}"
+                          class="inline m-0"
+                          onsubmit="return confirm('¿Eliminar este pedido cancelado?')">
                         @csrf
                         @method('DELETE')
+                        <input type="hidden" name="tipo" value="{{ $esGastrobar ? 'gastrobar' : 'restaurante' }}">
                         <button type="submit" class="btn-eliminar">
                             <i class="fas fa-trash"></i> Eliminar
                         </button>
@@ -365,22 +358,22 @@
             </div>
             @endif
 
-            {{-- Cancelado --}}
+            {{-- Strip cancelado --}}
             @if($cancelado)
             <div class="cancelado-strip">
-                <i class="fas fa-ban" style="font-size:11px;"></i> Pedido cancelado
+                <i class="fas fa-ban" style="font-size:11px;"></i> Pedido cancelado por el establecimiento
             </div>
             @endif
 
             {{-- Pie --}}
             <div class="pedido-foot">
                 <div class="foot-meta">
-                    @if($pedido->tipo === 'mesa')
-                        <i class="fas fa-chair"></i> Mesa
-                    @elseif(in_array($pedido->tipo, ['para_llevar', 'retiro']))
+                    @if(in_array($pedido->tipo, ['para_llevar', 'retiro']))
                         <i class="fas fa-bag-shopping"></i> Para llevar
-                    @else
+                    @elseif($pedido->tipo === 'envio')
                         <i class="fas fa-motorcycle"></i> Envío
+                    @else
+                        <i class="fas fa-chair"></i> Mesa
                     @endif
                     <span>· {{ $pedido->items->count() }} platillo{{ $pedido->items->count() !== 1 ? 's' : '' }}</span>
                 </div>

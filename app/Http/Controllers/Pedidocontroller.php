@@ -17,14 +17,13 @@ class PedidoController extends Controller
     public function store(Request $request, Restaurante $restaurante)
     {
         $request->validate([
-            'items'         => 'required|array|min:1',
-            'items.*.id'    => 'required|exists:platos,id',
+            'items'            => 'required|array|min:1',
+            'items.*.id'       => 'required|exists:platos,id',
             'items.*.cantidad' => 'required|integer|min:1|max:20',
-            'notas'         => 'nullable|string|max:500',
-            'tipo'          => 'required|in:envio,retiro',
+            'notas'            => 'nullable|string|max:500',
+            'tipo'             => 'required|in:envio,retiro',
         ]);
 
-        // Verificar que todos los platos pertenecen a este restaurante y están activos
         $itemsValidados = [];
         $total = 0;
 
@@ -76,7 +75,7 @@ class PedidoController extends Controller
             ->with(['restaurante', 'items.plato'])
             ->get()
             ->map(function ($p) {
-                $p->tipo_negocio = 'restaurante';
+                $p->tipo_negocio    = 'restaurante';
                 $p->establecimiento = $p->restaurante;
                 return $p;
             });
@@ -85,7 +84,7 @@ class PedidoController extends Controller
             ->with(['gastrobar', 'items.plato'])
             ->get()
             ->map(function ($p) {
-                $p->tipo_negocio = 'gastrobar';
+                $p->tipo_negocio    = 'gastrobar';
                 $p->establecimiento = $p->gastrobar;
                 return $p;
             });
@@ -117,12 +116,25 @@ class PedidoController extends Controller
         return view('pedidos.show', compact('pedido'));
     }
 
-    // Eliminar pedido confirmado
-    public function destroy(Pedido $pedido)
+    // Eliminar pedido cancelado (restaurante)
+    public function destroy(Request $request, $id)
     {
-        abort_unless($pedido->user_id === Auth::id(), 403);
-        abort_unless($pedido->estado === 'confirmado', 403);
+        // Detectar si es gastrobar o restaurante por el parámetro 'tipo'
+        $tipo = $request->input('tipo', 'restaurante');
 
+        if ($tipo === 'gastrobar') {
+            $pedido = PedidoGastrobar::where('id', $id)
+                ->where('user_id', Auth::id())
+                ->firstOrFail();
+        } else {
+            $pedido = Pedido::where('id', $id)
+                ->where('user_id', Auth::id())
+                ->firstOrFail();
+        }
+
+        abort_unless($pedido->estado === 'cancelado', 403);
+
+        $pedido->items()->delete();
         $pedido->delete();
 
         return redirect()->route('pedidos.mis')

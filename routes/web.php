@@ -19,6 +19,7 @@ use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\SoporteAppController;
 use App\Http\Controllers\Restaurante\CategoriaController;
 
 use App\Models\Restaurante;
@@ -234,10 +235,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             ->name('ajax.establecimientos');
     });
 
-    // ── SOPORTE ADMIN ─────────────────────────────────────────────────────────
-    Route::get('/soporte', function () {
-        return view('soporte.index');
-    })->name('soporte.index');
+    // ── SOPORTE ADMIN (REPORTES DE LA APP) ───────────────────────────────────
+    Route::get('/soporte',                    [SoporteAppController::class, 'index'])->name('soporte.index');
+    Route::patch('/soporte/{reporte}/estado', [SoporteAppController::class, 'updateEstado'])->name('soporte.estado');
 
     Route::get('/configuracion', function () {
         return view('configuracion.index', [
@@ -338,7 +338,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/{usuario}',           [\App\Http\Controllers\UsuarioController::class, 'show'])->name('show');
     });
 
-    // ── REPORTES ──────────────────────────────────────────────────────────────
+    // ── REPORTES (ESTADÍSTICAS) ───────────────────────────────────────────────
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 
     Route::get('/api/departamentos/{id}/municipios', function ($id) {

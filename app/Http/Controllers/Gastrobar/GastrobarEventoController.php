@@ -6,12 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Evento;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Services\FcmNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class GastrobarEventoController extends Controller
 {
+    private FcmNotificationService $fcm;
+
+    public function __construct(FcmNotificationService $fcm)
+    {
+        $this->fcm = $fcm;
+    }
+
     private function gastrobar()
     {
         return Auth::user()->gastrobar;
@@ -65,6 +73,11 @@ class GastrobarEventoController extends Controller
                 }
             }
         }
+
+        $this->fcm->enviar(
+            '📅 Nuevo evento',
+            "¡{$evento->titulo} ya está disponible en {$gastrobar->nombre}!"
+        );
 
         return redirect()->route('gastrobar.eventos.index')
             ->with('success', '¡Evento publicado exitosamente!');

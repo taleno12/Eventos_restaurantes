@@ -6,12 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Evento;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Services\FcmNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class RestauranteEventoController extends Controller
 {
+    private FcmNotificationService $fcm;
+
+    public function __construct(FcmNotificationService $fcm)
+    {
+        $this->fcm = $fcm;
+    }
+
     private function restaurante()
     {
         return Auth::user()->restaurante;
@@ -66,6 +74,11 @@ class RestauranteEventoController extends Controller
             }
         }
 
+        $this->fcm->enviar(
+            '📅 Nuevo evento',
+            "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
+        );
+
         return redirect()->route('restaurante.eventos.index')
             ->with('success', '¡Evento publicado exitosamente!');
     }
@@ -83,46 +96,46 @@ class RestauranteEventoController extends Controller
     }
 
     public function update(Request $request, Evento $evento)
-{
-    $restaurante = $this->restaurante();
-    abort_unless($evento->restaurante_id === $restaurante->id, 403);
+    {
+        $restaurante = $this->restaurante();
+        abort_unless($evento->restaurante_id === $restaurante->id, 403);
 
-    $validated = $request->validate([
-        'titulo'       => 'required|max:255',
-        'descripcion'  => 'nullable|string',
-        'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        'precio'       => 'required|numeric|min:0',
-        'fecha_evento' => 'required|date',
-        'municipio_id' => 'required|exists:municipios,id',
-        'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-    ]);
+        $validated = $request->validate([
+            'titulo'       => 'required|max:255',
+            'descripcion'  => 'nullable|string',
+            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'precio'       => 'required|numeric|min:0',
+            'fecha_evento' => 'required|date',
+            'municipio_id' => 'required|exists:municipios,id',
+            'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
 
-    // Imagen: solo actualizar si se subió una nueva
-    if ($request->hasFile('imagen')) {
-        if ($evento->imagen) Storage::disk('public')->delete($evento->imagen);
-        $validated['imagen'] = $request->file('imagen')->store('anuncios', 'public');
-    } else {
-        unset($validated['imagen']); // mantener la imagen existente
-    }
+        // Imagen: solo actualizar si se subió una nueva
+        if ($request->hasFile('imagen')) {
+            if ($evento->imagen) Storage::disk('public')->delete($evento->imagen);
+            $validated['imagen'] = $request->file('imagen')->store('anuncios', 'public');
+        } else {
+            unset($validated['imagen']); // mantener la imagen existente
+        }
 
-    // Galería adicional
-    unset($validated['galeria']);
-    unset($validated['is_destacado']); // bloquear que restaurantes cambien esto
-    $validated['is_destacado'] = false; // forzar siempre normal
-    $evento->update($validated);
+        // Galería adicional
+        unset($validated['galeria']);
+        unset($validated['is_destacado']); // bloquear que restaurantes cambien esto
+        $validated['is_destacado'] = false; // forzar siempre normal
+        $evento->update($validated);
 
-    if ($request->hasFile('galeria')) {
-        foreach ($request->file('galeria') as $img) {
-            if ($img && $img->isValid()) {
-                $path = $img->store('eventos/galeria', 'public');
-                $evento->imagenes()->create(['ruta' => $path]);
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $img) {
+                if ($img && $img->isValid()) {
+                    $path = $img->store('eventos/galeria', 'public');
+                    $evento->imagenes()->create(['ruta' => $path]);
+                }
             }
         }
-    }
 
-    return redirect()->route('restaurante.eventos.index')
-        ->with('success', 'Evento actualizado correctamente.');
-}
+        return redirect()->route('restaurante.eventos.index')
+            ->with('success', 'Evento actualizado correctamente.');
+    }
 
     public function destroy(Evento $evento)
     {

@@ -190,7 +190,7 @@ const oldMunicipio = "{{ old('municipio_id', $gastrobar->municipio_id ?? '') }}"
 
 function cargarMunicipios(depId, municipioSeleccionado = null) {
     if (!depId) { selectMun.innerHTML = '<option value="">Primero selecciona departamento</option>'; return; }
-    fetch(`/api/departamentos/${depId}/municipios`)
+    fetch(`/mi-gastrobar/api/municipios/${depId}`)
         .then(r => r.json())
         .then(data => {
             selectMun.innerHTML = '<option value="">Selecciona municipio</option>';

@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Restaurante;
 use App\Http\Controllers\Controller;
 use App\Models\Empleo;
 use App\Models\Municipio;
+use App\Services\FcmNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class RestauranteEmpleoController extends Controller
 {
+    private FcmNotificationService $fcm;
+
+    public function __construct(FcmNotificationService $fcm)
+    {
+        $this->fcm = $fcm;
+    }
+
     private function restaurante()
     {
         return Auth::user()->restaurante;
@@ -45,12 +53,17 @@ class RestauranteEmpleoController extends Controller
             'municipio_id'  => 'required|exists:municipios,id',
         ]);
 
-        Empleo::create([
+        $empleo = Empleo::create([
             ...$request->except('activo'),
             'activo'          => $request->boolean('activo', true),
             'restaurante_id'  => $restaurante->id,
             'departamento_id' => $restaurante->departamento_id,
         ]);
+
+        $this->fcm->enviar(
+            '💼 Nueva oferta de empleo',
+            "¡{$empleo->titulo} está disponible en {$restaurante->nombre}!"
+        );
 
         return redirect()->route('restaurante.empleos.index')
             ->with('success', '¡Oferta de empleo publicada!');
@@ -68,28 +81,28 @@ class RestauranteEmpleoController extends Controller
     }
 
     public function update(Request $request, Empleo $empleo)
-{
-    $restaurante = $this->restaurante();
-    abort_unless($empleo->restaurante_id === $restaurante->id, 403);
+    {
+        $restaurante = $this->restaurante();
+        abort_unless($empleo->restaurante_id === $restaurante->id, 403);
 
-    $validated = $request->validate([
-        'titulo'        => 'required|string|max:200',
-        'descripcion'   => 'required|string',
-        'requisitos'    => 'nullable|string',
-        'tipo_contrato' => 'nullable|string|max:50',
-        'salario'       => 'nullable|numeric|min:0',
-        'fecha_limite'  => 'nullable|date',
-        'municipio_id'  => 'required|exists:municipios,id',
-    ]);
+        $validated = $request->validate([
+            'titulo'        => 'required|string|max:200',
+            'descripcion'   => 'required|string',
+            'requisitos'    => 'nullable|string',
+            'tipo_contrato' => 'nullable|string|max:50',
+            'salario'       => 'nullable|numeric|min:0',
+            'fecha_limite'  => 'nullable|date',
+            'municipio_id'  => 'required|exists:municipios,id',
+        ]);
 
-    // Manejar activo por separado (checkbox)
-    $validated['activo'] = $request->boolean('activo', false);
+        // Manejar activo por separado (checkbox)
+        $validated['activo'] = $request->boolean('activo', false);
 
-    $empleo->update($validated);
+        $empleo->update($validated);
 
-    return redirect()->route('restaurante.empleos.index')
-        ->with('success', 'Oferta actualizada correctamente.');
-}
+        return redirect()->route('restaurante.empleos.index')
+            ->with('success', 'Oferta actualizada correctamente.');
+    }
 
     public function destroy(Empleo $empleo)
     {

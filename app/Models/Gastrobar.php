@@ -51,6 +51,8 @@ class Gastrobar extends Model
         'hora_cierre'   => 'string',
     ];
 
+    protected $appends = ['abierto'];
+
     // ── RELACIONES ──────────────────────────────────────────────
 
     public function departamento()
@@ -126,6 +128,50 @@ class Gastrobar extends Model
     {
         if (!$this->hora_apertura && !$this->hora_cierre) return 'No especificado';
         return ($this->hora_apertura ?? '--') . ' - ' . ($this->hora_cierre ?? '--');
+    }
+
+    /**
+     * Calcula si el gastrobar está abierto ahora, usando hora_apertura,
+     * hora_cierre y dias_atencion. Soporta horarios que cruzan medianoche.
+     */
+    public function getAbiertoAttribute(): bool
+    {
+        if (!$this->hora_apertura || !$this->hora_cierre) {
+            return false;
+        }
+
+        $diasMap = [
+            'domingo'   => 0,
+            'lunes'     => 1,
+            'martes'    => 2,
+            'miercoles' => 3,
+            'jueves'    => 4,
+            'viernes'   => 5,
+            'sabado'    => 6,
+        ];
+
+        $ahora      = now()->setTimezone('America/Managua');
+        $diaHoyNum  = (int) $ahora->format('w');
+        $horaActual = $ahora->format('H:i');
+
+        $diasAtencion = $this->dias_atencion ?? [];
+        $hoyEsLaboral = empty($diasAtencion)
+            ? true
+            : collect($diasAtencion)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
+
+        if (!$hoyEsLaboral) {
+            return false;
+        }
+
+        $apertura = $this->hora_apertura;
+        $cierre   = $this->hora_cierre;
+
+        if ($cierre > $apertura) {
+            return $horaActual >= $apertura && $horaActual < $cierre;
+        }
+
+        // Horario que cruza medianoche (ej: 22:00 - 02:00)
+        return $horaActual >= $apertura || $horaActual < $cierre;
     }
 
     // ── SCOPES ──────────────────────────────────────────────────

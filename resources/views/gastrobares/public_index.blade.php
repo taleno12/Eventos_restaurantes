@@ -143,6 +143,52 @@
         .pag-btn:hover { border-color: #2563eb; color: #2563eb; }
         .pag-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
         .pag-btn.disabled { color: #cbd5e1; pointer-events: none; }
+
+        /* ══ BADGES ABIERTO/CERRADO ══ */
+        .badge-abierto {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #f0fdf4; border: 1.5px solid #bbf7d0;
+            color: #15803d; font-size: 10px; font-weight: 800;
+            padding: 3px 8px; border-radius: 999px;
+            letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .badge-cerrado {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #fef2f2; border: 1.5px solid #fecaca;
+            color: #b91c1c; font-size: 10px; font-weight: 800;
+            padding: 3px 8px; border-radius: 999px;
+            letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .badge-sin-horario {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            color: #94a3b8; font-size: 10px; font-weight: 700;
+            padding: 3px 8px; border-radius: 999px;
+            letter-spacing: 0.04em; white-space: nowrap;
+        }
+        .dot-abierto {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+            animation: pulseDot 2s infinite;
+            display: inline-block; flex-shrink: 0;
+        }
+        .dot-cerrado {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #ef4444;
+            display: inline-block; flex-shrink: 0;
+        }
+        @keyframes pulseDot {
+            0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.25); }
+            50%      { box-shadow: 0 0 0 4px rgba(34,197,94,0.12); }
+        }
+
+        .social-btn {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: all 0.2s; flex-shrink: 0;
+        }
+        .social-btn:hover { transform: scale(1.15); }
     </style>
 </head>
 <body class="bg-slate-50/50 text-slate-900">
@@ -520,6 +566,64 @@
 
         {{-- Grid --}}
         @forelse($gastrobares as $gastrobar)
+
+            @php
+                $diasMap = [
+                    'lunes'     => 1,
+                    'martes'    => 2,
+                    'miercoles' => 3,
+                    'jueves'    => 4,
+                    'viernes'   => 5,
+                    'sabado'    => 6,
+                    'domingo'   => 0,
+                ];
+                $diasLabels = [
+                    'lunes'     => 'Lun',
+                    'martes'    => 'Mar',
+                    'miercoles' => 'Mié',
+                    'jueves'    => 'Jue',
+                    'viernes'   => 'Vie',
+                    'sabado'    => 'Sáb',
+                    'domingo'   => 'Dom',
+                ];
+
+                $tieneHorario = $gastrobar->hora_apertura && $gastrobar->hora_cierre;
+                $estaAbierto  = false;
+                $diaHoyNum    = (int) now()->setTimezone('America/Managua')->format('w');
+                $horaActual   = now()->setTimezone('America/Managua')->format('H:i');
+
+                if ($tieneHorario) {
+                    $diasAtencion = $gastrobar->dias_atencion ?? [];
+                    $hoyEsLaboral = empty($diasAtencion)
+                        ? true
+                        : collect($diasAtencion)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
+
+                    if ($hoyEsLaboral) {
+                        $apertura = substr($gastrobar->hora_apertura, 0, 5);
+                        $cierre   = substr($gastrobar->hora_cierre,   0, 5);
+                        if ($cierre > $apertura) {
+                            $estaAbierto = $horaActual >= $apertura && $horaActual < $cierre;
+                        } else {
+                            $estaAbierto = $horaActual >= $apertura || $horaActual < $cierre;
+                        }
+                    }
+                }
+
+                $aperturaFmt = $tieneHorario
+                    ? \Carbon\Carbon::parse($gastrobar->hora_apertura)->format('g:i A')
+                    : null;
+                $cierreFmt = $tieneHorario
+                    ? \Carbon\Carbon::parse($gastrobar->hora_cierre)->format('g:i A')
+                    : null;
+
+                $diasAtencionStr = '';
+                if (!empty($gastrobar->dias_atencion)) {
+                    $diasAtencionStr = collect($gastrobar->dias_atencion)
+                        ->map(fn($d) => $diasLabels[$d] ?? ucfirst($d))
+                        ->implode(' · ');
+                }
+            @endphp
+
             @if($loop->first)
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             @endif
@@ -528,7 +632,7 @@
                      onclick="window.location='{{ route('gastrobares.show', $gastrobar->id) }}'">
 
                 {{-- Imagen --}}
-                <div class="card-img" style="position:relative;height:240px;overflow:hidden;background:#f1f5f9;">
+                <div class="card-img" style="position:relative;height:220px;overflow:hidden;background:#f1f5f9;">
                     @if($gastrobar->imagen_principal)
                         <img src="{{ asset('storage/' . $gastrobar->imagen_principal) }}"
                              alt="{{ $gastrobar->nombre }}"
@@ -559,30 +663,62 @@
                 </div>
 
                 {{-- Contenido --}}
-                <div style="padding:24px;display:flex;flex-direction:column;gap:14px;">
-                    <div>
-                        <h3 class="premium-title" style="font-size:20px;font-weight:700;color:#0f172a;margin-bottom:6px;line-height:1.3;">
-                            {{ $gastrobar->nombre }}
-                        </h3>
-                        @if($gastrobar->descripcion)
-                            <p style="color:#64748b;font-size:13px;line-height:1.6;font-weight:400;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                {{ $gastrobar->descripcion }}
-                            </p>
+                <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
+
+                    {{-- Nombre --}}
+                    <h3 class="premium-title" style="font-size:19px;font-weight:700;color:#0f172a;margin:0;line-height:1.3;">
+                        {{ $gastrobar->nombre }}
+                    </h3>
+
+                    @if($gastrobar->descripcion)
+                        <p style="color:#64748b;font-size:13px;line-height:1.6;font-weight:400;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                            {{ $gastrobar->descripcion }}
+                        </p>
+                    @endif
+
+                    {{-- Badge abierto/cerrado + horario --}}
+                    <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #f1f5f9;padding-top:10px;">
+
+                        @if($tieneHorario)
+                            @if($estaAbierto)
+                                <span class="badge-abierto" style="align-self:flex-start;">
+                                    <span class="dot-abierto"></span>
+                                    Abierto ahora
+                                </span>
+                            @else
+                                <span class="badge-cerrado" style="align-self:flex-start;">
+                                    <span class="dot-cerrado"></span>
+                                    Cerrado ahora
+                                </span>
+                            @endif
+
+                            <span style="font-size:12px;color:#64748b;display:flex;align-items:center;gap:6px;">
+                                <i class="fas fa-clock" style="color:#94a3b8;font-size:10px;"></i>
+                                {{ $aperturaFmt }} – {{ $cierreFmt }}
+                            </span>
+
+                            @if($diasAtencionStr)
+                                <span style="font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:6px;">
+                                    <i class="fas fa-calendar-week" style="font-size:10px;"></i>
+                                    {{ $diasAtencionStr }}
+                                </span>
+                            @endif
+
+                        @else
+                            <span class="badge-sin-horario" style="align-self:flex-start;">
+                                <i class="fas fa-clock" style="font-size:9px;"></i>
+                                Horario no disponible
+                            </span>
                         @endif
+
                     </div>
 
-                    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#64748b;border-top:1px solid #f1f5f9;padding-top:12px;">
+                    {{-- Info extra --}}
+                    <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#64748b;">
                         @if($gastrobar->direccion)
                             <span style="display:flex;align-items:flex-start;gap:8px;">
                                 <i class="fas fa-map-marker-alt" style="color:#94a3b8;font-size:11px;margin-top:1px;flex-shrink:0;"></i>
                                 <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $gastrobar->direccion }}</span>
-                            </span>
-                        @endif
-                        @if($gastrobar->hora_apertura && $gastrobar->hora_cierre)
-                            <span style="display:flex;align-items:center;gap:8px;">
-                                <i class="fas fa-clock" style="color:#94a3b8;font-size:11px;flex-shrink:0;"></i>
-                                {{ \Carbon\Carbon::parse($gastrobar->hora_apertura)->format('g:i A') }} –
-                                {{ \Carbon\Carbon::parse($gastrobar->hora_cierre)->format('g:i A') }}
                             </span>
                         @endif
                         @if($gastrobar->tipo_musica)
@@ -599,43 +735,57 @@
                         @endif
                     </div>
 
-                    @if($gastrobar->whatsapp || $gastrobar->instagram || $gastrobar->facebook || $gastrobar->tiktok)
-                        <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation();">
-                            @if($gastrobar->whatsapp)
-                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $gastrobar->whatsapp) }}" target="_blank"
-                                   style="width:28px;height:28px;border-radius:50%;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-                                    <i class="fab fa-whatsapp" style="color:#16a34a;font-size:12px;"></i>
-                                </a>
-                            @endif
-                            @if($gastrobar->instagram)
-                                <a href="{{ $gastrobar->instagram }}" target="_blank"
-                                   style="width:28px;height:28px;border-radius:50%;background:#fdf4ff;border:1px solid #f5d0fe;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-                                    <i class="fab fa-instagram" style="color:#a21caf;font-size:12px;"></i>
-                                </a>
-                            @endif
-                            @if($gastrobar->facebook)
-                                <a href="{{ $gastrobar->facebook }}" target="_blank"
-                                   style="width:28px;height:28px;border-radius:50%;background:#eff6ff;border:1px solid #bfdbfe;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-                                    <i class="fab fa-facebook-f" style="color:#1d4ed8;font-size:12px;"></i>
-                                </a>
-                            @endif
-                            @if($gastrobar->tiktok)
-                                <a href="{{ $gastrobar->tiktok }}" target="_blank"
-                                   style="width:28px;height:28px;border-radius:50%;background:#f9fafb;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-                                    <i class="fab fa-tiktok" style="color:#0f172a;font-size:12px;"></i>
-                                </a>
-                            @endif
-                        </div>
-                    @endif
+                    {{-- Redes + ambiente --}}
+                    <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f1f5f9;padding-top:10px;">
 
-                    <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f1f5f9;padding-top:12px;">
+                        @if($gastrobar->whatsapp || $gastrobar->instagram || $gastrobar->facebook || $gastrobar->tiktok)
+                            <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation();">
+                                @if($gastrobar->whatsapp)
+                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $gastrobar->whatsapp) }}" target="_blank"
+                                       class="social-btn"
+                                       style="background:#f0fdf4;border:1px solid #bbf7d0;"
+                                       onmouseover="this.style.background='#22c55e';this.style.borderColor='#22c55e';this.querySelector('i').style.color='#fff'"
+                                       onmouseout="this.style.background='#f0fdf4';this.style.borderColor='#bbf7d0';this.querySelector('i').style.color='#16a34a'">
+                                        <i class="fab fa-whatsapp" style="color:#16a34a;font-size:13px;"></i>
+                                    </a>
+                                @endif
+                                @if($gastrobar->instagram)
+                                    <a href="{{ $gastrobar->instagram }}" target="_blank"
+                                       class="social-btn"
+                                       style="background:#fdf4ff;border:1px solid #f5d0fe;"
+                                       onmouseover="this.style.background='#ec4899';this.style.borderColor='#ec4899';this.querySelector('i').style.color='#fff'"
+                                       onmouseout="this.style.background='#fdf4ff';this.style.borderColor='#f5d0fe';this.querySelector('i').style.color='#a21caf'">
+                                        <i class="fab fa-instagram" style="color:#a21caf;font-size:13px;"></i>
+                                    </a>
+                                @endif
+                                @if($gastrobar->facebook)
+                                    <a href="{{ $gastrobar->facebook }}" target="_blank"
+                                       class="social-btn"
+                                       style="background:#eff6ff;border:1px solid #bfdbfe;"
+                                       onmouseover="this.style.background='#3b82f6';this.style.borderColor='#3b82f6';this.querySelector('i').style.color='#fff'"
+                                       onmouseout="this.style.background='#eff6ff';this.style.borderColor='#bfdbfe';this.querySelector('i').style.color='#2563eb'">
+                                        <i class="fab fa-facebook-f" style="color:#2563eb;font-size:13px;"></i>
+                                    </a>
+                                @endif
+                                @if($gastrobar->tiktok)
+                                    <a href="{{ $gastrobar->tiktok }}" target="_blank"
+                                       class="social-btn"
+                                       style="background:#f9fafb;border:1px solid #e5e7eb;"
+                                       onmouseover="this.style.background='#1c1917';this.style.borderColor='#1c1917';this.querySelector('i').style.color='#fff'"
+                                       onmouseout="this.style.background='#f9fafb';this.style.borderColor='#e5e7eb';this.querySelector('i').style.color='#0f172a'">
+                                        <i class="fab fa-tiktok" style="color:#0f172a;font-size:12px;"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        @else
+                            <span></span>
+                        @endif
+
                         @if($gastrobar->ambiente)
                             <span style="font-size:11px;font-weight:600;color:#94a3b8;">
                                 <i class="fas fa-chair" style="margin-right:4px;opacity:0.6;"></i>
                                 {{ $gastrobar->ambiente }}
                             </span>
-                        @else
-                            <span></span>
                         @endif
                     </div>
                 </div>
@@ -713,56 +863,55 @@
         @endif
     </main>
 
-   {{-- ══ FOOTER ══ --}}
-        <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
-                    <div class="sm:col-span-2 lg:col-span-4 space-y-4">
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
-                        </div>
-                        <p class="text-slate-400 text-sm leading-relaxed font-light">
-                            La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
-                            Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
-                        </p>
-                        <div class="flex items-center gap-3 pt-1">
-                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
-                        </div>
+    {{-- ══ FOOTER ══ --}}
+    <footer class="bg-slate-900 text-slate-300 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 sm:pt-16 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-10">
+                <div class="sm:col-span-2 lg:col-span-4 space-y-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
                     </div>
-                    <div class="lg:col-span-2 space-y-4">
-                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
-                        <ul class="space-y-2.5 text-sm p-0 list-none m-0">
-                            <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
-                            <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
-                            <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
-                            <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
-                            <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
-                        </ul>
-                    </div>
-                    <div class="lg:col-span-3 space-y-4">
-                        <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
-                        <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
-                        </div>
+                    <p class="text-slate-400 text-sm leading-relaxed font-light">
+                        La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                        Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
+                    </p>
+                    <div class="flex items-center gap-3 pt-1">
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all text-xs no-underline"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
-                <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
-                    <div class="flex gap-4">
-                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
-                        <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
+                <div class="lg:col-span-2 space-y-4">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Portal</h4>
+                    <ul class="space-y-2.5 text-sm p-0 list-none m-0">
+                        <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Inicio</a></li>
+                        <li><a href="{{ route('restaurantes.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Restaurantes</a></li>
+                        <li><a href="{{ route('gastrobares.index') }}" class="text-slate-400 hover:text-indigo-400 transition-all inline-block no-underline">Gastrobares</a></li>
+                        <li><a href="{{ route('empleos.index') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Bolsa de Empleos</a></li>
+                        <li><a href="{{ route('contacto') }}" class="text-slate-400 hover:text-blue-400 transition-all inline-block no-underline">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-3 space-y-4">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-white">Destinos Destacados</h4>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
+                        <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
                     </div>
                 </div>
             </div>
-        </footer>
-
+            <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row justify-between items-center gap-3">
+                <p>&copy; {{ date('Y') }} Gastro Nicaragua. Todos los derechos reservados.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Política de Privacidad</a>
+                    <a href="#" class="text-slate-500 hover:text-slate-400 no-underline">Términos de Servicio</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

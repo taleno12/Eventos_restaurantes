@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int|null $fotos_count
  * @property-read float|null $average_rating
  * @property-read int|null $reviews_count
+ * @property-read bool $abierto
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RestauranteFoto> $imagenes
  * @property-read int|null $imagenes_count
  * @property-read \App\Models\Municipio|null $municipio
@@ -98,6 +99,8 @@ class Restaurante extends Model
         'activo' => 'boolean',
         'membresia_vence_en' => 'date',
     ];
+
+    protected $appends = ['abierto'];
 
     /**
      * Un restaurante PERTENECE a un departamento
@@ -196,5 +199,49 @@ class Restaurante extends Model
     public function scopeActivos($query)
     {
         return $query->where('activo', true);
+    }
+
+    /**
+     * Calcula si el restaurante está abierto ahora, usando hora_apertura,
+     * hora_cierre y dias_laborales. Soporta horarios que cruzan medianoche.
+     */
+    public function getAbiertoAttribute(): bool
+    {
+        if (!$this->hora_apertura || !$this->hora_cierre) {
+            return false;
+        }
+
+        $diasMap = [
+            'domingo'   => 0,
+            'lunes'     => 1,
+            'martes'    => 2,
+            'miercoles' => 3,
+            'jueves'    => 4,
+            'viernes'   => 5,
+            'sabado'    => 6,
+        ];
+
+        $ahora      = now()->setTimezone('America/Managua');
+        $diaHoyNum  = (int) $ahora->format('w');
+        $horaActual = $ahora->format('H:i');
+
+        $diasLaborales = $this->dias_laborales ?? [];
+        $hoyEsLaboral  = empty($diasLaborales)
+            ? true
+            : collect($diasLaborales)->contains(fn($d) => ($diasMap[$d] ?? -1) === $diaHoyNum);
+
+        if (!$hoyEsLaboral) {
+            return false;
+        }
+
+        $apertura = $this->hora_apertura;
+        $cierre   = $this->hora_cierre;
+
+        if ($cierre > $apertura) {
+            return $horaActual >= $apertura && $horaActual < $cierre;
+        }
+
+        // Horario que cruza medianoche (ej: 22:00 - 02:00)
+        return $horaActual >= $apertura || $horaActual < $cierre;
     }
 }

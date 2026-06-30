@@ -86,13 +86,14 @@ class EventoController extends Controller
 
         $restaurantes = Restaurante::activos()->orderBy('nombre')->get();
 
+        // ✅ FIX: sin ->when($deptoFiltro) para que el hero muestre
+        // todos los destacados sin importar el departamento del usuario
         $eventosDestacados = Evento::with(['restaurante', 'gastrobar', 'departamento'])
             ->where('is_destacado', true)
             ->where(function ($q) {
                 $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
                   ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
             })
-            ->when($deptoFiltro, fn($q) => $q->where('departamento_id', $deptoFiltro))
             ->latest()
             ->get();
 

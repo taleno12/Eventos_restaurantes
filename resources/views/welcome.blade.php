@@ -1005,7 +1005,8 @@
                                     · {{ $item->municipio->nombre }}
                                 @endif
                             </div>
-                            @if(isset($item->destacado) && $item->destacado)
+                            {{-- ✅ FIX: usar is_destacado en lugar de destacado --}}
+                            @if($item->is_destacado)
                                 <div class="card-featured-badge">★ Destacado</div>
                             @endif
                             <div class="card-price-badge">C$ {{ number_format($item->precio, 0) }}</div>
@@ -1133,7 +1134,7 @@
                         <div class="grid grid-cols-2 gap-2 text-sm text-slate-400 font-light">
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Masaya</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Granada</span>
-                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
+                            <span class=                            <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>León</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>San Juan del Sur</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Estelí</span>
                             <span class="hover:text-white transition-colors cursor-pointer"><i class="fas fa-chevron-right text-[9px] text-blue-500 mr-1.5"></i>Matagalpa</span>
@@ -1204,7 +1205,7 @@
             updateHeroCountdown();
             setInterval(updateHeroCountdown, 60000);
 
-            // ── FILTRO CASCADA SIN ESPECIALIDAD ──
+            // ── FILTRO CASCADA ──
             const todosLosRestaurantes = @json($restaurantes->values());
 
             function configurarFiltroCascada(deptoId, munId, restId) {

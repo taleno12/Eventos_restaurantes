@@ -302,12 +302,12 @@
                 <a href="{{ route('reportes.index') }}"
                    class="nav-item {{ request()->routeIs('reportes.*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up-arrow"></i>
-                    <span>Reportes y Estadísticas</span>
+                    <span>Estadísticas</span>
                 </a>
                 <a href="{{ route('soporte.index') }}"
                    class="nav-item {{ request()->routeIs('soporte.*') ? 'active' : '' }}">
                     <i class="bi bi-headset"></i>
-                    <span>Soporte Técnico</span>
+                    <span>Soporte Técnico y reporte</span>
                 </a>
                 <a href="{{ route('configuracion.index') }}"
                    class="nav-item {{ request()->routeIs('configuracion.*') ? 'active' : '' }}">

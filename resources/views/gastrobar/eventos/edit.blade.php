@@ -246,7 +246,7 @@ const currentMunicipio = {{ $evento->municipio_id ?? 'null' }};
 selectDep.addEventListener('change', function () {
     const depId = this.value;
     if (!depId) { selectMun.innerHTML = '<option value="">Selecciona municipio</option>'; return; }
-    fetch(`/api/departamentos/${depId}/municipios`)
+    fetch(`/mi-gastrobar/api/municipios/${depId}`)
         .then(r => r.json())
         .then(data => {
             selectMun.innerHTML = '<option value="">Selecciona municipio</option>';

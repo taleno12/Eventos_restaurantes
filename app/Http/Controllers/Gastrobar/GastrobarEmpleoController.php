@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Gastrobar;
 use App\Http\Controllers\Controller;
 use App\Models\Empleo;
 use App\Models\Municipio;
+use App\Services\FcmNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GastrobarEmpleoController extends Controller
 {
+    private FcmNotificationService $fcm;
+
+    public function __construct(FcmNotificationService $fcm)
+    {
+        $this->fcm = $fcm;
+    }
+
     private function gastrobar()
     {
         return Auth::user()->gastrobar;
@@ -48,7 +56,7 @@ class GastrobarEmpleoController extends Controller
             'activo'         => 'boolean',
         ]);
 
-        Empleo::create([
+        $empleo = Empleo::create([
             'titulo'          => $request->titulo,
             'descripcion'     => $request->descripcion,
             'requisitos'      => $request->requisitos,
@@ -60,6 +68,11 @@ class GastrobarEmpleoController extends Controller
             'activo'          => $request->boolean('activo'),
             'gastrobar_id'    => $gastrobar->id,
         ]);
+
+        $this->fcm->enviar(
+            '💼 Nueva oferta de empleo',
+            "¡{$empleo->titulo} está disponible en {$gastrobar->nombre}!"
+        );
 
         return redirect()->route('gastrobar.empleos.index')
             ->with('success', '¡Oferta publicada exitosamente!');

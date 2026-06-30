@@ -66,6 +66,32 @@ class RestauranteController extends Controller
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
+    /**
+     * Crea el usuario propietario según el método de acceso elegido
+     * en el formulario: 'google' o 'telefono'.
+     */
+    private function crearUsuarioPropietario(Request $request, Restaurante $restaurante): void
+    {
+        if ($request->metodo_acceso === 'telefono') {
+            User::create([
+                'name'           => $request->propietario_nombre,
+                'email'          => $request->propietario_telefono . '@telefono.gastronicaragua.local',
+                'telefono'       => $request->propietario_telefono,
+                'password'       => Hash::make($request->propietario_password),
+                'role'           => 'restaurante',
+                'restaurante_id' => $restaurante->id,
+            ]);
+        } else {
+            User::create([
+                'name'           => $request->propietario_nombre,
+                'email'          => $request->propietario_email,
+                'password'       => Hash::make(uniqid()),
+                'role'           => 'restaurante',
+                'restaurante_id' => $restaurante->id,
+            ]);
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // MÉTODOS PÚBLICOS
     // ─────────────────────────────────────────────────────────────────────────
@@ -213,13 +239,25 @@ class RestauranteController extends Controller
             'dias_laborales.*'  => 'in:lunes,martes,miercoles,jueves,viernes,sabado,domingo',
             'hora_apertura'     => 'nullable|date_format:H:i',
             'hora_cierre'       => 'nullable|date_format:H:i',
-            'propietario_nombre'   => 'required|string|max:255',
-            'propietario_email'    => 'required|email|unique:users,email',
+
+            // ── Propietario: método de acceso ──
+            'propietario_nombre' => 'required|string|max:255',
+            'metodo_acceso'      => 'required|in:google,telefono',
+
+            'propietario_email' => 'required_if:metodo_acceso,google|nullable|email|unique:users,email',
+
+            'propietario_telefono' => 'required_if:metodo_acceso,telefono|nullable|string|max:20|unique:users,telefono',
+            'propietario_password' => 'required_if:metodo_acceso,telefono|nullable|string|min:8',
+        ], [
+            'propietario_email.required_if'    => 'El correo es obligatorio si el acceso es por Google.',
+            'propietario_telefono.required_if' => 'El teléfono es obligatorio si el acceso es por teléfono.',
+            'propietario_password.required_if' => 'La contraseña es obligatoria si el acceso es por teléfono.',
         ]);
 
         $restaurante = new Restaurante($request->except([
             'galeria', 'imagen_principal',
             'propietario_nombre', 'propietario_email',
+            'metodo_acceso', 'propietario_telefono', 'propietario_password',
         ]));
 
         if ($request->hasFile('imagen_principal')) {
@@ -239,21 +277,19 @@ class RestauranteController extends Controller
             }
         }
 
-        User::create([
-            'name'           => $request->propietario_nombre,
-            'email'          => $request->propietario_email,
-            'password'       => Hash::make(uniqid()),
-            'role'           => 'restaurante',
-            'restaurante_id' => $restaurante->id,
-        ]);
+        $this->crearUsuarioPropietario($request, $restaurante);
 
         $this->enviarNotificacionFCM(
             'Nuevo restaurante',
             "¡{$restaurante->nombre} ya está en GastroNicaragua!"
         );
 
+        $mensajeAcceso = $request->metodo_acceso === 'telefono'
+            ? "El propietario accederá con su número de teléfono y la contraseña asignada."
+            : "El propietario accederá con su cuenta de Google.";
+
         return redirect()->route('admin.restaurantes.index')
-            ->with('success', 'Restaurante y usuario propietario creados correctamente. El propietario accederá con su cuenta de Google.');
+            ->with('success', "Restaurante y usuario propietario creados correctamente. {$mensajeAcceso}");
     }
 
     public function adminShow(Restaurante $restaurante)
@@ -297,13 +333,24 @@ class RestauranteController extends Controller
             'dias_laborales.*' => 'in:lunes,martes,miercoles,jueves,viernes,sabado,domingo',
             'hora_apertura'    => 'nullable|date_format:H:i',
             'hora_cierre'      => 'nullable|date_format:H:i',
-            'propietario_nombre'   => 'required|string|max:255',
-            'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
+
+            // ── Propietario: método de acceso ──
+            'propietario_nombre' => 'required|string|max:255',
+            'metodo_acceso'      => 'required|in:google,telefono',
+
+            'propietario_email' => 'required_if:metodo_acceso,google|nullable|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
+
+            'propietario_telefono' => 'required_if:metodo_acceso,telefono|nullable|string|max:20|unique:users,telefono,' . ($propietario->id ?? 'NULL'),
+            'propietario_password' => 'nullable|string|min:8',
+        ], [
+            'propietario_email.required_if'    => 'El correo es obligatorio si el acceso es por Google.',
+            'propietario_telefono.required_if' => 'El teléfono es obligatorio si el acceso es por teléfono.',
         ]);
 
         $restaurante->fill($request->except([
             'galeria', 'imagen_principal',
             'propietario_nombre', 'propietario_email',
+            'metodo_acceso', 'propietario_telefono', 'propietario_password',
         ]));
 
         if ($request->hasFile('imagen_principal')) {
@@ -327,8 +374,20 @@ class RestauranteController extends Controller
         }
 
         if ($propietario) {
-            $propietario->name  = $request->propietario_nombre;
-            $propietario->email = $request->propietario_email;
+            $propietario->name = $request->propietario_nombre;
+
+            if ($request->metodo_acceso === 'telefono') {
+                $propietario->telefono = $request->propietario_telefono;
+                $propietario->email    = $request->propietario_telefono . '@telefono.gastronicaragua.local';
+
+                if ($request->filled('propietario_password')) {
+                    $propietario->password = Hash::make($request->propietario_password);
+                }
+            } else {
+                $propietario->email    = $request->propietario_email;
+                $propietario->telefono = null;
+            }
+
             $propietario->save();
         }
 

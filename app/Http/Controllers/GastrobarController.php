@@ -65,6 +65,32 @@ class GastrobarController extends Controller
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
+    /**
+     * Crea el usuario propietario según el método de acceso elegido
+     * en el formulario: 'google' o 'telefono'.
+     */
+    private function crearUsuarioPropietario(Request $request, Gastrobar $gastrobar): void
+    {
+        if ($request->metodo_acceso === 'telefono') {
+            User::create([
+                'name'         => $request->propietario_nombre,
+                'email'        => $request->propietario_telefono . '@telefono.gastronicaragua.local',
+                'telefono'     => $request->propietario_telefono,
+                'password'     => Hash::make($request->propietario_password),
+                'role'         => 'gastrobar',
+                'gastrobar_id' => $gastrobar->id,
+            ]);
+        } else {
+            User::create([
+                'name'         => $request->propietario_nombre,
+                'email'        => $request->propietario_email,
+                'password'     => Hash::make(uniqid()),
+                'role'         => 'gastrobar',
+                'gastrobar_id' => $gastrobar->id,
+            ]);
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Gastrobar::with(['departamento', 'municipio'])->latest();
@@ -123,13 +149,25 @@ class GastrobarController extends Controller
             'imagen_principal'     => 'nullable|image|max:3072',
             'galeria'              => 'nullable|array|max:4',
             'galeria.*'            => 'nullable|image|max:3072',
-            'propietario_nombre'   => 'required|string|max:255',
-            'propietario_email'    => 'required|email|unique:users,email',
+
+            // ── Propietario: método de acceso ──
+            'propietario_nombre' => 'required|string|max:255',
+            'metodo_acceso'      => 'required|in:google,telefono',
+
+            'propietario_email' => 'required_if:metodo_acceso,google|nullable|email|unique:users,email',
+
+            'propietario_telefono' => 'required_if:metodo_acceso,telefono|nullable|string|max:20|unique:users,telefono',
+            'propietario_password' => 'required_if:metodo_acceso,telefono|nullable|string|min:8',
+        ], [
+            'propietario_email.required_if'    => 'El correo es obligatorio si el acceso es por Google.',
+            'propietario_telefono.required_if' => 'El teléfono es obligatorio si el acceso es por teléfono.',
+            'propietario_password.required_if' => 'La contraseña es obligatoria si el acceso es por teléfono.',
         ]);
 
         $data = $request->except([
             'imagen_principal', 'galeria',
             'propietario_nombre', 'propietario_email',
+            'metodo_acceso', 'propietario_telefono', 'propietario_password',
         ]);
 
         if ($request->hasFile('imagen_principal')) {
@@ -149,21 +187,19 @@ class GastrobarController extends Controller
 
         $gastrobar = Gastrobar::create($data);
 
-        User::create([
-            'name'         => $request->propietario_nombre,
-            'email'        => $request->propietario_email,
-            'password'     => Hash::make(uniqid()),
-            'role'         => 'gastrobar',
-            'gastrobar_id' => $gastrobar->id,
-        ]);
+        $this->crearUsuarioPropietario($request, $gastrobar);
 
         $this->enviarNotificacionFCM(
             'Nuevo gastrobar',
             "{$gastrobar->nombre} ya está en GastroNicaragua!"
         );
 
+        $mensajeAcceso = $request->metodo_acceso === 'telefono'
+            ? "El propietario accederá con su número de teléfono y la contraseña asignada."
+            : "El propietario accederá con su cuenta de Google.";
+
         return redirect()->route('admin.gastrobares.index')
-            ->with('success', 'Gastrobar y usuario propietario creados correctamente. El propietario accederá con su cuenta de Google.');
+            ->with('success', "Gastrobar y usuario propietario creados correctamente. {$mensajeAcceso}");
     }
 
     public function adminShow(Gastrobar $gastrobar)
@@ -188,7 +224,7 @@ class GastrobarController extends Controller
             ->where('role', 'gastrobar')
             ->first();
 
-        if (!$propietario) {
+        if (!$propietario && $request->filled('propietario_email')) {
             $propietario = User::where('email', $request->propietario_email)
                 ->where('role', 'gastrobar')
                 ->first();
@@ -224,13 +260,24 @@ class GastrobarController extends Controller
             'imagen_principal'     => 'nullable|image|max:3072',
             'galeria'              => 'nullable|array|max:4',
             'galeria.*'            => 'nullable|image|max:3072',
-            'propietario_nombre'   => 'required|string|max:255',
-            'propietario_email'    => 'required|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
+
+            // ── Propietario: método de acceso ──
+            'propietario_nombre' => 'required|string|max:255',
+            'metodo_acceso'      => 'required|in:google,telefono',
+
+            'propietario_email' => 'required_if:metodo_acceso,google|nullable|email|unique:users,email,' . ($propietario->id ?? 'NULL'),
+
+            'propietario_telefono' => 'required_if:metodo_acceso,telefono|nullable|string|max:20|unique:users,telefono,' . ($propietario->id ?? 'NULL'),
+            'propietario_password' => 'nullable|string|min:8',
+        ], [
+            'propietario_email.required_if'    => 'El correo es obligatorio si el acceso es por Google.',
+            'propietario_telefono.required_if' => 'El teléfono es obligatorio si el acceso es por teléfono.',
         ]);
 
         $data = $request->except([
             'imagen_principal', 'galeria',
             'propietario_nombre', 'propietario_email',
+            'metodo_acceso', 'propietario_telefono', 'propietario_password',
         ]);
 
         if ($request->hasFile('imagen_principal')) {
@@ -259,8 +306,22 @@ class GastrobarController extends Controller
         $gastrobar->update($data);
 
         if ($propietario) {
-            $propietario->name  = $request->propietario_nombre;
-            $propietario->email = $request->propietario_email;
+            $propietario->name = $request->propietario_nombre;
+
+            if ($request->metodo_acceso === 'telefono') {
+                $propietario->telefono = $request->propietario_telefono;
+                $propietario->email    = $request->propietario_telefono . '@telefono.gastronicaragua.local';
+
+                if ($request->filled('propietario_password')) {
+                    $propietario->password = Hash::make($request->propietario_password);
+                }
+            } else {
+                // ── Fix: al cambiar a Google, limpiar el teléfono para que
+                // ── ya no pueda iniciar sesión por ese método.
+                $propietario->telefono = null;
+                $propietario->email    = $request->propietario_email;
+            }
+
             $propietario->save();
         }
 

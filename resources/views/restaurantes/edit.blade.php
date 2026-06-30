@@ -194,6 +194,10 @@
         {{-- ══════════════════════════════════════════ --}}
         {{-- CARD 2: Cuenta del Propietario            --}}
         {{-- ══════════════════════════════════════════ --}}
+        @php
+            $propietario  = $restaurante->propietario;
+            $metodoActual = old('metodo_acceso', ($propietario && $propietario->telefono) ? 'telefono' : 'google');
+        @endphp
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-body p-4">
                 <h6 class="text-uppercase text-muted fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
@@ -201,13 +205,29 @@
                 </h6>
                 <p class="text-muted small mb-4">
                     <i class="bi bi-info-circle me-1"></i>
-                    El acceso al panel es mediante <strong>Google (Gmail)</strong> — no requiere contraseña.
+                    Puedes cambiar cómo accede el propietario a su panel.
                 </p>
 
-                <div class="alert alert-info border-0 d-flex align-items-center gap-2 mb-4" style="background:#eff6ff; color:#1d4ed8;">
-                    <i class="bi bi-google fs-5"></i>
-                    <div class="small">
-                        <strong>Acceso con Google:</strong> El propietario iniciará sesión directamente con su cuenta de Gmail. No es necesario crear contraseña.
+                {{-- Selector de método de acceso --}}
+                <label class="form-label fw-semibold text-dark small mb-2">Método de Acceso <span class="text-danger">*</span></label>
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <div class="form-check border rounded-3 px-3 py-2 flex-fill" style="min-width:220px;">
+                        <input class="form-check-input" type="radio" name="metodo_acceso" id="metodo_google"
+                               value="google" {{ $metodoActual == 'google' ? 'checked' : '' }}
+                               onchange="toggleMetodoAcceso()">
+                        <label class="form-check-label fw-semibold text-dark" for="metodo_google">
+                            <i class="bi bi-google text-danger me-1"></i> Google (Gmail)
+                        </label>
+                        <p class="small text-muted mb-0 mt-1">Inicia sesión con su cuenta de Gmail. No requiere contraseña.</p>
+                    </div>
+                    <div class="form-check border rounded-3 px-3 py-2 flex-fill" style="min-width:220px;">
+                        <input class="form-check-input" type="radio" name="metodo_acceso" id="metodo_telefono"
+                               value="telefono" {{ $metodoActual == 'telefono' ? 'checked' : '' }}
+                               onchange="toggleMetodoAcceso()">
+                        <label class="form-check-label fw-semibold text-dark" for="metodo_telefono">
+                            <i class="bi bi-telephone text-warning me-1"></i> Teléfono y Contraseña
+                        </label>
+                        <p class="small text-muted mb-0 mt-1">Inicia sesión con número de teléfono y contraseña propia.</p>
                     </div>
                 </div>
 
@@ -219,21 +239,48 @@
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
                             <input type="text" name="propietario_nombre" required
-                                   value="{{ old('propietario_nombre', $restaurante->propietario->name ?? '') }}"
+                                   value="{{ old('propietario_nombre', $propietario->name ?? '') }}"
                                    class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="Nombre completo">
                         </div>
                     </div>
 
-                    {{-- Correo del Propietario --}}
-                    <div class="col-12 col-md-6">
+                    {{-- Bloque Google --}}
+                    <div class="col-12 col-md-6" id="campo-propietario-email">
                         <label class="form-label fw-semibold text-dark small">Correo del Propietario (Gmail) <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                            <input type="email" name="propietario_email" required
-                                   value="{{ old('propietario_email', $restaurante->propietario->email ?? '') }}"
+                            <input type="email" name="propietario_email" id="propietario_email"
+                                   value="{{ old('propietario_email', $propietario->email ?? '') }}"
                                    class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;" placeholder="correo@gmail.com">
                         </div>
                         <small class="text-muted">Debe ser una cuenta de Gmail válida para el acceso con Google.</small>
+                    </div>
+
+                    {{-- Bloque Teléfono --}}
+                    <div class="col-12 col-md-6" id="campo-propietario-telefono">
+                        <label class="form-label fw-semibold text-dark small">Teléfono del Propietario <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                            <input type="text" name="propietario_telefono" id="propietario_telefono"
+                                   value="{{ old('propietario_telefono', $propietario->telefono ?? '') }}"
+                                   placeholder="Ej: 88887777"
+                                   class="form-control bg-light border-start-0 ps-0" style="box-shadow:none;">
+                        </div>
+                        <small class="text-muted">El propietario usará este número para iniciar sesión.</small>
+                    </div>
+
+                    <div class="col-12 col-md-6" id="campo-propietario-password">
+                        <label class="form-label fw-semibold text-dark small">Contraseña <span class="text-muted fw-normal">(dejar en blanco para no cambiar)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="propietario_password" id="propietario_password" minlength="8"
+                                   placeholder="Mínimo 8 caracteres"
+                                   class="form-control bg-light border-start-0 border-end-0 ps-0" style="box-shadow:none;">
+                            <button type="button" class="btn btn-light border border-start-0" onclick="togglePassword('propietario_password', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Solo complétalo si quieres asignar una contraseña nueva.</small>
                     </div>
 
                 </div>
@@ -526,6 +573,37 @@
             icon.classList.replace('bi-eye-slash', 'bi-eye');
         }
     }
+
+    // ── Toggle Método de Acceso (Google / Teléfono) ──
+    function toggleMetodoAcceso() {
+        const esTelefono = document.getElementById('metodo_telefono').checked;
+
+        const campoEmail = document.getElementById('campo-propietario-email');
+        const inputEmail = document.getElementById('propietario_email');
+        const campoTel   = document.getElementById('campo-propietario-telefono');
+        const inputTel   = document.getElementById('propietario_telefono');
+        const campoPass  = document.getElementById('campo-propietario-password');
+
+        if (esTelefono) {
+            campoEmail.classList.add('d-none');
+            inputEmail.required = false;
+
+            campoTel.classList.remove('d-none');
+            inputTel.required = true;
+
+            campoPass.classList.remove('d-none');
+        } else {
+            campoEmail.classList.remove('d-none');
+            inputEmail.required = true;
+
+            campoTel.classList.add('d-none');
+            inputTel.required = false;
+
+            campoPass.classList.add('d-none');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', toggleMetodoAcceso);
 
     document.addEventListener('DOMContentLoaded', function () {
 

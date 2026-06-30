@@ -9,11 +9,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE pedido_gastrobars MODIFY tipo ENUM('envio','retiro') NOT NULL DEFAULT 'retiro'");
+        // En PostgreSQL la columna tipo es varchar, no ENUM
+        // El valor 'retiro' ya es válido sin modificar el tipo
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE pedido_gastrobars MODIFY tipo ENUM('mesa','para_llevar','delivery') NOT NULL DEFAULT 'mesa'");
+        //
     }
 };

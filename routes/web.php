@@ -12,6 +12,7 @@ use App\Http\Controllers\EmpleoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\GastrobarReviewController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\AuthTelefonoController;
 use App\Http\Controllers\DepartamentoUsuarioController;
 use App\Http\Controllers\GastrobarController;
 use App\Http\Controllers\TrabajadorController;
@@ -50,6 +51,17 @@ Route::get('/', function () {
 // ── LOGIN CON GOOGLE ──────────────────────────────────────────────────────────
 Route::get('/auth/google',          [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+// ── REGISTRO Y LOGIN CON TELÉFONO ─────────────────────────────────────────────
+Route::get('/registro',              [AuthTelefonoController::class, 'showRegisterForm'])->name('registro.telefono');
+Route::post('/registro',             [AuthTelefonoController::class, 'register'])->name('registro.telefono.store');
+
+Route::get('/login-telefono',        [AuthTelefonoController::class, 'showLoginForm'])->name('login.telefono');
+Route::post('/login-telefono',       [AuthTelefonoController::class, 'login'])->name('login.telefono.store');
+
+Route::get('/olvide-contrasena',     [AuthTelefonoController::class, 'showForgotForm'])->name('password.olvide');
+Route::post('/olvide-contrasena',    [AuthTelefonoController::class, 'buscarPregunta'])->name('password.buscar');
+Route::post('/restablecer-contrasena', [AuthTelefonoController::class, 'resetPassword'])->name('password.reset.telefono');
 
 // ── CONTACTO ─────────────────────────────────────────────────────────────────
 Route::get('/contacto', function () {

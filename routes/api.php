@@ -1527,4 +1527,4 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json(['message' => 'Pedido cancelado y eliminado correctamente.']);
     });
 
-});
+}); 

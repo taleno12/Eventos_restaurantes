@@ -2,9 +2,7 @@
     <style>
         @import url('https://fonts.bunny.net/css?family=syne:700,800|dm-sans:400,500,600');
 
-        /* ── ESCAPE del guest-layout ── */
         body { background: #0D0D0D !important; margin: 0 !important; padding: 0 !important; }
-
         body > div:first-child,
         .min-h-screen {
             display: block !important;
@@ -14,13 +12,12 @@
             background: transparent !important;
             min-height: unset !important;
         }
-
-        .min-h-screen > div:first-child:not(.login-root) { display: none !important; }
+        .min-h-screen > div:first-child:not(.lt-root) { display: none !important; }
         nav, .min-h-screen > div:first-child svg { display: none !important; }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .login-root {
+        .lt-root {
             font-family: 'DM Sans', sans-serif;
             display: flex;
             width: 100vw;
@@ -38,7 +35,7 @@
             position: relative;
             overflow: hidden;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-between;
             padding: 2.5rem;
             flex-shrink: 0;
         }
@@ -74,13 +71,6 @@
         .lb span { color: #2563eb; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; }
         .ln { font-family: 'Syne', sans-serif; font-weight: 700; color: #000; font-size: 0.82rem; letter-spacing: 0.04em; }
 
-        .lp-hero-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
         .lp-hero { position: relative; }
         .badge {
             display: inline-block;
@@ -103,6 +93,11 @@
         .ht-line:nth-child(2) { animation-delay: 0.62s; }
         .ht-line:nth-child(3) { animation-delay: 0.79s; }
         .hs { margin-top: 1rem; color: rgba(0,0,0,0.5); font-size: 0.875rem; line-height: 1.6; max-width: 320px; animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) 1s both; }
+
+        .stats { position: relative; display: flex; gap: 0.6rem; flex-wrap: wrap; animation: statsSlide 0.7s cubic-bezier(0.22,1,0.36,1) 1.15s both; }
+        .sc { background: rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 0.65rem 1rem; }
+        .sc .n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: #000; }
+        .sc .l { font-size: 0.6rem; color: rgba(0,0,0,0.45); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
 
         .panel-right {
             flex: 1;
@@ -133,6 +128,26 @@
             color: #60a5fa; font-size: 0.8rem; padding: 0.8rem 1rem; margin-bottom: 1.25rem;
         }
         .session-ok { font-size: 0.8rem; color: #4CAF50; margin-bottom: 1rem; text-align: center; }
+
+        .field { margin-bottom: 1.1rem; }
+        .field label {
+            display: block; font-size: 0.65rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: #555; margin-bottom: 0.45rem;
+        }
+        .field input {
+            width: 100%; background: #181818; border: 1px solid #262626;
+            border-radius: 11px; padding: 0.85rem 1rem;
+            color: #fff; font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field input::placeholder { color: #383838; }
+        .field input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.14); }
+        .field-error { font-size: 0.73rem; color: #2563eb; margin-top: 0.35rem; }
+
+        .row-opts { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 1.5rem; }
+        .forgot { font-size: 0.78rem; color: #2563eb; text-decoration: none; }
+        .forgot:hover { color: #60a5fa; }
 
         .btn-main {
             width: 100%; background: #2563eb; color: #000;
@@ -179,16 +194,17 @@
         @keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
         @keyframes wordReveal { 0% { opacity:0; transform: translateY(100%); } 100% { opacity:1; transform: translateY(0); } }
         @keyframes badgePop { 0% { opacity:0; transform: scale(0.7); } 70% { transform: scale(1.08); } 100% { opacity:1; transform: scale(1); } }
+        @keyframes statsSlide { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
         @keyframes floatG { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-18px) rotate(-1deg); } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
 
         .fu { animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both; }
         .d1{animation-delay:.05s} .d2{animation-delay:.12s} .d3{animation-delay:.19s}
         .d4{animation-delay:.26s} .d5{animation-delay:.33s} .d6{animation-delay:.4s}
-        .d7{animation-delay:.47s} .d8{animation-delay:.54s} .d9{animation-delay:.61s}
+        .d7{animation-delay:.47s} .d8{animation-delay:.54s}
     </style>
 
-    <div class="login-root">
+    <div class="lt-root">
 
         {{-- ══ PANEL IZQUIERDO ══ --}}
         <div class="panel-left">
@@ -197,19 +213,23 @@
                 <span class="ln">GastroNicaragua</span>
             </div>
 
-            <div class="lp-hero-wrap">
-                <div class="lp-hero">
-                    <div class="badge">🍽 Gastronomía · Nicaragua</div>
-                    <div class="ht" aria-label="Descubre los sabores auténticos de Nicaragua">
-                        <span class="ht-wrap"><span class="ht-line">Descubre los</span></span>
-                        <span class="ht-wrap"><span class="ht-line"><em>sabores</em> que</span></span>
-                        <span class="ht-wrap"><span class="ht-line">nos definen.</span></span>
-                    </div>
-                    <p class="hs">
-                        Explora los mejores restaurantes del país, conoce sus platos estrella
-                        y vive la riqueza culinaria de Nicaragua desde donde estés.
-                    </p>
+            <div class="lp-hero">
+                <div class="badge">🍽 Gastronomía · Nicaragua</div>
+                <div class="ht" aria-label="Descubre los sabores auténticos de Nicaragua">
+                    <span class="ht-wrap"><span class="ht-line">Descubre los</span></span>
+                    <span class="ht-wrap"><span class="ht-line"><em>sabores</em> que</span></span>
+                    <span class="ht-wrap"><span class="ht-line">nos definen.</span></span>
                 </div>
+                <p class="hs">
+                    Inicia sesión con tu número de teléfono y vive la riqueza
+                    culinaria de Nicaragua desde donde estés.
+                </p>
+            </div>
+
+            <div class="stats">
+                <div class="sc"><div class="n">200+</div><div class="l">Restaurantes</div></div>
+                <div class="sc"><div class="n">500+</div><div class="l">Platillos</div></div>
+                <div class="sc"><div class="n">18</div><div class="l">Deptos</div></div>
             </div>
         </div>
 
@@ -224,36 +244,61 @@
 
                 <div class="fh fu d1">
                     <h1>Bienvenido</h1>
-                    <p>Accede a tu cuenta para continuar.</p>
+                    <p>Inicia sesión con tu número de teléfono.</p>
                 </div>
 
-                @if(session('status'))
-                    <div class="session-ok fu d2">{{ session('status') }}</div>
+                @if(session('success'))
+                    <div class="session-ok fu d2">{{ session('success') }}</div>
                 @endif
 
-                @if(session('error'))
-                    <div class="alert-error fu d2">{{ session('error') }}</div>
+                @if ($errors->any())
+                    <div class="alert-error fu d2">
+                        {{ $errors->first() }}
+                    </div>
                 @endif
 
-                <a href="{{ route('login.telefono') }}" class="btn-main fu d3" style="display:block; text-align:center; text-decoration:none; line-height:1.4;">
-                    Iniciar sesión con teléfono
-                </a>
+                <form method="POST" action="{{ route('login.telefono.store') }}">
+                    @csrf
 
-                <div class="divider fu d5"><span>o continúa con</span></div>
+                    <div class="field fu d3">
+                        <label for="telefono">Número de teléfono</label>
+                        <input id="telefono" type="tel" name="telefono"
+                               value="{{ old('telefono') }}"
+                               placeholder="8888 8888"
+                               required autofocus autocomplete="tel"/>
+                    </div>
 
-                <a href="{{ route('auth.google') }}" class="btn-google fu d6">
+                    <div class="field fu d4">
+                        <label for="password">Contraseña</label>
+                        <input id="password" type="password" name="password"
+                               placeholder="••••••••••••"
+                               required autocomplete="current-password"/>
+                    </div>
+
+                    <div class="row-opts fu d5">
+                        <a href="{{ route('password.olvide') }}" class="forgot">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <div class="fu d6">
+                        <button type="submit" class="btn-main">Iniciar sesión</button>
+                    </div>
+                </form>
+
+                <div class="divider fu d6"><span>o continúa con</span></div>
+
+                <a href="{{ route('auth.google') }}" class="btn-google fu d7">
                     <svg width="17" height="17" viewBox="0 0 24 24">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                     </svg>
-                    Entrar con Google
+                    Continuar con Google
                 </a>
 
-                <a href="{{ route('registro.telefono') }}" class="btn-register fu d7">¿No tienes cuenta? Regístrate</a>
+                <a href="{{ route('registro.telefono') }}" class="btn-register fu d8">¿No tienes cuenta? Regístrate</a>
 
-                <a href="/" class="back-link fu d9">← Volver a la galería</a>
+                <a href="/" class="back-link fu d8">← Volver a la galería</a>
 
             </div>
         </div>
@@ -262,7 +307,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.body.style.cssText = 'margin:0;padding:0;background:#0D0D0D;overflow:hidden;';
-            const root = document.querySelector('.login-root');
+            const root = document.querySelector('.lt-root');
             if (root) {
                 let parent = root.parentElement;
                 while (parent && parent !== document.body) {

@@ -29,7 +29,7 @@ class RestauranteEstadisticasController extends Controller
                 'platos.id',
                 'platos.nombre',
                 'platos.imagen',
-                DB::raw('COALESCE(categorias_plato.nombre, "Sin categoría") as categoria'),
+                DB::raw("COALESCE(categorias_plato.nombre, 'Sin categoría') as categoria"),
                 DB::raw('SUM(pedido_items.cantidad) as total_vendido'),
                 DB::raw('SUM(pedido_items.subtotal) as total_ingresos')
             )

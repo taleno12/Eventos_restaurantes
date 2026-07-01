@@ -101,7 +101,8 @@ Route::get('/restaurantes/por-municipio/{municipio_id}', function ($municipio_id
 
 // ── RESTAURANTES (todos) ──
 Route::get('/restaurantes', function (Request $request) {
-    $query = Restaurante::with('departamento')
+    $query = Restaurante::where('activo', true)
+        ->with('departamento')
         ->withAvg('reviews', 'rating')
         ->withCount('reviews');
 
@@ -115,7 +116,8 @@ Route::get('/restaurantes', function (Request $request) {
 
 // ── RESTAURANTES CON FILTROS MANUALES ──
 Route::get('/restaurantes/buscar', function (Request $request) {
-    $query = Restaurante::with('departamento')
+    $query = Restaurante::where('activo', true)
+        ->with('departamento')
         ->withAvg('reviews', 'rating')
         ->withCount('reviews');
 
@@ -397,7 +399,8 @@ Route::post('/restaurantes/{id}/reviews', function (Request $request, $id) {
 
 // ── GASTROBARES (todos) ──
 Route::get('/gastrobares', function (Request $request) {
-    $query = Gastrobar::with('departamento')
+    $query = Gastrobar::where('activo', true)
+        ->with('departamento')
         ->withAvg('reviews', 'rating')
         ->withCount('reviews');
 
@@ -411,7 +414,8 @@ Route::get('/gastrobares', function (Request $request) {
 
 // ── GASTROBARES CON FILTROS MANUALES ──
 Route::get('/gastrobares/buscar', function (Request $request) {
-    $query = Gastrobar::with(['departamento'])
+    $query = Gastrobar::where('activo', true)
+        ->with(['departamento'])
         ->withAvg('reviews', 'rating')
         ->withCount('reviews');
 

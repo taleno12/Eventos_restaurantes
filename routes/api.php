@@ -855,6 +855,14 @@ Route::post('/login-telefono', function (Request $request) {
         return response()->json(['message' => 'Teléfono o contraseña incorrectos.'], 401);
     }
 
+    // Verificar si el establecimiento del propietario está activo
+    $establecimientoActivo = true; // default para usuarios normales/admin
+    if ($user->role === 'restaurante' && $user->restaurante_id) {
+        $establecimientoActivo = optional(Restaurante::find($user->restaurante_id))->activo ?? false;
+    } elseif ($user->role === 'gastrobar' && $user->gastrobar_id) {
+        $establecimientoActivo = optional(Gastrobar::find($user->gastrobar_id))->activo ?? false;
+    }
+
     return response()->json([
         'user' => [
             'id'              => $user->id,
@@ -866,6 +874,7 @@ Route::post('/login-telefono', function (Request $request) {
             'restaurante_id'  => $user->restaurante_id,
             'gastrobar_id'    => $user->gastrobar_id,
             'es_propietario'  => in_array($user->role, ['restaurante', 'gastrobar']),
+            'establecimiento_activo' => $establecimientoActivo,
             'idioma'          => $user->idioma ?? 'es',
         ],
         'token' => $user->createToken('flutter-app')->plainTextToken,
@@ -957,6 +966,13 @@ Route::post('/logout', function (Request $request) {
 Route::get('/me', function (Request $request) {
     $user = $request->user();
 
+    $establecimientoActivo = true; // default para usuarios normales/admin
+    if ($user->role === 'restaurante' && $user->restaurante_id) {
+        $establecimientoActivo = optional(Restaurante::find($user->restaurante_id))->activo ?? false;
+    } elseif ($user->role === 'gastrobar' && $user->gastrobar_id) {
+        $establecimientoActivo = optional(Gastrobar::find($user->gastrobar_id))->activo ?? false;
+    }
+
     return response()->json([
         'id'              => $user->id,
         'name'            => $user->name,
@@ -967,6 +983,7 @@ Route::get('/me', function (Request $request) {
         'restaurante_id'  => $user->restaurante_id,
         'gastrobar_id'    => $user->gastrobar_id,
         'avatar_url'      => $user->avatar ? asset('storage/' . $user->avatar) : null,
+        'establecimiento_activo' => $establecimientoActivo,
         'idioma'          => $user->idioma ?? 'es',
     ]);
 })->middleware('auth:sanctum');

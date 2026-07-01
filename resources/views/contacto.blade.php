@@ -280,7 +280,7 @@
                            style="display:inline-flex;align-items:center;gap:8px;background:#2563eb;color:#fff;padding:14px 28px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.25s;box-shadow:0 8px 32px rgba(37,99,235,0.40);"
                            onmouseover="this.style.background='#1d4ed8';this.style.transform='translateY(-2px)'"
                            onmouseout="this.style.background='#2563eb';this.style.transform='translateY(0)'">
-                            <i class="fas fa-rocket" style="font-size:11px;"></i> Ver Planes
+                            <i class="fas fa-rocket" style="font-size:11px;"></i> Ver Plan
                         </a>
                         <a href="#contacto-form"
                            style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);color:#fff;padding:14px 28px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.04em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);transition:all 0.25s;"
@@ -291,15 +291,15 @@
                     </div>
                 </div>
 
-                <div style="position:relative;display:flex;flex-direction:column;gap:16px;" class="hero-cards">
+               <div style="position:relative;display:flex;flex-direction:column;gap:16px;" class="hero-cards">
                     <div class="fade-in-up" style="animation-delay:0.3s;opacity:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(16px);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:16px;transform:translateX(20px);">
                         <div style="width:48px;height:48px;background:#2563eb;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 20px rgba(37,99,235,0.4);">
                             <i class="fas fa-chart-line" style="color:#fff;font-size:18px;"></i>
                         </div>
                         <div>
                             <div style="font-size:11px;color:rgba(214,211,208,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:2px;">Visibilidad</div>
-                            <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Playfair Display',serif;">+8,000</div>
-                            <div style="font-size:12px;color:rgba(214,211,208,0.65);">visitantes únicos al mes</div>
+                            <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Playfair Display',serif;">Creciente</div>
+                            <div style="font-size:12px;color:rgba(214,211,208,0.65);">visitantes que buscan experiencias gastronómicas</div>
                         </div>
                     </div>
 
@@ -320,8 +320,8 @@
                         </div>
                         <div>
                             <div style="font-size:11px;color:rgba(214,211,208,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:2px;">Eventos activos</div>
-                            <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Playfair Display',serif;">+300</div>
-                            <div style="font-size:12px;color:rgba(214,211,208,0.65);">experiencias publicadas</div>
+                            <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Playfair Display',serif;">Actividades</div>
+                            <div style="font-size:12px;color:rgba(214,211,208,0.65);">experiencias gastronómicas sociales publicadas</div>
                         </div>
                     </div>
 
@@ -330,7 +330,7 @@
                             <i class="fas fa-check" style="color:#16a34a;font-size:14px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:12px;font-weight:900;color:#1c1917;">Planes desde $25</div>
+                            <div style="font-size:12px;font-weight:900;color:#1c1917;">Plan único: $30/mes</div>
                             <div style="font-size:10px;color:#78716c;">Sin contratos de largo plazo</div>
                         </div>
                     </div>
@@ -389,97 +389,69 @@
                     <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
                         <i class="fas fa-chart-line text-blue-600 text-lg"></i>
                     </div>
-                    <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Estadísticas en Tiempo Real</h3>
-                    <p class="text-stone-500 text-sm leading-relaxed">Accede a métricas de visitas, interacciones y el alcance de tu perfil desde tu panel administrativo.</p>
+                    <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Panel de Administración</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed">Accede a tu propio panel de restaurante con métricas de visitas, interacciones y el alcance de tu perfil.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="100">
                     <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
                         <i class="fas fa-star text-blue-600 text-lg"></i>
                     </div>
-                    <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Perfil Destacado</h3>
-                    <p class="text-stone-500 text-sm leading-relaxed">Tu restaurante aparece en el carrusel principal del home visto por todos los visitantes de la plataforma.</p>
+                    <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Eventos Destacados (add-on)</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed">Destaca un evento puntual en el banner principal del home por un pago extra, solo cuando lo necesites.</p>
                 </div>
                 <div class="bento-card p-7" data-aos="fade-up" data-aos-delay="200">
                     <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-5">
-                        <i class="fas fa-headset text-blue-600 text-lg"></i>
+                        <i class="fas fa-mobile-alt text-blue-600 text-lg"></i>
                     </div>
-                    <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">Soporte Dedicado</h3>
-                    <p class="text-stone-500 text-sm leading-relaxed">Nuestro equipo te ayuda con el proceso de registro, publicación de contenido y cualquier duda técnica.</p>
+                    <h3 class="premium-title text-xl font-bold text-stone-900 mb-2">App Móvil Incluida</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed">Gestiona tu negocio también desde nuestra app móvil, con las mismas funciones que la plataforma web.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- ══ PLANES ══ --}}
+    {{-- ══ PLAN ÚNICO ══ --}}
     <section id="planes" class="py-20 bg-stone-50" data-aos="fade-up">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
                 <span class="plan-pill mb-4 inline-flex">
-                    <span class="dot"></span> Planes & Precios
+                    <span class="dot"></span> Plan & Precio
                 </span>
-                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Elige el plan que mejor<br><em class="text-blue-600 not-italic">se adapta a tu negocio</em></h2>
+                <h2 class="premium-title text-4xl font-black text-stone-900 mt-4">Un solo plan,<br><em class="text-blue-600 not-italic">todo incluido</em></h2>
                 <p class="text-stone-500 text-sm mt-4 max-w-md mx-auto leading-relaxed">Sin contratos de largo plazo. Cancela cuando quieras. Empieza hoy mismo.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-3xl mx-auto">
+            <div class="max-w-md mx-auto">
 
-                {{-- Plan Básico --}}
-                <div class="plan-card p-8" data-aos="fade-up" data-aos-delay="0">
-                    <div class="plan-icon-wrap" style="background:#eff6ff;">
-                        <i class="fas fa-fire text-blue-600 text-xl"></i>
-                    </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Básico</h3>
-                    <p class="text-stone-400 text-xs mb-6">Para negocios en crecimiento</p>
-                    <div class="mb-6">
-                        <div class="plan-price"><sup>$</sup>25<small>/mes</small></div>
-                        <p class="text-stone-400 text-xs mt-1">USD por mes</p>
-                    </div>
-                    <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Perfil de tu restaurante</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Aparece en búsquedas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería hasta 20 fotos</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Publicar eventos ilimitados</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Eventos visibles en sección de eventos</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo (3 vacantes)</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas básicas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte por WhatsApp</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Eventos destacados en el header</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Restaurante en carrusel principal</div>
-                        <div class="plan-feature"><i class="fas fa-times x"></i>Badge verificado</div>
-                    </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-outline">Empezar Ahora</a>
-                </div>
-
-                {{-- Plan Premium --}}
-                <div class="plan-card featured p-8" data-aos="fade-up" data-aos-delay="100">
-                    <div class="plan-badge">Recomendado</div>
+                {{-- Plan único --}}
+                <div class="plan-card featured p-8" data-aos="fade-up" data-aos-delay="0">
+                    <div class="plan-badge">Plan Único</div>
                     <div class="plan-icon-wrap" style="background:#1c1917;">
                         <i class="fas fa-crown text-yellow-400 text-xl"></i>
                     </div>
-                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Premium</h3>
-                    <p class="text-stone-400 text-xs mb-6">Máxima visibilidad para tu negocio</p>
+                    <h3 class="premium-title text-2xl font-black text-stone-900 mb-1">Gastro Nicaragua</h3>
+                    <p class="text-stone-400 text-xs mb-6">Todo lo que tu negocio necesita, en un solo plan</p>
                     <div class="mb-6">
-                        <div class="plan-price" style="color:#2563eb;"><sup style="color:#2563eb;">$</sup>35<small>/mes</small></div>
+                        <div class="plan-price" style="color:#2563eb;"><sup style="color:#2563eb;">$</sup>30<small>/mes</small></div>
                         <p class="text-stone-400 text-xs mt-1">USD por mes</p>
                     </div>
-                    <div class="mb-4 p-3 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-700 space-y-1">
-                        <p class="font-semibold mb-1">¿Por qué vale la diferencia?</p>
-                        <p>🎯 Tus eventos aparecen en el header — lo primero que ven todos los visitantes al entrar</p>
-                        <p>🍽️ Tu restaurante sale en el carrusel principal — máxima exposición garantizada</p>
-                    </div>
                     <div class="mb-8 space-y-0">
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Todo lo del plan Básico</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería ilimitada + videos</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Perfil completo de tu restaurante</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Aparece en búsquedas de la plataforma</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Galería</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>¡Hasta 12 eventos al mes podrán ser publicados!</div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Bolsa de empleo ilimitada</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas avanzadas</div>
-                        <div class="plan-feature" style="color:#1c1917;font-weight:700;"><i class="fas fa-check check" style="color:#2563eb;"></i><strong>Eventos destacados en el header</strong></div>
-                        <div class="plan-feature" style="color:#1c1917;font-weight:700;"><i class="fas fa-check check" style="color:#2563eb;"></i><strong>Restaurante en carrusel principal</strong></div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Acceso al panel administrativo de tu restaurante</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Estadísticas y métricas en tiempo real</div>
                         <div class="plan-feature"><i class="fas fa-check check"></i>Badge verificado ✓</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Posición #1 en búsquedas</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte 24/7 prioritario</div>
-                        <div class="plan-feature"><i class="fas fa-check check"></i>Gestión de múltiples locales</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Soporte prioritario</div>
+                        <div class="plan-feature"><i class="fas fa-check check"></i>Acceso incluido a la app móvil</div>
                     </div>
-                    <a href="#contacto-form" class="plan-btn plan-btn-primary">Quiero Premium</a>
+                    <div class="mb-4 p-3 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-700 space-y-1">
+                        <p class="font-semibold mb-1"><i class="fas fa-bolt mr-1"></i>Eventos destacados (extra)</p>
+                        <p>Si quieres que un evento puntual aparezca en el banner principal del home — lo primero que ve todo visitante — puedes contratarlo como un pago adicional por evento, sin necesidad de cambiar de plan.</p>
+                    </div>
+                    <a href="#contacto-form" class="plan-btn plan-btn-primary">Registrar mi Negocio</a>
                 </div>
 
             </div>
@@ -487,7 +459,6 @@
             <div class="mt-10 text-center">
                 <p class="text-stone-400 text-sm">
                     <i class="fas fa-shield-alt text-blue-600 mr-1"></i>
-                    Sin contratos. Precios en dólares estadounidenses (USD).
                     <a href="#faq" class="text-blue-600 hover:text-blue-700 font-semibold no-underline ml-1">¿Tienes dudas? Ver FAQ →</a>
                 </p>
             </div>
@@ -508,7 +479,7 @@
                         ¿Listo para registrar<br><em class="text-blue-600 not-italic">tu negocio?</em>
                     </h2>
                     <p class="text-stone-500 text-sm leading-relaxed max-w-md mb-10">
-                        Escríbenos y nuestro equipo comercial te contactará en menos de 24 horas para guiarte en el proceso de registro y elegir el plan ideal para tu negocio.
+                        Escríbenos y nuestro equipo comercial te contactará en menos de 24 horas para guiarte en el proceso de registro y activar tu perfil, tu panel administrativo y tu acceso a la app móvil.
                     </p>
 
                     <div class="space-y-4 mb-10">
@@ -537,6 +508,15 @@
                             <div>
                                 <div class="font-bold text-sm text-stone-900">Horario de Atención</div>
                                 <div class="text-stone-500 text-sm">Lun – Vie: 8:00 AM – 5:00 PM &nbsp;|&nbsp; Sáb: 8:00 AM – 1:00 PM</div>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-mobile-alt text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm text-stone-900">App Móvil Gastro Nicaragua</div>
+                                <div class="text-stone-500 text-sm">Disponible para tu negocio, con las mismas funciones que la plataforma web: panel, eventos, empleos y estadísticas.</div>
                             </div>
                         </div>
                     </div>
@@ -588,11 +568,11 @@
                         </div>
 
                         <div>
-                            <label class="contact-label">Plan de Interés</label>
+                            <label class="contact-label">Interés</label>
                             <select id="plan" class="contact-input" style="cursor:pointer;">
-                                <option value="">Selecciona un plan...</option>
-                                <option value="Básico ($25 USD/mes)">Básico — $25 USD / mes</option>
-                                <option value="Premium ($35 USD/mes)">Premium — $35 USD / mes</option>
+                                <option value="">Selecciona una opción...</option>
+                                <option value="Plan único ($30 USD/mes)">Plan único — $30 USD / mes</option>
+                                <option value="Plan único + evento destacado (extra)">Plan único + evento destacado (pago extra)</option>
                                 <option value="No estoy seguro">Aún no lo sé, necesito asesoría</option>
                             </select>
                         </div>
@@ -677,44 +657,44 @@
                             <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                         </button>
                         <div class="faq-answer">
-                            Llena el formulario de contacto con el nombre de tu negocio, dirección, teléfono y correo. Nuestro equipo te contactará en menos de 24 horas para confirmar los datos y activar tu perfil. En un máximo de 48 horas tu restaurante ya estará visible para todos los usuarios.
+                            Llena el formulario de contacto con el nombre de tu negocio, dirección, teléfono y correo. Nuestro equipo te contactará en menos de 24 horas para confirmar los datos y activar tu perfil, tu panel administrativo y tu acceso a la app móvil. En un máximo de 48 horas tu restaurante ya estará visible para todos los usuarios.
                         </div>
                     </div>
 
                     <div class="faq-item">
                         <button class="faq-btn" onclick="faqToggle(this)">
                             <span class="faq-num">02</span>
-                            <span class="faq-q">¿Cuál es la diferencia entre el plan Básico y Premium?</span>
+                            <span class="faq-q">¿Qué incluye el plan de $30 USD/mes?</span>
                             <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                         </button>
                         <div class="faq-answer">
-                            <p style="margin:0 0 12px;">La diferencia clave está en la <strong style="color:#1c1917;">visibilidad</strong>:</p>
-                            <div class="plan-row"><span class="badge badge-basico">Básico $25</span><span>Tus eventos aparecen en la sección de eventos de la plataforma. Tu restaurante NO aparece en el carrusel principal.</span></div>
-                            <div class="plan-row"><span class="badge badge-premium">Premium $35</span><span>Tus eventos se muestran en el <strong style="color:#1e3a8a;">header de la página principal</strong> — lo primero que ven todos al entrar. Además tu restaurante aparece en el <strong style="color:#1e3a8a;">carrusel principal</strong>.</span></div>
-                            <div class="faq-highlight-box"><i class="fas fa-fire" style="font-size:14px;flex-shrink:0;margin-top:2px;"></i>El header y el carrusel reciben el 100% de las visitas. Los restaurantes Premium tienen hasta 4× más clics que los listados regulares.</div>
+                            <p style="margin:0 0 12px;">El plan único de <strong style="color:#1c1917;">$30 USD/mes</strong> incluye absolutamente todo lo que necesita tu negocio:</p>
+                            <div class="plan-row"><span class="badge badge-premium">Incluido</span><span>Perfil completo, galería, hasta 12 eventos al mes, bolsa de empleo ilimitada, badge verificado y estadísticas en tiempo real.</span></div>
+                            <div class="plan-row"><span class="badge badge-premium">Incluido</span><span>Acceso completo al <strong style="color:#1e3a8a;">panel administrativo</strong> de tu restaurante, donde gestionas todo tu contenido.</span></div>
+                            <div class="plan-row"><span class="badge badge-premium">Incluido</span><span>Acceso a la <strong style="color:#1e3a8a;">app móvil</strong> de Gastro Nicaragua, con las mismas funciones que la web.</span></div>
+                            <div class="faq-highlight-box"><i class="fas fa-fire" style="font-size:14px;flex-shrink:0;margin-top:2px;"></i>Lo único que no está incluido es aparecer en el banner destacado del home, que se contrata aparte solo si lo necesitas.</div>
                         </div>
                     </div>
 
                     <div class="faq-item">
                         <button class="faq-btn" onclick="faqToggle(this)">
                             <span class="faq-num">03</span>
-                            <span class="faq-q">¿Cuántos eventos puedo publicar?</span>
+                            <span class="faq-q">¿Cómo funcionan los eventos destacados en el banner principal?</span>
                             <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                         </button>
                         <div class="faq-answer">
-                            <div class="plan-row"><span class="badge badge-basico">Básico $25</span><span>Eventos ilimitados visibles en la sección de eventos de la plataforma.</span></div>
-                            <div class="plan-row"><span class="badge badge-premium">Premium $35</span><span>Eventos ilimitados + aparecen destacados en el header de la página principal — máxima visibilidad.</span></div>
+                            Con el plan de $30 puedes publicar todos los eventos que quieras, y aparecerán en la sección de eventos de la plataforma. Si además quieres que un evento puntual se muestre en el <strong style="color:#1c1917;">banner principal del home</strong> — lo primero que ve cada visitante al entrar — puedes contratar ese destacado como un <strong style="color:#1c1917;">pago extra por evento</strong>, sin necesidad de cambiar de plan. Contáctanos por WhatsApp para conocer el costo por evento destacado.
                         </div>
                     </div>
 
                     <div class="faq-item">
                         <button class="faq-btn" onclick="faqToggle(this)">
                             <span class="faq-num">04</span>
-                            <span class="faq-q">¿Puedo cambiar de plan después de registrarme?</span>
+                            <span class="faq-q">¿Tienen una app móvil?</span>
                             <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                         </button>
                         <div class="faq-answer">
-                            Sí. Puedes subir o bajar de plan en cualquier momento. Los cambios se aplican al inicio del siguiente período de facturación y no hay penalizaciones ni costos adicionales.
+                            Sí. Gastro Nicaragua también está disponible como <strong style="color:#1c1917;">app móvil</strong>, con las mismas funciones que la plataforma web: perfil de tu negocio, publicación de eventos, bolsa de empleo, panel administrativo y estadísticas. El acceso a la app está incluido dentro del plan de $30 USD/mes, sin costo adicional.
                         </div>
                     </div>
 
@@ -736,18 +716,18 @@
                             <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                         </button>
                         <div class="faq-answer">
-                            Puedes cancelar en cualquier momento sin penalizaciones. Tu perfil permanecerá activo hasta el último día del período pagado. Al vencer, contáctanos para renovar o cambiar tu plan.
+                            Puedes cancelar en cualquier momento sin penalizaciones. Tu perfil permanecerá activo hasta el último día del período pagado. Al vencer, contáctanos para renovar tu plan.
                         </div>
                     </div>
 
                     <div class="faq-item">
                         <button class="faq-btn" onclick="faqToggle(this)">
                             <span class="faq-num">07</span>
-                            <span class="faq-q">¿Puedo gestionar múltiples sucursales desde una sola cuenta?</span>
-                            <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
+                        
+                        <span class="faq-q">¿Puedo gestionar varios locales desde el panel administrativo?</span>                            <span class="faq-icon-wrap"><i class="fas fa-plus"></i></span>
                         </button>
                         <div class="faq-answer">
-                            La gestión centralizada de múltiples locales está disponible exclusivamente en el plan <span class="badge badge-premium" style="vertical-align:middle;">Premium $35</span>. Si tienes más de 3 locales, contáctanos para conocer condiciones especiales.
+                            El panel administrativo te permite gestionar cómodamente todos tus negocios desde una sola cuenta, pero cada local se registra y factura de forma independiente, ya que cada uno cuenta con su propio perfil, visibilidad y suscripción de $30 USD/mes. Si tienes varios locales, contáctanos para coordinar el registro de cada uno.
                         </div>
                     </div>
 
@@ -785,7 +765,7 @@
                 ¿Tu restaurante aún no<br><em style="color:#3b82f6;font-style:normal;">está en el mapa?</em>
             </h2>
             <p style="color:rgba(214,211,208,0.75);font-size:1rem;line-height:1.75;max-width:480px;margin:0 auto 40px;">
-                Miles de personas buscan experiencias gastronómicas en Nicaragua cada mes. Asegúrate de que te encuentren a ti.
+                Miles de personas buscan experiencias gastronómicas en Nicaragua cada mes, tanto en la web como en nuestra app móvil. Asegúrate de que te encuentren a ti.
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
                 <a href="#planes"
@@ -794,7 +774,7 @@
                    onmouseout="this.style.background='#2563eb';this.style.transform='translateY(0)'">
                     <i class="fas fa-rocket" style="font-size:11px;"></i> Comenzar Ahora
                 </a>
-                <a href="https://api.whatsapp.com/send?phone=50583767512&text=Hola%20Gastro%20Nicaragua%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20planes" target="_blank"
+                <a href="https://api.whatsapp.com/send?phone=50583767512&text=Hola%20Gastro%20Nicaragua%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20plan" target="_blank"
                    style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);color:#fff;padding:15px 32px;border-radius:14px;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);transition:all 0.25s;"
                    onmouseover="this.style.background='rgba(255,255,255,0.15)'"
                    onmouseout="this.style.background='rgba(255,255,255,0.08)'">
@@ -812,7 +792,7 @@
                             <span class="text-xl font-bold tracking-tight text-white premium-title italic">Gastro<span class="text-blue-500">Nicaragua</span></span>
                         </div>
                         <p class="text-slate-400 text-sm leading-relaxed font-light">
-                            La plataforma líder en promoción turística y eventos culinarios de Nicaragua.
+                            La plataforma líder en promoción turística y eventos culinarios de Nicaragua, disponible en web y app móvil.
                             Descubre los mejores platillos, sabores tradicionales y experiencias únicas en todo el país.
                         </p>
                         <div class="flex items-center gap-3 pt-1">
@@ -885,7 +865,7 @@
                 `📧 *Correo:* ${email}%0A` +
                 `🍽️ *Negocio:* ${negocio || 'No especificado'}%0A` +
                 `🏷️ *Tipo:* ${tipo || 'No especificado'}%0A` +
-                `📦 *Plan de interés:* ${plan || 'No especificado'}%0A%0A` +
+                `📦 *Interés:* ${plan || 'No especificado'}%0A%0A` +
                 `💬 *Mensaje:* ${mensaje}`;
 
             window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${texto}`, '_blank');
@@ -897,4 +877,3 @@
     </script>
 </body>
 </html>
-

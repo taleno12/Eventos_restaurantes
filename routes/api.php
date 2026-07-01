@@ -330,7 +330,7 @@ Route::get('/pedidos-gastrobar/mis', function (Request $request) {
     return response()->json($pedidos);
 })->middleware('auth:sanctum');
 
-// ── ELIMINAR PEDIDO RESTAURANTE (solo si está cancelado) ──
+// ── ELIMINAR PEDIDO RESTAURANTE (cancelado o entregado) ──
 Route::delete('/pedidos/{id}', function (Request $request, $id) {
     $pedido = Pedido::where('id', $id)
         ->where('user_id', $request->user()->id)
@@ -340,8 +340,8 @@ Route::delete('/pedidos/{id}', function (Request $request, $id) {
         return response()->json(['message' => 'Pedido no encontrado.'], 404);
     }
 
-    if ($pedido->estado !== 'cancelado') {
-        return response()->json(['message' => 'Solo puedes eliminar pedidos cancelados.'], 403);
+    if (!in_array($pedido->estado, ['cancelado', 'entregado'])) {
+        return response()->json(['message' => 'Solo puedes eliminar pedidos cancelados o entregados.'], 403);
     }
 
     $pedido->items()->delete();
@@ -350,7 +350,7 @@ Route::delete('/pedidos/{id}', function (Request $request, $id) {
     return response()->json(['message' => 'Pedido eliminado correctamente.']);
 })->middleware('auth:sanctum');
 
-// ── ELIMINAR PEDIDO GASTROBAR (solo si está cancelado) ──
+// ── ELIMINAR PEDIDO GASTROBAR (cancelado o entregado) ──
 Route::delete('/pedidos-gastrobar/{id}', function (Request $request, $id) {
     $pedido = PedidoGastrobar::where('id', $id)
         ->where('user_id', $request->user()->id)
@@ -360,8 +360,8 @@ Route::delete('/pedidos-gastrobar/{id}', function (Request $request, $id) {
         return response()->json(['message' => 'Pedido no encontrado.'], 404);
     }
 
-    if ($pedido->estado !== 'cancelado') {
-        return response()->json(['message' => 'Solo puedes eliminar pedidos cancelados.'], 403);
+    if (!in_array($pedido->estado, ['cancelado', 'entregado'])) {
+        return response()->json(['message' => 'Solo puedes eliminar pedidos cancelados o entregados.'], 403);
     }
 
     $pedido->items()->delete();

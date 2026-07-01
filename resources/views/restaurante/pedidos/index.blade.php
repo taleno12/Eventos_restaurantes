@@ -476,7 +476,9 @@ document.querySelectorAll('.select-estado').forEach(select => {
                     }
                 }
 
-                // Si pasó a "entregado" o "cancelado": reemplazar el select por el botón Eliminar
+                // Si pasó a "entregado" o "cancelado": reemplazar el select por el botón Eliminar.
+                // La fila se queda visible (con opacidad reducida) hasta que el propietario le dé
+                // clic a "Eliminar", o hasta que el job de los 30 días la borre solo.
                 if (nuevoEstado === 'entregado' || nuevoEstado === 'cancelado') {
                     const celdaCambiar = fila.children[7];
                     if (celdaCambiar) {
@@ -494,26 +496,6 @@ document.querySelectorAll('.select-estado').forEach(select => {
 
                     fila.style.opacity = '0.6';
                     fila.classList.add('fila-entregado');
-
-                    const filtroEstadoActual = document.getElementById('filtro-estado').value;
-                    if (filtroEstadoActual !== nuevoEstado) {
-                        setTimeout(() => {
-                            fila.style.transition = 'all 0.5s ease';
-                            fila.style.opacity = '0';
-                            fila.style.transform = 'translateX(30px)';
-
-                            setTimeout(() => {
-                                fila.style.display = 'none';
-                                const visibles = Array.from(document.querySelectorAll('.fila-pedido')).filter(f => f.style.display !== 'none').length;
-                                if (sinRes) sinRes.style.display = visibles === 0 ? 'block' : 'none';
-                                if (contador) {
-                                    contador.textContent = visibles > 0
-                                        ? `${visibles} pedido${visibles !== 1 ? 's' : ''} encontrado${visibles !== 1 ? 's' : ''}`
-                                        : '';
-                                }
-                            }, 500);
-                        }, 800);
-                    }
                 }
 
                 if (window.__pedidos && window.__pedidos[fila.dataset.id]) {

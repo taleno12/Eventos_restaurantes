@@ -177,13 +177,6 @@
         }
         .btn-login:hover { border-color: #2563eb; color: #2563eb; }
 
-        .back-link {
-            display: block; text-align: center; margin-top: 1.75rem;
-            font-size: 0.7rem; color: #3A3A3A; letter-spacing: 0.08em;
-            text-transform: uppercase; text-decoration: none; transition: color 0.2s;
-        }
-        .back-link:hover { color: #2563eb; }
-
         @keyframes slideInLeft { from { opacity:0; transform: translateX(-40px); } to { opacity:1; transform: translateX(0); } }
         @keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
         @keyframes wordReveal { 0% { opacity:0; transform: translateY(100%); } 100% { opacity:1; transform: translateY(0); } }
@@ -250,7 +243,6 @@
                         <label for="name">Nombre completo</label>
                         <input id="name" type="text" name="name"
                                value="{{ old('name') }}"
-                               placeholder="Juan Pérez"
                                required autofocus autocomplete="name"/>
                         @error('name') <div class="field-error">{{ $message }}</div> @enderror
                     </div>
@@ -260,7 +252,6 @@
                         <label for="telefono">Número de teléfono</label>
                         <input id="telefono" type="tel" name="telefono"
                                value="{{ old('telefono') }}"
-                               placeholder="8888 8888"
                                required autocomplete="tel"/>
                         @error('telefono') <div class="field-error">{{ $message }}</div> @enderror
                     </div>
@@ -269,7 +260,6 @@
                     <div class="field fu d5">
                         <label for="password">Contraseña</label>
                         <input id="password" type="password" name="password"
-                               placeholder="••••••••••••"
                                required autocomplete="new-password"
                                oninput="checkStrength(this.value)"/>
                         <div class="pass-strength">
@@ -287,7 +277,6 @@
                         <label for="password_confirmation">Confirmar contraseña</label>
                         <input id="password_confirmation" type="password"
                                name="password_confirmation"
-                               placeholder="••••••••••••"
                                required autocomplete="new-password"/>
                         @error('password_confirmation') <div class="field-error">{{ $message }}</div> @enderror
                     </div>
@@ -311,7 +300,6 @@
                         <label for="respuesta_seguridad">Respuesta</label>
                         <input id="respuesta_seguridad" type="text" name="respuesta_seguridad"
                                value="{{ old('respuesta_seguridad') }}"
-                               placeholder="Tu respuesta"
                                required/>
                         <div class="field-error" style="color:#666; margin-top:0.35rem;">La usarás para recuperar tu cuenta si olvidas la contraseña.</div>
                         @error('respuesta_seguridad') <div class="field-error">{{ $message }}</div> @enderror
@@ -335,8 +323,6 @@
                 </a>
 
                 <a href="{{ route('login.telefono') }}" class="btn-login fu d8">¿Ya tienes cuenta? Iniciar sesión</a>
-
-                <a href="/" class="back-link fu d9">← Volver a la galería</a>
 
             </div>
         </div>

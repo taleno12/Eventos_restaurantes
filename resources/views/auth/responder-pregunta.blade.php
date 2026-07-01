@@ -35,7 +35,7 @@
             position: relative;
             overflow: hidden;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             padding: 2.5rem;
             flex-shrink: 0;
         }
@@ -71,6 +71,13 @@
         .lb span { color: #2563eb; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; }
         .ln { font-family: 'Syne', sans-serif; font-weight: 700; color: #000; font-size: 0.82rem; letter-spacing: 0.04em; }
 
+        .lp-hero-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
         .lp-hero { position: relative; }
         .badge {
             display: inline-block;
@@ -93,11 +100,6 @@
         .ht-line:nth-child(2) { animation-delay: 0.62s; }
         .ht-line:nth-child(3) { animation-delay: 0.79s; }
         .hs { margin-top: 1rem; color: rgba(0,0,0,0.5); font-size: 0.875rem; line-height: 1.6; max-width: 320px; animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) 1s both; }
-
-        .stats { position: relative; display: flex; gap: 0.6rem; flex-wrap: wrap; animation: statsSlide 0.7s cubic-bezier(0.22,1,0.36,1) 1.15s both; }
-        .sc { background: rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 0.65rem 1rem; }
-        .sc .n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: #000; }
-        .sc .l { font-size: 0.6rem; color: rgba(0,0,0,0.45); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
 
         .panel-right {
             flex: 1;
@@ -176,7 +178,6 @@
         @keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
         @keyframes wordReveal { 0% { opacity:0; transform: translateY(100%); } 100% { opacity:1; transform: translateY(0); } }
         @keyframes badgePop { 0% { opacity:0; transform: scale(0.7); } 70% { transform: scale(1.08); } 100% { opacity:1; transform: scale(1); } }
-        @keyframes statsSlide { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
         @keyframes floatG { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-18px) rotate(-1deg); } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
 
@@ -195,23 +196,19 @@
                 <span class="ln">GastroNicaragua</span>
             </div>
 
-            <div class="lp-hero">
-                <div class="badge">🍽 Gastronomía · Nicaragua</div>
-                <div class="ht" aria-label="Casi listo">
-                    <span class="ht-wrap"><span class="ht-line">Ya casi</span></span>
-                    <span class="ht-wrap"><span class="ht-line">estás <em>adentro</em></span></span>
-                    <span class="ht-wrap"><span class="ht-line">de nuevo.</span></span>
+            <div class="lp-hero-wrap">
+                <div class="lp-hero">
+                    <div class="badge">🍽 Gastronomía · Nicaragua</div>
+                    <div class="ht" aria-label="Casi listo">
+                        <span class="ht-wrap"><span class="ht-line">Ya casi</span></span>
+                        <span class="ht-wrap"><span class="ht-line">estás <em>adentro</em></span></span>
+                        <span class="ht-wrap"><span class="ht-line">de nuevo.</span></span>
+                    </div>
+                    <p class="hs">
+                        Responde tu pregunta de seguridad y define una
+                        nueva contraseña para tu cuenta.
+                    </p>
                 </div>
-                <p class="hs">
-                    Responde tu pregunta de seguridad y define una
-                    nueva contraseña para tu cuenta.
-                </p>
-            </div>
-
-            <div class="stats">
-                <div class="sc"><div class="n">200+</div><div class="l">Restaurantes</div></div>
-                <div class="sc"><div class="n">500+</div><div class="l">Platillos</div></div>
-                <div class="sc"><div class="n">18</div><div class="l">Deptos</div></div>
             </div>
         </div>
 
@@ -248,7 +245,6 @@
                     <div class="field fu d3">
                         <label for="respuesta_seguridad">Respuesta</label>
                         <input id="respuesta_seguridad" type="text" name="respuesta_seguridad"
-                               placeholder="Tu respuesta"
                                required autofocus/>
                         @error('respuesta_seguridad') <div class="field-error">{{ $message }}</div> @enderror
                     </div>
@@ -256,7 +252,6 @@
                     <div class="field fu d4">
                         <label for="password">Nueva contraseña</label>
                         <input id="password" type="password" name="password"
-                               placeholder="••••••••••••"
                                required autocomplete="new-password"
                                oninput="checkStrength(this.value)"/>
                         <div class="pass-strength">
@@ -273,7 +268,6 @@
                         <label for="password_confirmation">Confirmar contraseña</label>
                         <input id="password_confirmation" type="password"
                                name="password_confirmation"
-                               placeholder="••••••••••••"
                                required autocomplete="new-password"/>
                     </div>
 

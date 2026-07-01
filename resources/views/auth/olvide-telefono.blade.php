@@ -35,7 +35,7 @@
             position: relative;
             overflow: hidden;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             padding: 2.5rem;
             flex-shrink: 0;
         }
@@ -70,6 +70,13 @@
         .lb { width: 38px; height: 38px; background: #000; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .lb span { color: #2563eb; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; }
         .ln { font-family: 'Syne', sans-serif; font-weight: 700; color: #000; font-size: 0.82rem; letter-spacing: 0.04em; }
+
+        .lp-hero-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
 
         .lp-hero { position: relative; }
         .badge {
@@ -178,17 +185,19 @@
                 <span class="ln">GastroNicaragua</span>
             </div>
 
-            <div class="lp-hero">
-                <div class="badge">🍽 Gastronomía · Nicaragua</div>
-                <div class="ht" aria-label="Recupera tu cuenta">
-                    <span class="ht-wrap"><span class="ht-line">Recupera</span></span>
-                    <span class="ht-wrap"><span class="ht-line">tu <em>cuenta</em></span></span>
-                    <span class="ht-wrap"><span class="ht-line">fácilmente.</span></span>
+            <div class="lp-hero-wrap">
+                <div class="lp-hero">
+                    <div class="badge">🍽 Gastronomía · Nicaragua</div>
+                    <div class="ht" aria-label="Recupera tu cuenta">
+                        <span class="ht-wrap"><span class="ht-line">Recupera</span></span>
+                        <span class="ht-wrap"><span class="ht-line">tu <em>cuenta</em></span></span>
+                        <span class="ht-wrap"><span class="ht-line">fácilmente.</span></span>
+                    </div>
+                    <p class="hs">
+                        Ingresa tu número de teléfono y te ayudamos a recuperar
+                        el acceso a tu cuenta de GastroNicaragua.
+                    </p>
                 </div>
-                <p class="hs">
-                    Ingresa tu número de teléfono y te ayudamos a recuperar
-                    el acceso a tu cuenta de GastroNicaragua.
-                </p>
             </div>
         </div>
 

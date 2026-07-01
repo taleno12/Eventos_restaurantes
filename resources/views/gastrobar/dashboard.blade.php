@@ -14,7 +14,6 @@
     </div>
     <div>
         <div style="font-size:17px;font-weight:800;color:var(--text);">{{ $gastrobar->nombre }}</div>
-        <div style="font-size:12px;color:var(--muted);">{{ auth()->user()->email }}</div>
     </div>
     <span style="margin-left:auto;background:var(--primary-light);border:1px solid var(--primary-border);color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:5px 12px;border-radius:999px;">
         Gastrobar

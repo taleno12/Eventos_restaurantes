@@ -26,6 +26,8 @@ class User extends Authenticatable
         'avatar',
         'telefono',
         'idioma',
+        'pregunta_seguridad',
+        'respuesta_seguridad',
     ];
 
     protected $hidden = [

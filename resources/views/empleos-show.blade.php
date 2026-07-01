@@ -698,20 +698,40 @@
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="modal-grid-2">
-                   <div>
-    <label class="modal-label">Correo electrónico <span style="color:#3b82f6">*</span></label>
-    @auth
-        <input type="email" name="email" value="{{ auth()->user()->email }}"
-               class="modal-input" readonly
-               style="opacity:0.6;cursor:not-allowed;">
-        <p style="font-size:11px;color:#6b7280;margin:4px 0 0 2px;">
-            <i class="fas fa-lock" style="font-size:9px;margin-right:4px;"></i>
-            Correo vinculado a tu cuenta
-        </p>
-    @else
-        <input type="email" name="email" required placeholder="correo@ejemplo.com" class="modal-input">
-    @endauth
-</div>
+                    <div>
+                        <label class="modal-label">
+                            @auth
+                                {{ auth()->user()->telefono ? 'Número de teléfono' : 'Correo electrónico' }}
+                            @else
+                                Correo electrónico
+                            @endauth
+                            <span style="color:#3b82f6">*</span>
+                        </label>
+                        @auth
+                            @if(auth()->user()->telefono)
+                                {{-- Usuario registrado con teléfono: mostrar su número, pero seguir enviando el email real (autogenerado) por debajo --}}
+                                <input type="text" value="{{ auth()->user()->telefono }}"
+                                       class="modal-input" readonly
+                                       style="opacity:0.6;cursor:not-allowed;">
+                                <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                                <p style="font-size:11px;color:#6b7280;margin:4px 0 0 2px;">
+                                    <i class="fas fa-lock" style="font-size:9px;margin-right:4px;"></i>
+                                    Número vinculado a tu cuenta
+                                </p>
+                            @else
+                                {{-- Usuario registrado con Google: mostrar y enviar su correo real --}}
+                                <input type="email" name="email" value="{{ auth()->user()->email }}"
+                                       class="modal-input" readonly
+                                       style="opacity:0.6;cursor:not-allowed;">
+                                <p style="font-size:11px;color:#6b7280;margin:4px 0 0 2px;">
+                                    <i class="fas fa-lock" style="font-size:9px;margin-right:4px;"></i>
+                                    Correo vinculado a tu cuenta
+                                </p>
+                            @endif
+                        @else
+                            <input type="email" name="email" required placeholder="correo@ejemplo.com" class="modal-input">
+                        @endauth
+                    </div>
                     <div>
                         <label class="modal-label">Teléfono / WhatsApp <span style="color:#3b82f6">*</span></label>
                         <input type="tel" name="telefono" required placeholder="+505 8888-0000" class="modal-input">

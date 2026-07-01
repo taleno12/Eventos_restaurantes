@@ -11,6 +11,9 @@ class SolicitudEmpleo extends Model
 
     protected $fillable = [
         'empleo_id',
+        'user_id',
+        'restaurante_id',
+        'gastrobar_id',
         'nombre',
         'apellido',
         'email',
@@ -31,6 +34,11 @@ class SolicitudEmpleo extends Model
     public function empleo(): BelongsTo
     {
         return $this->belongsTo(Empleo::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getNombreCompletoAttribute(): string

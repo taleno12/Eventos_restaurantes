@@ -21,7 +21,13 @@ class GastrobarPedidoController extends Controller
         // Ya no es necesario excluir 'cancelado': los cancelados se eliminan físicamente
         $pedidos = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
             ->with(['user', 'items.plato'])
-            ->orderByRaw("FIELD(estado, 'pendiente', 'confirmado', 'en_preparacion', 'listo', 'entregado')")
+            ->orderByRaw("CASE estado
+                WHEN 'pendiente' THEN 1
+                WHEN 'confirmado' THEN 2
+                WHEN 'en_preparacion' THEN 3
+                WHEN 'listo' THEN 4
+                WHEN 'entregado' THEN 5
+                ELSE 6 END")
             ->latest()
             ->get()
             ->groupBy('estado');

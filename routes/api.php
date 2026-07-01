@@ -582,7 +582,7 @@ Route::post('/empleos/{id}/aplicar', function (Request $request, $id) {
     }
 
     $yaAplico = SolicitudEmpleo::where('empleo_id', $empleo->id)
-        ->where('email', $request->input('email'))
+        ->where('user_id', $request->user()->id)
         ->exists();
 
     if ($yaAplico) {
@@ -658,6 +658,7 @@ Route::post('/empleos/{id}/aplicar', function (Request $request, $id) {
 
     SolicitudEmpleo::create([
         'empleo_id'      => $empleo->id,
+        'user_id'        => $request->user()->id,
         'restaurante_id' => $empleo->restaurante_id,
         'gastrobar_id'   => $empleo->gastrobar_id,
         'nombre'         => $validated['nombre'],

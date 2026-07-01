@@ -99,6 +99,7 @@
                         <option value="en_preparacion">En preparación</option>
                         <option value="listo">Listo</option>
                         <option value="entregado">Entregado</option>
+                        <option value="cancelado">Cancelado</option>
                     </select>
                 </div>
                 <div class="col-12 col-md-3">
@@ -176,8 +177,11 @@
                     </thead>
                     <tbody class="border-top-0">
                         @foreach($todosLosPedidos as $pedido)
-                        <tr class="fila-pedido border-bottom {{ $pedido->estado === 'entregado' ? 'fila-entregado' : '' }}"
-                            style="border-color:var(--card-border) !important;cursor:pointer; {{ $pedido->estado === 'entregado' ? 'opacity:0.6;' : '' }}"
+                        @php
+                        $esFinal = in_array($pedido->estado, ['entregado', 'cancelado']);
+                        @endphp
+                        <tr class="fila-pedido border-bottom {{ $esFinal ? 'fila-entregado' : '' }}"
+                            style="border-color:var(--card-border) !important;cursor:pointer; {{ $esFinal ? 'opacity:0.6;' : '' }}"
                             data-id="{{ $pedido->id }}" data-cliente="{{ strtolower($pedido->user->name) }}"
                             data-estado="{{ $pedido->estado }}" data-tipo="{{ $pedido->tipo }}"
                             data-total="{{ $pedido->total }}" onclick="verDetalle({{ $pedido->id }})">
@@ -258,9 +262,9 @@
                                     $pedido->created_at->format('d/m') }}</span>
                             </td>
 
-                            {{-- Cambiar estado --}}
+                            {{-- Cambiar estado / Eliminar --}}
                             <td class="py-3 text-center" onclick="event.stopPropagation()">
-                                @if($pedido->estado !== 'entregado')
+                                @if(!$esFinal)
                                 <form method="POST" action="{{ route('gastrobar.pedidos.estado', $pedido) }}"
                                     class="form-estado">
                                     @csrf @method('PATCH')
@@ -276,9 +280,14 @@
                                     </select>
                                 </form>
                                 @else
-                                <span class="small fw-semibold" style="color:var(--muted) !important;">
-                                    <i class="bi bi-check-circle-fill text-success me-1"></i> Completado
-                                </span>
+                                <form method="POST" action="{{ route('gastrobar.pedidos.destroy', $pedido) }}"
+                                    class="form-eliminar-pedido">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm rounded-pill px-3"
+                                        style="font-size:11px;font-weight:700;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;">
+                                        <i class="bi bi-trash3 me-1"></i> Eliminar
+                                    </button>
+                                </form>
                                 @endif
                             </td>
 
@@ -463,8 +472,8 @@
 
             let visibles = 0;
             document.querySelectorAll('.fila-pedido').forEach(fila => {
-                // Por defecto, ocultar entregados a menos que se filtre explícitamente por "entregado"
-                if (fila.dataset.estado === 'entregado' && estado !== 'entregado') {
+                // Por defecto, ocultar entregados/cancelados a menos que se filtre explícitamente
+                if ((fila.dataset.estado === 'entregado' || fila.dataset.estado === 'cancelado') && estado !== fila.dataset.estado) {
                     fila.style.display = 'none';
                     return;
                 }
@@ -506,173 +515,130 @@
             const form = this.closest('.form-estado');
             const nuevoEstado = this.value;
             const estadoAnterior = fila.dataset.estado;
+            const formData = new FormData(form);
 
-            if (nuevoEstado === 'cancelado') {
-                // ── Cancelado: elimina la fila con animación ──
-                const totalPedido = parseFloat(fila.dataset.total) || 0;
-                const eraPendiente = estadoAnterior === 'pendiente';
+            this.disabled = true;
 
-                fila.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                fila.style.opacity = '0';
-                fila.style.transform = 'translateX(-30px)';
-                fila.style.height = fila.offsetHeight + 'px';
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    this.disabled = false;
 
-                setTimeout(() => {
-                    fila.style.height = '0';
-                    fila.style.padding = '0';
-                    fila.style.overflow = 'hidden';
-                }, 300);
-
-                setTimeout(() => {
-                    fila.remove();
-
-                    actualizarMetricas(eraPendiente, totalPedido);
-
-                    const visibles = document.querySelectorAll('.fila-pedido').length;
-                    if (sinRes) sinRes.style.display = visibles === 0 ? 'block' : 'none';
-                    if (contador) {
-                        contador.textContent = visibles > 0
-                            ? `${visibles} pedido${visibles !== 1 ? 's' : ''} encontrado${visibles !== 1 ? 's' : ''}`
-                            : '';
+                    if (!data || !data.success) {
+                        console.error('No se pudo actualizar el estado del pedido.');
+                        this.value = estadoAnterior;
+                        return;
                     }
 
-                    const formData = new FormData(form);
-                    fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
+                    fila.dataset.estado = nuevoEstado;
 
-                }, 600);
+                    // Actualizar el badge visual de "Estado"
+                    const info = window.estadosInfo[nuevoEstado];
+                    if (info) {
+                        const celdaEstado = fila.children[5];
+                        const badgeEstado = celdaEstado ? celdaEstado.querySelector('.badge') : null;
+                        if (badgeEstado) {
+                            badgeEstado.style.backgroundColor = info.color + '22';
+                            badgeEstado.style.color = info.color;
+                            badgeEstado.style.borderColor = info.color + '44';
+                            badgeEstado.innerHTML =
+                                `<span class="rounded-circle" style="width:5px;height:5px;background:${info.color};"></span> ${info.label}`;
+                        }
+                    }
 
-            } else {
-                // ── Cualquier otro estado (incluido "entregado"): enviar al backend ──
-                const formData = new FormData(form);
-                this.disabled = true;
+                    if (estadoAnterior === 'pendiente' && nuevoEstado !== 'pendiente') {
+                        const badgePendientes = document.getElementById('metrica-pendientes');
+                        if (badgePendientes) {
+                            const actual = parseInt(badgePendientes.textContent) || 0;
+                            if (actual > 0) badgePendientes.textContent = actual - 1;
+                        }
+                    }
 
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        this.disabled = false;
-                        console.log('Respuesta del servidor:', data);
-
-                        if (!data || !data.success) {
-                            console.error('No se pudo actualizar el estado del pedido.');
-                            // Revertir el select al estado anterior
-                            this.value = estadoAnterior;
-                            return;
+                    // Si pasó a "entregado" o "cancelado": reemplazar el select por el botón Eliminar
+                    if (nuevoEstado === 'entregado' || nuevoEstado === 'cancelado') {
+                        const celdaCambiar = fila.children[7];
+                        if (celdaCambiar) {
+                            celdaCambiar.innerHTML = `
+                                <form method="POST" action="/mi-gastrobar/pedidos/${fila.dataset.id}" class="form-eliminar-pedido">
+                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name=csrf-token]')?.content || form.querySelector('[name=_token]').value}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-sm rounded-pill px-3"
+                                        style="font-size:11px;font-weight:700;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;">
+                                        <i class="bi bi-trash3 me-1"></i> Eliminar
+                                    </button>
+                                </form>
+                            `;
                         }
 
-                        fila.dataset.estado = nuevoEstado;
+                        fila.style.opacity = '0.6';
+                        fila.classList.add('fila-entregado');
 
-                        // Actualizar el badge visual de "Estado" en la fila
-                        const info = window.estadosInfo[nuevoEstado];
-                        if (info) {
-                            const celdaEstado = fila.children[5]; // columna "Estado"
-                            const badgeEstado = celdaEstado ? celdaEstado.querySelector('.badge') : null;
-                            if (badgeEstado) {
-                                badgeEstado.style.backgroundColor = info.color + '22';
-                                badgeEstado.style.color = info.color;
-                                badgeEstado.style.borderColor = info.color + '44';
-                                badgeEstado.innerHTML =
-                                    `<span class="rounded-circle" style="width:5px;height:5px;background:${info.color};"></span> ${info.label}`;
-                            }
-                        }
+                        const filtroEstadoActual = document.getElementById('filtro-estado').value;
+                        if (filtroEstadoActual !== nuevoEstado) {
+                            setTimeout(() => {
+                                fila.style.transition = 'all 0.5s ease';
+                                fila.style.opacity = '0';
+                                fila.style.transform = 'translateX(30px)';
 
-                        // Si el pedido estaba pendiente y ahora no lo está, restar del contador de pendientes
-                        if (estadoAnterior === 'pendiente' && nuevoEstado !== 'pendiente') {
-                            const badgePendientes = document.getElementById('metrica-pendientes');
-                            if (badgePendientes) {
-                                const actual = parseInt(badgePendientes.textContent) || 0;
-                                if (actual > 0) badgePendientes.textContent = actual - 1;
-                            }
-                        }
-
-                        // Si pasó a "entregado", reemplazar el select por "Completado" y aplicar estilo
-                        if (nuevoEstado === 'entregado') {
-                            const celdaCambiar = fila.children[7]; // columna "Cambiar estado"
-                            if (celdaCambiar) {
-                                celdaCambiar.innerHTML = `
-                                    <span class="small fw-semibold" style="color:var(--muted) !important;">
-                                        <i class="bi bi-check-circle-fill text-success me-1"></i> Completado
-                                    </span>
-                                `;
-                            }
-                            
-                            // Aplicar estilo visual de entregado
-                            fila.style.opacity = '0.6';
-                            fila.classList.add('fila-entregado');
-                            
-                            // Ocultar después de un delay si no se está filtrando por entregados
-                            const filtroEstadoActual = document.getElementById('filtro-estado').value;
-                            if (filtroEstadoActual !== 'entregado') {
                                 setTimeout(() => {
-                                    fila.style.transition = 'all 0.5s ease';
-                                    fila.style.opacity = '0';
-                                    fila.style.transform = 'translateX(30px)';
-                                    
-                                    setTimeout(() => {
-                                        fila.style.display = 'none';
-                                        const visibles = Array.from(document.querySelectorAll('.fila-pedido')).filter(f => f.style.display !== 'none').length;
-                                        if (sinRes) sinRes.style.display = visibles === 0 ? 'block' : 'none';
-                                        if (contador) {
-                                            contador.textContent = visibles > 0
-                                                ? `${visibles} pedido${visibles !== 1 ? 's' : ''} encontrado${visibles !== 1 ? 's' : ''}`
-                                                : '';
-                                        }
-                                    }, 500);
-                                }, 800);
-                            }
-                        } else {
-                            // Quitar la opción "cancelado" del select si ya no aplica
-                            const opcionCancelado = this.querySelector('option[value="cancelado"]');
-                            if (opcionCancelado && nuevoEstado !== 'pendiente') {
-                                opcionCancelado.remove();
-                            }
+                                    fila.style.display = 'none';
+                                    const visibles = Array.from(document.querySelectorAll('.fila-pedido')).filter(f => f.style.display !== 'none').length;
+                                    if (sinRes) sinRes.style.display = visibles === 0 ? 'block' : 'none';
+                                    if (contador) {
+                                        contador.textContent = visibles > 0
+                                            ? `${visibles} pedido${visibles !== 1 ? 's' : ''} encontrado${visibles !== 1 ? 's' : ''}`
+                                            : '';
+                                    }
+                                }, 500);
+                            }, 800);
                         }
+                    }
 
-                        // Refrescar también los datos del modal de detalle
-                        if (window.__pedidos && window.__pedidos[fila.dataset.id]) {
-                            window.__pedidos[fila.dataset.id].estado = nuevoEstado;
-                        }
-                    })
-                    .catch(err => {
-                        this.disabled = false;
-                        this.value = estadoAnterior;
-                        console.error('Error al actualizar estado:', err);
-                        alert('Error al actualizar el estado. Inténtalo de nuevo.');
-                    });
-            }
+                    if (window.__pedidos && window.__pedidos[fila.dataset.id]) {
+                        window.__pedidos[fila.dataset.id].estado = nuevoEstado;
+                    }
+                })
+                .catch(err => {
+                    this.disabled = false;
+                    this.value = estadoAnterior;
+                    console.error('Error al actualizar estado:', err);
+                    alert('Error al actualizar el estado. Inténtalo de nuevo.');
+                });
         });
     });
 
-    function actualizarMetricas(eraPendiente, totalPedido) {
-        if (eraPendiente) {
-            const badgePendientes = document.getElementById('metrica-pendientes');
-            if (badgePendientes) {
-                const actual = parseInt(badgePendientes.textContent) || 0;
-                if (actual > 0) badgePendientes.textContent = actual - 1;
-            }
-        }
+    // ── ELIMINAR PEDIDO (delegado, cubre botones renderizados dinámicamente) ──
+    document.addEventListener('submit', function (e) {
+        if (!e.target.classList.contains('form-eliminar-pedido')) return;
+        e.preventDefault();
 
-        const badgeTotal = document.getElementById('metrica-total-hoy');
-        if (badgeTotal) {
-            const actual = parseInt(badgeTotal.textContent) || 0;
-            if (actual > 0) badgeTotal.textContent = actual - 1;
-        }
+        if (!confirm('¿Eliminar este pedido de forma permanente?')) return;
 
-        const badgeIngreso = document.getElementById('metrica-ingreso-hoy');
-        if (badgeIngreso && totalPedido > 0) {
-            const textoActual = badgeIngreso.textContent.replace(/[^\d]/g, '');
-            const actual = parseInt(textoActual) || 0;
-            const nuevo = Math.max(0, actual - totalPedido);
-            badgeIngreso.textContent = `C$ ${nuevo.toLocaleString()}`;
-        }
-    }
+        const form = e.target;
+        const fila = form.closest('.fila-pedido');
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.success && fila) {
+                    fila.style.transition = 'all 0.4s ease';
+                    fila.style.opacity = '0';
+                    setTimeout(() => fila.remove(), 400);
+                } else {
+                    alert(data?.message || 'No se pudo eliminar el pedido.');
+                }
+            })
+            .catch(() => alert('Error al eliminar el pedido. Inténtalo de nuevo.'));
+    });
 
     // ── Modal detalle ──
     function verDetalle(id) {

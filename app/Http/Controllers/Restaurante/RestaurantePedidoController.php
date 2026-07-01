@@ -18,9 +18,9 @@ class RestaurantePedidoController extends Controller
     {
         $restaurante = $this->restaurante();
 
-        // Pedidos activos: SOLO excluir cancelados, entregados se quedan
+        // Se muestran todos los estados, incluido "cancelado", para que el
+        // propietario pueda eliminarlos manualmente desde el panel.
         $pedidos = Pedido::where('restaurante_id', $restaurante->id)
-            ->where('estado', '!=', 'cancelado')
             ->with(['user', 'items.plato'])
             ->orderByRaw("CASE estado
                 WHEN 'pendiente' THEN 1
@@ -28,12 +28,12 @@ class RestaurantePedidoController extends Controller
                 WHEN 'en_preparacion' THEN 3
                 WHEN 'listo' THEN 4
                 WHEN 'entregado' THEN 5
-                ELSE 6 END")
+                WHEN 'cancelado' THEN 6
+                ELSE 7 END")
             ->latest()
             ->get()
             ->groupBy('estado');
 
-        // Métricas sin cancelados
         $totalHoy = Pedido::where('restaurante_id', $restaurante->id)
             ->whereDate('created_at', today())
             ->where('estado', '!=', 'cancelado')
@@ -74,13 +74,36 @@ class RestaurantePedidoController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'success' => true,
-                'estado' => $request->estado,
-                'eliminado' => $request->estado === 'cancelado'
+                'success'   => true,
+                'estado'    => $request->estado,
+                'eliminado' => false,
             ]);
         }
 
         return back()->with('success', 'Estado actualizado.');
+    }
+
+    public function destroy(Pedido $pedido)
+    {
+        $restaurante = $this->restaurante();
+        abort_unless($pedido->restaurante_id === $restaurante->id, 403);
+
+        if (!in_array($pedido->estado, ['cancelado', 'entregado'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Solo puedes eliminar pedidos cancelados o entregados.',
+            ], 403);
+        }
+
+        $pedido->items()->delete();
+        $pedido->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Pedido eliminado correctamente.']);
+        }
+
+        return redirect()->route('restaurante.pedidos.index')
+            ->with('success', 'Pedido eliminado correctamente.');
     }
 
     public function polling(Request $request)

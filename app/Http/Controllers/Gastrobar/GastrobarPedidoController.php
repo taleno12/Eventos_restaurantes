@@ -18,7 +18,6 @@ class GastrobarPedidoController extends Controller
     {
         $gastrobar = $this->gastrobar();
 
-        // Ya no es necesario excluir 'cancelado': los cancelados se eliminan físicamente
         $pedidos = PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
             ->with(['user', 'items.plato'])
             ->orderByRaw("CASE estado
@@ -67,24 +66,12 @@ class GastrobarPedidoController extends Controller
             'estado' => 'required|in:pendiente,confirmado,en_preparacion,listo,entregado,cancelado'
         ]);
 
-        // ── CANCELADO: eliminación real, no solo cambio de estado ──
-        if ($request->estado === 'cancelado') {
-            $pedidoGastrobar->delete();
-
-            if ($request->ajax()) {
-                return response()->json([
-                    'success'   => true,
-                    'estado'    => 'cancelado',
-                    'eliminado' => true,
-                ]);
-            }
-
-            return redirect()->route('gastrobar.pedidos.index')
-                ->with('success', 'Pedido cancelado y eliminado correctamente.');
-        }
-
         $pedidoGastrobar->update(['estado' => $request->estado]);
 
+        // ── Cancelado o entregado: se mantiene el registro.
+        // El propietario puede borrarlo desde el panel (destroy) o el cliente desde
+        // la app, y si nadie lo borra se elimina solo a los 30 días
+        // (comando pedidos:limpiar-cancelados). ──
         if ($request->ajax()) {
             return response()->json([
                 'success'   => true,
@@ -94,6 +81,29 @@ class GastrobarPedidoController extends Controller
         }
 
         return back()->with('success', 'Estado actualizado.');
+    }
+
+    public function destroy(PedidoGastrobar $pedidoGastrobar)
+    {
+        $gastrobar = $this->gastrobar();
+        abort_unless($pedidoGastrobar->gastrobar_id === $gastrobar->id, 403);
+
+        if (!in_array($pedidoGastrobar->estado, ['cancelado', 'entregado'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Solo puedes eliminar pedidos cancelados o entregados.',
+            ], 403);
+        }
+
+        $pedidoGastrobar->items()->delete();
+        $pedidoGastrobar->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Pedido eliminado correctamente.']);
+        }
+
+        return redirect()->route('gastrobar.pedidos.index')
+            ->with('success', 'Pedido eliminado correctamente.');
     }
 
     public function polling(Request $request)

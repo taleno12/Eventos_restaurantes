@@ -404,6 +404,7 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
         Route::get('/pedidos',                   [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'index'])->name('pedidos.index');
         Route::get('/pedidos/{pedido}',          [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'show'])->name('pedidos.show');
         Route::patch('/pedidos/{pedido}/estado', [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'cambiarEstado'])->name('pedidos.estado');
+        Route::delete('/pedidos/{pedido}',       [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'destroy'])->name('pedidos.destroy');
         Route::get('/pedidos-polling',           [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
 
         Route::get('/estadisticas', [\App\Http\Controllers\Restaurante\RestauranteEstadisticasController::class, 'index'])
@@ -479,6 +480,7 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
         Route::get('/pedidos',                              [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'index'])->name('pedidos.index');
         Route::get('/pedidos/{pedidoGastrobar}',            [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'show'])->name('pedidos.show');
         Route::patch('/pedidos/{pedidoGastrobar}/estado',   [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'cambiarEstado'])->name('pedidos.estado');
+        Route::delete('/pedidos/{pedidoGastrobar}',         [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'destroy'])->name('pedidos.destroy');
         Route::get('/pedidos-polling',                      [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'polling'])->name('pedidos.polling');
 
         Route::get('/estadisticas', [\App\Http\Controllers\Gastrobar\GastrobarEstadisticasController::class, 'index'])

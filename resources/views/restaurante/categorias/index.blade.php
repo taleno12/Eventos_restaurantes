@@ -7,15 +7,17 @@
     {{-- ── Encabezado ── --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
+            <h1 class="h3 mb-1 fw-bold" style="color:var(--text);">
                 <i class="bi bi-tags text-primary me-2"></i> Mis Categorías
             </h1>
-            <p class="text-muted mb-0 small">
+            <p class="mb-0 small" style="color:var(--muted);">
                 <i class="bi bi-circle-fill text-secondary me-1" style="font-size:6px;vertical-align:middle;"></i>
                 Organiza las categorías del menú de {{ $restaurante->nombre }}
             </p>
         </div>
-        <a href="{{ route('restaurante.platos.index') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+        <a href="{{ route('restaurante.platos.index') }}"
+           class="btn border rounded-pill px-4 fw-semibold"
+           style="background:var(--card-bg);color:var(--text);border-color:var(--card-border) !important;">
             <i class="bi bi-arrow-left me-1"></i> Volver al Menú
         </a>
     </div>
@@ -47,13 +49,14 @@
 
         {{-- ── Columna izquierda: lista + reorder ── --}}
         <div class="col-12 col-lg-8">
-            <div class="card border-0 shadow-sm rounded-3 bg-white">
-                <div class="card-header bg-light border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
-                    <span class="fw-bold text-uppercase text-secondary" style="font-size:0.75rem;letter-spacing:0.5px;">
+            <div class="card border-0 shadow-sm rounded-3" style="background:var(--card-bg) !important;">
+                <div class="card-header border-bottom py-3 px-4 d-flex justify-content-between align-items-center"
+                     style="background:var(--hover-bg);border-color:var(--card-border) !important;">
+                    <span class="fw-bold text-uppercase" style="font-size:0.75rem;letter-spacing:0.5px;color:var(--muted);">
                         <i class="bi bi-list-ul me-1"></i> Categorías
                         <span class="badge bg-primary bg-opacity-10 text-primary ms-1 fw-bold" style="font-size:0.7rem;">{{ $categorias->count() }}</span>
                     </span>
-                    <span class="text-muted" style="font-size:11px;">
+                    <span style="font-size:11px;color:var(--muted);">
                         <i class="bi bi-grip-vertical me-1"></i> Arrastra para reordenar
                     </span>
                 </div>
@@ -63,10 +66,10 @@
                         @foreach($categorias as $cat)
                         <li class="d-flex align-items-center gap-3 px-4 py-3 border-bottom sortable-item"
                             data-id="{{ $cat->id }}"
-                            style="border-color:#edf2f7 !important;cursor:default;">
+                            style="border-color:var(--card-border) !important;cursor:default;">
 
                             {{-- Handle drag --}}
-                            <div class="text-muted drag-handle" style="cursor:grab;font-size:1.1rem;">
+                            <div class="drag-handle" style="cursor:grab;font-size:1.1rem;color:var(--muted);">
                                 <i class="bi bi-grip-vertical"></i>
                             </div>
 
@@ -78,8 +81,8 @@
 
                             {{-- Nombre (editable inline) --}}
                             <div class="flex-grow-1">
-                                <span class="fw-semibold text-dark cat-nombre" style="font-size:0.9rem;">{{ $cat->nombre }}</span>
-                                <small class="text-muted ms-2" style="font-size:11px;">
+                                <span class="fw-semibold cat-nombre" style="font-size:0.9rem;color:var(--text);">{{ $cat->nombre }}</span>
+                                <small class="ms-2" style="font-size:11px;color:var(--muted);">
                                     {{ $cat->platos_count }} plato{{ $cat->platos_count !== 1 ? 's' : '' }}
                                 </small>
 
@@ -89,11 +92,12 @@
                                     @csrf @method('PUT')
                                     <div class="d-flex gap-2">
                                         <input type="text" name="nombre" value="{{ $cat->nombre }}"
-                                               class="form-control form-control-sm" required>
+                                               class="form-control form-control-sm input-tema" required>
                                         <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold">
                                             Guardar
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill btn-cancelar-editar">
+                                        <button type="button" class="btn btn-sm rounded-pill btn-cancelar-editar"
+                                                style="background:var(--hover-bg);color:var(--text);border:1px solid var(--card-border);">
                                             Cancelar
                                         </button>
                                     </div>
@@ -103,14 +107,16 @@
                             {{-- Acciones --}}
                             <div class="d-flex gap-1 flex-shrink-0 acciones-cat">
                                 <button type="button"
-                                        class="btn btn-light btn-sm px-2 action-icon-edit btn-editar-cat"
-                                        title="Editar nombre">
+                                        class="btn btn-sm px-2 action-icon-edit btn-editar-cat"
+                                        title="Editar nombre"
+                                        style="background:var(--hover-bg);color:var(--muted);border:1px solid var(--card-border);">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button type="submit"
                                         form="form-delete-cat-{{ $cat->id }}"
-                                        class="btn btn-light btn-sm px-2 action-icon-delete"
-                                        title="Eliminar">
+                                        class="btn btn-sm px-2 action-icon-delete"
+                                        title="Eliminar"
+                                        style="background:var(--hover-bg);color:var(--muted);border:1px solid var(--card-border);">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -126,9 +132,9 @@
                         @endforeach
                     </ul>
                     @else
-                    <div class="text-center text-muted py-5">
-                        <i class="bi bi-tags d-block display-6 text-muted mb-3"></i>
-                        <span class="fs-6 d-block">Aún no tienes categorías.</span>
+                    <div class="text-center py-5" style="color:var(--muted);">
+                        <i class="bi bi-tags d-block display-6 mb-3" style="opacity:0.4;"></i>
+                        <span class="fs-6 d-block" style="color:var(--text);">Aún no tienes categorías.</span>
                         <span class="small">Crea la primera desde el formulario.</span>
                     </div>
                     @endif
@@ -138,9 +144,9 @@
 
         {{-- ── Columna derecha: nueva categoría ── --}}
         <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-3 bg-white">
-                <div class="card-header bg-light border-bottom py-3 px-4">
-                    <span class="fw-bold text-uppercase text-secondary" style="font-size:0.75rem;letter-spacing:0.5px;">
+            <div class="card border-0 shadow-sm rounded-3" style="background:var(--card-bg) !important;">
+                <div class="card-header border-bottom py-3 px-4" style="background:var(--hover-bg);border-color:var(--card-border) !important;">
+                    <span class="fw-bold text-uppercase" style="font-size:0.75rem;letter-spacing:0.5px;color:var(--muted);">
                         <i class="bi bi-plus-circle me-1"></i> Nueva Categoría
                     </span>
                 </div>
@@ -148,11 +154,11 @@
                     <form method="POST" action="{{ route('restaurante.categorias.store') }}">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="font-size:13px;">Nombre *</label>
-                            <input type="text" name="nombre" class="form-control"
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Nombre *</label>
+                            <input type="text" name="nombre" class="form-control input-tema"
                                    placeholder="Ej: Entradas, Postres, Bebidas..."
                                    value="{{ old('nombre') }}" required autofocus>
-                            <div class="form-text text-muted" style="font-size:11px;">
+                            <div class="form-text" style="font-size:11px;color:var(--muted);">
                                 Se agregará al final de la lista y podrás reordenarla.
                             </div>
                         </div>
@@ -164,12 +170,12 @@
             </div>
 
             {{-- Tip --}}
-            <div class="card border-0 rounded-3 mt-3" style="background-color:#eff6ff;border:1px solid #bfdbfe !important;">
+            <div class="card border-0 rounded-3 mt-3" style="background-color:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25) !important;">
                 <div class="card-body p-3">
                     <p class="mb-1 fw-semibold text-primary" style="font-size:12px;">
                         <i class="bi bi-lightbulb me-1"></i> Tip
                     </p>
-                    <p class="text-muted mb-0" style="font-size:11px;line-height:1.5;">
+                    <p class="mb-0" style="font-size:11px;line-height:1.5;color:var(--muted);">
                         Al crear o editar un plato, podrás elegir una de estas categorías desde un selector. El orden que definas aquí es el mismo en que aparecen en el menú público.
                     </p>
                 </div>
@@ -182,8 +188,24 @@
 <style>
     .action-icon-edit:hover   { color: #ffc107 !important; }
     .action-icon-delete:hover { color: #dc3545 !important; }
-    .sortable-item.dragging   { opacity: 0.5; background: #f0f9ff !important; }
+    .sortable-item.dragging   { opacity: 0.5; background: var(--hover-bg) !important; }
     .drag-handle:active       { cursor: grabbing; }
+
+    .input-tema {
+        background: var(--card-bg) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--card-border) !important;
+    }
+    .input-tema::placeholder {
+        color: var(--muted) !important;
+        opacity: 0.8;
+    }
+    .input-tema:focus {
+        background: var(--card-bg) !important;
+        color: var(--text) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(37,99,235,0.15) !important;
+    }
 </style>
 
 @endsection

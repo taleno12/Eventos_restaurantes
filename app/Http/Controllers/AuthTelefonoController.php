@@ -15,6 +15,23 @@ class AuthTelefonoController extends Controller
         '85406068',
     ];
 
+    /**
+     * Normaliza un numero de telefono: quita espacios, guiones,
+     * parentesis y el prefijo +505 / 505 si viene incluido.
+     */
+    private function normalizarTelefono(string $telefono): string
+    {
+        // Deja solo digitos
+        $limpio = preg_replace('/\D+/', '', $telefono);
+
+        // Si quedo con codigo de pais (505) y 8 digitos de numero, se lo quitamos
+        if (strlen($limpio) === 11 && str_starts_with($limpio, '505')) {
+            $limpio = substr($limpio, 3);
+        }
+
+        return $limpio;
+    }
+
     // ───────────────────────────────
     // REGISTRO
     // ───────────────────────────────
@@ -25,6 +42,10 @@ class AuthTelefonoController extends Controller
 
     public function register(Request $request)
     {
+        $request->merge([
+            'telefono' => $this->normalizarTelefono((string) $request->input('telefono', '')),
+        ]);
+
         $request->validate([
             'name'                => 'required|string|max:255',
             'telefono'            => 'required|string|max:20|unique:users,telefono',
@@ -60,6 +81,10 @@ class AuthTelefonoController extends Controller
 
     public function login(Request $request)
     {
+        $request->merge([
+            'telefono' => $this->normalizarTelefono((string) $request->input('telefono', '')),
+        ]);
+
         $request->validate([
             'telefono' => 'required|string',
             'password' => 'required|string',
@@ -98,12 +123,20 @@ class AuthTelefonoController extends Controller
 
     public function buscarPregunta(Request $request)
     {
+        $request->merge([
+            'telefono' => $this->normalizarTelefono((string) $request->input('telefono', '')),
+        ]);
+
         $request->validate(['telefono' => 'required|string']);
 
         $user = User::where('telefono', $request->telefono)->first();
 
-        if (!$user || !$user->pregunta_seguridad) {
+        if (!$user) {
             return back()->withErrors(['telefono' => 'No encontramos una cuenta con ese telefono.'])->withInput();
+        }
+
+        if (!$user->pregunta_seguridad) {
+            return back()->withErrors(['telefono' => 'Tu cuenta no tiene una pregunta de seguridad configurada. Contacta al soporte para recuperar tu contrasena.'])->withInput();
         }
 
         return view('auth.responder-pregunta', [
@@ -117,6 +150,10 @@ class AuthTelefonoController extends Controller
     // ───────────────────────────────
     public function resetPassword(Request $request)
     {
+        $request->merge([
+            'telefono' => $this->normalizarTelefono((string) $request->input('telefono', '')),
+        ]);
+
         $request->validate([
             'telefono'            => 'required|string',
             'respuesta_seguridad' => 'required|string',

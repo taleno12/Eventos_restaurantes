@@ -803,6 +803,106 @@ Route::post('/auth/google', function (Request $request) {
     ]);
 });
 
+// ── REGISTRO CON TELÉFONO (API) ──
+Route::post('/register-telefono', function (Request $request) {
+    $request->validate([
+        'name'                => 'required|string|max:255',
+        'telefono'            => 'required|string|max:20|unique:users,telefono',
+        'password'            => 'required|string|min:8|confirmed',
+        'pregunta_seguridad'  => 'required|string|max:255',
+        'respuesta_seguridad' => 'required|string|max:255',
+    ]);
+
+    $user = User::create([
+        'name'                => $request->name,
+        'telefono'            => $request->telefono,
+        'email'               => $request->telefono . '@telefono.gastronicaragua.local',
+        'password'            => Hash::make($request->password),
+        'pregunta_seguridad'  => $request->pregunta_seguridad,
+        'respuesta_seguridad' => Hash::make(strtolower(trim($request->respuesta_seguridad))),
+        'role'                => 'usuario',
+        'idioma'              => 'es',
+    ]);
+
+    return response()->json([
+        'user' => [
+            'id'              => $user->id,
+            'name'            => $user->name,
+            'telefono'        => $user->telefono,
+            'role'            => $user->role,
+            'departamento_id' => $user->departamento_id,
+            'municipio_id'    => $user->municipio_id,
+            'idioma'          => $user->idioma,
+        ],
+        'token' => $user->createToken('flutter-app')->plainTextToken,
+    ], 201);
+});
+
+// ── LOGIN CON TELÉFONO (API) ──
+Route::post('/login-telefono', function (Request $request) {
+    $request->validate([
+        'telefono' => 'required|string',
+        'password' => 'required|string',
+    ]);
+
+    $user = User::where('telefono', $request->telefono)->first();
+
+    if (!$user || !$user->password || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Teléfono o contraseña incorrectos.'], 401);
+    }
+
+    return response()->json([
+        'user' => [
+            'id'              => $user->id,
+            'name'            => $user->name,
+            'telefono'        => $user->telefono,
+            'role'            => $user->role,
+            'departamento_id' => $user->departamento_id,
+            'municipio_id'    => $user->municipio_id,
+            'restaurante_id'  => $user->restaurante_id,
+            'gastrobar_id'    => $user->gastrobar_id,
+            'es_propietario'  => in_array($user->role, ['restaurante', 'gastrobar']),
+            'idioma'          => $user->idioma ?? 'es',
+        ],
+        'token' => $user->createToken('flutter-app')->plainTextToken,
+    ]);
+});
+
+// ── RECUPERAR CONTRASEÑA (API) - Paso 1: buscar pregunta ──
+Route::post('/olvide-telefono/buscar', function (Request $request) {
+    $request->validate(['telefono' => 'required|string']);
+
+    $user = User::where('telefono', $request->telefono)->first();
+
+    if (!$user || !$user->pregunta_seguridad) {
+        return response()->json(['message' => 'No encontramos una cuenta con ese teléfono.'], 404);
+    }
+
+    return response()->json([
+        'telefono' => $user->telefono,
+        'pregunta' => $user->pregunta_seguridad,
+    ]);
+});
+
+// ── RECUPERAR CONTRASEÑA (API) - Paso 2: validar respuesta y cambiar password ──
+Route::post('/olvide-telefono/reset', function (Request $request) {
+    $request->validate([
+        'telefono'            => 'required|string',
+        'respuesta_seguridad' => 'required|string',
+        'password'            => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('telefono', $request->telefono)->first();
+
+    if (!$user || !Hash::check(strtolower(trim($request->respuesta_seguridad)), $user->respuesta_seguridad)) {
+        return response()->json(['message' => 'Respuesta incorrecta.'], 401);
+    }
+
+    $user->update(['password' => Hash::make($request->password)]);
+
+    return response()->json(['message' => 'Contraseña actualizada correctamente.']);
+});
+
 // ── NOTIFICAR NUEVO RESTAURANTE ──
 Route::post('/notificar/restaurante', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
@@ -1527,4 +1627,4 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json(['message' => 'Pedido cancelado y eliminado correctamente.']);
     });
 
-}); 
+});

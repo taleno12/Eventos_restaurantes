@@ -94,11 +94,6 @@
         .ht-line:nth-child(3) { animation-delay: 0.79s; }
         .hs { margin-top: 1rem; color: rgba(0,0,0,0.5); font-size: 0.875rem; line-height: 1.6; max-width: 320px; animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) 1s both; }
 
-        .stats { position: relative; display: flex; gap: 0.6rem; flex-wrap: wrap; animation: statsSlide 0.7s cubic-bezier(0.22,1,0.36,1) 1.15s both; }
-        .sc { background: rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 0.65rem 1rem; }
-        .sc .n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: #000; }
-        .sc .l { font-size: 0.6rem; color: rgba(0,0,0,0.45); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
-
         .panel-right {
             flex: 1;
             display: flex;
@@ -166,7 +161,6 @@
         @keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
         @keyframes wordReveal { 0% { opacity:0; transform: translateY(100%); } 100% { opacity:1; transform: translateY(0); } }
         @keyframes badgePop { 0% { opacity:0; transform: scale(0.7); } 70% { transform: scale(1.08); } 100% { opacity:1; transform: scale(1); } }
-        @keyframes statsSlide { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
         @keyframes floatG { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-18px) rotate(-1deg); } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
 
@@ -195,12 +189,6 @@
                     Ingresa tu número de teléfono y te ayudamos a recuperar
                     el acceso a tu cuenta de GastroNicaragua.
                 </p>
-            </div>
-
-            <div class="stats">
-                <div class="sc"><div class="n">200+</div><div class="l">Restaurantes</div></div>
-                <div class="sc"><div class="n">500+</div><div class="l">Platillos</div></div>
-                <div class="sc"><div class="n">18</div><div class="l">Deptos</div></div>
             </div>
         </div>
 
@@ -235,7 +223,6 @@
                         <label for="telefono">Número de teléfono</label>
                         <input id="telefono" type="tel" name="telefono"
                                value="{{ old('telefono') }}"
-                               placeholder="8888 8888"
                                required autofocus autocomplete="tel"/>
                     </div>
 

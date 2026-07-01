@@ -253,7 +253,7 @@
 
                 <a href="{{ route('registro.telefono') }}" class="btn-register fu d7">¿No tienes cuenta? Regístrate</a>
 
-                <a href="/" class="back-link fu d9">← Volver a la galería</a>
+
 
             </div>
         </div>

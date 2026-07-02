@@ -6,20 +6,26 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-            <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
-                <i class="bi bi-calendar-event me-2" style="color:var(--primary);"></i> Mis Eventos
+            <h1 class="h3 mb-1 fw-bold" style="color:#f8fafc;">
+                <i class="bi bi-calendar-event me-2" style="color:#818cf8;"></i> Mis Eventos
             </h1>
-            <p class="text-muted mb-0 small">Gestiona los eventos de {{ $gastrobar->nombre }}</p>
+            <p class="mb-0 small" style="color:#cbd5e1;">
+                <i class="bi bi-circle-fill text-secondary me-1" style="font-size:6px;vertical-align:middle;"></i>
+                Gestiona los eventos de {{ $gastrobar->nombre }}
+            </p>
         </div>
-        <a href="{{ route('gastrobar.eventos.create') }}" class="btn-primary-panel">
-            <i class="bi bi-plus-lg"></i> Nuevo Evento
+        <a href="{{ route('gastrobar.eventos.create') }}" class="btn btn-primary px-4 rounded-pill shadow-sm fw-semibold">
+            <i class="bi bi-plus-lg me-1"></i> Nuevo Evento
         </a>
     </div>
 
     {{-- Aviso de límite mensual --}}
-    <div class="panel-alert {{ $visiblesEsteMes >= 12 ? 'panel-alert-error' : 'panel-alert-info' }} mb-4 d-flex align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2 rounded-3 px-3 py-3 mb-4"
+         style="background:{{ $visiblesEsteMes >= 12 ? 'rgba(220,53,69,0.08)' : 'rgba(99,102,241,0.08)' }};
+                border:1px solid {{ $visiblesEsteMes >= 12 ? 'rgba(220,53,69,0.25)' : 'rgba(99,102,241,0.25)' }};
+                color:{{ $visiblesEsteMes >= 12 ? '#dc3545' : '#818cf8' }};">
         <i class="bi {{ $visiblesEsteMes >= 12 ? 'bi-exclamation-circle-fill' : 'bi-info-circle-fill' }} fs-5"></i>
-        <div>
+        <div style="font-size:0.85rem;">
             @if($visiblesEsteMes >= 12)
                 Alcanzaste el límite de <strong>12 eventos visibles</strong> este mes. Oculta uno para poder mostrar otro, o esperá al próximo mes.
             @else
@@ -31,104 +37,128 @@
     {{-- Métricas --}}
     <div class="row g-3 mb-4">
         <div class="col-12 col-sm-4">
-            <div class="metric-card d-flex align-items-center gap-3">
-                <div class="metric-icon purple"><i class="bi bi-calendar3"></i></div>
-                <div>
-                    <div class="metric-label">Total</div>
-                    <div class="metric-value">{{ $eventos->total() }}</div>
+            <div class="card border-0 shadow-sm rounded-3 p-3" style="background:#1e293b !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center fs-4"
+                         style="width:50px;height:50px;background:rgba(99,102,241,0.15);color:#818cf8;">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div>
+                        <p class="text-uppercase fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;color:#94a3b8;">Total</p>
+                        <h3 class="fw-black mb-0" style="font-size:1.5rem;color:#f8fafc;">{{ $eventos->total() }}</h3>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-4">
-            <div class="metric-card d-flex align-items-center gap-3">
-                <div class="metric-icon orange"><i class="bi bi-star-fill"></i></div>
-                <div>
-                    <div class="metric-label">Destacados</div>
-                    <div class="metric-value">{{ $eventos->where('is_destacado', true)->count() }}</div>
+            <div class="card border-0 shadow-sm rounded-3 p-3" style="background:#1e293b !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center fs-4"
+                         style="width:50px;height:50px;background:rgba(245,158,11,0.15);color:#fbbf24;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>
+                        <p class="text-uppercase fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;color:#94a3b8;">Destacados</p>
+                        <h3 class="fw-black mb-0" style="font-size:1.5rem;color:#f8fafc;">{{ $eventos->where('is_destacado', true)->count() }}</h3>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-4">
-            <div class="metric-card d-flex align-items-center gap-3">
-                <div class="metric-icon green"><i class="bi bi-calendar-check"></i></div>
-                <div>
-                    <div class="metric-label">Próximos</div>
-                    <div class="metric-value">{{ $eventos->where('fecha_evento', '>=', now())->count() }}</div>
+            <div class="card border-0 shadow-sm rounded-3 p-3" style="background:#1e293b !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center fs-4"
+                         style="width:50px;height:50px;background:rgba(34,197,94,0.15);color:#4ade80;">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div>
+                        <p class="text-uppercase fw-bold mb-0" style="font-size:0.75rem;letter-spacing:0.5px;color:#94a3b8;">Próximos</p>
+                        <h3 class="fw-black mb-0" style="font-size:1.5rem;color:#f8fafc;">{{ $eventos->where('fecha_evento', '>=', now())->count() }}</h3>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Tabla --}}
-    <div class="panel-card">
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden" style="background:#1e293b !important;">
         <div class="card-body p-0">
             @if($eventos->count() > 0)
             <div class="table-responsive">
-                <table class="panel-table">
-                    <thead>
+                <table class="table table-hover mb-0 align-middle" id="tabla-eventos-gastrobar">
+                    <thead class="border-bottom" style="background:#0f172a !important;">
                         <tr>
-                            <th class="ps-4">Evento</th>
-                            <th>Fecha</th>
-                            <th>Precio</th>
-                            <th>Destacado</th>
-                            <th>Visible al público</th>
-                            <th class="text-end pe-4">Acciones</th>
+                            <th class="ps-4 py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:#94a3b8 !important;">Evento</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:#94a3b8 !important;">Fecha</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:#94a3b8 !important;">Precio</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:#94a3b8 !important;">Destacado</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:#94a3b8 !important;">Visible al público</th>
+                            <th class="text-end pe-4 py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:#94a3b8 !important;width:130px;">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="border-top-0">
                         @foreach($eventos as $evento)
-                        <tr>
-                            <td class="ps-4">
+                        <tr class="border-bottom fila-evento" style="border-color:#334155 !important;">
+                            <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-3 border overflow-hidden bg-light d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                                    <div class="rounded-3 border overflow-hidden d-flex align-items-center justify-content-center"
+                                         style="width:44px;height:44px;flex-shrink:0;background:#334155 !important;border-color:#475569 !important;">
                                         @if($evento->imagen)
                                             <img src="{{ asset('storage/'.$evento->imagen) }}" class="w-100 h-100" style="object-fit:cover;">
                                         @else
-                                            <i class="bi bi-calendar-event text-muted"></i>
+                                            <i class="bi bi-calendar-event" style="color:#94a3b8;"></i>
                                         @endif
                                     </div>
                                     <div>
-                                        <div class="fw-bold" style="font-size:0.9rem;">{{ $evento->titulo }}</div>
-                                        <small class="text-muted">{{ Str::limit($evento->descripcion, 50) }}</small>
+                                        <div class="fw-bold" style="font-size:0.9rem;color:#f8fafc;">{{ $evento->titulo }}</div>
+                                        <small style="color:#cbd5e1;">{{ Str::limit($evento->descripcion, 50) }}</small>
                                     </div>
                                 </div>
                             </td>
-                            <td style="white-space:nowrap;">
-                                <span class="small fw-semibold d-flex align-items-center gap-1">
-                                    <i class="bi bi-calendar3" style="color:var(--primary);font-size:0.8rem;"></i>
+                            <td class="py-3" style="white-space:nowrap;">
+                                <span class="small fw-semibold d-flex align-items-center gap-1" style="color:#f8fafc;">
+                                    <i class="bi bi-calendar3" style="color:#818cf8;font-size:0.8rem;"></i>
                                     {{ \Carbon\Carbon::parse($evento->fecha_evento)->format('d M, Y') }}
                                 </span>
                             </td>
-                            <td>
-                                <span class="panel-badge badge-purple">C$ {{ number_format($evento->precio, 0) }}</span>
+                            <td class="py-3">
+                                <span class="badge px-2 py-1 fw-bold" style="font-size:0.78rem;background:rgba(99,102,241,0.15) !important;color:#a5b4fc !important;border:1px solid rgba(99,102,241,0.3) !important;">
+                                    C$ {{ number_format($evento->precio, 0) }}
+                                </span>
                             </td>
-                            <td>
+                            <td class="py-3">
                                 @if($evento->is_destacado)
-                                    <span class="panel-badge badge-orange"><i class="bi bi-star-fill" style="font-size:9px;"></i> Destacado</span>
+                                    <span class="badge rounded-pill px-2 py-1 fw-semibold d-inline-flex align-items-center gap-1"
+                                          style="background-color:rgba(245,158,11,0.15) !important;color:#fbbf24 !important;border:1px solid rgba(245,158,11,0.3) !important;font-size:0.72rem;">
+                                        <i class="bi bi-star-fill" style="font-size:9px;"></i> Destacado
+                                    </span>
                                 @else
-                                    <span class="panel-badge badge-gray">Normal</span>
+                                    <span class="badge rounded-pill px-2 py-1 fw-normal" style="font-size:0.72rem;background:#334155 !important;color:#cbd5e1 !important;border:1px solid #475569 !important;">
+                                        Normal
+                                    </span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="py-3">
                                 <form method="POST" action="{{ route('gastrobar.eventos.toggleVisibilidad', $evento) }}">
                                     @csrf @method('PATCH')
                                     <button type="submit"
                                             class="btn btn-sm rounded-pill px-3"
-                                            style="border:1px solid {{ $evento->visible_publico ? 'rgba(22,163,74,0.3)' : 'var(--card-border)' }};background:{{ $evento->visible_publico ? 'rgba(22,163,74,0.1)' : 'transparent' }};color:{{ $evento->visible_publico ? '#22c55e' : 'var(--muted)' }};font-size:12px;font-weight:600;">
+                                            style="border:1px solid {{ $evento->visible_publico ? 'rgba(34,197,94,0.3)' : '#475569' }};background:{{ $evento->visible_publico ? 'rgba(34,197,94,0.1)' : 'transparent' }};color:{{ $evento->visible_publico ? '#4ade80' : '#94a3b8' }};font-size:12px;font-weight:600;">
                                         <i class="bi {{ $evento->visible_publico ? 'bi-eye-fill' : 'bi-eye-slash-fill' }} me-1"></i>
                                         {{ $evento->visible_publico ? 'Visible' : 'Oculto' }}
                                     </button>
                                 </form>
                             </td>
-                            <td class="text-end pe-4">
+                            <td class="text-end pe-4 py-3">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ route('gastrobar.eventos.edit', $evento) }}" class="action-btn action-btn-edit" title="Editar">
-                                        <i class="bi bi-pencil"></i>
+                                    <a href="{{ route('gastrobar.eventos.edit', $evento) }}" class="p-1 action-icon-edit" title="Editar" style="color:#94a3b8 !important;">
+                                        <i class="bi bi-pencil fs-5"></i>
                                     </a>
                                     <form method="POST" action="{{ route('gastrobar.eventos.destroy', $evento) }}" onsubmit="return confirm('¿Eliminar este evento?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="action-btn action-btn-delete" title="Eliminar">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-link p-1 m-0 border-0 align-baseline action-icon-delete"
+                                                title="Eliminar" style="box-shadow:none;text-decoration:none;color:#94a3b8 !important;">
+                                            <i class="bi bi-trash fs-5"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -142,11 +172,11 @@
                 {{ $eventos->links('pagination::bootstrap-5') }}
             </div>
             @else
-            <div class="empty-state">
-                <i class="bi bi-calendar-x"></i>
-                <p>No tienes eventos publicados aún.</p>
-                <a href="{{ route('gastrobar.eventos.create') }}" class="btn-primary-panel">
-                    <i class="bi bi-plus-lg"></i> Crear primer evento
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x d-block display-6 mb-3" style="color:#94a3b8;opacity:0.4;"></i>
+                <p class="fs-6 mb-3" style="color:#f8fafc;">No tienes eventos publicados aún.</p>
+                <a href="{{ route('gastrobar.eventos.create') }}" class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold">
+                    <i class="bi bi-plus-lg me-1"></i> Crear primer evento
                 </a>
             </div>
             @endif
@@ -154,4 +184,30 @@
     </div>
 
 </div>
+
+<style>
+    #tabla-eventos-gastrobar.table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: #f8fafc !important;
+        --bs-table-border-color: #334155 !important;
+    }
+    #tabla-eventos-gastrobar thead th {
+        background-color: #0f172a !important;
+        color: #94a3b8 !important;
+        border-bottom-color: #334155 !important;
+    }
+    #tabla-eventos-gastrobar tbody td {
+        color: #f8fafc !important;
+        background-color: #1e293b !important;
+        border-bottom-color: #334155 !important;
+    }
+    #tabla-eventos-gastrobar tbody tr:hover td {
+        background-color: #334155 !important;
+    }
+    .fila-evento {
+        background-color: #1e293b !important;
+    }
+    .action-icon-edit:hover  { color: #fbbf24 !important; }
+    .action-icon-delete:hover { color: #ef4444 !important; }
+</style>
 @endsection

@@ -21,6 +21,7 @@ use App\Models\Reporte;
 use Illuminate\Support\Facades\DB;
 
 // ── FUNCIÓN PARA ENVIAR NOTIFICACIONES PUSH ──
+if (!function_exists('enviarNotificacionFCM')) {
 function enviarNotificacionFCM(string $titulo, string $cuerpo): void
 {
     try {
@@ -49,7 +50,9 @@ function enviarNotificacionFCM(string $titulo, string $cuerpo): void
         \Log::error('FCM error: ' . $e->getMessage());
     }
 }
+}
 
+if (!function_exists('generarJwtFirebase')) {
 function generarJwtFirebase(array $credenciales): string
 {
     $ahora  = time();
@@ -70,10 +73,13 @@ function generarJwtFirebase(array $credenciales): string
 
     return "$header.$payload." . base64UrlEncode($firma);
 }
+}
 
+if (!function_exists('base64UrlEncode')) {
 function base64UrlEncode(string $data): string
 {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
 }
 
 Route::get('/mensaje-prueba', function () {

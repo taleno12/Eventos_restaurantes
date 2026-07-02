@@ -980,6 +980,7 @@ Route::get('/me', function (Request $request) {
         'id'              => $user->id,
         'name'            => $user->name,
         'email'           => $user->email,
+        'telefono'        => $user->telefono,
         'role'            => $user->role,
         'departamento_id' => $user->departamento_id,
         'municipio_id'    => $user->municipio_id,

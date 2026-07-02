@@ -25,12 +25,35 @@ class RestauranteEventoController extends Controller
         return Auth::user()->restaurante;
     }
 
+    /**
+     * Cuenta cuántos eventos visibles al público tiene el restaurante
+     * dentro del mes calendario actual (día 1 al último día del mes).
+     */
+    private function visiblesEsteMes($restauranteId, $excluirEventoId = null)
+    {
+        $inicioMes = now()->startOfMonth();
+        $finMes    = now()->endOfMonth();
+
+        $query = Evento::where('restaurante_id', $restauranteId)
+            ->where('visible_publico', true)
+            ->whereBetween('created_at', [$inicioMes, $finMes]);
+
+        if ($excluirEventoId) {
+            $query->where('id', '!=', $excluirEventoId);
+        }
+
+        return $query->count();
+    }
+
     public function index()
     {
         $restaurante = $this->restaurante();
         $eventos = Evento::where('restaurante_id', $restaurante->id)
             ->latest()->paginate(10);
-        return view('restaurante.eventos.index', compact('restaurante', 'eventos'));
+
+        $visiblesEsteMes = $this->visiblesEsteMes($restaurante->id);
+
+        return view('restaurante.eventos.index', compact('restaurante', 'eventos', 'visiblesEsteMes'));
     }
 
     public function create()
@@ -59,6 +82,9 @@ class RestauranteEventoController extends Controller
         $datos['departamento_id'] = $restaurante->departamento_id;
         $datos['is_destacado']    = false;
 
+        // Si ya llegó al límite mensual de visibles, el evento se crea oculto
+        $datos['visible_publico'] = $this->visiblesEsteMes($restaurante->id) < 12;
+
         if ($request->hasFile('imagen')) {
             $datos['imagen'] = $request->file('imagen')->store('anuncios', 'public');
         }
@@ -79,8 +105,11 @@ class RestauranteEventoController extends Controller
             "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
         );
 
-        return redirect()->route('restaurante.eventos.index')
-            ->with('success', '¡Evento publicado exitosamente!');
+        $mensaje = $datos['visible_publico']
+            ? '¡Evento publicado exitosamente!'
+            : 'Evento creado, pero alcanzaste el límite de 12 eventos visibles este mes. Quedó oculto — actívalo cuando tengas espacio disponible.';
+
+        return redirect()->route('restaurante.eventos.index')->with('success', $mensaje);
     }
 
     public function edit(Evento $evento)
@@ -135,6 +164,31 @@ class RestauranteEventoController extends Controller
 
         return redirect()->route('restaurante.eventos.index')
             ->with('success', 'Evento actualizado correctamente.');
+    }
+
+    /**
+     * Activa/desactiva la visibilidad pública del evento, respetando
+     * el límite de 12 eventos visibles por mes calendario.
+     */
+    public function toggleVisibilidad(Evento $evento)
+    {
+        $restaurante = $this->restaurante();
+        abort_unless($evento->restaurante_id === $restaurante->id, 403);
+
+        if (!$evento->visible_publico) {
+            // Se quiere activar: validar que no supere el límite mensual
+            $visibles = $this->visiblesEsteMes($restaurante->id, $evento->id);
+
+            if ($visibles >= 12) {
+                return back()->with('error', 'Alcanzaste el límite de 12 eventos visibles este mes. Oculta otro evento o esperá al próximo mes.');
+            }
+
+            $evento->update(['visible_publico' => true]);
+            return back()->with('success', 'Evento ahora visible al público.');
+        }
+
+        $evento->update(['visible_publico' => false]);
+        return back()->with('success', 'Evento ocultado del público.');
     }
 
     public function destroy(Evento $evento)

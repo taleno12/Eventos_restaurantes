@@ -383,6 +383,8 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
         Route::put('/perfil', [\App\Http\Controllers\Restaurante\RestaurantePerfilController::class, 'update'])
             ->name('perfil.update');
         Route::resource('eventos', \App\Http\Controllers\Restaurante\RestauranteEventoController::class);
+        Route::patch('eventos/{evento}/toggle-visibilidad', [\App\Http\Controllers\Restaurante\RestauranteEventoController::class, 'toggleVisibilidad'])
+            ->name('eventos.toggleVisibilidad');
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
@@ -457,6 +459,8 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
         });
 
         Route::resource('eventos', \App\Http\Controllers\Gastrobar\GastrobarEventoController::class);
+        Route::patch('eventos/{evento}/toggle-visibilidad', [\App\Http\Controllers\Gastrobar\GastrobarEventoController::class, 'toggleVisibilidad'])
+            ->name('eventos.toggleVisibilidad');
         Route::resource('empleos', \App\Http\Controllers\Gastrobar\GastrobarEmpleoController::class);
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────

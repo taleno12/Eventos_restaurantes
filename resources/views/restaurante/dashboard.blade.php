@@ -23,7 +23,7 @@
 {{-- Header --}}
 <div class="page-header">
     <div>
-        <div class="page-title">Bienvenido 👋</div>
+        <div class="page-title">Bienvenido </div>
         <div class="page-sub">Gestiona tu restaurante desde este panel. Todo lo que necesitas en un solo lugar.</div>
     </div>
 </div>

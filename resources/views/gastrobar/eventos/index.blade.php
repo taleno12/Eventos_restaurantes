@@ -4,7 +4,7 @@
 @section('content')
 <div class="container-fluid px-4 py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
             <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
                 <i class="bi bi-calendar-event me-2" style="color:var(--primary);"></i> Mis Eventos
@@ -14,6 +14,18 @@
         <a href="{{ route('gastrobar.eventos.create') }}" class="btn-primary-panel">
             <i class="bi bi-plus-lg"></i> Nuevo Evento
         </a>
+    </div>
+
+    {{-- Aviso de límite mensual --}}
+    <div class="panel-alert {{ $visiblesEsteMes >= 12 ? 'panel-alert-error' : 'panel-alert-info' }} mb-4 d-flex align-items-center gap-2">
+        <i class="bi {{ $visiblesEsteMes >= 12 ? 'bi-exclamation-circle-fill' : 'bi-info-circle-fill' }} fs-5"></i>
+        <div>
+            @if($visiblesEsteMes >= 12)
+                Alcanzaste el límite de <strong>12 eventos visibles</strong> este mes. Oculta uno para poder mostrar otro, o esperá al próximo mes.
+            @else
+                Llevas <strong>{{ $visiblesEsteMes }}/12</strong> eventos visibles al público este mes.
+            @endif
+        </div>
     </div>
 
     {{-- Métricas --}}
@@ -59,6 +71,7 @@
                             <th>Fecha</th>
                             <th>Precio</th>
                             <th>Destacado</th>
+                            <th>Visible al público</th>
                             <th class="text-end pe-4">Acciones</th>
                         </tr>
                     </thead>
@@ -95,6 +108,17 @@
                                 @else
                                     <span class="panel-badge badge-gray">Normal</span>
                                 @endif
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ route('gastrobar.eventos.toggleVisibilidad', $evento) }}">
+                                    @csrf @method('PATCH')
+                                    <button type="submit"
+                                            class="btn btn-sm rounded-pill px-3"
+                                            style="border:1px solid {{ $evento->visible_publico ? 'rgba(22,163,74,0.3)' : 'var(--card-border)' }};background:{{ $evento->visible_publico ? 'rgba(22,163,74,0.1)' : 'transparent' }};color:{{ $evento->visible_publico ? '#22c55e' : 'var(--muted)' }};font-size:12px;font-weight:600;">
+                                        <i class="bi {{ $evento->visible_publico ? 'bi-eye-fill' : 'bi-eye-slash-fill' }} me-1"></i>
+                                        {{ $evento->visible_publico ? 'Visible' : 'Oculto' }}
+                                    </button>
+                                </form>
                             </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">

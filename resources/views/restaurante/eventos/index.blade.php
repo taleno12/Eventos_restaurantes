@@ -5,7 +5,7 @@
 <div class="container-fluid px-4 py-4">
 
     {{-- Encabezado --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
             <h1 class="h3 mb-1 fw-bold" style="color: var(--text);">
                 <i class="bi bi-calendar-event text-primary me-2"></i> Mis Eventos
@@ -18,6 +18,21 @@
         <a href="{{ route('restaurante.eventos.create') }}" class="btn btn-primary px-4 rounded-pill shadow-sm fw-semibold">
             <i class="bi bi-plus-lg me-1"></i> Nuevo Evento
         </a>
+    </div>
+
+    {{-- Aviso de límite mensual --}}
+    <div class="d-flex align-items-center gap-2 rounded-3 px-3 py-3 mb-4"
+         style="background:{{ $visiblesEsteMes >= 12 ? 'rgba(220,53,69,0.08)' : 'var(--primary-light)' }};
+                border:1px solid {{ $visiblesEsteMes >= 12 ? 'rgba(220,53,69,0.25)' : 'var(--primary-border)' }};
+                color:{{ $visiblesEsteMes >= 12 ? '#dc3545' : 'var(--primary)' }};">
+        <i class="bi {{ $visiblesEsteMes >= 12 ? 'bi-exclamation-circle-fill' : 'bi-info-circle-fill' }} fs-5"></i>
+        <div style="font-size:0.85rem;">
+            @if($visiblesEsteMes >= 12)
+                Alcanzaste el límite de <strong>12 eventos visibles</strong> este mes. Oculta uno para poder mostrar otro, o esperá al próximo mes.
+            @else
+                Llevas <strong>{{ $visiblesEsteMes }}/12</strong> eventos visibles al público este mes.
+            @endif
+        </div>
     </div>
 
     {{-- Métricas --}}
@@ -78,6 +93,7 @@
                             <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Fecha</th>
                             <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Precio</th>
                             <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Destacado</th>
+                            <th class="py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;">Visible al público</th>
                             <th class="text-end pe-4 py-3 border-0" style="font-size:0.75rem;letter-spacing:0.5px;font-weight:600;text-transform:uppercase;color:var(--muted) !important;width:130px;">Acciones</th>
                         </tr>
                     </thead>
@@ -123,7 +139,7 @@
                             <td class="py-3">
                                 @if($evento->is_destacado)
                                     <span class="badge rounded-pill px-2 py-1 fw-semibold d-inline-flex align-items-center gap-1"
-                                          style="background-color:#fff7ed !important;color:#c2410c !important;border:1px solid #fed7aa !important;font-size:0.72rem;">
+                                          style="background-color:var(--primary-light) !important;color:#c2410c !important;border:1px solid #fed7aa !important;font-size:0.72rem;">
                                         <i class="bi bi-star-fill" style="font-size:9px;"></i> Destacado
                                     </span>
                                 @else
@@ -131,6 +147,19 @@
                                         Normal
                                     </span>
                                 @endif
+                            </td>
+
+                            {{-- Visible al público --}}
+                            <td class="py-3">
+                                <form method="POST" action="{{ route('restaurante.eventos.toggleVisibilidad', $evento) }}">
+                                    @csrf @method('PATCH')
+                                    <button type="submit"
+                                            class="btn btn-sm rounded-pill px-3"
+                                            style="border:1px solid {{ $evento->visible_publico ? 'rgba(22,163,74,0.3)' : 'var(--card-border)' }};background:{{ $evento->visible_publico ? 'rgba(22,163,74,0.1)' : 'transparent' }};color:{{ $evento->visible_publico ? '#22c55e' : 'var(--muted)' }};font-size:12px;font-weight:600;">
+                                        <i class="bi {{ $evento->visible_publico ? 'bi-eye-fill' : 'bi-eye-slash-fill' }} me-1"></i>
+                                        {{ $evento->visible_publico ? 'Visible' : 'Oculto' }}
+                                    </button>
+                                </form>
                             </td>
 
                             {{-- Acciones --}}

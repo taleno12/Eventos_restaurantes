@@ -385,6 +385,13 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
         Route::resource('eventos', \App\Http\Controllers\Restaurante\RestauranteEventoController::class);
         Route::patch('eventos/{evento}/toggle-visibilidad', [\App\Http\Controllers\Restaurante\RestauranteEventoController::class, 'toggleVisibilidad'])
             ->name('eventos.toggleVisibilidad');
+
+        // ✅ NUEVO: Rutas para gestionar imágenes de eventos del restaurante
+        Route::post('eventos/{evento}/imagenes', [EventoImagenController::class, 'store'])
+            ->name('eventos.imagenes.store');
+        Route::delete('evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])
+            ->name('evento.imagenes.destroy');
+
         Route::resource('empleos', \App\Http\Controllers\Restaurante\RestauranteEmpleoController::class);
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
@@ -461,6 +468,13 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
         Route::resource('eventos', \App\Http\Controllers\Gastrobar\GastrobarEventoController::class);
         Route::patch('eventos/{evento}/toggle-visibilidad', [\App\Http\Controllers\Gastrobar\GastrobarEventoController::class, 'toggleVisibilidad'])
             ->name('eventos.toggleVisibilidad');
+
+        // ✅ NUEVO: Rutas para gestionar imágenes de eventos del gastrobar
+        Route::post('eventos/{evento}/imagenes', [EventoImagenController::class, 'store'])
+            ->name('eventos.imagenes.store');
+        Route::delete('evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])
+            ->name('evento.imagenes.destroy');
+
         Route::resource('empleos', \App\Http\Controllers\Gastrobar\GastrobarEmpleoController::class);
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
@@ -520,11 +534,12 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
-    Route::post('/gastrobares/{gastrobar}/pedido',    [App\Http\Controllers\PedidoGastrobarController::class, 'store'])->name('pedidos.gastrobar.store'); // ← ESTA LÍNEA
+    Route::post('/gastrobares/{gastrobar}/pedido',    [App\Http\Controllers\PedidoGastrobarController::class, 'store'])->name('pedidos.gastrobar.store');
     Route::get('/mis-pedidos',                        [App\Http\Controllers\PedidoController::class, 'misPedidos'])->name('pedidos.mis');
     Route::get('/mis-pedidos/{pedido}',               [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.detalle');
     Route::delete('/mis-pedidos/{pedido}',            [App\Http\Controllers\PedidoController::class, 'destroy'])->name('pedidos.destroy');
 });
+
 // ── EVENTOS PÚBLICOS ──────────────────────────────────────────────────────────
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])
     ->name('eventos.show')

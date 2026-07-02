@@ -26,7 +26,10 @@ class ReporteController extends Controller
 
         $restaurantesPorDepto = Departamento::withCount(['restaurantes' => function ($q) use ($deptoId) {
             if ($deptoId) $q->where('departamento_id', $deptoId);
-        }])->having('restaurantes_count', '>', 0)->orderByDesc('restaurantes_count')->get();
+        }])->get()
+            ->filter(fn($d) => $d->restaurantes_count > 0)
+            ->sortByDesc('restaurantes_count')
+            ->values();
 
         // ── Gastrobares ──────────────────────────────────────────
         $gastroQuery = Gastrobar::query();
@@ -38,7 +41,10 @@ class ReporteController extends Controller
 
         $gastrobaresPorDepto = Departamento::withCount(['gastrobares' => function ($q) use ($deptoId) {
             if ($deptoId) $q->where('departamento_id', $deptoId);
-        }])->having('gastrobares_count', '>', 0)->orderByDesc('gastrobares_count')->get();
+        }])->get()
+            ->filter(fn($d) => $d->gastrobares_count > 0)
+            ->sortByDesc('gastrobares_count')
+            ->values();
 
         // ── Empleos ──────────────────────────────────────────────
         $empleoQuery = Empleo::query();
@@ -68,10 +74,10 @@ class ReporteController extends Controller
         $eventosDestacados = (clone $eventoQuery)->where('is_destacado', true)->count();
 
         $eventosPorMes = (clone $eventoQuery)
-            ->selectRaw("DATE_FORMAT(fecha_evento, '%b %Y') as mes, count(*) as total")
+            ->selectRaw("TO_CHAR(fecha_evento, 'Mon YYYY') as mes, count(*) as total, MIN(fecha_evento) as primer_fecha")
             ->where('fecha_evento', '>=', Carbon::now()->subMonths(6))
-            ->groupByRaw("DATE_FORMAT(fecha_evento, '%b %Y')")
-            ->orderBy('fecha_evento')
+            ->groupByRaw("TO_CHAR(fecha_evento, 'Mon YYYY')")
+            ->orderBy('primer_fecha')
             ->pluck('total', 'mes');
 
         // ── Departamentos para el filtro ─────────────────────────

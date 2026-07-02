@@ -15,7 +15,7 @@ class EventoImagenController extends Controller
      */
     public function store(Request $request, Evento $evento)
     {
-        $this->soloAdmin();
+        $this->autorizarEvento($evento);
 
         $request->validate([
             'fotos.*' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -28,8 +28,7 @@ class EventoImagenController extends Controller
                     $evento->imagenes()->create(['ruta' => $path]);
                 }
             }
-            return redirect()->route('eventos.edit', $evento->id)
-                ->with('success', 'Fotos agregadas correctamente.');
+            return back()->with('success', 'Fotos agregadas correctamente.');
         }
 
         return back()->withErrors(['fotos' => 'No se recibieron imágenes.']);
@@ -40,7 +39,8 @@ class EventoImagenController extends Controller
      */
     public function destroy(EventoImagen $imagen)
     {
-        $this->soloAdmin();
+        $evento = $imagen->evento;
+        $this->autorizarEvento($evento);
 
         Storage::disk('public')->delete($imagen->ruta);
         $imagen->delete();
@@ -48,9 +48,37 @@ class EventoImagenController extends Controller
         return back()->with('success', 'Imagen eliminada.');
     }
 
-    private function soloAdmin(): void
+    /**
+     * Permite al admin o al dueño real del evento (restaurante/gastrobar)
+     * gestionar las imágenes. Antes solo dejaba pasar al admin, por eso
+     * los restaurantes y gastrobares recibían 403.
+     */
+    private function autorizarEvento(?Evento $evento): void
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@turismo.ni') {
+        if (!Auth::check()) {
+            abort(403, 'Acceso no autorizado.');
+        }
+
+        $user = Auth::user();
+
+        // El admin siempre puede
+        if ($user->email === 'admin@turismo.ni' || $user->role === 'admin') {
+            return;
+        }
+
+        if (!$evento) {
+            abort(403, 'Acceso no autorizado.');
+        }
+
+        $esDuenoRestaurante = $user->role === 'restaurante'
+            && $evento->restaurante_id !== null
+            && $evento->restaurante_id === $user->restaurante_id;
+
+        $esDuenoGastrobar = $user->role === 'gastrobar'
+            && $evento->gastrobar_id !== null
+            && $evento->gastrobar_id === $user->gastrobar_id;
+
+        if (!$esDuenoRestaurante && !$esDuenoGastrobar) {
             abort(403, 'Acceso no autorizado.');
         }
     }

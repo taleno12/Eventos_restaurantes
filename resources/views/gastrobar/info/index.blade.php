@@ -31,15 +31,15 @@
     <div class="panel-card" style="margin-bottom:16px;">
         <div class="card-body">
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-                <div style="width:44px;height:44px;background:#fff7ed;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:18px;flex-shrink:0;">
+                <div style="width:44px;height:44px;background:var(--primary-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:18px;flex-shrink:0;">
                     <i class="bi bi-rocket-takeoff-fill"></i>
                 </div>
                 <div>
                     <div style="font-size:16px;font-weight:800;color:var(--text);">Bienvenido al Panel del Gastrobar</div>
-                    <div style="font-size:13px;color:#4a5568;">Todo lo que necesitas para gestionar tu negocio en GastroNicaragua</div>
+                    <div style="font-size:13px;color:var(--muted);">Todo lo que necesitas para gestionar tu negocio en GastroNicaragua</div>
                 </div>
             </div>
-            <p style="font-size:14px;color:#4a5568;line-height:1.8;">
+            <p style="font-size:14px;color:var(--muted);line-height:1.8;">
                 Este panel te permite administrar la presencia de tu gastrobar en la plataforma:
                 publicar eventos, ofertas de empleo, tu menú digital, recibir pedidos en tiempo real,
                 gestionar tu galería de fotos y revisar las opiniones de tus clientes — todo en un solo lugar.
@@ -106,7 +106,7 @@
             </div>
             <div>
                 <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">{{ $sec['titulo'] }}</div>
-                <p style="font-size:14px;color:#4a5568;line-height:1.7;margin:0;">{{ $sec['texto'] }}</p>
+                <p style="font-size:14px;color:var(--muted);line-height:1.7;margin:0;">{{ $sec['texto'] }}</p>
             </div>
         </div>
     </div>
@@ -118,7 +118,7 @@
 <div id="content-terminos" style="display:none;">
     <div class="panel-card">
         <div class="card-body">
-            <p style="font-size:11px;color:#4a5568;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:20px;">
+            <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:20px;">
                 Última actualización: {{ now()->format('d \d\e F \d\e Y') }}
             </p>
 
@@ -170,7 +170,7 @@
             @foreach($terminos as $i => $term)
             <div style="margin-bottom:{{ $i === count($terminos) - 1 ? '0' : '20px' }};">
                 <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;">{{ $term['titulo'] }}</div>
-                <p style="font-size:14px;color:#4a5568;line-height:1.8;margin:0;">{{ $term['texto'] }}</p>
+                <p style="font-size:14px;color:var(--muted);line-height:1.8;margin:0;">{{ $term['texto'] }}</p>
             </div>
             @if($i !== count($terminos) - 1)
                 <div style="height:1px;background:var(--card-border);margin:16px 0;"></div>
@@ -229,10 +229,10 @@
                     <i class="bi bi-patch-question-fill" style="color:var(--primary);margin-right:8px;"></i>
                     {{ $faq['q'] }}
                 </span>
-                <i class="bi bi-chevron-down" id="faq-icon-{{ $i }}" style="color:#4a5568;transition:transform 0.2s;flex-shrink:0;"></i>
+                <i class="bi bi-chevron-down" id="faq-icon-{{ $i }}" style="color:var(--muted);transition:transform 0.2s;flex-shrink:0;"></i>
             </button>
             <div id="faq-answer-{{ $i }}" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--card-border);">
-                <p style="font-size:14px;color:#4a5568;line-height:1.7;margin:0;">{{ $faq['a'] }}</p>
+                <p style="font-size:14px;color:var(--muted);line-height:1.7;margin:0;">{{ $faq['a'] }}</p>
             </div>
         </div>
     </div>

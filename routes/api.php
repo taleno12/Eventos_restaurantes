@@ -929,7 +929,7 @@ Route::post('/olvide-telefono/reset', function (Request $request) {
 Route::post('/notificar/restaurante', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
     enviarNotificacionFCM(
-        '🍽️ Nuevo restaurante',
+        ' Nuevo restaurante',
         "¡{$request->nombre} ya está en GastroNicaragua!"
     );
     return response()->json(['message' => 'Notificación enviada.']);
@@ -939,7 +939,7 @@ Route::post('/notificar/restaurante', function (Request $request) {
 Route::post('/notificar/evento', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
     enviarNotificacionFCM(
-        '🎉 Nuevo evento',
+        ' Nuevo evento',
         "¡{$request->nombre} ya está disponible!"
     );
     return response()->json(['message' => 'Notificación enviada.']);
@@ -949,7 +949,7 @@ Route::post('/notificar/evento', function (Request $request) {
 Route::post('/notificar/empleo', function (Request $request) {
     $request->validate(['titulo' => 'required|string']);
     enviarNotificacionFCM(
-        '💼 Nueva oferta de empleo',
+        ' Nueva oferta de empleo',
         "¡{$request->titulo} está buscando personal!"
     );
     return response()->json(['message' => 'Notificación enviada.']);
@@ -959,7 +959,7 @@ Route::post('/notificar/empleo', function (Request $request) {
 Route::post('/notificar/gastrobar', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
     enviarNotificacionFCM(
-        '🍹 Nuevo gastrobar',
+        ' Nuevo gastrobar',
         "¡{$request->nombre} ya está en GastroNicaragua!"
     );
     return response()->json(['message' => 'Notificación enviada.']);

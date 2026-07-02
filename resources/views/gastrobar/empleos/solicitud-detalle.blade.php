@@ -59,9 +59,15 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <p class="small mb-1" style="color:var(--muted);">Email</p>
-                    <a href="mailto:{{ $solicitud->email }}" class="text-decoration-none fw-semibold" style="color:var(--text);">
-                        <i class="bi bi-envelope-fill me-1" style="color:var(--primary);"></i>{{ $solicitud->email }}
-                    </a>
+                    @if(str_ends_with($solicitud->email, '@telefono.gastronicaragua.local'))
+                        <span class="fw-semibold" style="color:var(--muted);">
+                            <i class="bi bi-telephone-fill me-1" style="color:var(--primary);"></i>Registrado por teléfono
+                        </span>
+                    @else
+                        <a href="mailto:{{ $solicitud->email }}" class="text-decoration-none fw-semibold" style="color:var(--text);">
+                            <i class="bi bi-envelope-fill me-1" style="color:var(--primary);"></i>{{ $solicitud->email }}
+                        </a>
+                    @endif
                 </div>
                 <div class="col-md-6">
                     <p class="small mb-1" style="color:var(--muted);">Teléfono / WhatsApp</p>

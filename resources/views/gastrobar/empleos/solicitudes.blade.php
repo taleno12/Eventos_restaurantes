@@ -93,9 +93,15 @@
 
                         {{-- Contacto --}}
                         <div class="d-flex flex-column gap-1 mb-3">
-                            <a href="mailto:{{ $sol->email }}" class="text-decoration-none small" style="color:var(--muted);">
-                                <i class="bi bi-envelope-fill me-1" style="color:var(--primary);"></i>{{ $sol->email }}
-                            </a>
+                            @if(str_ends_with($sol->email, '@telefono.gastronicaragua.local'))
+                                <span class="small" style="color:var(--muted);">
+                                    <i class="bi bi-telephone-fill me-1" style="color:var(--primary);"></i>Registrado por teléfono
+                                </span>
+                            @else
+                                <a href="mailto:{{ $sol->email }}" class="text-decoration-none small" style="color:var(--muted);">
+                                    <i class="bi bi-envelope-fill me-1" style="color:var(--primary);"></i>{{ $sol->email }}
+                                </a>
+                            @endif
                             <a href="https://wa.me/{{ preg_replace('/[^0-9]/','',$sol->telefono) }}"
                                target="_blank" class="text-decoration-none small" style="color:var(--muted);">
                                 <i class="bi bi-whatsapp text-success me-1"></i>{{ $sol->telefono }}
@@ -115,15 +121,6 @@
                            style="background:var(--primary);color:white;">
                             <i class="bi bi-eye-fill me-1"></i> Ver detalle completo
                         </a>
-
-                        {{-- CV --}}
-                        @if($sol->curriculum)
-                            <a href="{{ asset('storage/' . $sol->curriculum) }}"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-primary rounded-pill mb-3 w-100">
-                                <i class="bi bi-file-earmark-person me-1"></i> Ver Currículum
-                            </a>
-                        @endif
 
                         {{-- Acciones --}}
                         <div class="d-flex gap-2 justify-content-between align-items-center border-top pt-3" style="border-color:var(--card-border) !important;">

@@ -539,7 +539,7 @@ Route::get('/eventos/{id}', function ($id) {
 
 // ── EMPLEOS CON FILTROS ──
 Route::get('/empleos', function (Request $request) {
-    $query = Empleo::with(['restaurante', 'departamento'])
+    $query = Empleo::with(['restaurante', 'gastrobar', 'departamento'])
         ->where('activo', true);
 
     if ($request->filled('search')) {

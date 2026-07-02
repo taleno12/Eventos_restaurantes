@@ -30,6 +30,7 @@ class HomeController extends Controller
         // ── Eventos destacados para el hero ──
         $eventosDestacadosQuery = Evento::with(['restaurante', 'departamento'])
             ->where('is_destacado', true)
+            ->where('visible_publico', true)  // ✅ SOLO VISIBLES
             ->where('fecha_evento', '>=', now());
 
         if ($deptoFiltro) {
@@ -47,6 +48,7 @@ class HomeController extends Controller
 
         // ── Query principal de eventos (incluye destacados también) ──
         $query = Evento::with(['restaurante', 'departamento', 'municipio'])
+            ->where('visible_publico', true)  // ✅ SOLO VISIBLES
             ->where('fecha_evento', '>=', now());
 
         if ($deptoFiltro) {

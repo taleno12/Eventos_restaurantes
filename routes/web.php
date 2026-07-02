@@ -387,6 +387,7 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
         Route::get('empleos/{empleo}/solicitudes',     [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'index'])->name('solicitudes.index');
+        Route::get('solicitudes/{solicitud}',          [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'show'])->name('solicitudes.show');
         Route::patch('solicitudes/{solicitud}/estado', [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'updateEstado'])->name('solicitudes.estado');
         Route::delete('solicitudes/{solicitud}',       [\App\Http\Controllers\Restaurante\RestauranteSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
 
@@ -460,6 +461,7 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 
         // ── SOLICITUDES DE EMPLEO ─────────────────────────────────
         Route::get('empleos/{empleo}/solicitudes',     [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'index'])->name('solicitudes.index');
+        Route::get('solicitudes/{solicitud}',          [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'show'])->name('solicitudes.show');
         Route::patch('solicitudes/{solicitud}/estado', [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'updateEstado'])->name('solicitudes.estado');
         Route::delete('solicitudes/{solicitud}',       [\App\Http\Controllers\Gastrobar\GastrobarSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
 

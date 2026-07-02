@@ -109,6 +109,13 @@
                             </p>
                         @endif
 
+                        {{-- Ver detalle completo --}}
+                        <a href="{{ route('gastrobar.solicitudes.show', $sol) }}"
+                           class="btn btn-sm rounded-pill mb-3 w-100"
+                           style="background:var(--primary);color:white;">
+                            <i class="bi bi-eye-fill me-1"></i> Ver detalle completo
+                        </a>
+
                         {{-- CV --}}
                         @if($sol->curriculum)
                             <a href="{{ asset('storage/' . $sol->curriculum) }}"

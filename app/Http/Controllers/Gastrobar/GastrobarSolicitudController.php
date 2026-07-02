@@ -27,6 +27,16 @@ class GastrobarSolicitudController extends Controller
         return view('gastrobar.empleos.solicitudes', compact('gastrobar', 'empleo', 'solicitudes'));
     }
 
+    public function show(SolicitudEmpleo $solicitud)
+    {
+        $gastrobar = $this->gastrobar();
+        abort_unless($solicitud->empleo->gastrobar_id === $gastrobar->id, 403);
+
+        $solicitud->load('empleo', 'user');
+
+        return view('gastrobar.empleos.solicitud-detalle', compact('gastrobar', 'solicitud'));
+    }
+
     public function updateEstado(Request $request, SolicitudEmpleo $solicitud)
     {
         $gastrobar = $this->gastrobar();

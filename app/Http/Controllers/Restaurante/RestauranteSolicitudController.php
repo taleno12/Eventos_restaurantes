@@ -32,6 +32,19 @@ class RestauranteSolicitudController extends Controller
     }
 
     /**
+     * Ver detalle completo de una solicitud
+     */
+    public function show(SolicitudEmpleo $solicitud)
+    {
+        $restaurante = $this->restaurante();
+        abort_unless($solicitud->empleo->restaurante_id === $restaurante->id, 403);
+
+        $solicitud->load('empleo', 'user');
+
+        return view('restaurante.empleos.solicitud-detalle', compact('restaurante', 'solicitud'));
+    }
+
+    /**
      * Cambiar estado de una solicitud (AJAX o redirect)
      */
     public function updateEstado(Request $request, SolicitudEmpleo $solicitud)

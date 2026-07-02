@@ -480,11 +480,20 @@ Route::post('/gastrobares/{id}/reviews', function (Request $request, $id) {
     return response()->json(['message' => '¡Reseña publicada!']);
 })->middleware('auth:sanctum');
 
+// ════════════════════════════════════════════════════════════
+// ── EVENTOS PÚBLICOS (con filtro visible_publico) ═══════════
+// ════════════════════════════════════════════════════════════
+
 // ── EVENTOS DESTACADOS ──
 Route::get('/eventos/destacados', function (Request $request) {
     $query = Evento::with(['restaurante', 'gastrobar', 'departamento'])
         ->where('is_destacado', true)
-        ->where('fecha_evento', '>=', now());
+        ->where('visible_publico', true)  // ✅ SOLO VISIBLES
+        ->where('fecha_evento', '>=', now())
+        ->where(function ($q) {
+            $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
+              ->orWhereHas('gastrobar', fn($r) => $r->where('activo', true));
+        });
 
     $user = $request->user('sanctum');
     if ($user && $user->departamento_id) {
@@ -497,7 +506,12 @@ Route::get('/eventos/destacados', function (Request $request) {
 // ── EVENTOS CON FILTROS MANUALES ──
 Route::get('/eventos', function (Request $request) {
     $query = Evento::with(['restaurante', 'gastrobar', 'departamento'])
-        ->where('fecha_evento', '>=', now());
+        ->where('visible_publico', true)  // ✅ SOLO VISIBLES
+        ->where('fecha_evento', '>=', now())
+        ->where(function ($q) {
+            $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
+              ->orWhereHas('gastrobar', fn($r) => $r->where('activo', true));
+        });
 
     if ($request->filled('departamento')) {
         $query->where('departamento_id', $request->departamento);
@@ -529,12 +543,27 @@ Route::get('/eventos', function (Request $request) {
 
 // ── DETALLE DE UN EVENTO ──
 Route::get('/eventos/{id}', function ($id) {
-    return Evento::with([
+    $evento = Evento::with([
         'restaurante',
         'gastrobar',
         'departamento',
         'municipio',
     ])->findOrFail($id);
+
+    // ✅ Verificar que el evento sea visible
+    if (!$evento->visible_publico) {
+        return response()->json(['message' => 'Evento no disponible.'], 404);
+    }
+
+    // ✅ Verificar que el establecimiento esté activo
+    $entidadActiva = ($evento->restaurante && $evento->restaurante->activo)
+                  || ($evento->gastrobar && $evento->gastrobar->activo);
+
+    if (!$entidadActiva) {
+        return response()->json(['message' => 'Establecimiento no disponible.'], 404);
+    }
+
+    return response()->json($evento);
 });
 
 // ── EMPLEOS CON FILTROS ──
@@ -1134,12 +1163,27 @@ Route::post('/reportes', function (Request $request) {
 
 Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
+    // ── Función auxiliar para contar eventos visibles este mes ──
+    $eventosVisiblesEsteMes = function() {
+        $user = auth()->user();
+        $query = Evento::where('visible_publico', true)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+
+        if ($user->role === 'restaurante') {
+            $query->where('restaurante_id', $user->restaurante_id);
+        } elseif ($user->role === 'gastrobar') {
+            $query->where('gastrobar_id', $user->gastrobar_id);
+        }
+
+        return $query->count();
+    };
+
     // ────────────────────────────────────────────────────────
     // EVENTOS
     // ────────────────────────────────────────────────────────
 
-    // Listar mis eventos
-    Route::get('/eventos', function (Request $request) {
+    // Listar mis eventos (incluye visibles y ocultos)
+    Route::get('/eventos', function (Request $request) use ($eventosVisiblesEsteMes) {
         $user = $request->user();
 
         $query = Evento::latest();
@@ -1152,7 +1196,16 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             return response()->json(['message' => 'No autorizado.'], 403);
         }
 
-        return response()->json($query->paginate(10));
+        $eventos = $query->paginate(10);
+
+        // ✅ Agregar conteo de eventos visibles este mes
+        $visiblesEsteMes = $eventosVisiblesEsteMes();
+
+        return response()->json([
+            'data' => $eventos,
+            'visibles_este_mes' => $visiblesEsteMes,
+            'limite_mensual' => 12,
+        ]);
     });
 
     // Detalle de un evento
@@ -1170,8 +1223,8 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json($evento->load(['municipio', 'departamento']));
     });
 
-    // Crear evento
-    Route::post('/eventos', function (Request $request) {
+    // Crear evento (con límite de visibilidad)
+    Route::post('/eventos', function (Request $request) use ($eventosVisiblesEsteMes) {
         $user = $request->user();
 
         if (!in_array($user->role, ['restaurante', 'gastrobar'])) {
@@ -1208,15 +1261,25 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         $datos['municipio_id'] = $request->municipio_id;
         $datos['is_destacado'] = false;
 
+        // ✅ Verificar límite de eventos visibles
+        $visiblesEsteMes = $eventosVisiblesEsteMes();
+        $datos['visible_publico'] = $visiblesEsteMes < 12;
+
         if ($request->hasFile('imagen')) {
             $datos['imagen'] = $request->file('imagen')->store('anuncios', 'public');
         }
 
         $evento = Evento::create($datos);
 
+        $mensaje = '¡Evento publicado exitosamente!';
+        if (!$datos['visible_publico']) {
+            $mensaje .= ' Alcanzaste el límite de 12 eventos visibles este mes, así que este quedó guardado pero oculto del público.';
+        }
+
         return response()->json([
-            'message' => '¡Evento publicado exitosamente!',
+            'message' => $mensaje,
             'evento'  => $evento,
+            'visible_publico' => $datos['visible_publico'],
         ], 201);
     });
 
@@ -1260,6 +1323,40 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json([
             'message' => 'Evento actualizado correctamente.',
             'evento'  => $evento->fresh(),
+        ]);
+    });
+
+    // ✅ Toggle visibilidad de evento
+    Route::patch('/eventos/{id}/toggle-visibilidad', function (Request $request, $id) use ($eventosVisiblesEsteMes) {
+        $user   = $request->user();
+        $evento = Evento::findOrFail($id);
+
+        if ($user->role === 'restaurante' && $evento->restaurante_id !== $user->restaurante_id) {
+            return response()->json(['message' => 'No autorizado.'], 403);
+        }
+        if ($user->role === 'gastrobar' && $evento->gastrobar_id !== $user->gastrobar_id) {
+            return response()->json(['message' => 'No autorizado.'], 403);
+        }
+
+        // Si está oculto y quiere mostrarlo, verificar límite
+        if (!$evento->visible_publico) {
+            $visiblesEsteMes = $eventosVisiblesEsteMes();
+
+            if ($visiblesEsteMes >= 12) {
+                return response()->json([
+                    'message' => 'Ya alcanzaste el límite de 12 eventos visibles este mes. Oculta otro evento primero, o esperá al próximo mes.'
+                ], 422);
+            }
+        }
+
+        $evento->visible_publico = !$evento->visible_publico;
+        $evento->save();
+
+        return response()->json([
+            'message' => $evento->visible_publico
+                ? 'Evento ahora visible al público.'
+                : 'Evento oculto del público.',
+            'visible_publico' => $evento->visible_publico,
         ]);
     });
 
@@ -1357,6 +1454,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ];
         }
 
+        // ✅ CORREGIDO: se cambió "=>" por "=" en estas asignaciones
         $datos['titulo']        = $request->titulo;
         $datos['descripcion']   = $request->descripcion;
         $datos['requisitos']    = $request->requisitos;

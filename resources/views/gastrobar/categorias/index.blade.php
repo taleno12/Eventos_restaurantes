@@ -18,16 +18,7 @@
         </a>
     </div>
 
-    {{-- Mensaje de éxito - UN SOLO BLOQUE --}}
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2) !important;color:#4ade80;">
-        <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-check-circle-fill fs-5"></i>
-            <div>{{ session('success') }}</div>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif
+    {{-- ELIMINADO: El layout ya muestra los mensajes de sesión --}}
 
     @if($errors->any())
     <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2) !important;color:#ef4444;">

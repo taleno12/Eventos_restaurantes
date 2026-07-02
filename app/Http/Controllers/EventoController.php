@@ -86,10 +86,10 @@ class EventoController extends Controller
 
         $restaurantes = Restaurante::activos()->orderBy('nombre')->get();
 
-        // ✅ FIX: sin ->when($deptoFiltro) para que el hero muestre
-        // todos los destacados sin importar el departamento del usuario
+        // ✅ NUEVO: Solo eventos visibles al público
         $eventosDestacados = Evento::with(['restaurante', 'gastrobar', 'departamento'])
             ->where('is_destacado', true)
+            ->where('visible_publico', true) // ✅ NUEVO
             ->where(function ($q) {
                 $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
                   ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
@@ -97,7 +97,9 @@ class EventoController extends Controller
             ->latest()
             ->get();
 
+        // ✅ NUEVO: Solo eventos visibles al público
         $query = Evento::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
+            ->where('visible_publico', true) // ✅ NUEVO
             ->where(function ($q) {
                 $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
                   ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
@@ -124,7 +126,9 @@ class EventoController extends Controller
         $eventos = $query->latest()->get();
 
         if ($eventos->isEmpty() && !$hayFiltroActivo && !$departamentoPredefinido) {
+            // ✅ NUEVO: Solo eventos visibles al público
             $eventos = Evento::with(['restaurante', 'gastrobar', 'departamento', 'municipio'])
+                ->where('visible_publico', true) // ✅ NUEVO
                 ->where(function ($q) {
                     $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
                       ->orWhereHas('gastrobar',   fn($r) => $r->where('activo', true));
@@ -146,6 +150,9 @@ class EventoController extends Controller
 
     public function show(Evento $evento)
     {
+        // ✅ NUEVO: Solo mostrar eventos visibles al público
+        abort_unless($evento->visible_publico, 404);
+
         $evento->load(['restaurante', 'gastrobar', 'departamento', 'municipio', 'imagenes']);
 
         $entidadActiva = ($evento->restaurante && $evento->restaurante->activo)
@@ -242,7 +249,7 @@ class EventoController extends Controller
         }
 
         $this->enviarNotificacionFCM(
-            '📅 Nuevo evento',
+            ' Nuevo evento',
             "¡{$evento->titulo} ya está disponible en GastroNicaragua!"
         );
 

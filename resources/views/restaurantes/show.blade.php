@@ -135,6 +135,9 @@
                         style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;color:#2d3748;">
                         <i class="bi bi-person-badge text-primary"></i> Cuenta del Propietario
                     </h5>
+                    @php
+                        $esAccesoTelefono = !empty($restaurante->propietario->telefono);
+                    @endphp
                     <div class="d-flex align-items-start gap-3 mb-3">
                         <div class="rounded-3 d-flex align-items-center justify-content-center fw-black text-white shadow-sm flex-shrink-0"
                              style="width:52px;height:52px;font-size:1.3rem;background:linear-gradient(135deg,#1e293b,#334155);">
@@ -150,22 +153,41 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
-                                    <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Correo del Propietario</p>
-                                    <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
-                                        <i class="bi bi-envelope text-secondary flex-shrink-0"></i>
-                                        <span class="text-truncate">{{ $restaurante->propietario->email }}</span>
-                                    </p>
+
+                            @if($esAccesoTelefono)
+                                {{-- Acceso por Teléfono --}}
+                                <div class="col-12 col-sm-6">
+                                    <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                        <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Teléfono del Propietario</p>
+                                        <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                                            <i class="bi bi-telephone text-secondary flex-shrink-0"></i>
+                                            <span class="text-truncate">{{ $restaurante->propietario->telefono }}</span>
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
+                            @else
+                                {{-- Acceso por Google --}}
+                                <div class="col-12 col-sm-6">
+                                    <div class="p-3 rounded-3 h-100" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                        <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.7rem;letter-spacing:0.5px;">Correo del Propietario</p>
+                                        <p class="mb-0 fw-semibold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                                            <i class="bi bi-envelope text-secondary flex-shrink-0"></i>
+                                            <span class="text-truncate">{{ $restaurante->propietario->email }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-2 p-3 rounded-3"
                          style="background:#fffbeb;border:1px solid #fde68a;">
-                        <i class="bi bi-shield-check text-warning"></i>
+                        <i class="bi {{ $esAccesoTelefono ? 'bi-telephone-fill' : 'bi-google' }} text-warning"></i>
                         <small class="fw-semibold" style="color:#92400e;">
-                            Este usuario tiene acceso al panel de administración del restaurante.
+                            @if($esAccesoTelefono)
+                                Este propietario inicia sesión con teléfono y contraseña.
+                            @else
+                                Este propietario inicia sesión con su cuenta de Google (Gmail).
+                            @endif
                         </small>
                     </div>
                 </div>

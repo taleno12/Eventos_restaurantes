@@ -12,4 +12,6 @@ Schedule::command('notificaciones:verificar')->dailyAt('07:00');
 
 Schedule::command('notificaciones:vencimiento')->dailyAt('08:00');
 
+Schedule::command('notificaciones:vencimiento-gastrobar')->dailyAt('08:15');
+
 Schedule::command('notificaciones:limpiar')->dailyAt('03:00');

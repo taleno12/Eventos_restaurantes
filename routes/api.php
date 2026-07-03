@@ -1831,9 +1831,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
                 'descripcion'     => 'nullable|string',
                 'telefono'        => 'nullable|string|max:30',
                 'whatsapp'        => 'nullable|string|max:30',
-                'instagram'       => 'nullable|url|max:255',
-                'facebook'        => 'nullable|url|max:255',
-                'tiktok'          => 'nullable|url|max:255',
+                'instagram'       => 'nullable|string|max:255',
+                'facebook'        => 'nullable|string|max:255',
+                'tiktok'          => 'nullable|string|max:255',
                 'departamento_id' => 'required|exists:departamentos,id',
                 'municipio_id'    => 'required|exists:municipios,id',
                 'direccion'       => 'nullable|string|max:500',
@@ -1865,6 +1865,16 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ]);
 
         } elseif ($user->role === 'gastrobar') {
+            // ✅ CORRECCIÓN: Procesar dias_atencion si viene como JSON string
+            if ($request->has('dias_atencion') && is_string($request->dias_atencion)) {
+                $decoded = json_decode($request->dias_atencion, true);
+                if (is_array($decoded)) {
+                    $request->merge(['dias_atencion' => $decoded]);
+                } else {
+                    $request->merge(['dias_atencion' => []]);
+                }
+            }
+
             $request->validate([
                 'nombre'          => 'required|string|max:255',
                 'tipo_bar'        => 'nullable|string|max:100',
@@ -1874,13 +1884,14 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
                 'email'           => 'nullable|email|max:255',
                 'descripcion'     => 'nullable|string',
                 'dias_atencion'   => 'nullable|array',
+                'dias_atencion.*' => 'string|max:20',
                 'hora_apertura'   => 'nullable|string',
                 'hora_cierre'     => 'nullable|string',
                 'telefono'        => 'nullable|string|max:30',
                 'whatsapp'        => 'nullable|string|max:30',
-                'instagram'       => 'nullable|url|max:255',
-                'facebook'        => 'nullable|url|max:255',
-                'tiktok'          => 'nullable|url|max:255',
+                'instagram'       => 'nullable|string|max:255',
+                'facebook'        => 'nullable|string|max:255',
+                'tiktok'          => 'nullable|string|max:255',
                 'departamento_id' => 'required|exists:departamentos,id',
                 'municipio_id'    => 'required|exists:municipios,id',
                 'direccion'       => 'nullable|string|max:500',

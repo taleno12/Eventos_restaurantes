@@ -15,6 +15,7 @@ class Pedido extends Model
         'total',
         'notas',
         'tipo',
+        'direccion_entrega',
     ];
 
     // Colores y etiquetas para cada estado

@@ -15,6 +15,7 @@ class PedidoGastrobar extends Model
         'total',
         'notas',
         'tipo',
+        'direccion_entrega',
     ];
 
     const ESTADOS = [

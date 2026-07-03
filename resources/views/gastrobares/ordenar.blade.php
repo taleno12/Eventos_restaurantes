@@ -382,14 +382,21 @@ window.__platosOpciones = {!! json_encode(
                         <label class="notas-label">Tipo de pedido</label>
                         <div class="tipo-grid" style="margin-bottom:14px;">
                             <label class="tipo-opt">
-                                <input type="radio" name="tipo" value="envio">
+                                <input type="radio" name="tipo" value="envio" onchange="toggleDireccion()">
                                 <i class="fas fa-motorcycle" style="color:var(--blue);font-size:12px;"></i> Envío
                             </label>
                             <label class="tipo-opt">
-                                <input type="radio" name="tipo" value="retiro" checked>
+                                <input type="radio" name="tipo" value="retiro" checked onchange="toggleDireccion()">
                                 <i class="fas fa-store" style="color:var(--blue);font-size:12px;"></i> Retiro en el local
                             </label>
                         </div>
+
+                        <div id="direccion-wrap" style="display:none;">
+                            <label class="notas-label">Dirección de entrega</label>
+                            <textarea name="direccion_entrega" id="direccion-entrega" rows="2" maxlength="255" class="notas-input"
+                                      placeholder="Ej: De la iglesia San Rafael, 2c al lago, casa color celeste..."></textarea>
+                        </div>
+
                         <label class="notas-label">Notas <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></label>
                         <textarea name="notas" rows="2" maxlength="500" class="notas-input"
                                   placeholder="Ej: Sin cebolla, alergia al maní..."></textarea>
@@ -528,6 +535,20 @@ function cambiarCantidadKey(key, delta) {
     carrito[key].cantidad += delta;
     if (carrito[key].cantidad <= 0) delete carrito[key];
     renderCarritoConKey();
+}
+
+// ── TIPO DE PEDIDO / DIRECCIÓN ──
+function toggleDireccion() {
+    const envio = document.querySelector('input[name="tipo"][value="envio"]').checked;
+    const wrap  = document.getElementById('direccion-wrap');
+    const input = document.getElementById('direccion-entrega');
+    wrap.style.display = envio ? 'block' : 'none';
+    if (envio) {
+        input.setAttribute('required', 'required');
+    } else {
+        input.removeAttribute('required');
+        input.value = '';
+    }
 }
 
 // ── MODAL ──

@@ -203,6 +203,11 @@
                             <td class="py-3">
                                 @if($pedido->tipo === 'envio')
                                     <span class="badge px-2 py-1 fw-semibold" style="font-size:0.72rem;background:var(--badge-gray-bg) !important;color:var(--badge-gray-text) !important;border:1px solid var(--card-border) !important;">🛵 Envío</span>
+                                    @if($pedido->direccion_entrega)
+                                        <small class="d-block mt-1" style="font-size:0.7rem;color:var(--muted) !important;max-width:180px;">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ Str::limit($pedido->direccion_entrega, 45) }}
+                                        </small>
+                                    @endif
                                 @else
                                     <span class="badge px-2 py-1 fw-semibold" style="font-size:0.72rem;background:var(--badge-gray-bg) !important;color:var(--badge-gray-text) !important;border:1px solid var(--card-border) !important;">🏬 Retiro en el local</span>
                                 @endif
@@ -299,6 +304,7 @@ window.__pedidos = {
         id: {{ $pedido->id }},
         cliente: @json($pedido->user->name),
         tipo: @json($pedido->tipo),
+        direccion_entrega: @json($pedido->direccion_entrega),
         estado: @json($pedido->estado),
         notas: @json($pedido->notas),
         total: {{ $pedido->total }},
@@ -572,6 +578,17 @@ function verDetalle(id) {
         </div>`;
     });
 
+    let direccionHtml = '';
+    if (p.tipo === 'envio' && p.direccion_entrega) {
+        direccionHtml = `
+        <div class="mt-3 p-3 rounded-3" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);">
+            <div class="fw-bold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#2563eb;">
+                <i class="bi bi-geo-alt-fill me-1"></i> Dirección de entrega
+            </div>
+            <div style="font-size:13px;color:var(--text);">${p.direccion_entrega}</div>
+        </div>`;
+    }
+
     let notasHtml = '';
     if (p.notas) {
         notasHtml = `
@@ -589,7 +606,7 @@ function verDetalle(id) {
             <span class="fw-black" style="font-size:1.1rem;color:var(--primary);">C$ ${Number(p.total).toLocaleString()}</span>
         </div>`;
 
-    document.getElementById('modal-body').innerHTML = itemsHtml + notasHtml + totalHtml;
+    document.getElementById('modal-body').innerHTML = itemsHtml + direccionHtml + notasHtml + totalHtml;
 
     new bootstrap.Modal(document.getElementById('modalDetalle')).show();
 }

@@ -1458,7 +1458,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ];
         }
 
-        // ✅ CORREGIDO: se cambió "=>" por "=" en estas asignaciones
         $datos['titulo']        = $request->titulo;
         $datos['descripcion']   = $request->descripcion;
         $datos['requisitos']    = $request->requisitos;
@@ -1759,6 +1758,162 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         $pedido->delete();
 
         return response()->json(['message' => 'Pedido cancelado y eliminado correctamente.']);
+    });
+
+    // ────────────────────────────────────────────────────────
+    // MI PERFIL — restaurante o gastrobar, según el rol
+    // ────────────────────────────────────────────────────────
+
+    // Obtener perfil actual
+    Route::get('/perfil', function (Request $request) {
+        $user = $request->user();
+
+        if ($user->role === 'restaurante') {
+            $r = Restaurante::findOrFail($user->restaurante_id);
+            return response()->json([
+                'tipo'            => 'restaurante',
+                'id'              => $r->id,
+                'nombre'          => $r->nombre,
+                'especialidad'    => $r->especialidad,
+                'descripcion'     => $r->descripcion,
+                'telefono'        => $r->telefono,
+                'whatsapp'        => $r->whatsapp,
+                'instagram'       => $r->instagram,
+                'facebook'        => $r->facebook,
+                'tiktok'          => $r->tiktok,
+                'departamento_id' => $r->departamento_id,
+                'municipio_id'    => $r->municipio_id,
+                'direccion'       => $r->direccion,
+                'latitud'         => $r->latitud,
+                'longitud'        => $r->longitud,
+                'foto_url'        => $r->foto_portada ? asset('storage/' . $r->foto_portada) : null,
+            ]);
+        } elseif ($user->role === 'gastrobar') {
+            $g = Gastrobar::findOrFail($user->gastrobar_id);
+            return response()->json([
+                'tipo'            => 'gastrobar',
+                'id'              => $g->id,
+                'nombre'          => $g->nombre,
+                'tipo_bar'        => $g->tipo_bar,
+                'tipo_cocina'     => $g->tipo_cocina,
+                'ambiente'        => $g->ambiente,
+                'capacidad'       => $g->capacidad,
+                'email'           => $g->email,
+                'descripcion'     => $g->descripcion,
+                'dias_atencion'   => $g->dias_atencion ?? [],
+                'hora_apertura'   => $g->hora_apertura,
+                'hora_cierre'     => $g->hora_cierre,
+                'telefono'        => $g->telefono,
+                'whatsapp'        => $g->whatsapp,
+                'instagram'       => $g->instagram,
+                'facebook'        => $g->facebook,
+                'tiktok'          => $g->tiktok,
+                'departamento_id' => $g->departamento_id,
+                'municipio_id'    => $g->municipio_id,
+                'direccion'       => $g->direccion,
+                'latitud'         => $g->latitud,
+                'longitud'        => $g->longitud,
+                'foto_url'        => $g->imagen_principal ? asset('storage/' . $g->imagen_principal) : null,
+            ]);
+        }
+
+        return response()->json(['message' => 'No autorizado.'], 403);
+    });
+
+    // Actualizar perfil (con imagen opcional)
+    Route::post('/perfil', function (Request $request) {
+        $user = $request->user();
+
+        if ($user->role === 'restaurante') {
+            $request->validate([
+                'nombre'          => 'required|string|max:255',
+                'especialidad'    => 'required|string|max:255',
+                'descripcion'     => 'nullable|string',
+                'telefono'        => 'nullable|string|max:30',
+                'whatsapp'        => 'nullable|string|max:30',
+                'instagram'       => 'nullable|url|max:255',
+                'facebook'        => 'nullable|url|max:255',
+                'tiktok'          => 'nullable|url|max:255',
+                'departamento_id' => 'required|exists:departamentos,id',
+                'municipio_id'    => 'required|exists:municipios,id',
+                'direccion'       => 'nullable|string|max:500',
+                'latitud'         => 'nullable|numeric',
+                'longitud'        => 'nullable|numeric',
+                'foto'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            ]);
+
+            $r = Restaurante::findOrFail($user->restaurante_id);
+
+            $datos = $request->only([
+                'nombre', 'especialidad', 'descripcion', 'telefono', 'whatsapp',
+                'instagram', 'facebook', 'tiktok', 'departamento_id', 'municipio_id',
+                'direccion', 'latitud', 'longitud',
+            ]);
+
+            if ($request->hasFile('foto')) {
+                if ($r->foto_portada) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($r->foto_portada);
+                }
+                $datos['foto_portada'] = $request->file('foto')->store('portadas', 'public');
+            }
+
+            $r->update($datos);
+
+            return response()->json([
+                'message'  => 'Perfil actualizado correctamente.',
+                'foto_url' => $r->fresh()->foto_portada ? asset('storage/' . $r->fresh()->foto_portada) : null,
+            ]);
+
+        } elseif ($user->role === 'gastrobar') {
+            $request->validate([
+                'nombre'          => 'required|string|max:255',
+                'tipo_bar'        => 'nullable|string|max:100',
+                'tipo_cocina'     => 'nullable|string|max:100',
+                'ambiente'        => 'nullable|string|max:100',
+                'capacidad'       => 'nullable|integer|min:1',
+                'email'           => 'nullable|email|max:255',
+                'descripcion'     => 'nullable|string',
+                'dias_atencion'   => 'nullable|array',
+                'hora_apertura'   => 'nullable|string',
+                'hora_cierre'     => 'nullable|string',
+                'telefono'        => 'nullable|string|max:30',
+                'whatsapp'        => 'nullable|string|max:30',
+                'instagram'       => 'nullable|url|max:255',
+                'facebook'        => 'nullable|url|max:255',
+                'tiktok'          => 'nullable|url|max:255',
+                'departamento_id' => 'required|exists:departamentos,id',
+                'municipio_id'    => 'required|exists:municipios,id',
+                'direccion'       => 'nullable|string|max:500',
+                'latitud'         => 'nullable|numeric',
+                'longitud'        => 'nullable|numeric',
+                'foto'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            ]);
+
+            $g = Gastrobar::findOrFail($user->gastrobar_id);
+
+            $datos = $request->only([
+                'nombre', 'tipo_bar', 'tipo_cocina', 'ambiente', 'capacidad', 'email',
+                'descripcion', 'dias_atencion', 'hora_apertura', 'hora_cierre',
+                'telefono', 'whatsapp', 'instagram', 'facebook', 'tiktok',
+                'departamento_id', 'municipio_id', 'direccion', 'latitud', 'longitud',
+            ]);
+
+            if ($request->hasFile('foto')) {
+                if ($g->imagen_principal) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($g->imagen_principal);
+                }
+                $datos['imagen_principal'] = $request->file('foto')->store('gastrobares', 'public');
+            }
+
+            $g->update($datos);
+
+            return response()->json([
+                'message'  => 'Perfil actualizado correctamente.',
+                'foto_url' => $g->fresh()->imagen_principal ? asset('storage/' . $g->fresh()->imagen_principal) : null,
+            ]);
+        }
+
+        return response()->json(['message' => 'No autorizado.'], 403);
     });
 
 });

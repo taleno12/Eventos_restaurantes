@@ -318,7 +318,7 @@
                                  style="aspect-ratio:1/1;">
                                 <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto del evento"
                                      class="w-100 h-100" style="object-fit:cover;">
-                                <form action="{{ route('evento.imagenes.destroy', $foto->id) }}" method="POST"
+                                <form action="{{ route('admin.evento.imagenes.destroy', $foto->id) }}" method="POST"
                                       class="position-absolute top-0 end-0 m-1"
                                       onsubmit="return confirm('¿Eliminar esta foto?')">
                                     @csrf @method('DELETE')
@@ -364,7 +364,7 @@
 
             <div id="new-photos-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
 
-            <form action="{{ route('evento.imagenes.store', $evento->id) }}" method="POST"
+            <form action="{{ route('admin.evento.imagenes.store', $evento->id) }}" method="POST"
                   enctype="multipart/form-data" id="photos-form" class="mt-3">
                 @csrf
                 <input type="file" name="fotos[]" id="fotos-hidden" accept="image/*" multiple class="d-none">

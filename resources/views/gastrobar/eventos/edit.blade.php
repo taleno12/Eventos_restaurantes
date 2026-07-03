@@ -103,7 +103,7 @@
                         <div style="position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);">
                             <img src="{{ asset('storage/'.$img->ruta) }}" style="width:100%;height:100%;object-fit:cover;">
                             <button type="button"
-                                    onclick="eliminarImagen({{ $img->id }}, '{{ route('evento.imagenes.destroy', $img) }}', this)"
+                                    onclick="eliminarImagen({{ $img->id }}, '{{ route('gastrobar.evento.imagenes.destroy', $img) }}', this)"
                                     style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.85);border:none;color:white;width:22px;height:22px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;">
                                 <i class="bi bi-x"></i>
                             </button>

@@ -113,7 +113,10 @@
     .tipo-opt input { accent-color: var(--blue); }
     .notas-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; outline: none; resize: none; transition: border-color 0.2s; color: var(--text); background: var(--white); margin-bottom: 14px; }
     .notas-input:focus { border-color: var(--blue); }
-    .notas-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 6px; }
+    .direccion-wrap { display: none; margin-bottom: 14px; }
+    .direccion-wrap.show { display: block; }
+    .direccion-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.2s; color: var(--text); background: var(--white); }
+    .direccion-input:focus { border-color: var(--blue); }
     .btn-confirmar { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--blue); color: white; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; font-family: inherit; }
     .btn-confirmar:hover { background: var(--blue2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
     .btn-confirmar:disabled { background: #d1d5db; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -382,13 +385,18 @@ window.__platosOpciones = {!! json_encode(
                         <label class="notas-label">Tipo de pedido</label>
                         <div class="tipo-grid" style="margin-bottom:14px;">
                             <label class="tipo-opt">
-                                <input type="radio" name="tipo" value="envio">
+                                <input type="radio" name="tipo" value="envio" onchange="toggleDireccion()">
                                 <i class="fas fa-motorcycle" style="color:var(--blue);font-size:12px;"></i> Envío
                             </label>
                             <label class="tipo-opt">
-                                <input type="radio" name="tipo" value="retiro" checked>
+                                <input type="radio" name="tipo" value="retiro" checked onchange="toggleDireccion()">
                                 <i class="fas fa-store" style="color:var(--blue);font-size:12px;"></i> Retiro en el local
                             </label>
+                        </div>
+                        <div class="direccion-wrap" id="direccion-wrap">
+                            <label class="notas-label">Dirección de entrega</label>
+                            <input type="text" name="direccion_entrega" id="direccion_entrega" class="direccion-input"
+                                   placeholder="Ej: Del parque central 2c al lago, casa portón negro">
                         </div>
                         <label class="notas-label">Notas <span style="font-weight:400;text-transform:none;letter-spacing:0;">(opcional)</span></label>
                         <textarea name="notas" rows="2" maxlength="500" class="notas-input"
@@ -528,6 +536,23 @@ function cambiarCantidadKey(key, delta) {
     carrito[key].cantidad += delta;
     if (carrito[key].cantidad <= 0) delete carrito[key];
     renderCarritoConKey();
+}
+
+// ── DIRECCIÓN DE ENTREGA (solo si tipo = envío) ──
+function toggleDireccion() {
+    const envioRadio = document.querySelector('input[name="tipo"][value="envio"]');
+    const wrap  = document.getElementById('direccion-wrap');
+    const input = document.getElementById('direccion_entrega');
+    if (!envioRadio || !wrap || !input) return;
+
+    if (envioRadio.checked) {
+        wrap.classList.add('show');
+        input.required = true;
+    } else {
+        wrap.classList.remove('show');
+        input.required = false;
+        input.value = '';
+    }
 }
 
 // ── MODAL ──

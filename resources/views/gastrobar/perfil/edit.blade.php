@@ -7,9 +7,6 @@
         <div class="page-title">Mi Perfil</div>
         <div class="page-sub">Información pública de {{ $gastrobar->nombre }}</div>
     </div>
-    <a href="{{ route('gastrobares.show', $gastrobar) }}" target="_blank" class="btn-secondary-panel">
-        <i class="bi bi-box-arrow-up-right"></i> Ver página pública
-    </a>
 </div>
 
 @if($errors->any())

@@ -15,12 +15,19 @@ class PedidoGastrobarController extends Controller
     public function store(Request $request, Gastrobar $gastrobar)
     {
         $request->validate([
-            'items'            => 'required|array|min:1',
-            'items.*.id'       => 'required|exists:platos,id',
-            'items.*.cantidad' => 'required|integer|min:1|max:20',
-            'notas'            => 'nullable|string|max:500',
-            'tipo'             => 'required|in:envio,retiro',
+            'items'             => 'required|array|min:1',
+            'items.*.id'        => 'required|exists:platos,id',
+            'items.*.cantidad'  => 'required|integer|min:1|max:20',
+            'notas'             => 'nullable|string|max:500',
+            'tipo'              => 'required|in:envio,retiro',
+            'direccion_entrega' => 'required_if:tipo,envio|nullable|string|max:500',
         ]);
+
+        // El formulario usa 'envio'/'retiro', pero la columna en BD usa 'delivery'/'para_llevar'
+        $tipoMap = [
+            'envio'  => 'delivery',
+            'retiro' => 'para_llevar',
+        ];
 
         $itemsValidados = [];
         $total = 0;
@@ -47,14 +54,15 @@ class PedidoGastrobarController extends Controller
             ];
         }
 
-        DB::transaction(function () use ($gastrobar, $request, $itemsValidados, $total) {
+        DB::transaction(function () use ($gastrobar, $request, $itemsValidados, $total, $tipoMap) {
             $pedido = PedidoGastrobar::create([
-                'gastrobar_id' => $gastrobar->id,
-                'user_id'      => Auth::id(),
-                'estado'       => 'pendiente',
-                'total'        => $total,
-                'notas'        => $request->notas,
-                'tipo'         => $request->tipo,
+                'gastrobar_id'      => $gastrobar->id,
+                'user_id'           => Auth::id(),
+                'estado'            => 'pendiente',
+                'total'             => $total,
+                'notas'             => $request->notas,
+                'tipo'              => $tipoMap[$request->tipo],
+                'direccion_entrega' => $request->tipo === 'envio' ? $request->direccion_entrega : null,
             ]);
 
             foreach ($itemsValidados as $item) {

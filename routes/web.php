@@ -199,9 +199,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/eventos/{evento}',      [EventoController::class, 'update'])->name('eventos.update');
         Route::patch('/eventos/{evento}',    [EventoController::class, 'update']);
         Route::delete('/eventos/{evento}',   [EventoController::class, 'destroy'])->name('eventos.destroy');
-
-        Route::post('/eventos/{evento}/imagenes',  [EventoImagenController::class, 'store'])->name('evento.imagenes.store');
-        Route::delete('/evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])->name('evento.imagenes.destroy');
+        // (Rutas de evento.imagenes.store / evento.imagenes.destroy removidas de aquí:
+        //  estaban duplicadas y heredaban el middleware role:admin del grupo padre,
+        //  bloqueando a restaurantes/gastrobares con 403. Ya existen correctamente
+        //  dentro de los grupos mi-restaurante y mi-gastrobar más abajo.)
     });
 
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
@@ -386,7 +387,7 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
         Route::patch('eventos/{evento}/toggle-visibilidad', [\App\Http\Controllers\Restaurante\RestauranteEventoController::class, 'toggleVisibilidad'])
             ->name('eventos.toggleVisibilidad');
 
-        // ✅ NUEVO: Rutas para gestionar imágenes de eventos del restaurante
+        // ✅ Rutas para gestionar imágenes de eventos del restaurante
         Route::post('eventos/{evento}/imagenes', [EventoImagenController::class, 'store'])
             ->name('eventos.imagenes.store');
         Route::delete('evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])
@@ -469,7 +470,7 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
         Route::patch('eventos/{evento}/toggle-visibilidad', [\App\Http\Controllers\Gastrobar\GastrobarEventoController::class, 'toggleVisibilidad'])
             ->name('eventos.toggleVisibilidad');
 
-        // ✅ NUEVO: Rutas para gestionar imágenes de eventos del gastrobar
+        // ✅ Rutas para gestionar imágenes de eventos del gastrobar
         Route::post('eventos/{evento}/imagenes', [EventoImagenController::class, 'store'])
             ->name('eventos.imagenes.store');
         Route::delete('evento-imagenes/{imagen}', [EventoImagenController::class, 'destroy'])

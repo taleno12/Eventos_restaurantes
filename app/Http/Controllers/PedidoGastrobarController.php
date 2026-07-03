@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -22,12 +22,6 @@ class PedidoGastrobarController extends Controller
             'tipo'              => 'required|in:envio,retiro',
             'direccion_entrega' => 'required_if:tipo,envio|nullable|string|max:500',
         ]);
-
-        // El formulario usa 'envio'/'retiro', pero la columna en BD usa 'delivery'/'para_llevar'
-        $tipoMap = [
-            'envio'  => 'delivery',
-            'retiro' => 'para_llevar',
-        ];
 
         $itemsValidados = [];
         $total = 0;
@@ -54,14 +48,14 @@ class PedidoGastrobarController extends Controller
             ];
         }
 
-        DB::transaction(function () use ($gastrobar, $request, $itemsValidados, $total, $tipoMap) {
+        DB::transaction(function () use ($gastrobar, $request, $itemsValidados, $total) {
             $pedido = PedidoGastrobar::create([
                 'gastrobar_id'      => $gastrobar->id,
                 'user_id'           => Auth::id(),
                 'estado'            => 'pendiente',
                 'total'             => $total,
                 'notas'             => $request->notas,
-                'tipo'              => $tipoMap[$request->tipo],
+                'tipo'              => $request->tipo,
                 'direccion_entrega' => $request->tipo === 'envio' ? $request->direccion_entrega : null,
             ]);
 

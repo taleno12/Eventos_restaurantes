@@ -15,6 +15,8 @@ class GastrobarEventoController extends Controller
 {
     private FcmNotificationService $fcm;
 
+    const LIMITE_EVENTOS_VISIBLES_MES = 12;
+
     public function __construct(FcmNotificationService $fcm)
     {
         $this->fcm = $fcm;
@@ -25,12 +27,26 @@ class GastrobarEventoController extends Controller
         return Auth::user()->gastrobar;
     }
 
+    /**
+     * Cuenta eventos visibles al público creados en el mes calendario actual.
+     */
+    private function eventosVisiblesEsteMes(int $gastrobarId)
+    {
+        return Evento::where('gastrobar_id', $gastrobarId)
+            ->where('visible_publico', true)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->count();
+    }
+
     public function index()
     {
         $gastrobar = $this->gastrobar();
         $eventos   = Evento::where('gastrobar_id', $gastrobar->id)
             ->latest()->paginate(10);
-        return view('gastrobar.eventos.index', compact('gastrobar', 'eventos'));
+
+        $visiblesEsteMes = $this->eventosVisiblesEsteMes($gastrobar->id);
+
+        return view('gastrobar.eventos.index', compact('gastrobar', 'eventos', 'visiblesEsteMes'));
     }
 
     public function create()
@@ -59,6 +75,10 @@ class GastrobarEventoController extends Controller
         $datos['departamento_id'] = $gastrobar->departamento_id;
         $datos['is_destacado']    = false;
 
+        // Si ya alcanzó el límite de visibles este mes, el evento se crea oculto
+        $yaAlcanzoLimite = $this->eventosVisiblesEsteMes($gastrobar->id) >= self::LIMITE_EVENTOS_VISIBLES_MES;
+        $datos['visible_publico'] = !$yaAlcanzoLimite;
+
         if ($request->hasFile('imagen')) {
             $datos['imagen'] = $request->file('imagen')->store('anuncios', 'public');
         }
@@ -74,13 +94,20 @@ class GastrobarEventoController extends Controller
             }
         }
 
-        $this->fcm->enviar(
-            '📅 Nuevo evento',
-            "¡{$evento->titulo} ya está disponible en {$gastrobar->nombre}!"
-        );
+        // ✅ Solo notificar si el evento quedó visible al público
+        if ($datos['visible_publico']) {
+            $this->fcm->enviar(
+                'Nuevo evento',
+                "¡{$evento->titulo} ya está disponible en {$gastrobar->nombre}!"
+            );
+        }
 
-        return redirect()->route('gastrobar.eventos.index')
-            ->with('success', '¡Evento publicado exitosamente!');
+        $mensaje = '¡Evento publicado exitosamente!';
+        if ($yaAlcanzoLimite) {
+            $mensaje .= ' Alcanzaste el límite de ' . self::LIMITE_EVENTOS_VISIBLES_MES . ' eventos visibles este mes, así que este quedó guardado pero oculto del público. Podés activarlo desactivando otro, o esperar al próximo mes.';
+        }
+
+        return redirect()->route('gastrobar.eventos.index')->with('success', $mensaje);
     }
 
     public function show(Evento $evento)
@@ -139,6 +166,38 @@ class GastrobarEventoController extends Controller
 
         return redirect()->route('gastrobar.eventos.index')
             ->with('success', 'Evento actualizado correctamente.');
+    }
+
+    /**
+     * Activa/desactiva la visibilidad pública de un evento, respetando el límite mensual.
+     */
+    public function toggleVisibilidad(Evento $evento)
+    {
+        $gastrobar = $this->gastrobar();
+        abort_unless($evento->gastrobar_id === $gastrobar->id, 403);
+
+        if (!$evento->visible_publico) {
+            $visiblesEsteMes = $this->eventosVisiblesEsteMes($gastrobar->id);
+
+            if ($visiblesEsteMes >= self::LIMITE_EVENTOS_VISIBLES_MES) {
+                return back()->with('error', 'Ya alcanzaste el límite de ' . self::LIMITE_EVENTOS_VISIBLES_MES . ' eventos visibles este mes. Oculta otro evento primero, o esperá al próximo mes.');
+            }
+        }
+
+        $evento->visible_publico = !$evento->visible_publico;
+        $evento->save();
+
+        // ✅ NUEVO: notificar solo cuando pasa de oculto a visible
+        if ($evento->visible_publico) {
+            $this->fcm->enviar(
+                'Evento disponible',
+                "¡{$evento->titulo} ya está disponible en {$gastrobar->nombre}!"
+            );
+        }
+
+        return back()->with('success', $evento->visible_publico
+            ? 'Evento ahora visible al público.'
+            : 'Evento oculto del público.');
     }
 
     public function destroy(Evento $evento)

@@ -60,10 +60,12 @@ class RestauranteEmpleoController extends Controller
             'departamento_id' => $restaurante->departamento_id,
         ]);
 
-        $this->fcm->enviar(
-            '💼 Nueva oferta de empleo',
-            "¡{$empleo->titulo} está disponible en {$restaurante->nombre}!"
-        );
+        if ($empleo->activo) {
+            $this->fcm->enviar(
+                '💼 Nueva oferta de empleo',
+                "¡{$empleo->titulo} está disponible en {$restaurante->nombre}!"
+            );
+        }
 
         return redirect()->route('restaurante.empleos.index')
             ->with('success', '¡Oferta de empleo publicada!');
@@ -96,9 +98,18 @@ class RestauranteEmpleoController extends Controller
         ]);
 
         // Manejar activo por separado (checkbox)
+        $estabaActivo = $empleo->activo;
         $validated['activo'] = $request->boolean('activo', false);
 
         $empleo->update($validated);
+
+        // ✅ NUEVO: notificar solo cuando pasa de inactivo a activo
+        if (!$estabaActivo && $empleo->activo) {
+            $this->fcm->enviar(
+                '💼 Oferta disponible',
+                "¡{$empleo->titulo} está disponible en {$restaurante->nombre}!"
+            );
+        }
 
         return redirect()->route('restaurante.empleos.index')
             ->with('success', 'Oferta actualizada correctamente.');

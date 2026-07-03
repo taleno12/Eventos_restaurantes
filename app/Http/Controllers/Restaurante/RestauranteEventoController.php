@@ -100,10 +100,12 @@ class RestauranteEventoController extends Controller
             }
         }
 
-        $this->fcm->enviar(
-            '📅 Nuevo evento',
-            "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
-        );
+        if ($datos['visible_publico']) {
+            $this->fcm->enviar(
+                '📅 Nuevo evento',
+                "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
+            );
+        }
 
         $mensaje = $datos['visible_publico']
             ? '¡Evento publicado exitosamente!'
@@ -184,6 +186,13 @@ class RestauranteEventoController extends Controller
             }
 
             $evento->update(['visible_publico' => true]);
+
+            // ✅ NUEVO: notificar al volver a mostrarlo
+            $this->fcm->enviar(
+                '📅 Evento disponible',
+                "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
+            );
+
             return back()->with('success', 'Evento ahora visible al público.');
         }
 

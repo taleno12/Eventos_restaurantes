@@ -1275,6 +1275,14 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $evento = Evento::create($datos);
 
+        // ✅ NUEVO: notificación push, solo si el evento quedó visible al público
+        if ($datos['visible_publico']) {
+            enviarNotificacionFCM(
+                '🎉 Nuevo evento',
+                "¡{$evento->titulo} ya está disponible en GastroNicaragua!"
+            );
+        }
+
         $mensaje = '¡Evento publicado exitosamente!';
         if (!$datos['visible_publico']) {
             $mensaje .= ' Alcanzaste el límite de 12 eventos visibles este mes, así que este quedó guardado pero oculto del público.';
@@ -1355,6 +1363,14 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $evento->visible_publico = !$evento->visible_publico;
         $evento->save();
+
+        // ✅ NUEVO: notificar solo cuando pasa de oculto a visible
+        if ($evento->visible_publico) {
+            enviarNotificacionFCM(
+                '🎉 Evento disponible',
+                "¡{$evento->titulo} ya está disponible en GastroNicaragua!"
+            );
+        }
 
         return response()->json([
             'message' => $evento->visible_publico
@@ -1469,6 +1485,14 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $empleo = Empleo::create($datos);
 
+        // ✅ NUEVO: notificación push, solo si la oferta quedó activa
+        if ($datos['activo']) {
+            enviarNotificacionFCM(
+                '💼 Nueva oferta de empleo',
+                "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+            );
+        }
+
         return response()->json([
             'message' => '¡Oferta publicada exitosamente!',
             'empleo'  => $empleo,
@@ -1498,6 +1522,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             'activo'        => 'nullable|boolean',
         ]);
 
+        // ✅ Guardamos el estado anterior para detectar la transición
+        $estabaActivo = $empleo->activo;
+
         $empleo->update([
             'titulo'        => $request->titulo,
             'descripcion'   => $request->descripcion,
@@ -1508,6 +1535,14 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             'fecha_limite'  => $request->fecha_limite,
             'activo'        => $request->boolean('activo', false),
         ]);
+
+        // ✅ NUEVO: notificar solo cuando pasa de inactivo a activo
+        if (!$estabaActivo && $empleo->activo) {
+            enviarNotificacionFCM(
+                '💼 Oferta disponible',
+                "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+            );
+        }
 
         return response()->json([
             'message' => 'Oferta actualizada correctamente.',

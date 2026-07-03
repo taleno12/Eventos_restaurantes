@@ -23,7 +23,7 @@ class GastrobarPlatoController extends Controller
         $platos = Plato::where('gastrobar_id', $gastrobar->id)
             ->orderBy('orden')
             ->get()
-            ->groupBy(fn($p) => $p->categoria ?? 'Sin categoria');
+            ->groupBy(fn($p) => $p->categoriaPlato->nombre ?? 'Sin categoria');
         $categorias = $gastrobar->categoriasPlato()->ordenadas()->get();
         return view('gastrobar.platos.index', compact('gastrobar', 'platos', 'categorias'));
     }
@@ -39,13 +39,23 @@ class GastrobarPlatoController extends Controller
     {
         $gastrobar = $this->gastrobar();
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:150',
-            'descripcion' => 'nullable|string',
-            'precio'      => 'required|numeric|min:0',
-            'imagen'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'categoria'   => 'nullable|string|max:100',
-            'orden'       => 'nullable|integer|min:0',
+            'nombre'       => 'required|string|max:150',
+            'descripcion'  => 'nullable|string',
+            'precio'       => 'required|numeric|min:0',
+            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'categoria'    => 'nullable|string|max:100',
+            'categoria_id' => 'nullable|integer|exists:categorias_plato,id',
+            'orden'        => 'nullable|integer|min:0',
         ]);
+
+        // Asegurar que la categoria_id pertenezca a este gastrobar
+        if (!empty($validated['categoria_id'])) {
+            $perteneceAlGastrobar = $gastrobar->categoriasPlato()
+                ->where('id', $validated['categoria_id'])
+                ->exists();
+            abort_unless($perteneceAlGastrobar, 403);
+        }
+
         $validated['gastrobar_id'] = $gastrobar->id;
         $validated['activo']       = $request->boolean('activo', true);
         $validated['orden']        = $validated['orden'] ?? 0;
@@ -78,13 +88,23 @@ class GastrobarPlatoController extends Controller
         $gastrobar = $this->gastrobar();
         abort_unless($plato->gastrobar_id === $gastrobar->id, 403);
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:150',
-            'descripcion' => 'nullable|string',
-            'precio'      => 'required|numeric|min:0',
-            'imagen'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'categoria'   => 'nullable|string|max:100',
-            'orden'       => 'nullable|integer|min:0',
+            'nombre'       => 'required|string|max:150',
+            'descripcion'  => 'nullable|string',
+            'precio'       => 'required|numeric|min:0',
+            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'categoria'    => 'nullable|string|max:100',
+            'categoria_id' => 'nullable|integer|exists:categorias_plato,id',
+            'orden'        => 'nullable|integer|min:0',
         ]);
+
+        // Asegurar que la categoria_id pertenezca a este gastrobar
+        if (!empty($validated['categoria_id'])) {
+            $perteneceAlGastrobar = $gastrobar->categoriasPlato()
+                ->where('id', $validated['categoria_id'])
+                ->exists();
+            abort_unless($perteneceAlGastrobar, 403);
+        }
+
         $validated['activo'] = $request->boolean('activo', false);
         $validated['orden']  = $validated['orden'] ?? 0;
         if ($request->hasFile('imagen')) {

@@ -67,10 +67,10 @@
                             </div>
                             <div class="col-12 col-sm-6">
                                 <label class="form-label fw-semibold small" style="color:var(--text);">Categoría</label>
-                                <select name="categoria" class="form-select">
+                                <select name="categoria_id" class="form-select">
                                     <option value="">Sin categoría</option>
                                     @foreach($categorias as $cat)
-                                        <option value="{{ $cat->nombre }}" {{ old('categoria', $plato->categoria) === $cat->nombre ? 'selected' : '' }}>
+                                        <option value="{{ $cat->id }}" {{ (string) old('categoria_id', $plato->categoria_id) === (string) $cat->id ? 'selected' : '' }}>
                                             {{ $cat->nombre }}
                                         </option>
                                     @endforeach
@@ -78,10 +78,6 @@
                                 @if($categorias->isEmpty())
                                     <div class="form-text" style="font-size:11px;">
                                         No tienes categorías aún. <a href="{{ route('gastrobar.categorias.index') }}">Crea una aquí</a>.
-                                    </div>
-                                @elseif($plato->categoria && !$categorias->pluck('nombre')->contains($plato->categoria))
-                                    <div class="form-text text-warning" style="font-size:11px;">
-                                        Este plato tenía la categoría "{{ $plato->categoria }}", que ya no existe en tu lista. Se mostrará como "Sin categoría" si guardas sin cambiarla.
                                     </div>
                                 @endif
                             </div>

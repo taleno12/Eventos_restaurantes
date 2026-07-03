@@ -56,10 +56,10 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <label class="form-label fw-semibold small" style="color:var(--text);">Categoría <span style="color:var(--muted);font-weight:500;">(opcional)</span></label>
-                            <select name="categoria" class="form-select">
+                            <select name="categoria_id" class="form-select">
                                 <option value="">Sin categoría</option>
                                 @foreach($categorias as $cat)
-                                    <option value="{{ $cat->nombre }}" {{ old('categoria') === $cat->nombre ? 'selected' : '' }}>
+                                    <option value="{{ $cat->id }}" {{ (string) old('categoria_id') === (string) $cat->id ? 'selected' : '' }}>
                                         {{ $cat->nombre }}
                                     </option>
                                 @endforeach

@@ -16,6 +16,7 @@ class GastrobarEventoController extends Controller
     private FcmNotificationService $fcm;
 
     const LIMITE_EVENTOS_VISIBLES_MES = 12;
+    const LIMITE_GALERIA = 4;
 
     public function __construct(FcmNotificationService $fcm)
     {
@@ -36,6 +37,21 @@ class GastrobarEventoController extends Controller
             ->where('visible_publico', true)
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->count();
+    }
+
+    /**
+     * Filtra los archivos de galería recibidos, devolviendo solo los válidos.
+     */
+    private function archivosGaleriaValidos(Request $request): array
+    {
+        if (!$request->hasFile('galeria')) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $request->file('galeria'),
+            fn ($img) => $img && $img->isValid()
+        ));
     }
 
     public function index()
@@ -67,9 +83,16 @@ class GastrobarEventoController extends Controller
             'precio'       => 'required|numeric|min:0',
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
-            'galeria'      => 'nullable|array|max:4',
             'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        $archivosGaleria = $this->archivosGaleriaValidos($request);
+
+        if (count($archivosGaleria) > self::LIMITE_GALERIA) {
+            return back()->withErrors([
+                'galeria' => 'Podés subir máximo ' . self::LIMITE_GALERIA . ' imágenes en la galería.',
+            ])->withInput();
+        }
 
         $datos = $request->except(['imagen', 'galeria']);
         $datos['gastrobar_id']    = $gastrobar->id;
@@ -86,13 +109,9 @@ class GastrobarEventoController extends Controller
 
         $evento = Evento::create($datos);
 
-        if ($request->hasFile('galeria')) {
-            foreach ($request->file('galeria') as $img) {
-                if ($img && $img->isValid()) {
-                    $path = $img->store('eventos/galeria', 'public');
-                    $evento->imagenes()->create(['ruta' => $path]);
-                }
-            }
+        foreach ($archivosGaleria as $img) {
+            $path = $img->store('eventos/galeria', 'public');
+            $evento->imagenes()->create(['ruta' => $path]);
         }
 
         // ✅ Solo notificar si el evento quedó visible al público
@@ -142,9 +161,20 @@ class GastrobarEventoController extends Controller
             'precio'       => 'required|numeric|min:0',
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
-            'galeria'      => 'nullable|array|max:4',
             'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        $archivosGaleria = $this->archivosGaleriaValidos($request);
+        $existentes      = $evento->imagenes()->count();
+
+        if ($existentes + count($archivosGaleria) > self::LIMITE_GALERIA) {
+            $disponibles = max(0, self::LIMITE_GALERIA - $existentes);
+            return back()->withErrors([
+                'galeria' => $disponibles > 0
+                    ? "Este evento ya tiene {$existentes} foto(s) en la galería. Solo podés agregar {$disponibles} más (máximo " . self::LIMITE_GALERIA . " en total)."
+                    : "Este evento ya alcanzó el máximo de " . self::LIMITE_GALERIA . " fotos en la galería. Elimina alguna para poder agregar otra.",
+            ])->withInput();
+        }
 
         if ($request->hasFile('imagen')) {
             if ($evento->imagen) Storage::disk('public')->delete($evento->imagen);
@@ -157,13 +187,9 @@ class GastrobarEventoController extends Controller
         $validated['is_destacado'] = false;
         $evento->update($validated);
 
-        if ($request->hasFile('galeria')) {
-            foreach ($request->file('galeria') as $img) {
-                if ($img && $img->isValid()) {
-                    $path = $img->store('eventos/galeria', 'public');
-                    $evento->imagenes()->create(['ruta' => $path]);
-                }
-            }
+        foreach ($archivosGaleria as $img) {
+            $path = $img->store('eventos/galeria', 'public');
+            $evento->imagenes()->create(['ruta' => $path]);
         }
 
         return redirect()->route('gastrobar.eventos.index')

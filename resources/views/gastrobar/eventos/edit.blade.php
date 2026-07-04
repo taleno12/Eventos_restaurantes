@@ -23,6 +23,11 @@
 </div>
 @endif
 
+@php
+    $totalImagenesGaleria = $evento->imagenes->count();
+    $espaciosGaleria = max(0, 4 - $totalImagenesGaleria);
+@endphp
+
 <form method="POST" action="{{ route('gastrobar.eventos.update', $evento) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -94,10 +99,19 @@
             </div>
 
             {{-- Galería existente --}}
-            @if($evento->imagenes->count() > 0)
+            @if($totalImagenesGaleria > 0)
             <div class="panel-card">
-                <div class="card-header"><i class="bi bi-images me-1"></i> Galería actual</div>
+                <div class="card-header">
+                    <i class="bi bi-images me-1"></i> Galería actual
+                    <span class="fw-normal ms-1" style="text-transform:none;font-size:11px;color:var(--muted);">({{ $totalImagenesGaleria }} de 4)</span>
+                </div>
                 <div class="card-body">
+                    @if($totalImagenesGaleria > 4)
+                    <p class="small mb-3" style="color:var(--muted);">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Este evento tiene {{ $totalImagenesGaleria }} fotos guardadas de antes de que se aplicara el límite de 4. Podés eliminar las que no necesites con la "x".
+                    </p>
+                    @endif
                     <div class="d-flex flex-wrap gap-2">
                         @foreach($evento->imagenes as $img)
                         <div style="position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);">
@@ -117,11 +131,14 @@
             <div class="panel-card">
                 <div class="card-header">
                     <i class="bi bi-cloud-upload me-1"></i> Agregar fotos a galería
-                    <span class="fw-normal ms-1" style="text-transform:none;font-size:11px;color:var(--muted);">(opcional, máx. 4 imágenes)</span>
+                    <span class="fw-normal ms-1" style="text-transform:none;font-size:11px;color:var(--muted);">
+                        (opcional, máx. 4 en total)
+                    </span>
                 </div>
                 <div class="card-body">
+                    @if($espaciosGaleria > 0)
                     <div class="row g-3">
-                        @for ($i = 1; $i <= 4; $i++)
+                        @for ($i = 1; $i <= $espaciosGaleria; $i++)
                         <div class="col-6 col-md-3">
                             <div class="galeria-slot" data-slot="{{ $i }}">
                                 <input type="file" name="galeria[]" accept="image/*" class="galeria-slot-input" style="display:none;">
@@ -139,6 +156,12 @@
                         </div>
                         @endfor
                     </div>
+                    @else
+                    <p class="small mb-0" style="color:var(--muted);">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Ya alcanzaste el máximo de 4 fotos en la galería. Elimina alguna foto arriba si querés agregar una nueva.
+                    </p>
+                    @endif
                 </div>
             </div>
 
@@ -275,7 +298,7 @@ document.getElementById('imagen-input').addEventListener('change', function () {
     reader.readAsDataURL(file);
 });
 
-// Slots individuales de galería (máx. 4)
+// Slots individuales de galería (cantidad dinámica según espacio disponible)
 document.querySelectorAll('.galeria-slot').forEach(slot => {
     const input       = slot.querySelector('.galeria-slot-input');
     const box          = slot.querySelector('.galeria-slot-box');

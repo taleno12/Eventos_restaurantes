@@ -89,19 +89,30 @@
 
             <div class="panel-card">
                 <div class="card-header">
-                    <i class="bi bi-cloud-upload me-1"></i> Galería adicional
-                    <span class="fw-normal ms-1" style="text-transform:none;font-size:11px;color:var(--muted);">(opcional)</span>
+                    <i class="bi bi-cloud-upload me-1"></i> Galería de Imágenes Destacadas
+                    <span class="fw-normal ms-1" style="text-transform:none;font-size:11px;color:var(--muted);">(opcional, máx. 4 imágenes)</span>
                 </div>
                 <div class="card-body">
-                    <div class="border rounded-3 p-4 text-center position-relative galeria-drop"
-                         style="border-style:dashed !important;border-color:var(--input-border);cursor:pointer;">
-                        <i class="bi bi-images d-block mb-2 fs-4" style="color:var(--muted);"></i>
-                        <p class="small mb-1" style="color:var(--muted);">Arrastra fotos aquí o <span style="color:var(--primary);font-weight:600;">haz clic para seleccionar</span></p>
-                        <p class="mb-0" style="font-size:11px;color:var(--muted);">JPG, PNG, WEBP — máx. 2 MB por imagen</p>
-                        <input type="file" name="galeria[]" id="galeria-input" multiple accept="image/*"
-                               style="position:absolute;inset:0;opacity:0;cursor:pointer;">
+                    <p class="small mb-3" style="color:var(--muted);">Agrega fotos adicionales del evento. Las imágenes se guardarán al publicar el evento.</p>
+                    <div class="row g-3">
+                        @for ($i = 1; $i <= 4; $i++)
+                        <div class="col-6 col-md-3">
+                            <div class="galeria-slot" data-slot="{{ $i }}">
+                                <input type="file" name="galeria[]" accept="image/*" class="galeria-slot-input" style="display:none;">
+                                <div class="galeria-slot-box">
+                                    <img class="galeria-slot-preview" src="" alt="" style="display:none;">
+                                    <button type="button" class="galeria-slot-remove" style="display:none;" title="Quitar">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                    <div class="galeria-slot-placeholder">
+                                        <i class="bi bi-plus-lg"></i>
+                                        <span>Foto {{ $i }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endfor
                     </div>
-                    <div id="galeria-preview" class="d-flex flex-wrap gap-2 mt-3"></div>
                 </div>
             </div>
 
@@ -143,8 +154,55 @@
 </form>
 
 <style>
-    .galeria-drop:hover { border-color: var(--primary) !important; }
     #imagen-drop:hover  { border-color: var(--primary) !important; }
+
+    .galeria-slot-box {
+        position: relative;
+        aspect-ratio: 1/1;
+        border: 1px dashed var(--input-border);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color .15s ease;
+    }
+    .galeria-slot-box:hover { border-color: var(--primary); }
+    .galeria-slot-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        inset: 0;
+    }
+    .galeria-slot-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+    }
+    .galeria-slot-placeholder i { font-size: 1.1rem; }
+    .galeria-slot-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: none;
+        background: rgba(220,38,38,0.85);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        cursor: pointer;
+        z-index: 2;
+    }
 </style>
 @endsection
 
@@ -163,18 +221,36 @@ document.getElementById('imagen-input').addEventListener('change', function () {
     reader.readAsDataURL(file);
 });
 
-document.getElementById('galeria-input').addEventListener('change', function () {
-    const container = document.getElementById('galeria-preview');
-    container.innerHTML = '';
-    Array.from(this.files).forEach(file => {
+// Slots individuales de galería (máx. 4)
+document.querySelectorAll('.galeria-slot').forEach(slot => {
+    const input       = slot.querySelector('.galeria-slot-input');
+    const box          = slot.querySelector('.galeria-slot-box');
+    const preview      = slot.querySelector('.galeria-slot-preview');
+    const placeholder  = slot.querySelector('.galeria-slot-placeholder');
+    const removeBtn    = slot.querySelector('.galeria-slot-remove');
+
+    box.addEventListener('click', () => input.click());
+
+    input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = e => {
-            const div = document.createElement('div');
-            div.style.cssText = 'width:70px;height:70px;border-radius:8px;overflow:hidden;border:1px solid var(--card-border);';
-            div.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
-            container.appendChild(div);
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+            removeBtn.style.display = 'flex';
         };
         reader.readAsDataURL(file);
+    });
+
+    removeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        input.value = '';
+        preview.src = '';
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
+        removeBtn.style.display = 'none';
     });
 });
 

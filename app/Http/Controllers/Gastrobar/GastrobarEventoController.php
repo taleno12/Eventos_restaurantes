@@ -67,6 +67,7 @@ class GastrobarEventoController extends Controller
             'precio'       => 'required|numeric|min:0',
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
+            'galeria'      => 'nullable|array|max:4',
             'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -141,6 +142,7 @@ class GastrobarEventoController extends Controller
             'precio'       => 'required|numeric|min:0',
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
+            'galeria'      => 'nullable|array|max:4',
             'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 

@@ -74,6 +74,7 @@ class RestauranteEventoController extends Controller
             'precio'       => 'required|numeric|min:0',
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
+            'galeria'      => 'nullable|array|max:4',
             'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -102,7 +103,7 @@ class RestauranteEventoController extends Controller
 
         if ($datos['visible_publico']) {
             $this->fcm->enviar(
-                '📅 Nuevo evento',
+                ' Nuevo evento',
                 "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
             );
         }
@@ -138,6 +139,7 @@ class RestauranteEventoController extends Controller
             'precio'       => 'required|numeric|min:0',
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
+            'galeria'      => 'nullable|array|max:4',
             'galeria.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -189,7 +191,7 @@ class RestauranteEventoController extends Controller
 
             // ✅ NUEVO: notificar al volver a mostrarlo
             $this->fcm->enviar(
-                '📅 Evento disponible',
+                ' Evento disponible',
                 "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
             );
 

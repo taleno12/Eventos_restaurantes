@@ -336,13 +336,23 @@ class EmpleoController extends Controller
 
         $empleo = Empleo::create($validated);
 
+<<<<<<< HEAD
         $this->enviarNotificacionFCM(
             'Nueva oferta de empleo',
             "¡{$empleo->titulo} está disponible en GastroNicaragua!"
         );
+=======
+        //  Solo notificar si la oferta quedó activa
+        if ($empleo->activo) {
+            $this->enviarNotificacionFCM(
+                ' Nueva oferta de empleo',
+                "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+            );
+        }
+>>>>>>> bd6631cc8fc4cecf1bc276f18a8798d168384496
 
         return redirect()->route('admin.empleos.index')
-            ->with('success', '✅ Oferta publicada exitosamente.');
+            ->with('success', ' Oferta publicada exitosamente.');
     }
 
     public function adminShow(Empleo $empleo)
@@ -384,7 +394,18 @@ class EmpleoController extends Controller
             $validated['gastrobar_id'] = null;
         }
 
+        // ✅ Guardamos el estado anterior para detectar la transición
+        $estabaActivo = $empleo->activo;
+
         $empleo->update($validated);
+
+        // ✅ NUEVO: notificar solo cuando pasa de inactivo a activo
+        if (!$estabaActivo && $empleo->activo) {
+            $this->enviarNotificacionFCM(
+                ' Oferta disponible',
+                "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+            );
+        }
 
         return redirect()->route('admin.empleos.index')
             ->with('success', '✅ Oferta actualizada correctamente.');
@@ -394,6 +415,6 @@ class EmpleoController extends Controller
     {
         $empleo->delete();
         return redirect()->route('admin.empleos.index')
-            ->with('success', '🗑️ Oferta eliminada.');
+            ->with('success', ' Oferta eliminada.');
     }
 }

@@ -197,9 +197,18 @@
 
                             {{-- Cliente --}}
                             <td class="py-3">
-                                <span class="fw-semibold d-block"
-                                    style="font-size:0.875rem;color:var(--text) !important;">{{ $pedido->user->name
-                                    }}</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold d-block"
+                                        style="font-size:0.875rem;color:var(--text) !important;">{{ $pedido->user->name
+                                        }}</span>
+                                    @if($pedido->user->telefono)
+                                    <a href="tel:{{ $pedido->user->telefono }}" onclick="event.stopPropagation()"
+                                        title="Llamar a {{ $pedido->user->telefono }}"
+                                        style="color:#2563eb;font-size:0.9rem;">
+                                        <i class="bi bi-telephone-fill"></i>
+                                    </a>
+                                    @endif
+                                </div>
                                 @if($pedido->notas)
                                 <small class="d-block" style="font-size:0.72rem;color:var(--muted) !important;">
                                     <i class="bi bi-sticky text-warning me-1"></i>{{ Str::limit($pedido->notas, 40) }}
@@ -342,6 +351,7 @@
     "{{ $pedido->id }}": {
         id: {{ $pedido->id }},
         cliente: @json($pedido->user->name),
+        telefono: @json($pedido->user->telefono),
         tipo: @json($pedido->tipo),
         direccion_entrega: @json($pedido->direccion_entrega),
         estado: @json($pedido->estado),
@@ -423,12 +433,6 @@
         color: var(--text);
     }
 
-    .item-opciones {
-        font-size: 12px;
-        color: var(--primary);
-        margin-top: 3px;
-    }
-
     .item-precio {
         font-size: 13px;
         font-weight: 700;
@@ -443,6 +447,83 @@
         padding: 2px 8px;
         font-size: 12px;
         font-weight: 800;
+    }
+
+    /* ── Sección "Opciones del plato" dentro del detalle del pedido ── */
+    .opciones-seccion {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed var(--card-border);
+    }
+
+    .opciones-titulo {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin-bottom: 6px;
+    }
+
+    .opcion-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+    }
+
+    .opcion-label {
+        font-weight: 800;
+        color: var(--muted);
+        background: var(--card-bg);
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+        border: 1px solid var(--card-border);
+    }
+
+    .opcion-valores {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .opcion-valor {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 3px 9px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .opcion-extra {
+        font-size: 10px;
+        font-weight: 800;
+        color: #16a34a;
+        background: rgba(34, 197, 94, 0.15);
+        padding: 1px 6px;
+        border-radius: 6px;
+        margin-left: 5px;
+    }
+
+    .opcion-nota-libre {
+        font-size: 12px;
+        color: var(--muted);
+        font-style: italic;
+        margin-top: 6px;
+    }
+
+    /* ── Sección "Contactar al cliente" dentro del modal ── */
+    .contacto-cliente-box {
+        background: rgba(37, 99, 235, 0.08);
+        border: 1px solid rgba(37, 99, 235, 0.2);
     }
 </style>
 
@@ -628,6 +709,59 @@
             .catch(() => alert('Error al eliminar el pedido. Inténtalo de nuevo.'));
     });
 
+    // Convierte el texto plano guardado en "notas" del item (ej:
+    // "asda: sasa (+C$ 230.00), sasa (+C$ 23.00), sas (+C$ 23.00)" o
+    // "asda: sasa · sin cebolla") en una sección visual rotulada "OPCIONES DEL
+    // PLATO", con cada opción como etiqueta y cada valor elegido como chip.
+    // Las notas libres del cliente (texto sin "Opcion: " delante) se muestran
+    // aparte, en cursiva, para no confundirlas con las opciones del menú.
+    function formatOpcionesHtml(opcionesStr) {
+        if (!opcionesStr) return '';
+
+        const partes = opcionesStr.split(' · ');
+        const filasOpciones = [];
+        const notasLibres = [];
+
+        partes.forEach(parte => {
+            const sepIndex = parte.indexOf(': ');
+            if (sepIndex > -1) {
+                const label = parte.substring(0, sepIndex);
+                const valoresStr = parte.substring(sepIndex + 2);
+                const valoresHtml = valoresStr.split(', ').map(v => {
+                    const match = v.match(/^(.*?)\s*\(\+C\$\s*([\d,.]+)\)$/);
+                    if (match) {
+                        return `<span class="opcion-valor">${match[1]}<span class="opcion-extra">+C$ ${match[2]}</span></span>`;
+                    }
+                    return `<span class="opcion-valor">${v}</span>`;
+                }).join('');
+
+                filasOpciones.push(`
+                    <div class="opcion-row">
+                        <span class="opcion-label">${label}</span>
+                        <div class="opcion-valores">${valoresHtml}</div>
+                    </div>`);
+            } else {
+                notasLibres.push(parte);
+            }
+        });
+
+        let html = '';
+
+        if (filasOpciones.length > 0) {
+            html += `
+            <div class="opciones-seccion">
+                <div class="opciones-titulo"><i class="bi bi-sliders me-1"></i>Opciones del plato</div>
+                ${filasOpciones.join('')}
+            </div>`;
+        }
+
+        if (notasLibres.length > 0) {
+            html += `<div class="opcion-nota-libre"><i class="bi bi-chat-left-text me-1"></i>${notasLibres.join(' · ')}</div>`;
+        }
+
+        return html;
+    }
+
     // ── Modal detalle ──
     function verDetalle(id) {
         const p = window.__pedidos[id];
@@ -648,17 +782,44 @@
         let itemsHtml = '';
         p.items.forEach(item => {
             itemsHtml += `
-        <div class="item-detalle-row d-flex align-items-start justify-content-between gap-3">
-            <div style="flex:1;min-width:0;">
-                <div class="d-flex align-items-center gap-2 mb-1">
-                    <span class="item-cantidad-badge">${item.cantidad}x</span>
-                    <span class="item-nombre">${item.nombre}</span>
+        <div class="item-detalle-row">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+                <div style="flex:1;min-width:0;">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="item-cantidad-badge">${item.cantidad}x</span>
+                        <span class="item-nombre">${item.nombre}</span>
+                    </div>
                 </div>
-                ${item.opciones ? `<div class="item-opciones"><i class="bi bi-sliders me-1"></i>${item.opciones}</div>` : ''}
+                <div class="item-precio">C$ ${Number(item.subtotal).toLocaleString()}</div>
             </div>
-            <div class="item-precio">C$ ${Number(item.subtotal).toLocaleString()}</div>
+            ${item.opciones ? formatOpcionesHtml(item.opciones) : ''}
         </div>`;
         });
+
+        // ── Contactar al cliente (teléfono / WhatsApp) ──
+        let contactoHtml = '';
+        if (p.telefono) {
+            const telLimpio = p.telefono.replace(/\D/g, '');
+            contactoHtml = `
+        <div class="mt-3 p-3 rounded-3 contacto-cliente-box d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <div class="fw-bold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#2563eb;">
+                    <i class="bi bi-telephone-fill me-1"></i> Contactar al cliente
+                </div>
+                <div style="font-size:14px;font-weight:600;color:var(--text);">${p.telefono}</div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="tel:${p.telefono}" class="btn btn-sm rounded-pill px-3"
+                   style="background:#2563eb;color:white;font-size:12px;font-weight:700;">
+                    <i class="bi bi-telephone-fill me-1"></i> Llamar
+                </a>
+                <a href="https://wa.me/505${telLimpio}" target="_blank" rel="noopener" class="btn btn-sm rounded-pill px-3"
+                   style="background:#25D366;color:white;font-size:12px;font-weight:700;">
+                    <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                </a>
+            </div>
+        </div>`;
+        }
 
         let direccionHtml = '';
         if (p.tipo === 'envio' && p.direccion_entrega) {
@@ -688,7 +849,7 @@
             <span class="fw-black" style="font-size:1.1rem;color:var(--primary);">C$ ${Number(p.total).toLocaleString()}</span>
         </div>`;
 
-        document.getElementById('modal-body').innerHTML = itemsHtml + direccionHtml + notasHtml + totalHtml;
+        document.getElementById('modal-body').innerHTML = itemsHtml + contactoHtml + direccionHtml + notasHtml + totalHtml;
 
         new bootstrap.Modal(document.getElementById('modalDetalle')).show();
     }

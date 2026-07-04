@@ -102,7 +102,7 @@ class RestauranteEventoController extends Controller
 
         if ($datos['visible_publico']) {
             $this->fcm->enviar(
-                '📅 Nuevo evento',
+                'Nuevo evento',
                 "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
             );
         }
@@ -189,7 +189,7 @@ class RestauranteEventoController extends Controller
 
             // ✅ NUEVO: notificar al volver a mostrarlo
             $this->fcm->enviar(
-                '📅 Evento disponible',
+                'Evento disponible',
                 "¡{$evento->titulo} ya está disponible en {$restaurante->nombre}!"
             );
 

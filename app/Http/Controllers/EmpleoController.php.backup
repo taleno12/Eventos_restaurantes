@@ -337,7 +337,7 @@ class EmpleoController extends Controller
         $empleo = Empleo::create($validated);
 
         $this->enviarNotificacionFCM(
-            'Nueva oferta de empleo',
+            '💼 Nueva oferta de empleo',
             "¡{$empleo->titulo} está disponible en GastroNicaragua!"
         );
 

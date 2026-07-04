@@ -62,7 +62,7 @@ class RestauranteEmpleoController extends Controller
 
         if ($empleo->activo) {
             $this->fcm->enviar(
-                '💼 Nueva oferta de empleo',
+                'Nueva oferta de empleo',
                 "¡{$empleo->titulo} está disponible en {$restaurante->nombre}!"
             );
         }
@@ -106,7 +106,7 @@ class RestauranteEmpleoController extends Controller
         // ✅ NUEVO: notificar solo cuando pasa de inactivo a activo
         if (!$estabaActivo && $empleo->activo) {
             $this->fcm->enviar(
-                '💼 Oferta disponible',
+                'Oferta disponible',
                 "¡{$empleo->titulo} está disponible en {$restaurante->nombre}!"
             );
         }

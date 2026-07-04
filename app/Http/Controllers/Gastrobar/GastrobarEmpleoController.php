@@ -69,10 +69,13 @@ class GastrobarEmpleoController extends Controller
             'gastrobar_id'    => $gastrobar->id,
         ]);
 
-        $this->fcm->enviar(
-            '💼 Nueva oferta de empleo',
-            "¡{$empleo->titulo} está disponible en {$gastrobar->nombre}!"
-        );
+        // Solo notificar si la oferta quedo activa
+        if ($empleo->activo) {
+            $this->fcm->enviar(
+                'Nueva oferta de empleo',
+                "¡{$empleo->titulo} está disponible en {$gastrobar->nombre}!"
+            );
+        }
 
         return redirect()->route('gastrobar.empleos.index')
             ->with('success', '¡Oferta publicada exitosamente!');
@@ -110,6 +113,9 @@ class GastrobarEmpleoController extends Controller
             'activo'        => 'boolean',
         ]);
 
+        // Guardamos el estado anterior para detectar la transicion
+        $estabaActivo = $empleo->activo;
+
         $empleo->update([
             'titulo'        => $request->titulo,
             'descripcion'   => $request->descripcion,
@@ -120,6 +126,14 @@ class GastrobarEmpleoController extends Controller
             'fecha_limite'  => $request->fecha_limite,
             'activo'        => $request->boolean('activo'),
         ]);
+
+        // Notificar solo cuando pasa de inactivo a activo
+        if (!$estabaActivo && $empleo->activo) {
+            $this->fcm->enviar(
+                'Oferta disponible',
+                "¡{$empleo->titulo} está disponible en {$gastrobar->nombre}!"
+            );
+        }
 
         return redirect()->route('gastrobar.empleos.index')
             ->with('success', 'Oferta actualizada correctamente.');

@@ -9,7 +9,7 @@
             <div class="page-title">Estadísticas</div>
             <div class="page-sub">Actividad de {{ $gastrobar->nombre }}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--card-border);border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;color:var(--muted);">
+        <div style="display:flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--card-border);border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;color:var(--muted);">
             <i class="bi bi-calendar3" style="color:var(--primary);"></i>
             {{ now()->subDays(30)->format('d M') }} — {{ now()->format('d M, Y') }}
         </div>
@@ -51,7 +51,7 @@
         <div class="card-body">
             <div class="empty-state">
                 <i class="bi bi-bar-chart" style="font-size:40px;display:block;margin-bottom:12px;opacity:0.25;"></i>
-                <p style="font-size:14px;font-weight:700;margin-bottom:6px;">Sin datos aún</p>
+                <p style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);">Sin datos aún</p>
                 <p style="font-size:13px;color:var(--muted);">Cuando recibas pedidos completados, aquí verás qué platos se venden más.</p>
             </div>
         </div>
@@ -110,12 +110,12 @@
                         </td>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
-                                <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:#f5f6fa;flex-shrink:0;">
+                                <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:rgba(148,163,184,0.15);flex-shrink:0;">
                                     @if($plato->imagen)
                                         <img src="{{ asset('storage/'.$plato->imagen) }}" style="width:100%;height:100%;object-fit:cover;">
                                     @else
                                         <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-egg-fried" style="color:#c4bdb8;font-size:14px;"></i>
+                                            <i class="bi bi-egg-fried" style="color:var(--muted);font-size:14px;"></i>
                                         </div>
                                     @endif
                                 </div>
@@ -133,8 +133,8 @@
                         </td>
                         <td style="text-align:right;">
                             <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
-                                <div style="width:80px;height:6px;background:#f0f1f4;border-radius:999px;overflow:hidden;">
-                                    <div style="height:100%;width:{{ $porcentaje }}%;background:#2563eb;border-radius:999px;transition:width 1s ease;"></div>
+                                <div style="width:80px;height:6px;background:rgba(148,163,184,0.2);border-radius:999px;overflow:hidden;">
+                                    <div style="height:100%;width:{{ $porcentaje }}%;background:var(--primary);border-radius:999px;transition:width 1s ease;"></div>
                                 </div>
                                 <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:36px;">{{ $porcentaje }}%</span>
                             </div>
@@ -163,6 +163,12 @@ const colores = [
     '#0891b2','#ca8a04','#dc2626','#059669','#4f46e5'
 ];
 
+// Leemos las variables CSS del panel para que los gráficos respeten el modo oscuro/claro
+const estilos     = getComputedStyle(document.documentElement);
+const colorTexto  = estilos.getPropertyValue('--text').trim()  || '#1a1d23';
+const colorMuted  = estilos.getPropertyValue('--muted').trim() || '#8b92a5';
+const colorGrid   = estilos.getPropertyValue('--card-border').trim() || '#f0f1f4';
+
 new Chart(document.getElementById('chart-barras'), {
     type: 'bar',
     data: {
@@ -185,12 +191,12 @@ new Chart(document.getElementById('chart-barras'), {
         },
         scales: {
             x: {
-                grid: { color: '#f0f1f4' },
-                ticks: { color: '#8b92a5', font: { size: 11, weight: '600' } }
+                grid: { color: colorGrid },
+                ticks: { color: colorMuted, font: { size: 11, weight: '600' } }
             },
             y: {
                 grid: { display: false },
-                ticks: { color: '#1a1d23', font: { size: 12, weight: '700' } }
+                ticks: { color: colorTexto, font: { size: 12, weight: '700' } }
             }
         }
     }
@@ -204,7 +210,7 @@ new Chart(document.getElementById('chart-dona'), {
             data: vendidos,
             backgroundColor: colores.slice(0, labels.length),
             borderWidth: 2,
-            borderColor: '#ffffff',
+            borderColor: 'transparent',
             hoverOffset: 8,
         }]
     },
@@ -216,7 +222,7 @@ new Chart(document.getElementById('chart-dona'), {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: '#5a6175',
+                    color: colorMuted,
                     font: { size: 11, weight: '600' },
                     padding: 14,
                     usePointStyle: true

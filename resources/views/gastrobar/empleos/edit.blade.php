@@ -45,7 +45,7 @@
                     </div>
                     <div>
                         <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
-                            Requisitos <span class="text-muted fw-normal">(opcional)</span>
+                            Requisitos <span class="fw-normal" style="color:var(--muted);">(opcional)</span>
                         </label>
                         <textarea name="requisitos" class="form-control" rows="3"
                                   placeholder="Experiencia mínima, habilidades...">{{ old('requisitos', $empleo->requisitos) }}</textarea>
@@ -109,7 +109,7 @@
                                {{ old('activo', $empleo->activo) ? 'checked' : '' }}>
                         <div>
                             <div class="fw-bold" style="font-size:13px;color:var(--text);">Oferta activa</div>
-                            <div class="text-muted" style="font-size:11px;">Visible para los candidatos</div>
+                            <div style="font-size:11px;color:var(--muted);">Visible para los candidatos</div>
                         </div>
                     </label>
                 </div>
@@ -131,7 +131,7 @@
                     <i class="bi bi-exclamation-triangle me-1"></i> Zona de peligro
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">Esta acción no se puede deshacer.</p>
+                    <p class="small mb-3" style="color:var(--muted);">Esta acción no se puede deshacer.</p>
                     <button type="submit" form="form-delete-empleo" class="btn-danger-panel w-100 justify-content-center">
                         <i class="bi bi-trash"></i> Eliminar Oferta
                     </button>

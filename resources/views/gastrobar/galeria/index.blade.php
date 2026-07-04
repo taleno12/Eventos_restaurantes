@@ -6,10 +6,10 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold" style="color:#2d3748;">
+            <h1 class="h3 mb-1 fw-bold" style="color:var(--text);">
                 <i class="bi bi-images me-2" style="color:var(--primary);"></i> Galería
             </h1>
-            <p class="text-muted mb-0 small">Fotos de {{ $gastrobar->nombre }}</p>
+            <p class="mb-0 small" style="color:var(--muted);">Fotos de {{ $gastrobar->nombre }}</p>
         </div>
     </div>
 
@@ -17,7 +17,7 @@
     <div class="panel-card mb-4">
         <div class="card-header">
             Subir nuevas fotos
-            <span class="text-muted fw-normal ms-2" style="text-transform:none;font-size:11px;">(máx. 10 a la vez)</span>
+            <span class="fw-normal ms-2" style="text-transform:none;font-size:11px;color:var(--muted);">(máx. 10 a la vez)</span>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('gastrobar.galeria.store') }}" enctype="multipart/form-data" id="form-galeria">
@@ -25,12 +25,12 @@
 
                 <label for="fotos-input" id="drop-zone"
                        class="rounded-3 text-center d-block position-relative overflow-hidden"
-                       style="border:2px dashed #e2e8f0;padding:40px;cursor:pointer;transition:border-color 0.2s,background 0.2s;">
-                    <i class="bi bi-cloud-upload d-block mb-3" style="font-size:32px;color:#a0aec0;"></i>
-                    <p class="mb-1" style="font-size:13px;color:#718096;">
+                       style="border:2px dashed var(--input-border);padding:40px;cursor:pointer;transition:border-color 0.2s,background 0.2s;">
+                    <i class="bi bi-cloud-upload d-block mb-3" style="font-size:32px;color:var(--muted);"></i>
+                    <p class="mb-1" style="font-size:13px;color:var(--muted);">
                         Arrastra fotos aquí o <span class="fw-bold" style="color:var(--primary);">haz clic para seleccionar</span>
                     </p>
-                    <p class="mb-0" style="font-size:11px;color:#a0aec0;">JPG, PNG, WEBP — máx. 3 MB por foto</p>
+                    <p class="mb-0" style="font-size:11px;color:var(--muted);">JPG, PNG, WEBP — máx. 3 MB por foto</p>
                     <input type="file" name="fotos[]" id="fotos-input" multiple accept="image/*"
                            class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                            style="cursor:pointer;">
@@ -62,7 +62,7 @@
     <div class="panel-card">
         <div class="card-header d-flex align-items-center justify-content-between">
             <span>Fotos actuales</span>
-            <span class="text-muted fw-normal" style="text-transform:none;font-size:11px;">
+            <span class="fw-normal" style="text-transform:none;font-size:11px;color:var(--muted);">
                 {{ $fotos->count() }} foto{{ $fotos->count() !== 1 ? 's' : '' }}
             </span>
         </div>
@@ -71,7 +71,7 @@
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
                 @foreach($fotos as $foto)
                 <div class="position-relative rounded-3 overflow-hidden"
-                     style="aspect-ratio:1;border:1px solid #e2e8f0;">
+                     style="aspect-ratio:1;border:1px solid var(--input-border);">
                     <img src="{{ asset('storage/'.$foto->ruta_foto) }}"
                          class="w-100 h-100"
                          style="object-fit:cover;display:block;transition:transform 0.3s;"
@@ -101,8 +101,8 @@
 </div>
 
 <style>
-    #drop-zone:hover   { border-color: var(--primary) !important; background: #f5f3ff; }
-    #drop-zone.dragover { border-color: var(--primary) !important; background: #f5f3ff; }
+    #drop-zone:hover   { border-color: var(--primary) !important; background: rgba(124,58,237,0.08); }
+    #drop-zone.dragover { border-color: var(--primary) !important; background: rgba(124,58,237,0.08); }
 </style>
 @endsection
 
@@ -138,7 +138,7 @@ function renderPreviews() {
         const reader = new FileReader();
         reader.onload = e => {
             const div = document.createElement('div');
-            div.style.cssText = 'aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;position:relative;';
+            div.style.cssText = 'aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--input-border);position:relative;';
             div.innerHTML = `
                 <img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">
                 <button type="button" data-idx="${idx}"

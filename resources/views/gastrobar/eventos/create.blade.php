@@ -90,14 +90,14 @@
             <div class="panel-card">
                 <div class="card-header">
                     <i class="bi bi-cloud-upload me-1"></i> Galería adicional
-                    <span class="text-muted fw-normal ms-1" style="text-transform:none;font-size:11px;">(opcional)</span>
+                    <span class="fw-normal ms-1" style="text-transform:none;font-size:11px;color:var(--muted);">(opcional)</span>
                 </div>
                 <div class="card-body">
                     <div class="border rounded-3 p-4 text-center position-relative galeria-drop"
                          style="border-style:dashed !important;border-color:var(--input-border);cursor:pointer;">
-                        <i class="bi bi-images d-block mb-2 text-muted fs-4"></i>
-                        <p class="small text-muted mb-1">Arrastra fotos aquí o <span style="color:var(--primary);font-weight:600;">haz clic para seleccionar</span></p>
-                        <p class="text-muted mb-0" style="font-size:11px;">JPG, PNG, WEBP — máx. 2 MB por imagen</p>
+                        <i class="bi bi-images d-block mb-2 fs-4" style="color:var(--muted);"></i>
+                        <p class="small mb-1" style="color:var(--muted);">Arrastra fotos aquí o <span style="color:var(--primary);font-weight:600;">haz clic para seleccionar</span></p>
+                        <p class="mb-0" style="font-size:11px;color:var(--muted);">JPG, PNG, WEBP — máx. 2 MB por imagen</p>
                         <input type="file" name="galeria[]" id="galeria-input" multiple accept="image/*"
                                style="position:absolute;inset:0;opacity:0;cursor:pointer;">
                     </div>
@@ -117,13 +117,13 @@
                          style="border-style:dashed !important;border-color:var(--input-border);aspect-ratio:16/9;cursor:pointer;overflow:hidden;">
                         <img id="imagen-preview" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
                         <div id="imagen-placeholder" class="text-center px-3">
-                            <i class="bi bi-cloud-upload d-block mb-2 text-muted fs-3"></i>
-                            <p class="small text-muted mb-0">Haz clic para subir<br>imagen principal</p>
+                            <i class="bi bi-cloud-upload d-block mb-2 fs-3" style="color:var(--muted);"></i>
+                            <p class="small mb-0" style="color:var(--muted);">Haz clic para subir<br>imagen principal</p>
                         </div>
                         <input type="file" name="imagen" id="imagen-input" accept="image/*" required
                                style="position:absolute;inset:0;opacity:0;cursor:pointer;">
                     </div>
-                    <p class="text-muted mb-0" style="font-size:11px;">JPG, PNG, WEBP — máx. 2 MB</p>
+                    <p class="mb-0" style="font-size:11px;color:var(--muted);">JPG, PNG, WEBP — máx. 2 MB</p>
                 </div>
             </div>
 

@@ -33,12 +33,12 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Nombre del gastrobar *</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Nombre del gastrobar *</label>
                             <input type="text" name="nombre" class="form-control"
                                    value="{{ old('nombre', $gastrobar->nombre) }}" required>
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Tipo de bar</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Tipo de bar</label>
                             <select name="tipo_bar" class="form-select">
                                 <option value="">Seleccionar tipo...</option>
                                 @foreach(['Cocktail Bar','Sports Bar','Rooftop Bar','Lounge Bar','Bar de Tapas','Bar de Vinos','Bar de Cervezas','Otro'] as $tipo)
@@ -53,13 +53,13 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Tipo de cocina</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Tipo de cocina</label>
                             <input type="text" name="tipo_cocina" class="form-control"
                                    placeholder="Ej: Fusión, Internacional, Tapas..."
                                    value="{{ old('tipo_cocina', $gastrobar->tipo_cocina) }}">
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Ambiente</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Ambiente</label>
                             <select name="ambiente" class="form-select">
                                 <option value="">Seleccionar ambiente...</option>
                                 @foreach(['Interior','Exterior','Rooftop','Mixto'] as $amb)
@@ -74,13 +74,13 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Capacidad</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Capacidad</label>
                             <input type="number" name="capacidad" class="form-control" min="1"
                                    placeholder="Ej: 80"
                                    value="{{ old('capacidad', $gastrobar->capacidad) }}">
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Correo electrónico</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Correo electrónico</label>
                             <input type="email" name="email" class="form-control"
                                    placeholder="contacto@migastrobar.com"
                                    value="{{ old('email', $gastrobar->email) }}">
@@ -88,7 +88,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">Descripción <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
+                        <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Descripción <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
                         <textarea name="descripcion" class="form-control" style="min-height:100px;"
                                   placeholder="Cuéntanos sobre tu gastrobar, tu historia, qué te hace especial...">{{ old('descripcion', $gastrobar->descripcion) }}</textarea>
                     </div>
@@ -115,7 +115,7 @@
                     @endphp
 
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">Días de atención</label>
+                        <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Días de atención</label>
                         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
                             @foreach($diasConfig as $valor => $etiqueta)
                                 <input type="checkbox"
@@ -134,12 +134,12 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Hora de apertura</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Hora de apertura</label>
                             <input type="time" name="hora_apertura" class="form-control"
                                    value="{{ old('hora_apertura', $gastrobar->hora_apertura ? substr($gastrobar->hora_apertura, 0, 5) : '') }}">
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Hora de cierre</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Hora de cierre</label>
                             <input type="time" name="hora_cierre" class="form-control"
                                    value="{{ old('hora_cierre', $gastrobar->hora_cierre ? substr($gastrobar->hora_cierre, 0, 5) : '') }}">
                         </div>
@@ -155,7 +155,7 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Departamento *</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Departamento *</label>
                             <select name="departamento_id" id="select-dep" class="form-select" required>
                                 @foreach($departamentos as $dep)
                                     <option value="{{ $dep->id }}"
@@ -166,7 +166,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">Municipio *</label>
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Municipio *</label>
                             <select name="municipio_id" id="select-mun" class="form-select" required>
                                 @foreach($municipios as $mun)
                                     <option value="{{ $mun->id }}"
@@ -179,7 +179,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">Dirección exacta <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
+                        <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Dirección exacta <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
                         <input type="text" name="direccion" id="direccion" class="form-control"
                                placeholder="Ej: Del parque central 1 cuadra al lago, edificio esquinero"
                                value="{{ old('direccion', $gastrobar->direccion) }}">
@@ -187,7 +187,7 @@
 
                     {{-- Un solo campo de coordenadas --}}
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">
+                        <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
                             Coordenadas <span style="color:var(--muted);font-weight:400;">(latitud, longitud — o haz clic en el mapa)</span>
                         </label>
                         <div style="display:flex;gap:8px;">
@@ -211,7 +211,7 @@
 
                     {{-- Mapa interactivo --}}
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">Buscar Dirección</label>
+                        <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">Buscar Dirección</label>
                         <div style="display:flex;gap:8px;margin-bottom:6px;">
                             <input type="text" id="direccion-buscar" class="form-control"
                                    placeholder="Ej: Gastrobar La Noche, Managua, Nicaragua"
@@ -242,7 +242,7 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
                                 <i class="bi bi-telephone-fill" style="color:var(--primary);"></i> Teléfono
                             </label>
                             <input type="text" name="telefono" class="form-control"
@@ -250,7 +250,7 @@
                                    value="{{ old('telefono', $gastrobar->telefono) }}">
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
                                 <i class="bi bi-whatsapp" style="color:#22c55e;"></i> WhatsApp
                             </label>
                             <input type="text" name="whatsapp" class="form-control"
@@ -260,7 +260,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label fw-semibold" style="font-size:13px;">
+                        <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
                             <i class="bi bi-instagram" style="color:#db2777;"></i> Instagram <span style="color:var(--muted);font-weight:400;">(URL completa)</span>
                         </label>
                         <input type="url" name="instagram" class="form-control"
@@ -270,7 +270,7 @@
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
                                 <i class="bi bi-facebook" style="color:#2563eb;"></i> Facebook
                             </label>
                             <input type="url" name="facebook" class="form-control"
@@ -278,8 +278,8 @@
                                    value="{{ old('facebook', $gastrobar->facebook) }}">
                         </div>
                         <div>
-                            <label class="form-label fw-semibold" style="font-size:13px;">
-                                <i class="bi bi-tiktok" style="color:#0f172a;"></i> TikTok
+                            <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
+                                <i class="bi bi-tiktok" style="color:var(--text);"></i> TikTok
                             </label>
                             <input type="url" name="tiktok" class="form-control"
                                    placeholder="https://tiktok.com/@tugastrobar"
@@ -340,7 +340,7 @@
                 <div class="card-header">Vista previa</div>
                 <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
                     <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:40px;height:40px;border-radius:10px;overflow:hidden;background:#f5f6fa;flex-shrink:0;">
+                        <div style="width:40px;height:40px;border-radius:10px;overflow:hidden;background:rgba(148,163,184,0.15);flex-shrink:0;">
                             @if($gastrobar->imagen_principal)
                                 <img src="{{ asset('storage/'.$gastrobar->imagen_principal) }}" style="width:100%;height:100%;object-fit:cover;">
                             @else
@@ -609,8 +609,8 @@ selectDep.addEventListener('change', function () {
     font-size: 12px;
     font-weight: 700;
     border: 1.5px solid var(--card-border);
-    background: #f9fafb;
-    color: #9ca3af;
+    background: rgba(148,163,184,0.15);
+    color: var(--muted);
     transition: all 0.18s;
     user-select: none;
     cursor: pointer;

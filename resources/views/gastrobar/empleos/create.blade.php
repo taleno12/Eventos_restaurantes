@@ -45,7 +45,7 @@
                     </div>
                     <div>
                         <label class="form-label fw-semibold" style="font-size:13px;color:var(--text);">
-                            Requisitos <span class="text-muted fw-normal">(opcional)</span>
+                            Requisitos <span class="fw-normal" style="color:var(--muted);">(opcional)</span>
                         </label>
                         <textarea name="requisitos" class="form-control" rows="3"
                                   placeholder="Experiencia mínima, habilidades, estudios requeridos...">{{ old('requisitos') }}</textarea>
@@ -109,7 +109,7 @@
                                {{ old('activo', '1') == '1' ? 'checked' : '' }}>
                         <div>
                             <div class="fw-bold" style="font-size:13px;color:var(--text);">Publicar activo</div>
-                            <div class="text-muted" style="font-size:11px;">Visible para los candidatos</div>
+                            <div style="font-size:11px;color:var(--muted);">Visible para los candidatos</div>
                         </div>
                     </label>
                 </div>

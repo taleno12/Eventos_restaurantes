@@ -20,7 +20,7 @@ use App\Models\SolicitudEmpleo;
 use App\Models\Reporte;
 use Illuminate\Support\Facades\DB;
 
-// ── FUNCIÓN PARA ENVIAR NOTIFICACIONES PUSH ──
+// -- FUNCION PARA ENVIAR NOTIFICACIONES PUSH --
 if (!function_exists('enviarNotificacionFCM')) {
 function enviarNotificacionFCM(string $titulo, string $cuerpo): void
 {
@@ -83,29 +83,29 @@ function base64UrlEncode(string $data): string
 }
 
 Route::get('/mensaje-prueba', function () {
-    return response()->json(['texto' => '¡Hola desde mi base de datos de Laravel!']);
+    return response()->json(['texto' => 'Hola desde mi base de datos de Laravel!']);
 });
 
-// ── DEPARTAMENTOS ──
+// -- DEPARTAMENTOS --
 Route::get('/departamentos', function () {
     return Departamento::orderBy('nombre')->get();
 });
 
-// ── MUNICIPIOS POR DEPARTAMENTO ──
+// -- MUNICIPIOS POR DEPARTAMENTO --
 Route::get('/municipios/{departamento_id}', function ($departamento_id) {
     return Municipio::where('departamento_id', $departamento_id)
         ->orderBy('nombre')
         ->get(['id', 'nombre']);
 });
 
-// ── RESTAURANTES POR MUNICIPIO ──
+// -- RESTAURANTES POR MUNICIPIO --
 Route::get('/restaurantes/por-municipio/{municipio_id}', function ($municipio_id) {
     return Restaurante::where('municipio_id', $municipio_id)
         ->orderBy('nombre')
         ->get(['id', 'nombre']);
 });
 
-// ── RESTAURANTES (todos) ──
+// -- RESTAURANTES (todos) --
 Route::get('/restaurantes', function (Request $request) {
     $query = Restaurante::where('activo', true)
         ->with('departamento')
@@ -120,7 +120,7 @@ Route::get('/restaurantes', function (Request $request) {
     return $query->get();
 });
 
-// ── RESTAURANTES CON FILTROS MANUALES ──
+// -- RESTAURANTES CON FILTROS MANUALES --
 Route::get('/restaurantes/buscar', function (Request $request) {
     $query = Restaurante::where('activo', true)
         ->with('departamento')
@@ -143,7 +143,7 @@ Route::get('/restaurantes/buscar', function (Request $request) {
     return $query->orderBy('nombre')->paginate(12);
 });
 
-// ── DETALLE DE UN RESTAURANTE ──
+// -- DETALLE DE UN RESTAURANTE --
 Route::get('/restaurantes/{id}', function ($id) {
     return Restaurante::with([
         'departamento',
@@ -153,7 +153,7 @@ Route::get('/restaurantes/{id}', function ($id) {
     ])->findOrFail($id);
 });
 
-// ── MENÚ DE UN RESTAURANTE (con opciones y categoría) ──
+// -- MENU DE UN RESTAURANTE (con opciones y categoria) --
 Route::get('/restaurantes/{id}/platos', function ($id) {
     $platos = Plato::where('restaurante_id', $id)
         ->where('activo', true)
@@ -165,7 +165,7 @@ Route::get('/restaurantes/{id}/platos', function ($id) {
     return response()->json($platos);
 });
 
-// ── CREAR PEDIDO RESTAURANTE (API) ──
+// -- CREAR PEDIDO RESTAURANTE (API) --
 Route::post('/restaurantes/{id}/pedidos', function (Request $request, $id) {
     $request->validate([
         'items'             => 'required|array|min:1',
@@ -189,7 +189,7 @@ Route::post('/restaurantes/{id}/pedidos', function (Request $request, $id) {
             ->first();
 
         if (!$plato) {
-            return response()->json(['message' => 'Uno de los platos no está disponible.'], 422);
+            return response()->json(['message' => 'Uno de los platos no esta disponible.'], 422);
         }
 
         $subtotal = $plato->precio * $item['cantidad'];
@@ -223,12 +223,12 @@ Route::post('/restaurantes/{id}/pedidos', function (Request $request, $id) {
     });
 
     return response()->json([
-        'message' => '¡Tu pedido fue enviado! El restaurante lo confirmará en breve.',
+        'message' => 'Tu pedido fue enviado! El restaurante lo confirmara en breve.',
         'pedido'  => $pedido->load('items.plato'),
     ], 201);
 })->middleware('auth:sanctum');
 
-// ── MENÚ DE UN GASTROBAR (con opciones y categoría) ──
+// -- MENU DE UN GASTROBAR (con opciones y categoria) --
 Route::get('/gastrobares/{id}/platos', function ($id) {
     $platos = Plato::where('gastrobar_id', $id)
         ->where('activo', true)
@@ -257,7 +257,7 @@ Route::get('/gastrobares/{id}/platos', function ($id) {
     return response()->json($platos);
 });
 
-// ── CREAR PEDIDO GASTROBAR (API) ──
+// -- CREAR PEDIDO GASTROBAR (API) --
 Route::post('/gastrobares/{id}/pedidos', function (Request $request, $id) {
     $request->validate([
         'items'             => 'required|array|min:1',
@@ -281,7 +281,7 @@ Route::post('/gastrobares/{id}/pedidos', function (Request $request, $id) {
             ->first();
 
         if (!$plato) {
-            return response()->json(['message' => 'Uno de los platos no está disponible.'], 422);
+            return response()->json(['message' => 'Uno de los platos no esta disponible.'], 422);
         }
 
         $subtotal = $plato->precio * $item['cantidad'];
@@ -315,12 +315,12 @@ Route::post('/gastrobares/{id}/pedidos', function (Request $request, $id) {
     });
 
     return response()->json([
-        'message' => '¡Tu pedido fue enviado! El gastrobar lo confirmará en breve.',
+        'message' => 'Tu pedido fue enviado! El gastrobar lo confirmara en breve.',
         'pedido'  => $pedido->load('items.plato'),
     ], 201);
 })->middleware('auth:sanctum');
 
-// ── MIS PEDIDOS DE RESTAURANTE (API) ──
+// -- MIS PEDIDOS DE RESTAURANTE (API) --
 Route::get('/pedidos/mis', function (Request $request) {
     $pedidos = Pedido::where('user_id', $request->user()->id)
         ->with(['restaurante', 'items.plato'])
@@ -330,7 +330,7 @@ Route::get('/pedidos/mis', function (Request $request) {
     return response()->json($pedidos);
 })->middleware('auth:sanctum');
 
-// ── MIS PEDIDOS DE GASTROBAR (API) ──
+// -- MIS PEDIDOS DE GASTROBAR (API) --
 Route::get('/pedidos-gastrobar/mis', function (Request $request) {
     $pedidos = PedidoGastrobar::where('user_id', $request->user()->id)
         ->with(['gastrobar', 'items.plato'])
@@ -340,7 +340,7 @@ Route::get('/pedidos-gastrobar/mis', function (Request $request) {
     return response()->json($pedidos);
 })->middleware('auth:sanctum');
 
-// ── ELIMINAR PEDIDO RESTAURANTE (cancelado o entregado) ──
+// -- ELIMINAR PEDIDO RESTAURANTE (cancelado o entregado) --
 Route::delete('/pedidos/{id}', function (Request $request, $id) {
     $pedido = Pedido::where('id', $id)
         ->where('user_id', $request->user()->id)
@@ -360,7 +360,7 @@ Route::delete('/pedidos/{id}', function (Request $request, $id) {
     return response()->json(['message' => 'Pedido eliminado correctamente.']);
 })->middleware('auth:sanctum');
 
-// ── ELIMINAR PEDIDO GASTROBAR (cancelado o entregado) ──
+// -- ELIMINAR PEDIDO GASTROBAR (cancelado o entregado) --
 Route::delete('/pedidos-gastrobar/{id}', function (Request $request, $id) {
     $pedido = PedidoGastrobar::where('id', $id)
         ->where('user_id', $request->user()->id)
@@ -380,7 +380,7 @@ Route::delete('/pedidos-gastrobar/{id}', function (Request $request, $id) {
     return response()->json(['message' => 'Pedido eliminado correctamente.']);
 })->middleware('auth:sanctum');
 
-// ── ENVIAR RESEÑA ──
+// -- ENVIAR RESENA --
 Route::post('/restaurantes/{id}/reviews', function (Request $request, $id) {
     $request->validate([
         'rating' => 'required|integer|min:1|max:5',
@@ -394,7 +394,7 @@ Route::post('/restaurantes/{id}/reviews', function (Request $request, $id) {
         ->exists();
 
     if ($existe) {
-        return response()->json(['message' => 'Ya dejaste una reseña.'], 422);
+        return response()->json(['message' => 'Ya dejaste una resena.'], 422);
     }
 
     $restaurante->reviews()->create([
@@ -404,10 +404,10 @@ Route::post('/restaurantes/{id}/reviews', function (Request $request, $id) {
         'restaurante_id' => $id,
     ]);
 
-    return response()->json(['message' => '¡Reseña publicada!']);
+    return response()->json(['message' => 'Resena publicada!']);
 })->middleware('auth:sanctum');
 
-// ── GASTROBARES (todos) ──
+// -- GASTROBARES (todos) --
 Route::get('/gastrobares', function (Request $request) {
     $query = Gastrobar::where('activo', true)
         ->with('departamento')
@@ -422,7 +422,7 @@ Route::get('/gastrobares', function (Request $request) {
     return $query->get();
 });
 
-// ── GASTROBARES CON FILTROS MANUALES ──
+// -- GASTROBARES CON FILTROS MANUALES --
 Route::get('/gastrobares/buscar', function (Request $request) {
     $query = Gastrobar::where('activo', true)
         ->with(['departamento'])
@@ -448,7 +448,7 @@ Route::get('/gastrobares/buscar', function (Request $request) {
     return $query->latest()->paginate(12);
 });
 
-// ── DETALLE DE UN GASTROBAR ──
+// -- DETALLE DE UN GASTROBAR --
 Route::get('/gastrobares/{id}', function ($id) {
     return Gastrobar::with([
         'departamento',
@@ -457,7 +457,7 @@ Route::get('/gastrobares/{id}', function ($id) {
     ])->findOrFail($id);
 });
 
-// ── ENVIAR RESEÑA GASTROBAR ──
+// -- ENVIAR RESENA GASTROBAR --
 Route::post('/gastrobares/{id}/reviews', function (Request $request, $id) {
     $request->validate([
         'rating' => 'required|integer|min:1|max:5',
@@ -471,7 +471,7 @@ Route::post('/gastrobares/{id}/reviews', function (Request $request, $id) {
         ->exists();
 
     if ($existe) {
-        return response()->json(['message' => 'Ya dejaste una reseña.'], 422);
+        return response()->json(['message' => 'Ya dejaste una resena.'], 422);
     }
 
     $gastrobar->reviews()->create([
@@ -481,18 +481,18 @@ Route::post('/gastrobares/{id}/reviews', function (Request $request, $id) {
         'gastrobar_id' => $id,
     ]);
 
-    return response()->json(['message' => '¡Reseña publicada!']);
+    return response()->json(['message' => 'Resena publicada!']);
 })->middleware('auth:sanctum');
 
-// ════════════════════════════════════════════════════════════
-// ── EVENTOS PÚBLICOS (con filtro visible_publico) ═══════════
-// ════════════════════════════════════════════════════════════
+// ============================================================
+// -- EVENTOS PUBLICOS (con filtro visible_publico) ==========
+// ============================================================
 
-// ── EVENTOS DESTACADOS ──
+// -- EVENTOS DESTACADOS --
 Route::get('/eventos/destacados', function (Request $request) {
     $query = Evento::with(['restaurante', 'gastrobar', 'departamento'])
         ->where('is_destacado', true)
-        ->where('visible_publico', true)  // ✅ SOLO VISIBLES
+        ->where('visible_publico', true)  // solo visibles
         ->where('fecha_evento', '>=', now())
         ->where(function ($q) {
             $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
@@ -507,10 +507,10 @@ Route::get('/eventos/destacados', function (Request $request) {
     return $query->limit(5)->get();
 });
 
-// ── EVENTOS CON FILTROS MANUALES ──
+// -- EVENTOS CON FILTROS MANUALES --
 Route::get('/eventos', function (Request $request) {
     $query = Evento::with(['restaurante', 'gastrobar', 'departamento'])
-        ->where('visible_publico', true)  // ✅ SOLO VISIBLES
+        ->where('visible_publico', true)  // solo visibles
         ->where('fecha_evento', '>=', now())
         ->where(function ($q) {
             $q->whereHas('restaurante', fn($r) => $r->where('activo', true))
@@ -545,7 +545,7 @@ Route::get('/eventos', function (Request $request) {
     return $query->orderBy('fecha_evento')->paginate(10);
 });
 
-// ── DETALLE DE UN EVENTO ──
+// -- DETALLE DE UN EVENTO --
 Route::get('/eventos/{id}', function ($id) {
     $evento = Evento::with([
         'restaurante',
@@ -554,12 +554,12 @@ Route::get('/eventos/{id}', function ($id) {
         'municipio',
     ])->findOrFail($id);
 
-    // ✅ Verificar que el evento sea visible
+    // Verificar que el evento sea visible
     if (!$evento->visible_publico) {
         return response()->json(['message' => 'Evento no disponible.'], 404);
     }
 
-    // ✅ Verificar que el establecimiento esté activo
+    // Verificar que el establecimiento este activo
     $entidadActiva = ($evento->restaurante && $evento->restaurante->activo)
                   || ($evento->gastrobar && $evento->gastrobar->activo);
 
@@ -570,7 +570,7 @@ Route::get('/eventos/{id}', function ($id) {
     return response()->json($evento);
 });
 
-// ── EMPLEOS CON FILTROS ──
+// -- EMPLEOS CON FILTROS --
 Route::get('/empleos', function (Request $request) {
     $query = Empleo::with(['restaurante', 'gastrobar', 'departamento'])
         ->where('activo', true);
@@ -602,7 +602,7 @@ Route::get('/empleos', function (Request $request) {
     return $query->orderByDesc('created_at')->paginate(9);
 });
 
-// ── DETALLE DE UN EMPLEO ──
+// -- DETALLE DE UN EMPLEO --
 Route::get('/empleos/{id}', function ($id) {
     return Empleo::with([
         'restaurante',
@@ -612,12 +612,12 @@ Route::get('/empleos/{id}', function ($id) {
     ])->findOrFail($id);
 });
 
-// ── POSTULAR A UN EMPLEO (API) ──
+// -- POSTULAR A UN EMPLEO (API) --
 Route::post('/empleos/{id}/aplicar', function (Request $request, $id) {
     $empleo = Empleo::findOrFail($id);
 
     if (!$empleo->activo) {
-        return response()->json(['message' => 'Esta vacante ya no está disponible.'], 404);
+        return response()->json(['message' => 'Esta vacante ya no esta disponible.'], 404);
     }
 
     $yaAplico = SolicitudEmpleo::where('empleo_id', $empleo->id)
@@ -643,13 +643,13 @@ Route::post('/empleos/{id}/aplicar', function (Request $request, $id) {
     ], [
         'nombre.required'    => 'El nombre es obligatorio.',
         'apellido.required'  => 'El apellido es obligatorio.',
-        'email.required'     => 'El correo electrónico es obligatorio.',
-        'email.email'        => 'Ingresa un correo válido.',
-        'telefono.required'  => 'El teléfono es obligatorio.',
+        'email.required'     => 'El correo electronico es obligatorio.',
+        'email.email'        => 'Ingresa un correo valido.',
+        'telefono.required'  => 'El telefono es obligatorio.',
         'edad.required'      => 'La edad es obligatoria.',
-        'edad.min'           => 'Debes tener al menos 18 años.',
+        'edad.min'           => 'Debes tener al menos 18 anos.',
         'municipio.required' => 'El municipio es obligatorio.',
-        'curriculum.mimes'   => 'El currículum debe ser PDF, DOC o DOCX.',
+        'curriculum.mimes'   => 'El curriculum debe ser PDF, DOC o DOCX.',
         'curriculum.max'     => 'El archivo no puede superar los 5MB.',
     ]);
 
@@ -736,18 +736,18 @@ Route::post('/empleos/{id}/aplicar', function (Request $request, $id) {
                 'candidato'
             ));
     } catch (\Exception $e) {
-        \Log::error('Error enviando correo de aplicación (API): ' . $e->getMessage());
+        \Log::error('Error enviando correo de aplicacion (API): ' . $e->getMessage());
         return response()->json([
-            'message' => '¡Tu solicitud fue enviada! (El correo de confirmación no pudo enviarse.)'
+            'message' => 'Tu solicitud fue enviada! (El correo de confirmacion no pudo enviarse.)'
         ], 201);
     }
 
     return response()->json([
-        'message' => '¡Tu solicitud fue enviada con éxito!'
+        'message' => 'Tu solicitud fue enviada con exito!'
     ], 201);
 })->middleware('auth:sanctum');
 
-// ── LOGIN ──
+// -- LOGIN --
 Route::post('/login', function (Request $request) {
     $request->validate([
         'email'    => 'required|email',
@@ -774,7 +774,7 @@ Route::post('/login', function (Request $request) {
     ]);
 });
 
-// ── REGISTER ──
+// -- REGISTER --
 Route::post('/register', function (Request $request) {
     $request->validate([
         'name'     => 'required|string|max:255',
@@ -804,7 +804,7 @@ Route::post('/register', function (Request $request) {
     ], 201);
 });
 
-// ── LOGIN CON GOOGLE ──
+// -- LOGIN CON GOOGLE --
 Route::post('/auth/google', function (Request $request) {
     $request->validate([
         'idToken' => 'required|string',
@@ -815,7 +815,7 @@ Route::post('/auth/google', function (Request $request) {
     ]);
 
     if ($response->failed() || $response->json('aud') !== env('GOOGLE_CLIENT_ID')) {
-        return response()->json(['message' => 'Token de Google inválido.'], 401);
+        return response()->json(['message' => 'Token de Google invalido.'], 401);
     }
 
     $payload = $response->json();
@@ -847,7 +847,7 @@ Route::post('/auth/google', function (Request $request) {
     ]);
 });
 
-// ── REGISTRO CON TELÉFONO (API) ──
+// -- REGISTRO CON TELEFONO (API) --
 Route::post('/register-telefono', function (Request $request) {
     $request->validate([
         'name'                => 'required|string|max:255',
@@ -883,7 +883,7 @@ Route::post('/register-telefono', function (Request $request) {
     ], 201);
 });
 
-// ── LOGIN CON TELÉFONO (API) ──
+// -- LOGIN CON TELEFONO (API) --
 Route::post('/login-telefono', function (Request $request) {
     $request->validate([
         'telefono' => 'required|string',
@@ -893,10 +893,10 @@ Route::post('/login-telefono', function (Request $request) {
     $user = User::where('telefono', $request->telefono)->first();
 
     if (!$user || !$user->password || !Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Teléfono o contraseña incorrectos.'], 401);
+        return response()->json(['message' => 'Telefono o contrasena incorrectos.'], 401);
     }
 
-    // Verificar si el establecimiento del propietario está activo
+    // Verificar si el establecimiento del propietario esta activo
     $establecimientoActivo = true; // default para usuarios normales/admin
     if ($user->role === 'restaurante' && $user->restaurante_id) {
         $establecimientoActivo = optional(Restaurante::find($user->restaurante_id))->activo ?? false;
@@ -923,14 +923,14 @@ Route::post('/login-telefono', function (Request $request) {
     ]);
 });
 
-// ── RECUPERAR CONTRASEÑA (API) - Paso 1: buscar pregunta ──
+// -- RECUPERAR CONTRASENA (API) - Paso 1: buscar pregunta --
 Route::post('/olvide-telefono/buscar', function (Request $request) {
     $request->validate(['telefono' => 'required|string']);
 
     $user = User::where('telefono', $request->telefono)->first();
 
     if (!$user || !$user->pregunta_seguridad) {
-        return response()->json(['message' => 'No encontramos una cuenta con ese teléfono.'], 404);
+        return response()->json(['message' => 'No encontramos una cuenta con ese telefono.'], 404);
     }
 
     return response()->json([
@@ -939,7 +939,7 @@ Route::post('/olvide-telefono/buscar', function (Request $request) {
     ]);
 });
 
-// ── RECUPERAR CONTRASEÑA (API) - Paso 2: validar respuesta y cambiar password ──
+// -- RECUPERAR CONTRASENA (API) - Paso 2: validar respuesta y cambiar password --
 Route::post('/olvide-telefono/reset', function (Request $request) {
     $request->validate([
         'telefono'            => 'required|string',
@@ -955,56 +955,56 @@ Route::post('/olvide-telefono/reset', function (Request $request) {
 
     $user->update(['password' => Hash::make($request->password)]);
 
-    return response()->json(['message' => 'Contraseña actualizada correctamente.']);
+    return response()->json(['message' => 'Contrasena actualizada correctamente.']);
 });
 
-// ── NOTIFICAR NUEVO RESTAURANTE ──
+// -- NOTIFICAR NUEVO RESTAURANTE --
 Route::post('/notificar/restaurante', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
     enviarNotificacionFCM(
-        ' Nuevo restaurante',
-        "¡{$request->nombre} ya está en GastroNicaragua!"
+        'Nuevo restaurante',
+        "{$request->nombre} ya esta en GastroNicaragua!"
     );
-    return response()->json(['message' => 'Notificación enviada.']);
+    return response()->json(['message' => 'Notificacion enviada.']);
 })->middleware('auth:sanctum');
 
-// ── NOTIFICAR NUEVO EVENTO ──
+// -- NOTIFICAR NUEVO EVENTO --
 Route::post('/notificar/evento', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
     enviarNotificacionFCM(
-        ' Nuevo evento',
-        "¡{$request->nombre} ya está disponible!"
+        'Nuevo evento',
+        "{$request->nombre} ya esta disponible!"
     );
-    return response()->json(['message' => 'Notificación enviada.']);
+    return response()->json(['message' => 'Notificacion enviada.']);
 })->middleware('auth:sanctum');
 
-// ── NOTIFICAR NUEVO EMPLEO ──
+// -- NOTIFICAR NUEVO EMPLEO --
 Route::post('/notificar/empleo', function (Request $request) {
     $request->validate(['titulo' => 'required|string']);
     enviarNotificacionFCM(
-        ' Nueva oferta de empleo',
-        "¡{$request->titulo} está buscando personal!"
+        'Nueva oferta de empleo',
+        "{$request->titulo} esta buscando personal!"
     );
-    return response()->json(['message' => 'Notificación enviada.']);
+    return response()->json(['message' => 'Notificacion enviada.']);
 })->middleware('auth:sanctum');
 
-// ── NOTIFICAR NUEVO GASTROBAR ──
+// -- NOTIFICAR NUEVO GASTROBAR --
 Route::post('/notificar/gastrobar', function (Request $request) {
     $request->validate(['nombre' => 'required|string']);
     enviarNotificacionFCM(
-        ' Nuevo gastrobar',
-        "¡{$request->nombre} ya está en GastroNicaragua!"
+        'Nuevo gastrobar',
+        "{$request->nombre} ya esta en GastroNicaragua!"
     );
-    return response()->json(['message' => 'Notificación enviada.']);
+    return response()->json(['message' => 'Notificacion enviada.']);
 })->middleware('auth:sanctum');
 
-// ── LOGOUT ──
+// -- LOGOUT --
 Route::post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
-    return response()->json(['message' => 'Sesión cerrada.']);
+    return response()->json(['message' => 'Sesion cerrada.']);
 })->middleware('auth:sanctum');
 
-// ── USUARIO AUTENTICADO ──
+// -- USUARIO AUTENTICADO --
 Route::get('/me', function (Request $request) {
     $user = $request->user();
 
@@ -1031,7 +1031,7 @@ Route::get('/me', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
-// ── GUARDAR IDIOMA DEL USUARIO ──
+// -- GUARDAR IDIOMA DEL USUARIO --
 Route::put('/usuario/idioma', function (Request $request) {
     $request->validate([
         'idioma' => 'required|in:es,en',
@@ -1042,7 +1042,7 @@ Route::put('/usuario/idioma', function (Request $request) {
     return response()->json(['message' => 'Idioma actualizado.', 'idioma' => $request->idioma]);
 })->middleware('auth:sanctum');
 
-// ── GUARDAR DEPARTAMENTO DEL USUARIO ──
+// -- GUARDAR DEPARTAMENTO DEL USUARIO --
 Route::post('/usuario/departamento', function (Request $request) {
     $request->validate([
         'departamento_id' => 'required|exists:departamentos,id',
@@ -1066,7 +1066,7 @@ Route::post('/usuario/departamento', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
-// ── GUARDAR MUNICIPIO DEL USUARIO ──
+// -- GUARDAR MUNICIPIO DEL USUARIO --
 Route::post('/usuario/municipio', function (Request $request) {
     $request->validate([
         'municipio_id' => 'required|exists:municipios,id',
@@ -1089,7 +1089,7 @@ Route::post('/usuario/municipio', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
-// ── SUBIR AVATAR DEL USUARIO ──
+// -- SUBIR AVATAR DEL USUARIO --
 Route::post('/usuario/avatar', function (Request $request) {
     $request->validate([
         'avatar' => 'required|image|max:2048',
@@ -1113,7 +1113,7 @@ Route::post('/usuario/avatar', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
-// ── OBTENER PERFIL DEL USUARIO ──
+// -- OBTENER PERFIL DEL USUARIO --
 Route::get('/usuario/perfil', function (Request $request) {
     $user = $request->user();
     return response()->json([
@@ -1130,7 +1130,7 @@ Route::get('/usuario/perfil', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
-// ── ACTUALIZAR NOMBRE DEL USUARIO ──
+// -- ACTUALIZAR NOMBRE DEL USUARIO --
 Route::post('/usuario/nombre', function (Request $request) {
     $request->validate([
         'name' => 'required|string|max:255',
@@ -1144,7 +1144,7 @@ Route::post('/usuario/nombre', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
-// ── REPORTAR UN PROBLEMA (desde la app móvil) ──
+// -- REPORTAR UN PROBLEMA (desde la app movil) --
 Route::post('/reportes', function (Request $request) {
     $request->validate([
         'asunto'  => 'nullable|string|max:255',
@@ -1161,13 +1161,13 @@ Route::post('/reportes', function (Request $request) {
     return response()->json(['message' => 'Reporte enviado correctamente.']);
 })->middleware('auth:sanctum');
 
-// ════════════════════════════════════════════════════════════
-// ── GESTIÓN DEL PROPIETARIO (requiere auth:sanctum) ─────────
-// ════════════════════════════════════════════════════════════
+// ============================================================
+// -- GESTION DEL PROPIETARIO (requiere auth:sanctum) --------
+// ============================================================
 
 Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
-    // ── Función auxiliar para contar eventos visibles este mes ──
+    // -- Funcion auxiliar para contar eventos visibles este mes --
     $eventosVisiblesEsteMes = function() {
         $user = auth()->user();
         $query = Evento::where('visible_publico', true)
@@ -1182,9 +1182,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return $query->count();
     };
 
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
     // EVENTOS
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
 
     // Listar mis eventos (incluye visibles y ocultos)
     Route::get('/eventos', function (Request $request) use ($eventosVisiblesEsteMes) {
@@ -1202,7 +1202,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $eventos = $query->paginate(10);
 
-        // ✅ Agregar conteo de eventos visibles este mes
+        // Agregar conteo de eventos visibles este mes
         $visiblesEsteMes = $eventosVisiblesEsteMes();
 
         return response()->json([
@@ -1227,7 +1227,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json($evento->load(['municipio', 'departamento']));
     });
 
-    // Crear evento (con límite de visibilidad)
+    // Crear evento (con limite de visibilidad)
     Route::post('/eventos', function (Request $request) use ($eventosVisiblesEsteMes) {
         $user = $request->user();
 
@@ -1265,7 +1265,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         $datos['municipio_id'] = $request->municipio_id;
         $datos['is_destacado'] = false;
 
-        // ✅ Verificar límite de eventos visibles
+        // Verificar limite de eventos visibles
         $visiblesEsteMes = $eventosVisiblesEsteMes();
         $datos['visible_publico'] = $visiblesEsteMes < 12;
 
@@ -1275,17 +1275,17 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $evento = Evento::create($datos);
 
-        // ✅ NUEVO: notificación push, solo si el evento quedó visible al público
+        // Notificacion push, solo si el evento quedo visible al publico
         if ($datos['visible_publico']) {
             enviarNotificacionFCM(
-                '🎉 Nuevo evento',
-                "¡{$evento->titulo} ya está disponible en GastroNicaragua!"
+                'Nuevo evento',
+                "{$evento->titulo} ya esta disponible en GastroNicaragua!"
             );
         }
 
-        $mensaje = '¡Evento publicado exitosamente!';
+        $mensaje = 'Evento publicado exitosamente!';
         if (!$datos['visible_publico']) {
-            $mensaje .= ' Alcanzaste el límite de 12 eventos visibles este mes, así que este quedó guardado pero oculto del público.';
+            $mensaje .= ' Alcanzaste el limite de 12 eventos visibles este mes, asi que este quedo guardado pero oculto del publico.';
         }
 
         return response()->json([
@@ -1338,44 +1338,50 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         ]);
     });
 
-    // ✅ Toggle visibilidad de evento
+    // Toggle visibilidad de evento
+    // NOTA: usa DB::transaction + lockForUpdate para evitar que dos peticiones
+    // simultaneas (doble tap del switch) lean el mismo estado viejo y ambas
+    // terminen enviando la notificacion push duplicada.
     Route::patch('/eventos/{id}/toggle-visibilidad', function (Request $request, $id) use ($eventosVisiblesEsteMes) {
-        $user   = $request->user();
-        $evento = Evento::findOrFail($id);
+        $user = $request->user();
 
-        if ($user->role === 'restaurante' && $evento->restaurante_id !== $user->restaurante_id) {
-            return response()->json(['message' => 'No autorizado.'], 403);
-        }
-        if ($user->role === 'gastrobar' && $evento->gastrobar_id !== $user->gastrobar_id) {
-            return response()->json(['message' => 'No autorizado.'], 403);
-        }
+        $evento = DB::transaction(function () use ($id, $user, $eventosVisiblesEsteMes) {
+            $evento = Evento::where('id', $id)->lockForUpdate()->firstOrFail();
 
-        // Si está oculto y quiere mostrarlo, verificar límite
-        if (!$evento->visible_publico) {
-            $visiblesEsteMes = $eventosVisiblesEsteMes();
-
-            if ($visiblesEsteMes >= 12) {
-                return response()->json([
-                    'message' => 'Ya alcanzaste el límite de 12 eventos visibles este mes. Oculta otro evento primero, o esperá al próximo mes.'
-                ], 422);
+            if ($user->role === 'restaurante' && $evento->restaurante_id !== $user->restaurante_id) {
+                abort(403, 'No autorizado.');
             }
-        }
+            if ($user->role === 'gastrobar' && $evento->gastrobar_id !== $user->gastrobar_id) {
+                abort(403, 'No autorizado.');
+            }
 
-        $evento->visible_publico = !$evento->visible_publico;
-        $evento->save();
+            // Si esta oculto y quiere mostrarlo, verificar limite
+            if (!$evento->visible_publico) {
+                $visiblesEsteMes = $eventosVisiblesEsteMes();
 
-        // ✅ NUEVO: notificar solo cuando pasa de oculto a visible
+                if ($visiblesEsteMes >= 12) {
+                    abort(422, 'Ya alcanzaste el limite de 12 eventos visibles este mes. Oculta otro evento primero, o espera al proximo mes.');
+                }
+            }
+
+            $evento->visible_publico = !$evento->visible_publico;
+            $evento->save();
+
+            return $evento;
+        });
+
+        // Notificar solo cuando pasa de oculto a visible
         if ($evento->visible_publico) {
             enviarNotificacionFCM(
-                '🎉 Evento disponible',
-                "¡{$evento->titulo} ya está disponible en GastroNicaragua!"
+                'Evento disponible',
+                "{$evento->titulo} ya esta disponible en GastroNicaragua!"
             );
         }
 
         return response()->json([
             'message' => $evento->visible_publico
-                ? 'Evento ahora visible al público.'
-                : 'Evento oculto del público.',
+                ? 'Evento ahora visible al publico.'
+                : 'Evento oculto del publico.',
             'visible_publico' => $evento->visible_publico,
         ]);
     });
@@ -1402,9 +1408,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json(['message' => 'Evento eliminado.']);
     });
 
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
     // EMPLEOS
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
 
     // Listar mis empleos (con conteo de solicitudes nuevas para el badge)
     Route::get('/empleos', function (Request $request) {
@@ -1485,31 +1491,26 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $empleo = Empleo::create($datos);
 
-        // ✅ NUEVO: notificación push, solo si la oferta quedó activa
+        // Notificacion push, solo si la oferta quedo activa
         if ($datos['activo']) {
             enviarNotificacionFCM(
-                '💼 Nueva oferta de empleo',
-                "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+                'Nueva oferta de empleo',
+                "{$empleo->titulo} esta disponible en GastroNicaragua!"
             );
         }
 
         return response()->json([
-            'message' => '¡Oferta publicada exitosamente!',
+            'message' => 'Oferta publicada exitosamente!',
             'empleo'  => $empleo,
         ], 201);
     });
 
     // Actualizar empleo
+    // NOTA: igual que en eventos, se usa DB::transaction + lockForUpdate
+    // para evitar el mismo problema de notificaciones duplicadas si el
+    // toggle de "activo" se dispara dos veces casi al mismo tiempo.
     Route::put('/empleos/{id}', function (Request $request, $id) {
-        $user   = $request->user();
-        $empleo = Empleo::findOrFail($id);
-
-        if ($user->role === 'restaurante' && $empleo->restaurante_id !== $user->restaurante_id) {
-            return response()->json(['message' => 'No autorizado.'], 403);
-        }
-        if ($user->role === 'gastrobar' && $empleo->gastrobar_id !== $user->gastrobar_id) {
-            return response()->json(['message' => 'No autorizado.'], 403);
-        }
+        $user = $request->user();
 
         $request->validate([
             'titulo'        => 'required|string|max:255',
@@ -1522,31 +1523,47 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             'activo'        => 'nullable|boolean',
         ]);
 
-        // ✅ Guardamos el estado anterior para detectar la transición
-        $estabaActivo = $empleo->activo;
+        $resultado = DB::transaction(function () use ($request, $id, $user) {
+            $empleo = Empleo::where('id', $id)->lockForUpdate()->firstOrFail();
 
-        $empleo->update([
-            'titulo'        => $request->titulo,
-            'descripcion'   => $request->descripcion,
-            'requisitos'    => $request->requisitos,
-            'tipo_contrato' => $request->tipo_contrato,
-            'salario'       => $request->salario,
-            'municipio_id'  => $request->municipio_id,
-            'fecha_limite'  => $request->fecha_limite,
-            'activo'        => $request->boolean('activo', false),
-        ]);
+            if ($user->role === 'restaurante' && $empleo->restaurante_id !== $user->restaurante_id) {
+                abort(403, 'No autorizado.');
+            }
+            if ($user->role === 'gastrobar' && $empleo->gastrobar_id !== $user->gastrobar_id) {
+                abort(403, 'No autorizado.');
+            }
 
-        // ✅ NUEVO: notificar solo cuando pasa de inactivo a activo
-        if (!$estabaActivo && $empleo->activo) {
+            // Guardamos el estado anterior para detectar la transicion
+            $estabaActivo = $empleo->activo;
+
+            $empleo->update([
+                'titulo'        => $request->titulo,
+                'descripcion'   => $request->descripcion,
+                'requisitos'    => $request->requisitos,
+                'tipo_contrato' => $request->tipo_contrato,
+                'salario'       => $request->salario,
+                'municipio_id'  => $request->municipio_id,
+                'fecha_limite'  => $request->fecha_limite,
+                'activo'        => $request->boolean('activo', false),
+            ]);
+
+            return [
+                'empleo'        => $empleo->fresh(),
+                'paso_a_activo' => (!$estabaActivo && $empleo->activo),
+            ];
+        });
+
+        // Notificar solo cuando pasa de inactivo a activo
+        if ($resultado['paso_a_activo']) {
             enviarNotificacionFCM(
-                '💼 Oferta disponible',
-                "¡{$empleo->titulo} está disponible en GastroNicaragua!"
+                'Oferta disponible',
+                "{$resultado['empleo']->titulo} esta disponible en GastroNicaragua!"
             );
         }
 
         return response()->json([
             'message' => 'Oferta actualizada correctamente.',
-            'empleo'  => $empleo->fresh(),
+            'empleo'  => $resultado['empleo'],
         ]);
     });
 
@@ -1567,9 +1584,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json(['message' => 'Oferta eliminada.']);
     });
 
-    // ────────────────────────────────────────────────────────
-    // SOLICITUDES DE EMPLEO — gestión del propietario
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
+    // SOLICITUDES DE EMPLEO -- gestion del propietario
+    // ------------------------------------------------------------
 
     // Listar solicitudes de una vacante (y marcar 'nueva' como 'vista')
     Route::get('/empleos/{id}/solicitudes', function (Request $request, $id) {
@@ -1647,9 +1664,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json(['message' => 'Solicitud eliminada correctamente.']);
     });
 
-    // ────────────────────────────────────────────────────────
-    // MENÚ (Platos) — gestión del propietario
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
+    // MENU (Platos) -- gestion del propietario
+    // ------------------------------------------------------------
 
     // Listar mis platos
     Route::get('/menu', function (Request $request) {
@@ -1690,11 +1707,11 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         ]);
     });
 
-    // ────────────────────────────────────────────────────────
-    // PEDIDOS — gestión del propietario
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
+    // PEDIDOS -- gestion del propietario
+    // ------------------------------------------------------------
 
-    // Listar mis pedidos (restaurante o gastrobar, según el rol)
+    // Listar mis pedidos (restaurante o gastrobar, segun el rol)
     Route::get('/pedidos', function (Request $request) {
         $user = $request->user();
 
@@ -1748,7 +1765,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
                 ->where('gastrobar_id', $user->gastrobar_id)
                 ->first();
         } else {
-            return response()->json(['message' => 'Origen inválido.'], 422);
+            return response()->json(['message' => 'Origen invalido.'], 422);
         }
 
         if (!$pedido) {
@@ -1782,7 +1799,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
                 ->where('gastrobar_id', $user->gastrobar_id)
                 ->first();
         } else {
-            return response()->json(['message' => 'Origen inválido.'], 422);
+            return response()->json(['message' => 'Origen invalido.'], 422);
         }
 
         if (!$pedido) {
@@ -1795,9 +1812,9 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         return response()->json(['message' => 'Pedido cancelado y eliminado correctamente.']);
     });
 
-    // ────────────────────────────────────────────────────────
-    // MI PERFIL — restaurante o gastrobar, según el rol
-    // ────────────────────────────────────────────────────────
+    // ------------------------------------------------------------
+    // MI PERFIL -- restaurante o gastrobar, segun el rol
+    // ------------------------------------------------------------
 
     // Obtener perfil actual
     Route::get('/perfil', function (Request $request) {
@@ -1900,7 +1917,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ]);
 
         } elseif ($user->role === 'gastrobar') {
-            // ✅ CORRECCIÓN: Procesar dias_atencion si viene como JSON string
+            // Procesar dias_atencion si viene como JSON string
             if ($request->has('dias_atencion') && is_string($request->dias_atencion)) {
                 $decoded = json_decode($request->dias_atencion, true);
                 if (is_array($decoded)) {

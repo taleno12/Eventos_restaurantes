@@ -552,6 +552,7 @@ Route::get('/eventos/{id}', function ($id) {
         'gastrobar',
         'departamento',
         'municipio',
+        'imagenes',
     ])->findOrFail($id);
 
     // Verificar que el evento sea visible
@@ -1224,7 +1225,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             return response()->json(['message' => 'No autorizado.'], 403);
         }
 
-        return response()->json($evento->load(['municipio', 'departamento']));
+        return response()->json($evento->load(['municipio', 'departamento', 'imagenes']));
     });
 
     // Crear evento (con limite de visibilidad)
@@ -1242,6 +1243,8 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
             'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'galeria'      => 'nullable|array|max:4',
+            'galeria.*'    => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         if ($user->role === 'restaurante') {
@@ -1274,6 +1277,14 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         }
 
         $evento = Evento::create($datos);
+
+        // Guardar hasta 4 fotos de galeria (ademas de la imagen principal)
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $foto) {
+                $rutaGaleria = $foto->store('anuncios', 'public');
+                $evento->imagenes()->create(['ruta' => $rutaGaleria]);
+            }
+        }
 
         // Notificacion push, solo si el evento quedo visible al publico.
         // Usa el nombre real del restaurante/gastrobar, igual que el panel web.
@@ -1315,7 +1326,19 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             'fecha_evento' => 'required|date',
             'municipio_id' => 'required|exists:municipios,id',
             'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'galeria'      => 'nullable|array',
+            'galeria.*'    => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        // La galeria nueva no puede hacer que el total (existentes + nuevas) pase de 4
+        $fotosExistentes = $evento->imagenes()->count();
+        $fotosNuevas     = $request->hasFile('galeria') ? count($request->file('galeria')) : 0;
+
+        if (($fotosExistentes + $fotosNuevas) > 4) {
+            return response()->json([
+                'message' => 'Ya alcanzaste el maximo de 4 fotos en la galeria. Elimina alguna existente antes de agregar nuevas.',
+            ], 422);
+        }
 
         $datos = [
             'titulo'       => $request->titulo,
@@ -1333,10 +1356,42 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $evento->update($datos);
 
+        // Agregar fotos nuevas a la galeria (sin tocar las existentes)
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $foto) {
+                $rutaGaleria = $foto->store('anuncios', 'public');
+                $evento->imagenes()->create(['ruta' => $rutaGaleria]);
+            }
+        }
+
         return response()->json([
             'message' => 'Evento actualizado correctamente.',
-            'evento'  => $evento->fresh(),
+            'evento'  => $evento->fresh()->load('imagenes'),
         ]);
+    });
+
+    // Eliminar una foto especifica de la galeria de un evento
+    Route::delete('/eventos/{eventoId}/imagenes/{imagenId}', function (Request $request, $eventoId, $imagenId) {
+        $user   = $request->user();
+        $evento = Evento::findOrFail($eventoId);
+
+        if ($user->role === 'restaurante' && $evento->restaurante_id !== $user->restaurante_id) {
+            return response()->json(['message' => 'No autorizado.'], 403);
+        }
+        if ($user->role === 'gastrobar' && $evento->gastrobar_id !== $user->gastrobar_id) {
+            return response()->json(['message' => 'No autorizado.'], 403);
+        }
+
+        $imagen = $evento->imagenes()->where('id', $imagenId)->first();
+
+        if (!$imagen) {
+            return response()->json(['message' => 'Imagen no encontrada.'], 404);
+        }
+
+        \Illuminate\Support\Facades\Storage::disk('public')->delete($imagen->ruta);
+        $imagen->delete();
+
+        return response()->json(['message' => 'Foto eliminada de la galeria.']);
     });
 
     // Toggle visibilidad de evento

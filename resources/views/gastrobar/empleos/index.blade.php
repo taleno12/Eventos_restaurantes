@@ -67,7 +67,7 @@
                                 <div style="width:4px;height:32px;background:var(--primary);border-radius:4px;margin-right:12px;flex-shrink:0;"></div>
                                 <div>
                                     <div class="fw-bold" style="font-size:0.9rem;color:var(--text);">{{ $empleo->titulo }}</div>
-                                    <small class="text-muted">{{ Str::limit($empleo->descripcion, 50) }}</small>
+                                    <small style="color:var(--muted);">{{ Str::limit($empleo->descripcion, 50) }}</small>
                                 </div>
                             </div>
                         </td>
@@ -75,14 +75,14 @@
                             @if($empleo->tipo_contrato)
                                 <span class="panel-badge badge-gray">{{ $empleo->tipo_contrato }}</span>
                             @else
-                                <span class="text-muted small">—</span>
+                                <span class="small" style="color:var(--muted);">—</span>
                             @endif
                         </td>
                         <td>
                             @if($empleo->salario)
                                 <span class="panel-badge badge-purple">C$ {{ number_format($empleo->salario, 0) }}</span>
                             @else
-                                <span class="text-muted small">—</span>
+                                <span class="small" style="color:var(--muted);">—</span>
                             @endif
                         </td>
                         <td style="white-space:nowrap;">
@@ -92,7 +92,7 @@
                                     {{ \Carbon\Carbon::parse($empleo->fecha_limite)->format('d M, Y') }}
                                 </span>
                             @else
-                                <span class="text-muted small">—</span>
+                                <span class="small" style="color:var(--muted);">—</span>
                             @endif
                         </td>
                         <td class="text-center">

@@ -1275,11 +1275,12 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $evento = Evento::create($datos);
 
-        // Notificacion push, solo si el evento quedo visible al publico
+        // Notificacion push, solo si el evento quedo visible al publico.
+        // Usa el nombre real del restaurante/gastrobar, igual que el panel web.
         if ($datos['visible_publico']) {
             enviarNotificacionFCM(
                 'Nuevo evento',
-                "{$evento->titulo} ya esta disponible en GastroNicaragua!"
+                "{$evento->titulo} ya esta disponible en {$entidad->nombre}!"
             );
         }
 
@@ -1370,11 +1371,17 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             return $evento;
         });
 
-        // Notificar solo cuando pasa de oculto a visible
+        // Notificar solo cuando pasa de oculto a visible.
+        // Se carga el nombre real del restaurante/gastrobar dueno del evento,
+        // igual que hace el panel web, en vez de usar un texto fijo.
         if ($evento->visible_publico) {
+            $nombreEstablecimiento = $evento->restaurante_id
+                ? optional(Restaurante::find($evento->restaurante_id))->nombre
+                : optional(Gastrobar::find($evento->gastrobar_id))->nombre;
+
             enviarNotificacionFCM(
                 'Evento disponible',
-                "{$evento->titulo} ya esta disponible en GastroNicaragua!"
+                "{$evento->titulo} ya esta disponible en " . ($nombreEstablecimiento ?? 'GastroNicaragua') . "!"
             );
         }
 
@@ -1491,11 +1498,12 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $empleo = Empleo::create($datos);
 
-        // Notificacion push, solo si la oferta quedo activa
+        // Notificacion push, solo si la oferta quedo activa.
+        // Usa el nombre real del restaurante/gastrobar, igual que el panel web.
         if ($datos['activo']) {
             enviarNotificacionFCM(
                 'Nueva oferta de empleo',
-                "{$empleo->titulo} esta disponible en GastroNicaragua!"
+                "{$empleo->titulo} esta disponible en {$entidad->nombre}!"
             );
         }
 
@@ -1553,11 +1561,19 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ];
         });
 
-        // Notificar solo cuando pasa de inactivo a activo
+        // Notificar solo cuando pasa de inactivo a activo.
+        // Se carga el nombre real del restaurante/gastrobar dueno del empleo,
+        // igual que hace el panel web, en vez de usar un texto fijo.
         if ($resultado['paso_a_activo']) {
+            $empleoActualizado = $resultado['empleo'];
+
+            $nombreEstablecimiento = $empleoActualizado->restaurante_id
+                ? optional(Restaurante::find($empleoActualizado->restaurante_id))->nombre
+                : optional(Gastrobar::find($empleoActualizado->gastrobar_id))->nombre;
+
             enviarNotificacionFCM(
                 'Oferta disponible',
-                "{$resultado['empleo']->titulo} esta disponible en GastroNicaragua!"
+                "{$empleoActualizado->titulo} esta disponible en " . ($nombreEstablecimiento ?? 'GastroNicaragua') . "!"
             );
         }
 

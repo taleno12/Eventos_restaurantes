@@ -454,6 +454,7 @@ Route::get('/gastrobares/{id}', function ($id) {
         'departamento',
         'municipio',
         'reviews.user',
+        'fotos',
     ])->findOrFail($id);
 });
 
@@ -1207,7 +1208,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
     Route::get('/eventos', function (Request $request) use ($eventosVisiblesEsteMes) {
         $user = $request->user();
 
-        $query = Evento::latest();
+        $query = Evento::with('imagenes')->latest();
 
         if ($user->role === 'restaurante') {
             $query->where('restaurante_id', $user->restaurante_id);

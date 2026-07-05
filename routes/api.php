@@ -18,6 +18,7 @@ use App\Models\Pedido;
 use App\Models\PedidoGastrobar;
 use App\Models\SolicitudEmpleo;
 use App\Models\Reporte;
+use App\Http\Controllers\NegociacionController;
 use Illuminate\Support\Facades\DB;
 
 // -- FUNCION PARA ENVIAR NOTIFICACIONES PUSH --
@@ -1030,6 +1031,12 @@ Route::get('/me', function (Request $request) {
         'avatar_url'      => $user->avatar ? asset('storage/' . $user->avatar) : null,
         'establecimiento_activo' => $establecimientoActivo,
         'idioma'          => $user->idioma ?? 'es',
+        // ── Campos de motorizado ──────────────────────────
+        'disponible'      => $user->disponible ?? false,
+        'vehiculo'        => $user->vehiculo,
+        'placa'           => $user->placa,
+        'lat'             => $user->lat,
+        'lng'             => $user->lng,
     ]);
 })->middleware('auth:sanctum');
 
@@ -1178,6 +1185,54 @@ Route::post('/reportes', function (Request $request) {
 
     return response()->json(['message' => 'Reporte enviado correctamente.']);
 })->middleware('auth:sanctum');
+
+// ============================================================
+// -- NEGOCIACIONES DE ENVIO (MODO MOTORIZADO EN FLUTTER) ----
+// ============================================================
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Listar mis negociaciones (el motorizado ve sus chats entrantes)
+    Route::get('/negociaciones', [NegociacionController::class, 'misNegociaciones']);
+
+    // Ver una negociacion con todos sus mensajes (para polling del chat)
+    Route::get('/negociaciones/{negociacion}', [NegociacionController::class, 'show']);
+
+    // Enviar un mensaje (opcionalmente con propuesta de tarifa)
+    Route::post('/negociaciones/{negociacion}/mensajes', [NegociacionController::class, 'enviarMensaje']);
+
+    // Aceptar la tarifa actualmente propuesta
+    Route::patch('/negociaciones/{negociacion}/aceptar', [NegociacionController::class, 'aceptar']);
+
+    // Prender/apagar disponibilidad del motorizado
+    Route::patch('/motorizado/disponibilidad', function (Request $request) {
+        $request->validate([
+            'disponible' => 'required|boolean',
+        ]);
+
+        $request->user()->update(['disponible' => $request->boolean('disponible')]);
+
+        return response()->json([
+            'disponible' => $request->user()->fresh()->disponible,
+        ]);
+    });
+
+    // Actualizar ubicacion GPS del motorizado (envio periodico desde Flutter)
+    Route::patch('/motorizado/ubicacion', function (Request $request) {
+        $data = $request->validate([
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+        ]);
+
+        $request->user()->update([
+            'lat'                      => $data['lat'],
+            'lng'                      => $data['lng'],
+            'ubicacion_actualizada_at' => now(),
+        ]);
+
+        return response()->json(['ok' => true]);
+    });
+});
 
 // ============================================================
 // -- GESTION DEL PROPIETARIO (requiere auth:sanctum) --------

@@ -1145,6 +1145,22 @@ Route::post('/usuario/nombre', function (Request $request) {
     ]);
 })->middleware('auth:sanctum');
 
+// -- ACTUALIZAR TELEFONO DEL USUARIO (para cuentas de Gmail sin telefono) --
+Route::post('/usuario/telefono', function (Request $request) {
+    $request->validate([
+        'telefono' => 'required|string|max:20|unique:users,telefono,' . $request->user()->id,
+    ], [
+        'telefono.unique' => 'Ese numero de telefono ya esta en uso por otra cuenta.',
+    ]);
+
+    $request->user()->update(['telefono' => $request->telefono]);
+
+    return response()->json([
+        'message'  => 'Telefono actualizado.',
+        'telefono' => $request->user()->fresh()->telefono,
+    ]);
+})->middleware('auth:sanctum');
+
 // -- REPORTAR UN PROBLEMA (desde la app movil) --
 Route::post('/reportes', function (Request $request) {
     $request->validate([

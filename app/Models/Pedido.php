@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Pedido extends Model
 {
     protected $fillable = [
         'restaurante_id',
         'user_id',
+        'motorizado_id',
         'estado',
         'total',
         'notas',
@@ -38,9 +40,19 @@ class Pedido extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function motorizado(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'motorizado_id');
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(PedidoItem::class);
+    }
+
+    public function negociaciones(): MorphMany
+    {
+        return $this->morphMany(NegociacionPedido::class, 'pedido');
     }
 
     public function getEstadoInfoAttribute(): array

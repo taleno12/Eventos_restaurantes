@@ -21,6 +21,8 @@ use App\Http\Controllers\PagoController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SoporteAppController;
+use App\Http\Controllers\MotorizadoController;
+use App\Http\Controllers\NegociacionController;
 use App\Http\Controllers\Restaurante\CategoriaController;
 
 use App\Models\Restaurante;
@@ -418,6 +420,32 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
         Route::delete('/pedidos/{pedido}',       [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'destroy'])->name('pedidos.destroy');
         Route::get('/pedidos-polling',           [\App\Http\Controllers\Restaurante\RestaurantePedidoController::class, 'polling'])->name('pedidos.polling');
 
+        // ── MOTORIZADOS Y NEGOCIACIÓN DE ENVÍO ───────────────────
+        Route::get('/motorizados', function () {
+            $restaurante = \Illuminate\Support\Facades\Auth::user()->restaurante;
+
+            $pedidosPendientes = \App\Models\Pedido::where('restaurante_id', $restaurante->id)
+                ->where('tipo', 'envio')
+                ->whereNull('motorizado_id')
+                ->whereNotIn('estado', ['entregado', 'cancelado'])
+                ->latest()
+                ->get();
+
+            return view('restaurante.motorizados.index', [
+                'restaurante' => $restaurante,
+                'pedidosPendientes' => $pedidosPendientes,
+            ]);
+        })->name('motorizados.index');
+
+        Route::post('/negociaciones', [NegociacionController::class, 'store'])
+            ->name('negociaciones.store');
+        Route::get('/negociaciones/{negociacion}', [NegociacionController::class, 'show'])
+            ->name('negociaciones.show');
+        Route::post('/negociaciones/{negociacion}/mensajes', [NegociacionController::class, 'enviarMensaje'])
+            ->name('negociaciones.mensajes.store');
+        Route::patch('/negociaciones/{negociacion}/aceptar', [NegociacionController::class, 'aceptar'])
+            ->name('negociaciones.aceptar');
+
         Route::get('/estadisticas', [\App\Http\Controllers\Restaurante\RestauranteEstadisticasController::class, 'index'])
             ->name('estadisticas.index');
 
@@ -504,6 +532,32 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
         Route::delete('/pedidos/{pedidoGastrobar}',         [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'destroy'])->name('pedidos.destroy');
         Route::get('/pedidos-polling',                      [\App\Http\Controllers\Gastrobar\GastrobarPedidoController::class, 'polling'])->name('pedidos.polling');
 
+        // ── MOTORIZADOS Y NEGOCIACIÓN DE ENVÍO ───────────────────
+        Route::get('/motorizados', function () {
+            $gastrobar = \Illuminate\Support\Facades\Auth::user()->gastrobar;
+
+            $pedidosPendientes = \App\Models\PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
+                ->where('tipo', 'envio')
+                ->whereNull('motorizado_id')
+                ->whereNotIn('estado', ['entregado', 'cancelado'])
+                ->latest()
+                ->get();
+
+            return view('gastrobar.motorizados.index', [
+                'gastrobar' => $gastrobar,
+                'pedidosPendientes' => $pedidosPendientes,
+            ]);
+        })->name('motorizados.index');
+
+        Route::post('/negociaciones', [NegociacionController::class, 'store'])
+            ->name('negociaciones.store');
+        Route::get('/negociaciones/{negociacion}', [NegociacionController::class, 'show'])
+            ->name('negociaciones.show');
+        Route::post('/negociaciones/{negociacion}/mensajes', [NegociacionController::class, 'enviarMensaje'])
+            ->name('negociaciones.mensajes.store');
+        Route::patch('/negociaciones/{negociacion}/aceptar', [NegociacionController::class, 'aceptar'])
+            ->name('negociaciones.aceptar');
+
         Route::get('/estadisticas', [\App\Http\Controllers\Gastrobar\GastrobarEstadisticasController::class, 'index'])
             ->name('estadisticas.index');
 
@@ -532,6 +586,12 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
         Route::get('/notificaciones-count', [\App\Http\Controllers\Gastrobar\GastrobarNotificacionController::class, 'contarNoLeidas'])->name('notificaciones.count');
     });
 
+// ── MOTORIZADOS (DISPONIBLES CERCA DEL NEGOCIO) ───────────────────────────────
+Route::middleware(['auth', 'role:restaurante,gastrobar,admin'])->group(function () {
+    Route::get('/motorizados/disponibles-cerca', [MotorizadoController::class, 'disponiblesCerca'])
+        ->name('motorizados.disponibles-cerca');
+});
+
 // ── RUTAS DE PEDIDOS PÚBLICOS ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::post('/restaurantes/{restaurante}/pedido', [App\Http\Controllers\PedidoController::class, 'store'])->name('pedidos.store');
@@ -545,5 +605,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/eventos/{evento}', [EventoController::class, 'show'])
     ->name('eventos.show')
     ->whereNumber('evento');
+
 
 require __DIR__ . '/auth.php';

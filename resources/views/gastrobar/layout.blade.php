@@ -932,6 +932,13 @@
                 @endif
             </a>
 
+             <a href="{{ route('gastrobar.motorizados.index') }}"
+               class="nav-link {{ request()->routeIs('gastrobar.motorizados.*') ? 'active' : '' }}">
+                <i class="bi bi-bicycle"></i>
+                Motorizados
+            </a>
+
+
             <a href="{{ route('gastrobar.estadisticas.index') }}"
                class="nav-link {{ request()->routeIs('gastrobar.estadisticas.*') ? 'active' : '' }}">
                 <i class="bi bi-bar-chart-fill"></i>

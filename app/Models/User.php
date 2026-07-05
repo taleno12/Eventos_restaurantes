@@ -28,6 +28,11 @@ class User extends Authenticatable
         'idioma',
         'pregunta_seguridad',
         'respuesta_seguridad',
+        'disponible',
+        'vehiculo',
+        'placa',
+        'lat',
+        'lng',
     ];
 
     protected $hidden = [
@@ -40,6 +45,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+            'disponible'        => 'boolean',
         ];
     }
 
@@ -81,5 +87,36 @@ class User extends Authenticatable
     public function isUsuario(): bool
     {
         return $this->role === 'usuario';
+    }
+
+    public function isMotorizado(): bool
+    {
+        return $this->role === 'motorizado';
+    }
+
+    public function pedidosEntregados()
+    {
+        return $this->hasMany(\App\Models\PedidoGastrobar::class, 'motorizado_id');
+    }
+
+    /**
+     * Scope: motorizados disponibles dentro de un radio (en km) desde un punto dado.
+     * Uso: User::motorizadosCerca($lat, $lng, 5)->get();
+     */
+    public function scopeMotorizadosCerca($query, float $lat, float $lng, float $radioKm = 5)
+    {
+        $haversine = "(6371 * acos(cos(radians($lat))
+            * cos(radians(lat))
+            * cos(radians(lng) - radians($lng))
+            + sin(radians($lat))
+            * sin(radians(lat))))";
+
+        return $query->where('role', 'motorizado')
+            ->where('disponible', true)
+            ->whereNotNull('lat')
+            ->whereNotNull('lng')
+            ->selectRaw("users.*, {$haversine} AS distancia_km")
+            ->having('distancia_km', '<=', $radioKm)
+            ->orderBy('distancia_km', 'asc');
     }
 }

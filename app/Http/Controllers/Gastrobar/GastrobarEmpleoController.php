@@ -69,17 +69,10 @@ class GastrobarEmpleoController extends Controller
             'gastrobar_id'    => $gastrobar->id,
         ]);
 
-<<<<<<< HEAD
-        // Solo notificar si la oferta quedo activa
+        // Solo notificar si la oferta quedó activa
         if ($empleo->activo) {
             $this->fcm->enviar(
                 'Nueva oferta de empleo',
-=======
-        // ✅ Solo notificar si la oferta quedó activa
-        if ($empleo->activo) {
-            $this->fcm->enviar(
-                ' Nueva oferta de empleo',
->>>>>>> bd6631cc8fc4cecf1bc276f18a8798d168384496
                 "¡{$empleo->titulo} está disponible en {$gastrobar->nombre}!"
             );
         }

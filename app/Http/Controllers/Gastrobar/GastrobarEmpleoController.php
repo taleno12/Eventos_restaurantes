@@ -113,11 +113,7 @@ class GastrobarEmpleoController extends Controller
             'activo'        => 'boolean',
         ]);
 
-<<<<<<< HEAD
-        // Guardamos el estado anterior para detectar la transicion
-=======
         // Guardamos el estado anterior para detectar la transición
->>>>>>> bd6631cc8fc4cecf1bc276f18a8798d168384496
         $estabaActivo = $empleo->activo;
 
         $empleo->update([
@@ -131,17 +127,10 @@ class GastrobarEmpleoController extends Controller
             'activo'        => $request->boolean('activo'),
         ]);
 
-<<<<<<< HEAD
         // Notificar solo cuando pasa de inactivo a activo
         if (!$estabaActivo && $empleo->activo) {
             $this->fcm->enviar(
                 'Oferta disponible',
-=======
-        // ✅ NUEVO: notificar solo cuando pasa de inactivo a activo
-        if (!$estabaActivo && $empleo->activo) {
-            $this->fcm->enviar(
-                ' Oferta disponible',
->>>>>>> bd6631cc8fc4cecf1bc276f18a8798d168384496
                 "¡{$empleo->titulo} está disponible en {$gastrobar->nombre}!"
             );
         }

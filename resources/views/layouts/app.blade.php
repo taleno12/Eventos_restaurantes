@@ -252,6 +252,15 @@
                     <i class="bi bi-cup-straw"></i>
                     <span>Gastrobares</span>
                 </a>
+                <a href="{{ route('admin.solicitudes-motorizado.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.solicitudes-motorizado.*') ? 'active' : '' }}">
+                    <i class="bi bi-scooter"></i>
+                    <span>Motorizados</span>
+                    @php $totalPendientesMoto = \App\Models\SolicitudMotorizado::where('estado', 'pendiente')->count(); @endphp
+                    @if($totalPendientesMoto > 0)
+                        <span class="nav-badge">{{ $totalPendientesMoto }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('eventos.index') }}"
                    class="nav-item {{ request()->routeIs('eventos.*') ? 'active' : '' }}">
                     <i class="bi bi-calendar-event"></i>

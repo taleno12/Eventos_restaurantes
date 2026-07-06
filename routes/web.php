@@ -23,6 +23,7 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SoporteAppController;
 use App\Http\Controllers\MotorizadoController;
 use App\Http\Controllers\NegociacionController;
+use App\Http\Controllers\SolicitudMotorizadoController;
 use App\Http\Controllers\Restaurante\CategoriaController;
 
 use App\Models\Restaurante;
@@ -201,10 +202,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/eventos/{evento}',      [EventoController::class, 'update'])->name('eventos.update');
         Route::patch('/eventos/{evento}',    [EventoController::class, 'update']);
         Route::delete('/eventos/{evento}',   [EventoController::class, 'destroy'])->name('eventos.destroy');
-        // (Rutas de evento.imagenes.store / evento.imagenes.destroy removidas de aquí:
-        //  estaban duplicadas y heredaban el middleware role:admin del grupo padre,
-        //  bloqueando a restaurantes/gastrobares con 403. Ya existen correctamente
-        //  dentro de los grupos mi-restaurante y mi-gastrobar más abajo.)
     });
 
     Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
@@ -351,6 +348,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::delete('/{usuario}',        [\App\Http\Controllers\UsuarioController::class, 'destroy'])->name('destroy');
         Route::patch('/{usuario}/toggle',  [\App\Http\Controllers\UsuarioController::class, 'toggle'])->name('toggle');
         Route::get('/{usuario}',           [\App\Http\Controllers\UsuarioController::class, 'show'])->name('show');
+    });
+
+    // ── SOLICITUDES DE MOTORIZADO ─────────────────────────────────────────────
+    Route::prefix('solicitudes-motorizado')->name('admin.solicitudes-motorizado.')->group(function () {
+        Route::get('/',                    [SolicitudMotorizadoController::class, 'index'])->name('index');
+        Route::get('/{solicitud}',         [SolicitudMotorizadoController::class, 'show'])->name('show');
+        Route::patch('/{solicitud}/aprobar',  [SolicitudMotorizadoController::class, 'aprobar'])->name('aprobar');
+        Route::patch('/{solicitud}/rechazar', [SolicitudMotorizadoController::class, 'rechazar'])->name('rechazar');
     });
 
     // ── REPORTES (ESTADÍSTICAS) ───────────────────────────────────────────────

@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'pedido_gastrobar' => \App\Models\PedidoGastrobar::class,
             'pedido'           => \App\Models\Pedido::class,
+            'usuario'          => \App\Models\User::class,
         ]);
     }
 

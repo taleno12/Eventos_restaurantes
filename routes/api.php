@@ -17,6 +17,7 @@ use App\Models\Plato;
 use App\Models\Pedido;
 use App\Models\PedidoGastrobar;
 use App\Models\SolicitudEmpleo;
+use App\Models\SolicitudMotorizado;
 use App\Models\Reporte;
 use App\Http\Controllers\NegociacionController;
 use Illuminate\Support\Facades\DB;
@@ -1231,6 +1232,53 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
 
         return response()->json(['ok' => true]);
+    });
+
+    // -- SOLICITAR SER MOTORIZADO --
+    Route::post('/motorizado/solicitar', function (Request $request) {
+        $user = $request->user();
+
+        if ($user->role === 'motorizado') {
+            return response()->json(['message' => 'Ya sos motorizado.'], 422);
+        }
+
+        $existente = SolicitudMotorizado::where('user_id', $user->id)
+            ->where('estado', 'pendiente')
+            ->first();
+
+        if ($existente) {
+            return response()->json(['message' => 'Ya tenes una solicitud pendiente.'], 422);
+        }
+
+        $request->validate([
+            'tipo_vehiculo'   => 'required|string|in:moto,bicicleta,carro',
+            'placa'           => 'nullable|string|max:20',
+            'departamento_id' => 'nullable|exists:departamentos,id',
+            'municipio_id'    => 'nullable|exists:municipios,id',
+        ]);
+
+        $solicitud = SolicitudMotorizado::create([
+            'user_id'         => $user->id,
+            'tipo_vehiculo'   => $request->tipo_vehiculo,
+            'placa'           => $request->placa,
+            'departamento_id' => $request->departamento_id,
+            'municipio_id'    => $request->municipio_id,
+            'estado'          => 'pendiente',
+        ]);
+
+        return response()->json([
+            'message'   => 'Solicitud enviada. Te avisaremos cuando sea revisada.',
+            'solicitud' => $solicitud,
+        ], 201);
+    });
+
+    // -- VER ESTADO DE MI SOLICITUD DE MOTORIZADO --
+    Route::get('/motorizado/mi-solicitud', function (Request $request) {
+        $solicitud = SolicitudMotorizado::where('user_id', $request->user()->id)
+            ->latest()
+            ->first();
+
+        return response()->json(['solicitud' => $solicitud]);
     });
 });
 

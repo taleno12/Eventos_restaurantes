@@ -358,6 +358,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::patch('/{solicitud}/rechazar', [SolicitudMotorizadoController::class, 'rechazar'])->name('rechazar');
     });
 
+    // ── MOTORIZADOS ACTIVOS (activar/desactivar) ───────────────────────────────
+    Route::prefix('motorizados')->name('admin.motorizados.')->group(function () {
+        Route::get('/', [MotorizadoController::class, 'index'])->name('index');
+    });
+
     // ── REPORTES (ESTADÍSTICAS) ───────────────────────────────────────────────
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 

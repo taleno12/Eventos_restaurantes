@@ -15,9 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
 
         $middleware->alias([
-            'admin'         => \App\Http\Middleware\AdminOnly::class,
-            'role'          => \App\Http\Middleware\RoleMiddleware::class,
-            'entidad.activa' => \App\Http\Middleware\CheckEntidadActiva::class,
+            'admin'             => \App\Http\Middleware\AdminOnly::class,
+            'role'              => \App\Http\Middleware\RoleMiddleware::class,
+            'entidad.activa'    => \App\Http\Middleware\CheckEntidadActiva::class,
+            'motorizado.activo' => \App\Http\Middleware\CheckMotorizadoActivo::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

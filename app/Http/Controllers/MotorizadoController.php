@@ -47,4 +47,22 @@ class MotorizadoController extends Controller
             'motorizados' => $motorizados,
         ]);
     }
+
+    /**
+     * Panel admin: listado de motorizados con boton activar/desactivar.
+     */
+    public function index(Request $request)
+    {
+        $query = User::where('role', 'motorizado')->latest();
+
+        if ($request->filled('buscar')) {
+            $b = $request->buscar;
+            $query->where(fn($q) => $q->where('name', 'like', "%$b%")
+                                       ->orWhere('telefono', 'like', "%$b%"));
+        }
+
+        $motorizados = $query->paginate(15);
+
+        return view('motorizados.index', compact('motorizados'));
+    }
 }

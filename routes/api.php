@@ -456,7 +456,6 @@ Route::get('/gastrobares/{id}', function ($id) {
         'departamento',
         'municipio',
         'reviews.user',
-        'fotos',
     ])->findOrFail($id);
 });
 
@@ -900,6 +899,13 @@ Route::post('/login-telefono', function (Request $request) {
         return response()->json(['message' => 'Telefono o contrasena incorrectos.'], 401);
     }
 
+    // Si es motorizado y esta suspendido, no dejarlo entrar
+    if ($user->role === 'motorizado' && ($user->estado ?? 'activo') === 'suspendido') {
+        return response()->json([
+            'message' => 'Tu cuenta de motorizado ha sido desactivada. Contacta al administrador para mas informacion.',
+        ], 403);
+    }
+
     // Verificar si el establecimiento del propietario esta activo
     $establecimientoActivo = true; // default para usuarios normales/admin
     if ($user->role === 'restaurante' && $user->restaurante_id) {
@@ -921,6 +927,7 @@ Route::post('/login-telefono', function (Request $request) {
             'gastrobar_id'    => $user->gastrobar_id,
             'es_propietario'  => in_array($user->role, ['restaurante', 'gastrobar']),
             'establecimiento_activo' => $establecimientoActivo,
+            'motorizado_activo' => $user->role === 'motorizado' ? (($user->estado ?? 'activo') === 'activo') : null,
             'idioma'          => $user->idioma ?? 'es',
         ],
         'token' => $user->createToken('flutter-app')->plainTextToken,
@@ -1032,12 +1039,13 @@ Route::get('/me', function (Request $request) {
         'avatar_url'      => $user->avatar ? asset('storage/' . $user->avatar) : null,
         'establecimiento_activo' => $establecimientoActivo,
         'idioma'          => $user->idioma ?? 'es',
-        // ── Campos de motorizado ──────────────────────────
+        // -- Campos de motorizado --------------------------
         'disponible'      => $user->disponible ?? false,
         'vehiculo'        => $user->vehiculo,
         'placa'           => $user->placa,
         'lat'             => $user->lat,
         'lng'             => $user->lng,
+        'motorizado_activo' => $user->role === 'motorizado' ? (($user->estado ?? 'activo') === 'activo') : null,
     ]);
 })->middleware('auth:sanctum');
 
@@ -1191,7 +1199,7 @@ Route::post('/reportes', function (Request $request) {
 // -- NEGOCIACIONES DE ENVIO (MODO MOTORIZADO EN FLUTTER) ----
 // ============================================================
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
 
     // Listar mis negociaciones (el motorizado ve sus chats entrantes)
     Route::get('/negociaciones', [NegociacionController::class, 'misNegociaciones']);
@@ -1242,28 +1250,67 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Ya sos motorizado.'], 422);
         }
 
-        $existente = SolicitudMotorizado::where('user_id', $user->id)
+        $pendiente = SolicitudMotorizado::where('user_id', $user->id)
             ->where('estado', 'pendiente')
             ->first();
 
-        if ($existente) {
+        if ($pendiente) {
             return response()->json(['message' => 'Ya tenes una solicitud pendiente.'], 422);
         }
 
+        $ultimaRechazada = SolicitudMotorizado::where('user_id', $user->id)
+            ->where('estado', 'rechazada')
+            ->latest('revisado_at')
+            ->first();
+
+        if ($ultimaRechazada && $ultimaRechazada->revisado_at) {
+            $puedeReenviarEn = $ultimaRechazada->revisado_at->copy()->addDays(24);
+
+            if (now()->lessThan($puedeReenviarEn)) {
+                $diasFaltantes = now()->diffInDays($puedeReenviarEn, false);
+                $diasFaltantes = max(1, ceil($diasFaltantes));
+
+                return response()->json([
+                    'message' => "Tu solicitud anterior fue rechazada. Podes volver a solicitar en {$diasFaltantes} dia(s).",
+                ], 422);
+            }
+        }
+
         $request->validate([
-            'tipo_vehiculo'   => 'required|string|in:moto,bicicleta,carro',
-            'placa'           => 'nullable|string|max:20',
-            'departamento_id' => 'nullable|exists:departamentos,id',
-            'municipio_id'    => 'nullable|exists:municipios,id',
+            'nombre_completo'      => 'required|string|max:255',
+            'edad'                 => 'required|integer|min:18|max:80',
+            'tipo_vehiculo'        => 'required|string|in:moto,bicicleta,carro',
+            'placa'                => 'nullable|string|max:20',
+            'departamento_id'      => 'nullable|exists:departamentos,id',
+            'municipio_id'         => 'nullable|exists:municipios,id',
+            'foto_perfil'          => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'foto_licencia'        => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'foto_record_policial' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+        ], [
+            'nombre_completo.required'      => 'El nombre completo es obligatorio.',
+            'edad.required'                 => 'La edad es obligatoria.',
+            'edad.min'                      => 'Debes tener al menos 18 anos.',
+            'foto_perfil.required'          => 'La foto de perfil es obligatoria.',
+            'foto_licencia.required'        => 'La foto de la licencia es obligatoria.',
+            'foto_record_policial.required' => 'La foto del record policial es obligatoria.',
         ]);
 
+        $rutaFotoPerfil = $request->file('foto_perfil')->store('motorizados/perfil', 'public');
+        $rutaLicencia   = $request->file('foto_licencia')->store('motorizados/licencia', 'public');
+        $rutaRecord     = $request->file('foto_record_policial')->store('motorizados/record', 'public');
+
         $solicitud = SolicitudMotorizado::create([
-            'user_id'         => $user->id,
-            'tipo_vehiculo'   => $request->tipo_vehiculo,
-            'placa'           => $request->placa,
-            'departamento_id' => $request->departamento_id,
-            'municipio_id'    => $request->municipio_id,
-            'estado'          => 'pendiente',
+            'user_id'              => $user->id,
+            'nombre_completo'      => $request->nombre_completo,
+            'edad'                 => $request->edad,
+            'tipo_vehiculo'        => $request->tipo_vehiculo,
+            'placa'                => $request->placa,
+            'foto_perfil'          => $rutaFotoPerfil,
+            'foto_licencia'        => $rutaLicencia,
+            'foto_record_policial' => $rutaRecord,
+            'departamento_id'      => $request->departamento_id,
+            'municipio_id'         => $request->municipio_id,
+            'estado'               => 'pendiente',
         ]);
 
         return response()->json([
@@ -1311,7 +1358,7 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
     Route::get('/eventos', function (Request $request) use ($eventosVisiblesEsteMes) {
         $user = $request->user();
 
-        $query = Evento::with('imagenes')->latest();
+        $query = Evento::latest();
 
         if ($user->role === 'restaurante') {
             $query->where('restaurante_id', $user->restaurante_id);
@@ -1515,9 +1562,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
     });
 
     // Toggle visibilidad de evento
-    // NOTA: usa DB::transaction + lockForUpdate para evitar que dos peticiones
-    // simultaneas (doble tap del switch) lean el mismo estado viejo y ambas
-    // terminen enviando la notificacion push duplicada.
     Route::patch('/eventos/{id}/toggle-visibilidad', function (Request $request, $id) use ($eventosVisiblesEsteMes) {
         $user = $request->user();
 
@@ -1547,8 +1591,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
         });
 
         // Notificar solo cuando pasa de oculto a visible.
-        // Se carga el nombre real del restaurante/gastrobar dueno del evento,
-        // igual que hace el panel web, en vez de usar un texto fijo.
         if ($evento->visible_publico) {
             $nombreEstablecimiento = $evento->restaurante_id
                 ? optional(Restaurante::find($evento->restaurante_id))->nombre
@@ -1673,8 +1715,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
 
         $empleo = Empleo::create($datos);
 
-        // Notificacion push, solo si la oferta quedo activa.
-        // Usa el nombre real del restaurante/gastrobar, igual que el panel web.
         if ($datos['activo']) {
             enviarNotificacionFCM(
                 'Nueva oferta de empleo',
@@ -1689,9 +1729,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
     });
 
     // Actualizar empleo
-    // NOTA: igual que en eventos, se usa DB::transaction + lockForUpdate
-    // para evitar el mismo problema de notificaciones duplicadas si el
-    // toggle de "activo" se dispara dos veces casi al mismo tiempo.
     Route::put('/empleos/{id}', function (Request $request, $id) {
         $user = $request->user();
 
@@ -1716,7 +1753,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
                 abort(403, 'No autorizado.');
             }
 
-            // Guardamos el estado anterior para detectar la transicion
             $estabaActivo = $empleo->activo;
 
             $empleo->update([
@@ -1736,9 +1772,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ];
         });
 
-        // Notificar solo cuando pasa de inactivo a activo.
-        // Se carga el nombre real del restaurante/gastrobar dueno del empleo,
-        // igual que hace el panel web, en vez de usar un texto fijo.
         if ($resultado['paso_a_activo']) {
             $empleoActualizado = $resultado['empleo'];
 
@@ -2108,7 +2141,6 @@ Route::middleware('auth:sanctum')->prefix('propietario')->group(function () {
             ]);
 
         } elseif ($user->role === 'gastrobar') {
-            // Procesar dias_atencion si viene como JSON string
             if ($request->has('dias_atencion') && is_string($request->dias_atencion)) {
                 $decoded = json_decode($request->dias_atencion, true);
                 if (is_array($decoded)) {

@@ -354,6 +354,8 @@
         telefono: @json($pedido->user->telefono),
         tipo: @json($pedido->tipo),
         direccion_entrega: @json($pedido->direccion_entrega),
+        latitud_entrega: {{ $pedido->latitud_entrega ?? 'null' }},
+        longitud_entrega: {{ $pedido->longitud_entrega ?? 'null' }},
         estado: @json($pedido->estado),
         notas: @json($pedido->notas),
         total: {{ $pedido->total }},
@@ -823,12 +825,20 @@
 
         let direccionHtml = '';
         if (p.tipo === 'envio' && p.direccion_entrega) {
+            const linkMapa = (p.latitud_entrega && p.longitud_entrega)
+                ? `<a href="https://www.google.com/maps?q=${p.latitud_entrega},${p.longitud_entrega}" target="_blank" rel="noopener"
+                      class="btn btn-sm rounded-pill px-3 mt-2" style="font-size:12px;font-weight:700;background:#2563eb;color:white;">
+                      <i class="bi bi-map me-1"></i> Ver en el mapa
+                   </a>`
+                : '';
+
             direccionHtml = `
         <div class="mt-3 p-3 rounded-3" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);">
             <div class="fw-bold mb-1" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#2563eb;">
                 <i class="bi bi-geo-alt-fill me-1"></i> Dirección de entrega
             </div>
             <div style="font-size:13px;color:var(--text);">${p.direccion_entrega}</div>
+            ${linkMapa}
         </div>`;
         }
 

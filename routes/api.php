@@ -177,6 +177,8 @@ Route::post('/restaurantes/{id}/pedidos', function (Request $request, $id) {
         'notas'             => 'nullable|string|max:500',
         'tipo'              => 'required|in:envio,retiro',
         'direccion_entrega' => 'required_if:tipo,envio|nullable|string|max:500',
+        'latitud_entrega'   => 'nullable|numeric|between:-90,90',
+        'longitud_entrega'  => 'nullable|numeric|between:-180,180',
     ]);
 
     $restaurante = Restaurante::findOrFail($id);
@@ -217,6 +219,8 @@ Route::post('/restaurantes/{id}/pedidos', function (Request $request, $id) {
             'notas'             => $request->notas,
             'tipo'              => $request->tipo,
             'direccion_entrega' => $request->tipo === 'envio' ? $request->direccion_entrega : null,
+            'latitud_entrega'   => $request->tipo === 'envio' ? $request->latitud_entrega : null,
+            'longitud_entrega'  => $request->tipo === 'envio' ? $request->longitud_entrega : null,
         ]);
 
         foreach ($itemsValidados as $item) {
@@ -269,6 +273,8 @@ Route::post('/gastrobares/{id}/pedidos', function (Request $request, $id) {
         'notas'             => 'nullable|string|max:500',
         'tipo'              => 'required|in:envio,retiro',
         'direccion_entrega' => 'required_if:tipo,envio|nullable|string|max:500',
+        'latitud_entrega'   => 'nullable|numeric|between:-90,90',
+        'longitud_entrega'  => 'nullable|numeric|between:-180,180',
     ]);
 
     $gastrobar = Gastrobar::findOrFail($id);
@@ -309,6 +315,8 @@ Route::post('/gastrobares/{id}/pedidos', function (Request $request, $id) {
             'notas'             => $request->notas,
             'tipo'              => $request->tipo,
             'direccion_entrega' => $request->tipo === 'envio' ? $request->direccion_entrega : null,
+            'latitud_entrega'   => $request->tipo === 'envio' ? $request->latitud_entrega : null,
+            'longitud_entrega'  => $request->tipo === 'envio' ? $request->longitud_entrega : null,
         ]);
 
         foreach ($itemsValidados as $item) {

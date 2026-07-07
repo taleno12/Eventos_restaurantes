@@ -14,7 +14,7 @@
             <h1 class="h3 mb-0 fw-bold text-dark">
                 <i class="bi bi-scooter text-primary me-2"></i> Detalle de Solicitud
             </h1>
-            <p class="text-muted small mb-0">Revisá los datos antes de decidir.</p>
+            <p class="text-muted small mb-0">Revisá los datos y documentación antes de decidir.</p>
         </div>
     </div>
 
@@ -75,6 +75,63 @@
                 <div class="col-6">
                     <div class="text-muted small">Municipio</div>
                     <div class="fw-semibold text-dark">{{ $solicitud->municipio->nombre ?? '—' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ─ NUEVA SECCIÓN: Documentación Fotográfica ─ --}}
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+            <h6 class="text-uppercase text-muted fw-bold mb-4 d-flex align-items-center gap-2"
+                style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                <i class="bi bi-images text-primary"></i> Documentación Fotográfica
+            </h6>
+
+            <div class="row g-3">
+                {{-- Foto de Perfil --}}
+                <div class="col-md-4">
+                    <div class="text-muted small mb-2">Foto de Perfil</div>
+                    @if($solicitud->foto_perfil)
+                        <img src="{{ asset('storage/' . $solicitud->foto_perfil) }}"
+                             alt="Foto de perfil"
+                             class="img-fluid rounded-3 border"
+                             style="width:100%; height:200px; object-fit:cover;">
+                    @else
+                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="height:200px;">
+                            Sin foto
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Foto de Licencia --}}
+                <div class="col-md-4">
+                    <div class="text-muted small mb-2">Licencia de Conducir</div>
+                    @if($solicitud->foto_licencia)
+                        <img src="{{ asset('storage/' . $solicitud->foto_licencia) }}"
+                             alt="Licencia"
+                             class="img-fluid rounded-3 border"
+                             style="width:100%; height:200px; object-fit:cover;">
+                    @else
+                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="height:200px;">
+                            Sin foto
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Foto de Récord Policial --}}
+                <div class="col-md-4">
+                    <div class="text-muted small mb-2">Récord Policial</div>
+                    @if($solicitud->foto_record_policial)
+                        <img src="{{ asset('storage/' . $solicitud->foto_record_policial) }}"
+                             alt="Récord policial"
+                             class="img-fluid rounded-3 border"
+                             style="width:100%; height:200px; object-fit:cover;">
+                    @else
+                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="height:200px;">
+                            Sin foto
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

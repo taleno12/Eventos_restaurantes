@@ -102,6 +102,11 @@ class User extends Authenticatable
     /**
      * Scope: motorizados disponibles dentro de un radio (en km) desde un punto dado.
      * Uso: User::motorizadosCerca($lat, $lng, 5)->get();
+     *
+     * Nota: se usa whereRaw en vez de having('distancia_km', ...) porque
+     * PostgreSQL no permite referenciar un alias de SELECT dentro de HAVING
+     * sin GROUP BY (a diferencia de MySQL, que sí lo permite). Con whereRaw
+     * se repite la formula completa, lo cual es compatible con ambos motores.
      */
     public function scopeMotorizadosCerca($query, float $lat, float $lng, float $radioKm = 5)
     {
@@ -116,7 +121,7 @@ class User extends Authenticatable
             ->whereNotNull('lat')
             ->whereNotNull('lng')
             ->selectRaw("users.*, {$haversine} AS distancia_km")
-            ->having('distancia_km', '<=', $radioKm)
+            ->whereRaw("{$haversine} <= ?", [$radioKm])
             ->orderBy('distancia_km', 'asc');
     }
 }

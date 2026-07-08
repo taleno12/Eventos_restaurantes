@@ -98,6 +98,12 @@ class NegociacionController extends Controller
             'mensajes' => fn ($q) => $q->orderBy('created_at'),
             'motorizado:id,name,vehiculo,placa,avatar',
             'iniciadoPor:id,name',
+            'pedido' => function ($morphTo) {
+                $morphTo->morphWith([
+                    Pedido::class         => ['restaurante:id,nombre'],
+                    PedidoGastrobar::class => ['gastrobar:id,nombre'],
+                ]);
+            },
         ]);
 
         return response()->json(['negociacion' => $negociacion]);
@@ -180,13 +186,25 @@ class NegociacionController extends Controller
     /**
      * Lista las negociaciones del usuario autenticado, sea dueño (via el pedido)
      * o motorizado. Usado tanto en el panel web como en la app Flutter (modo motorizado).
+     *
+     * ✅ AGREGADO: eager load de 'pedido' con su restaurante/gastrobar (nombre)
+     * usando morphWith, para que el motorizado vea el nombre real del negocio
+     * en vez de solo la etiqueta genérica "Restaurante"/"Gastrobar".
      */
     public function misNegociaciones(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        $query = NegociacionPedido::with(['motorizado:id,name,vehiculo,placa,avatar', 'iniciadoPor:id,name'])
-            ->latest();
+        $query = NegociacionPedido::with([
+            'motorizado:id,name,vehiculo,placa,avatar',
+            'iniciadoPor:id,name',
+            'pedido' => function ($morphTo) {
+                $morphTo->morphWith([
+                    Pedido::class          => ['restaurante:id,nombre'],
+                    PedidoGastrobar::class => ['gastrobar:id,nombre'],
+                ]);
+            },
+        ])->latest();
 
         if ($user->isMotorizado()) {
             $query->where('motorizado_id', $user->id);

@@ -1024,6 +1024,7 @@ Route::post('/logout', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // -- USUARIO AUTENTICADO --
+// -- USUARIO AUTENTICADO --
 Route::get('/me', function (Request $request) {
     $user = $request->user();
 
@@ -1032,6 +1033,15 @@ Route::get('/me', function (Request $request) {
         $establecimientoActivo = optional(Restaurante::find($user->restaurante_id))->activo ?? false;
     } elseif ($user->role === 'gastrobar' && $user->gastrobar_id) {
         $establecimientoActivo = optional(Gastrobar::find($user->gastrobar_id))->activo ?? false;
+    }
+
+    // Estado de la ultima solicitud de motorizado (solo si el usuario todavia no es motorizado).
+    // La app usa esto para ocultar el icono de "solicitar ser motorizado" cuando ya hay
+    // una solicitud pendiente o aprobada, y mostrarlo de nuevo solo si fue rechazada.
+    $solicitudMotorizadoEstado = null;
+    if ($user->role !== 'motorizado') {
+        $ultimaSolicitud = SolicitudMotorizado::where('user_id', $user->id)->latest()->first();
+        $solicitudMotorizadoEstado = $ultimaSolicitud->estado ?? null;
     }
 
     return response()->json([
@@ -1054,6 +1064,7 @@ Route::get('/me', function (Request $request) {
         'lat'             => $user->lat,
         'lng'             => $user->lng,
         'motorizado_activo' => $user->role === 'motorizado' ? (($user->estado ?? 'activo') === 'activo') : null,
+        'solicitud_motorizado_estado' => $solicitudMotorizadoEstado,
     ]);
 })->middleware('auth:sanctum');
 

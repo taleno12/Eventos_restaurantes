@@ -436,7 +436,7 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
 
             $pedidosPendientes = \App\Models\Pedido::where('restaurante_id', $restaurante->id)
                 ->where('tipo', 'envio')
-                ->whereNull('motorizado_id')
+                ->with('motorizado')
                 ->whereNotIn('estado', ['entregado', 'cancelado'])
                 ->latest()
                 ->get();
@@ -548,7 +548,7 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 
             $pedidosPendientes = \App\Models\PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
                 ->where('tipo', 'envio')
-                ->whereNull('motorizado_id')
+                ->with('motorizado')
                 ->whereNotIn('estado', ['entregado', 'cancelado'])
                 ->latest()
                 ->get();
@@ -618,3 +618,4 @@ Route::get('/eventos/{evento}', [EventoController::class, 'show'])
 
 
 require __DIR__ . '/auth.php';
+

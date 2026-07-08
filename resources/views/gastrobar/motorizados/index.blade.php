@@ -339,21 +339,51 @@ function renderChat(negociacion) {
     cont.scrollTop = cont.scrollHeight;
 
     const tarifaBox = document.getElementById('chat-tarifa-actual');
+    const btnAceptar = document.getElementById('btn-aceptar-tarifa');
+
     if (negociacion.estado === 'aceptado') {
         tarifaBox.classList.remove('d-none');
         tarifaBox.style.background = 'rgba(34,197,94,0.12)';
         tarifaBox.style.color = '#22c55e';
         tarifaBox.innerHTML = `✅ Tarifa acordada: C$ ${Number(negociacion.tarifa_acordada).toFixed(2)}`;
-        document.getElementById('btn-aceptar-tarifa').disabled = true;
-        document.getElementById('btn-aceptar-tarifa').textContent = 'Acordado';
+        btnAceptar.disabled = true;
+        btnAceptar.innerHTML = 'Acordado';
     } else {
         const tarifaMotorizado = negociacion.tarifa_propuesta_motorizado;
         const tarifaDueno = negociacion.tarifa_propuesta_dueno;
+
         if (tarifaMotorizado || tarifaDueno) {
             tarifaBox.classList.remove('d-none');
+            tarifaBox.style.background = 'var(--primary-light)';
+            tarifaBox.style.color = 'var(--primary)';
             tarifaBox.innerHTML = `Última propuesta: C$ ${Number(tarifaMotorizado ?? tarifaDueno).toFixed(2)}`;
+
+            // ✅ FIX: antes, cuando el dueño aceptaba pero el motorizado todavía
+            // no había aceptado, la pantalla se quedaba EXACTAMENTE igual que
+            // antes de dar clic (mismo texto "Última propuesta..."), dando la
+            // sensación de que el botón "no respondía". En realidad sí se
+            // guardaba en el backend (aceptado_dueno = true), solo que no había
+            // ningún indicio visual del cambio. Ahora se muestra el estado real.
+            if (negociacion.aceptado_dueno && !negociacion.aceptado_motorizado) {
+                tarifaBox.innerHTML += `<br><span style="font-size:11px;font-weight:600;">
+                    ✅ Vos ya aceptaste. Esperando confirmación del motorizado...
+                </span>`;
+                btnAceptar.disabled = true;
+                btnAceptar.innerHTML = 'Esperando...';
+            } else if (!negociacion.aceptado_dueno && negociacion.aceptado_motorizado) {
+                tarifaBox.innerHTML += `<br><span style="font-size:11px;font-weight:600;">
+                    🏍️ El motorizado ya aceptó. Confirmá vos para cerrar el trato.
+                </span>`;
+                btnAceptar.disabled = false;
+                btnAceptar.innerHTML = '<i class="bi bi-check-circle me-1"></i> Aceptar';
+            } else {
+                btnAceptar.disabled = false;
+                btnAceptar.innerHTML = '<i class="bi bi-check-circle me-1"></i> Aceptar';
+            }
         } else {
             tarifaBox.classList.add('d-none');
+            btnAceptar.disabled = false;
+            btnAceptar.innerHTML = '<i class="bi bi-check-circle me-1"></i> Aceptar';
         }
     }
 }
@@ -378,38 +408,58 @@ document.getElementById('form-mensaje').addEventListener('submit', async (e) => 
     input.value = '';
     tarifaInput.value = '';
 
-    await fetch(`/mi-gastrobar/negociaciones/${negociacionActual}/mensajes`, {
-        method: 'POST',
-        body: formData,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-    });
+    try {
+        await fetch(`/mi-gastrobar/negociaciones/${negociacionActual}/mensajes`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
 
-    const res = await fetch(`/mi-gastrobar/negociaciones/${negociacionActual}`);
-    const data = await res.json();
-    renderChat(data.negociacion);
+        const res = await fetch(`/mi-gastrobar/negociaciones/${negociacionActual}`);
+        const data = await res.json();
+        renderChat(data.negociacion);
+    } catch (err) {
+        alert('No se pudo enviar el mensaje. Revisá tu conexión e intentá de nuevo.');
+    }
 });
 
 // ── 6. Aceptar la tarifa propuesta actual ──
 document.getElementById('btn-aceptar-tarifa').addEventListener('click', async () => {
     if (!negociacionActual) return;
 
+    const btnAceptar = document.getElementById('btn-aceptar-tarifa');
+    btnAceptar.disabled = true;
+
     const formData = new FormData();
     formData.append('_token', CSRF);
     formData.append('_method', 'PATCH');
 
-    const res = await fetch(`/mi-gastrobar/negociaciones/${negociacionActual}/aceptar`, {
-        method: 'POST',
-        body: formData,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-    });
-    const data = await res.json();
-    renderChat(data.negociacion);
+    try {
+        const res = await fetch(`/mi-gastrobar/negociaciones/${negociacionActual}/aceptar`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
 
-    if (data.cerrada) {
-        setTimeout(() => {
-            alert('¡Motorizado asignado! El pedido ya tiene el costo de envío confirmado.');
-            window.location.reload();
-        }, 800);
+        if (!res.ok) {
+            const errData = await res.json().catch(() => null);
+            alert(errData?.message || 'No se pudo aceptar la tarifa (error ' + res.status + ').');
+            btnAceptar.disabled = false;
+            return;
+        }
+
+        const data = await res.json();
+        renderChat(data.negociacion);
+
+        if (data.cerrada) {
+            setTimeout(() => {
+                alert('¡Motorizado asignado! El pedido ya tiene el costo de envío confirmado.');
+                window.location.reload();
+            }, 800);
+        }
+    } catch (err) {
+        alert('Error de conexión al intentar aceptar la tarifa.');
+        btnAceptar.disabled = false;
     }
 });
 </script>

@@ -1255,6 +1255,7 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
     });
 
     // -- SOLICITAR SER MOTORIZADO --
+    // -- SOLICITAR SER MOTORIZADO --
     Route::post('/motorizado/solicitar', function (Request $request) {
         $user = $request->user();
 
@@ -1290,18 +1291,25 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
 
         $request->validate([
             'nombre_completo'      => 'required|string|max:255',
-            'edad'                 => 'required|integer|min:18|max:80',
+            'cedula'               => 'required|string|max:20',
+            'fecha_nacimiento'     => 'required|date|before:-18 years',
+            'genero'               => 'required|string|in:masculino,femenino,otro',
+            'contacto'             => 'required|string|max:150',
             'tipo_vehiculo'        => 'required|string|in:moto,bicicleta,carro',
             'placa'                => 'nullable|string|max:20',
             'departamento_id'      => 'nullable|exists:departamentos,id',
             'municipio_id'         => 'nullable|exists:municipios,id',
+            'localidad'            => 'nullable|string|max:255',
             'foto_perfil'          => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
             'foto_licencia'        => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
             'foto_record_policial' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
         ], [
             'nombre_completo.required'      => 'El nombre completo es obligatorio.',
-            'edad.required'                 => 'La edad es obligatoria.',
-            'edad.min'                      => 'Debes tener al menos 18 anos.',
+            'cedula.required'               => 'La cedula es obligatoria.',
+            'fecha_nacimiento.required'     => 'La fecha de nacimiento es obligatoria.',
+            'fecha_nacimiento.before'       => 'Debes ser mayor de 18 anos para ser motorizado.',
+            'genero.required'               => 'El genero es obligatorio.',
+            'contacto.required'             => 'El telefono o correo es obligatorio.',
             'foto_perfil.required'          => 'La foto de perfil es obligatoria.',
             'foto_licencia.required'        => 'La foto de la licencia es obligatoria.',
             'foto_record_policial.required' => 'La foto del record policial es obligatoria.',
@@ -1311,10 +1319,17 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
         $rutaLicencia   = $request->file('foto_licencia')->store('motorizados/licencia', 'public');
         $rutaRecord     = $request->file('foto_record_policial')->store('motorizados/record', 'public');
 
+        $fechaNacimiento = \Carbon\Carbon::parse($request->fecha_nacimiento);
+        $edadCalculada   = $fechaNacimiento->age;
+
         $solicitud = SolicitudMotorizado::create([
             'user_id'              => $user->id,
             'nombre_completo'      => $request->nombre_completo,
-            'edad'                 => $request->edad,
+            'cedula'               => $request->cedula,
+            'fecha_nacimiento'     => $fechaNacimiento,
+            'genero'               => $request->genero,
+            'contacto'             => $request->contacto,
+            'edad'                 => $edadCalculada,
             'tipo_vehiculo'        => $request->tipo_vehiculo,
             'placa'                => $request->placa,
             'foto_perfil'          => $rutaFotoPerfil,
@@ -1322,6 +1337,7 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
             'foto_record_policial' => $rutaRecord,
             'departamento_id'      => $request->departamento_id,
             'municipio_id'         => $request->municipio_id,
+            'localidad'            => $request->localidad,
             'estado'               => 'pendiente',
         ]);
 

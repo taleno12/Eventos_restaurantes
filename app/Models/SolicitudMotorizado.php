@@ -14,6 +14,10 @@ class SolicitudMotorizado extends Model
     protected $fillable = [
         'user_id',
         'nombre_completo',
+        'cedula',
+        'fecha_nacimiento',
+        'genero',
+        'contacto',
         'edad',
         'tipo_vehiculo',
         'placa',
@@ -22,6 +26,7 @@ class SolicitudMotorizado extends Model
         'foto_record_policial',
         'departamento_id',
         'municipio_id',
+        'localidad',
         'estado',
         'motivo_rechazo',
         'revisado_por',
@@ -29,8 +34,9 @@ class SolicitudMotorizado extends Model
     ];
 
     protected $casts = [
-        'edad'        => 'integer',
-        'revisado_at' => 'datetime',
+        'edad'             => 'integer',
+        'fecha_nacimiento' => 'date',
+        'revisado_at'      => 'datetime',
     ];
 
     public function user()

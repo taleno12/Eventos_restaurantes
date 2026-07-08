@@ -27,8 +27,15 @@
             <select id="select-pedido" class="form-select rounded-pill">
                 <option value="">— Selecciona un pedido con envío pendiente —</option>
                 @foreach($pedidosPendientes as $pedido)
-                    <option value="{{ $pedido->id }}">
+                    <option
+                        value="{{ $pedido->id }}"
+                        data-asignado="{{ $pedido->motorizado_id ? '1' : '0' }}"
+                        data-motorizado-nombre="{{ $pedido->motorizado->name ?? '' }}"
+                    >
                         #{{ str_pad($pedido->id, 4, '0', STR_PAD_LEFT) }} — {{ $pedido->user->name ?? 'Cliente' }} — C$ {{ number_format($pedido->total, 0) }}
+                        @if($pedido->motorizado)
+                            — Asignado a {{ $pedido->motorizado->name }}
+                        @endif
                     </option>
                 @endforeach
             </select>
@@ -38,6 +45,13 @@
                 </small>
             @endif
         </div>
+    </div>
+
+    {{-- Aviso de pedido ya asignado (no se puede reasignar) --}}
+    <div id="aviso-ya-asignado" class="alert border-0 rounded-3 mb-4" style="display:none;background:rgba(34,197,94,0.12);color:#16a34a;">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        Este pedido ya tiene un motorizado asignado (<strong id="aviso-motorizado-nombre"></strong>).
+        No se puede reasignar desde aquí.
     </div>
 
     {{-- Lista de motorizados --}}
@@ -159,6 +173,8 @@ const wrapperLista       = document.getElementById('lista-motorizados-wrapper');
 const listaMotorizados   = document.getElementById('lista-motorizados');
 const motorizadosCount   = document.getElementById('motorizados-count');
 const estadoVacio        = document.getElementById('estado-vacio');
+const avisoYaAsignado    = document.getElementById('aviso-ya-asignado');
+const avisoMotorizadoNombre = document.getElementById('aviso-motorizado-nombre');
 
 let negociacionActual = null;
 let pollingInterval    = null;
@@ -166,12 +182,28 @@ let pollingInterval    = null;
 // ── 1. Al elegir un pedido, cargar motorizados disponibles cerca ──
 selectPedido.addEventListener('change', async () => {
     const pedidoId = selectPedido.value;
+
     if (!pedidoId) {
         wrapperLista.style.display = 'none';
         estadoVacio.style.display = 'block';
+        avisoYaAsignado.style.display = 'none';
         return;
     }
 
+    const opcionSeleccionada = selectPedido.options[selectPedido.selectedIndex];
+    const yaAsignado = opcionSeleccionada.dataset.asignado === '1';
+
+    // Si el pedido ya tiene motorizado, no mostramos la lista para negociar:
+    // solo el aviso informativo, para que no se pueda reasignar por error.
+    if (yaAsignado) {
+        wrapperLista.style.display = 'none';
+        estadoVacio.style.display = 'none';
+        avisoYaAsignado.style.display = 'block';
+        avisoMotorizadoNombre.textContent = opcionSeleccionada.dataset.motorizadoNombre || 'motorizado';
+        return;
+    }
+
+    avisoYaAsignado.style.display = 'none';
     listaMotorizados.innerHTML = `<div class="text-center py-4 w-100"><div class="spinner-border spinner-border-sm text-primary"></div></div>`;
     wrapperLista.style.display = 'block';
     estadoVacio.style.display = 'none';
@@ -246,6 +278,16 @@ listaMotorizados.addEventListener('click', async (e) => {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
         });
         const data = await res.json();
+
+        // El backend puede rechazar si el pedido ya fue asignado a otro motorizado
+        // mientras tanto (carrera entre pestañas, refresh atrasado, etc.)
+        if (!res.ok) {
+            modal.hide();
+            alert(data.message || 'No se pudo iniciar la negociación.');
+            window.location.reload();
+            return;
+        }
+
         negociacionActual = data.negociacion.id;
         renderChat(data.negociacion);
         iniciarPolling();

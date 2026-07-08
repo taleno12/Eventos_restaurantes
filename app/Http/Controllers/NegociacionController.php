@@ -42,6 +42,14 @@ class NegociacionController extends Controller
         // Verificar que el pedido pertenece al negocio del usuario autenticado
         $this->verificarPropietarioDelPedido($user, $pedido);
 
+        // Si el pedido ya tiene un motorizado asignado, no se permite iniciar
+        // una nueva negociacion (evita reasignarlo por error a otro motorizado)
+        if (!empty($pedido->motorizado_id)) {
+            return response()->json([
+                'message' => 'Este pedido ya tiene un motorizado asignado y no se puede reasignar.',
+            ], 422);
+        }
+
         // Evitar duplicar negociaciones activas para el mismo pedido
         $existente = NegociacionPedido::where('pedido_type', $pedidoClass)
             ->where('pedido_id', $pedido->id)

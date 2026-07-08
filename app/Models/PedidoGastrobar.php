@@ -27,6 +27,7 @@ class PedidoGastrobar extends Model
         'listo'          => ['label' => 'Listo',          'color' => '#22c55e'],
         'entregado'      => ['label' => 'Entregado',      'color' => '#6b7280'],
         'cancelado'      => ['label' => 'Cancelado',      'color' => '#ef4444'],
+        'incidente'      => ['label' => 'Incidente reportado', 'color' => '#dc2626'],
     ];
 
     public function gastrobar(): BelongsTo
@@ -52,6 +53,11 @@ class PedidoGastrobar extends Model
     public function negociaciones(): MorphMany
     {
         return $this->morphMany(NegociacionPedido::class, 'pedido');
+    }
+
+    public function incidentes(): MorphMany
+    {
+        return $this->morphMany(IncidentePedido::class, 'pedido');
     }
 
     public function getEstadoInfoAttribute(): array

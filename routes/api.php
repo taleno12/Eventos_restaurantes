@@ -20,6 +20,7 @@ use App\Models\SolicitudEmpleo;
 use App\Models\SolicitudMotorizado;
 use App\Models\Reporte;
 use App\Http\Controllers\NegociacionController;
+use App\Http\Controllers\IncidenteController;
 use Illuminate\Support\Facades\DB;
 
 // -- FUNCION PARA ENVIAR NOTIFICACIONES PUSH --
@@ -1213,6 +1214,22 @@ Route::post('/reportes', function (Request $request) {
 
     return response()->json(['message' => 'Reporte enviado correctamente.']);
 })->middleware('auth:sanctum');
+
+// ============================================================
+// -- INCIDENTES DE PEDIDO (cliente, negocio o motorizado) ---
+// ============================================================
+
+// Reportar un incidente sobre un pedido especifico (restaurante o gastrobar)
+Route::post('/pedidos/{tipoPedido}/{pedidoId}/incidente', [IncidenteController::class, 'store'])
+    ->middleware('auth:sanctum');
+
+// Panel admin: listar incidentes (filtrable por ?estado=abierto|en_revision|resuelto)
+Route::get('/admin/incidentes', [IncidenteController::class, 'index'])
+    ->middleware('auth:sanctum');
+
+// Panel admin: resolver un incidente y decidir el estado final del pedido
+Route::patch('/admin/incidentes/{incidente}', [IncidenteController::class, 'resolver'])
+    ->middleware('auth:sanctum');
 
 // ============================================================
 // -- NEGOCIACIONES DE ENVIO (MODO MOTORIZADO EN FLUTTER) ----

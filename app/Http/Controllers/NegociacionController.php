@@ -184,6 +184,63 @@ class NegociacionController extends Controller
     }
 
     /**
+     * ✅ AGREGADO: el motorizado asignado marca el pedido como entregado al
+     * cliente. Solo se permite si:
+     *  - el usuario autenticado es el motorizado de ESTA negociacion (no el
+     *    dueño ni otro motorizado), y
+     *  - la negociacion ya esta en estado 'aceptado' (hubo tarifa acordada).
+     * Actualiza directamente el estado del pedido (Pedido o PedidoGastrobar,
+     * segun corresponda via la relacion polimorfica).
+     */
+    public function entregar(Request $request, NegociacionPedido $negociacion): JsonResponse
+    {
+        $user = $request->user();
+
+        abort_unless(
+            $user->id === $negociacion->motorizado_id,
+            403,
+            'Solo el motorizado asignado puede marcar este pedido como entregado.'
+        );
+
+        if ($negociacion->estado !== 'aceptado') {
+            return response()->json([
+                'message' => 'Esta negociacion todavia no tiene una tarifa acordada.',
+            ], 422);
+        }
+
+        $pedido = $negociacion->pedido;
+
+        if (!$pedido) {
+            return response()->json([
+                'message' => 'No se encontro el pedido asociado a esta negociacion.',
+            ], 404);
+        }
+
+        if ($pedido->estado === 'entregado') {
+            return response()->json([
+                'message' => 'Este pedido ya habia sido marcado como entregado.',
+            ], 422);
+        }
+
+        $pedido->update(['estado' => 'entregado']);
+
+        return response()->json([
+            'message'       => 'Pedido marcado como entregado.',
+            'pedido_estado' => 'entregado',
+            'negociacion'   => $negociacion->fresh([
+                'mensajes',
+                'motorizado:id,name,vehiculo,placa',
+                'pedido' => function ($morphTo) {
+                    $morphTo->morphWith([
+                        Pedido::class          => ['restaurante:id,nombre'],
+                        PedidoGastrobar::class => ['gastrobar:id,nombre'],
+                    ]);
+                },
+            ]),
+        ]);
+    }
+
+    /**
      * Lista las negociaciones del usuario autenticado, sea dueño (via el pedido)
      * o motorizado. Usado tanto en el panel web como en la app Flutter (modo motorizado).
      *

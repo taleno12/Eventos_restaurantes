@@ -1221,6 +1221,10 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
     // Aceptar la tarifa actualmente propuesta
     Route::patch('/negociaciones/{negociacion}/aceptar', [NegociacionController::class, 'aceptar']);
 
+    // ✅ AGREGADO: el motorizado marca el pedido como entregado al cliente,
+    // una vez que la tarifa ya fue acordada (negociacion.estado === 'aceptado').
+    Route::patch('/negociaciones/{negociacion}/entregar', [NegociacionController::class, 'entregar']);
+
     // Prender/apagar disponibilidad del motorizado
     Route::patch('/motorizado/disponibilidad', function (Request $request) {
         $request->validate([

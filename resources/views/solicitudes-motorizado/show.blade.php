@@ -48,6 +48,27 @@
                     <div class="text-muted small">Fecha de solicitud</div>
                     <div class="fw-semibold text-dark">{{ $solicitud->created_at->format('d/m/Y h:i A') }}</div>
                 </div>
+                <div class="col-6">
+                    <div class="text-muted small">Cédula</div>
+                    <div class="fw-semibold text-dark">{{ $solicitud->cedula ?? '—' }}</div>
+                </div>
+                <div class="col-6">
+                    <div class="text-muted small">Fecha de nacimiento</div>
+                    <div class="fw-semibold text-dark">
+                        {{ $solicitud->fecha_nacimiento ? \Carbon\Carbon::parse($solicitud->fecha_nacimiento)->format('d/m/Y') : '—' }}
+                        @if($solicitud->fecha_nacimiento)
+                            <span class="text-muted fw-normal">({{ $solicitud->edad }} años)</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="text-muted small">Género</div>
+                    <div class="fw-semibold text-dark text-capitalize">{{ $solicitud->genero ?? '—' }}</div>
+                </div>
+                <div class="col-6">
+                    <div class="text-muted small">Contacto</div>
+                    <div class="fw-semibold text-dark">{{ $solicitud->contacto ?? '—' }}</div>
+                </div>
             </div>
         </div>
     </div>
@@ -75,6 +96,10 @@
                 <div class="col-6">
                     <div class="text-muted small">Municipio</div>
                     <div class="fw-semibold text-dark">{{ $solicitud->municipio->nombre ?? '—' }}</div>
+                </div>
+                <div class="col-6">
+                    <div class="text-muted small">Localidad</div>
+                    <div class="fw-semibold text-dark">{{ $solicitud->localidad ?? '—' }}</div>
                 </div>
             </div>
         </div>

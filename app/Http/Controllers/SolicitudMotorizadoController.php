@@ -35,9 +35,14 @@ class SolicitudMotorizadoController extends Controller
         ]);
 
         $solicitud->user->update([
-            'role'     => 'motorizado',
-            'vehiculo' => $solicitud->tipo_vehiculo,
-            'placa'    => $solicitud->placa,
+            'role'             => 'motorizado',
+            'vehiculo'         => $solicitud->tipo_vehiculo,
+            'placa'            => $solicitud->placa,
+            'cedula'           => $solicitud->cedula,
+            'fecha_nacimiento' => $solicitud->fecha_nacimiento,
+            'genero'           => $solicitud->genero,
+            'contacto'         => $solicitud->contacto,
+            'localidad'        => $solicitud->localidad,
         ]);
 
         return redirect()

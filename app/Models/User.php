@@ -107,6 +107,11 @@ class User extends Authenticatable
      * PostgreSQL no permite referenciar un alias de SELECT dentro de HAVING
      * sin GROUP BY (a diferencia de MySQL, que sí lo permite). Con whereRaw
      * se repite la formula completa, lo cual es compatible con ambos motores.
+     *
+     * Se filtra por estado = 'activo' para excluir motorizados suspendidos:
+     * sin esto, un motorizado suspendido seguía apareciendo como "disponible
+     * cerca" para negociar pedidos, ya que solo se validaba `disponible` (el
+     * switch de conectado/desconectado) y no el estado de la cuenta.
      */
     public function scopeMotorizadosCerca($query, float $lat, float $lng, float $radioKm = 5)
     {
@@ -117,6 +122,7 @@ class User extends Authenticatable
             * sin(radians(lat))))";
 
         return $query->where('role', 'motorizado')
+            ->where('estado', 'activo')
             ->where('disponible', true)
             ->whereNotNull('lat')
             ->whereNotNull('lng')

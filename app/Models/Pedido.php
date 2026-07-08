@@ -18,6 +18,7 @@ class Pedido extends Model
         'notas',
         'tipo',
         'direccion_entrega',
+        'costo_envio',
     ];
 
     // Colores y etiquetas para cada estado

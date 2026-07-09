@@ -25,6 +25,7 @@ use App\Http\Controllers\MotorizadoController;
 use App\Http\Controllers\NegociacionController;
 use App\Http\Controllers\SolicitudMotorizadoController;
 use App\Http\Controllers\Restaurante\CategoriaController;
+use App\Http\Controllers\Admin\IncidentePedidoController;
 
 use App\Models\Restaurante;
 use App\Models\Gastrobar;
@@ -251,6 +252,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/soporte',                    [SoporteAppController::class, 'index'])->name('soporte.index');
     Route::patch('/soporte/{reporte}/estado', [SoporteAppController::class, 'updateEstado'])->name('soporte.estado');
 
+    // ── INCIDENTES DE PEDIDO (CLIENTE / NEGOCIO / MOTORIZADO) ────────────────
+    Route::get('/incidentes',                     [IncidentePedidoController::class, 'index'])->name('incidentes.index');
+    Route::patch('/incidentes/{incidente}/resolver', [IncidentePedidoController::class, 'resolver'])->name('incidentes.resolver');
+
     Route::get('/configuracion', function () {
         return view('configuracion.index', [
             'totalRestaurantes'    => Restaurante::count(),
@@ -436,8 +441,8 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
 
             $pedidosPendientes = \App\Models\Pedido::where('restaurante_id', $restaurante->id)
                 ->where('tipo', 'envio')
-                ->with('motorizado')
                 ->whereNotIn('estado', ['entregado', 'cancelado'])
+                ->with('motorizado')
                 ->latest()
                 ->get();
 
@@ -548,8 +553,8 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 
             $pedidosPendientes = \App\Models\PedidoGastrobar::where('gastrobar_id', $gastrobar->id)
                 ->where('tipo', 'envio')
-                ->with('motorizado')
                 ->whereNotIn('estado', ['entregado', 'cancelado'])
+                ->with('motorizado')
                 ->latest()
                 ->get();
 
@@ -618,4 +623,3 @@ Route::get('/eventos/{evento}', [EventoController::class, 'show'])
 
 
 require __DIR__ . '/auth.php';
-

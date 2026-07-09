@@ -33,6 +33,7 @@ class User extends Authenticatable
         'placa',
         'lat',
         'lng',
+        'fcm_token',
     ];
 
     protected $hidden = [

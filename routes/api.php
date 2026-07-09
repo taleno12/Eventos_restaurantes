@@ -22,6 +22,7 @@ use App\Models\Reporte;
 use App\Http\Controllers\NegociacionController;
 use App\Http\Controllers\IncidenteController;
 use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Controllers\Api\UsuarioController;
 use Illuminate\Support\Facades\DB;
 
 // -- FUNCION PARA ENVIAR NOTIFICACIONES PUSH --
@@ -52,6 +53,48 @@ function enviarNotificacionFCM(string $titulo, string $cuerpo): void
             ]);
     } catch (\Exception $e) {
         \Log::error('FCM error: ' . $e->getMessage());
+    }
+}
+}
+
+// ✅ AGREGADO (Paso 7): igual que enviarNotificacionFCM(), pero manda la
+// notificacion a UN SOLO dispositivo (via 'token') en vez de a todos los
+// suscritos al topic. Se usa para avisos individuales, como "tu pedido ya
+// esta aqui" o "el motorizado acepto tu tarifa".
+if (!function_exists('enviarNotificacionFCMAUsuario')) {
+function enviarNotificacionFCMAUsuario(?string $fcmToken, string $titulo, string $cuerpo): void
+{
+    // Si el usuario no tiene token guardado (nunca abrio la app logueado,
+    // o rechazo permisos de notificaciones), simplemente no hacemos nada.
+    if (!$fcmToken) {
+        \Log::info("FCM: intento de notificar a usuario sin fcm_token registrado.");
+        return;
+    }
+
+    try {
+        $credencialesPath = storage_path('app/firebase-credentials.json');
+        $credenciales = json_decode(file_get_contents($credencialesPath), true);
+
+        $tokenResponse = Http::post('https://oauth2.googleapis.com/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion'  => generarJwtFirebase($credenciales),
+        ]);
+
+        $accessToken = $tokenResponse->json('access_token');
+        $projectId   = $credenciales['project_id'];
+
+        Http::withToken($accessToken)
+            ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+                'message' => [
+                    'token'        => $fcmToken,
+                    'notification' => [
+                        'title' => $titulo,
+                        'body'  => $cuerpo,
+                    ],
+                ],
+            ]);
+    } catch (\Exception $e) {
+        \Log::error('FCM error (usuario): ' . $e->getMessage());
     }
 }
 }
@@ -1197,6 +1240,13 @@ Route::post('/usuario/telefono', function (Request $request) {
         'telefono' => $request->user()->fresh()->telefono,
     ]);
 })->middleware('auth:sanctum');
+
+// ✅ AGREGADO: guardar/actualizar el fcm_token del dispositivo del usuario
+// autenticado. Flutter llama esto al hacer login y cada vez que Firebase
+// rota el token (onTokenRefresh), para poder enviarle notificaciones push
+// individuales (ej: "Tu pedido ya esta aqui").
+Route::patch('/usuario/fcm-token', [UsuarioController::class, 'actualizarFcmToken'])
+    ->middleware('auth:sanctum');
 
 // -- REPORTAR UN PROBLEMA (desde la app movil) --
 Route::post('/reportes', function (Request $request) {

@@ -322,6 +322,19 @@
                     <i class="bi bi-graph-up-arrow"></i>
                     <span>Estadísticas</span>
                 </a>
+                {{-- ✅ AGREGADO: link de Incidentes de Pedido, con badge de
+                     abiertos igual estilo que el de Notificaciones --}}
+                <a href="{{ route('incidentes.index') }}"
+                   class="nav-item {{ request()->routeIs('incidentes.*') ? 'active' : '' }}">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span>Incidentes de Pedido</span>
+                    @php $totalIncidentesAbiertos = \App\Models\IncidentePedido::where('estado', 'abierto')->count(); @endphp
+                    @if($totalIncidentesAbiertos > 0)
+                        <span class="nav-badge" style="background:rgba(220,38,38,0.18);color:#fc8181;border-color:rgba(220,38,38,0.25);">
+                            {{ $totalIncidentesAbiertos }}
+                        </span>
+                    @endif
+                </a>
                 <a href="{{ route('soporte.index') }}"
                    class="nav-item {{ request()->routeIs('soporte.*') ? 'active' : '' }}">
                     <i class="bi bi-headset"></i>

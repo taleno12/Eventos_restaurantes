@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\IncidentePedido;
+use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\PedidoGastrobar;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
@@ -44,7 +46,27 @@ class IncidenteController extends Controller
         // Congela el pedido para que no siga avanzando solo
         $pedido->update(['estado' => 'incidente']);
 
-        // TODO: notificar al admin por FCM aquí (igual que en otros controladores)
+        // Notifica internamente a todos los admins (campanita del panel).
+        // ⚠️ Asumí las columnas 'user_id', 'titulo', 'mensaje', 'tipo' y 'leida'
+        // según el uso que ya tenías en el sidebar (Notificacion::noLeidas()
+        // ->where('user_id', ...)). Si tu tabla usa otros nombres, avisame
+        // el error exacto y ajusto esta parte.
+        $numeroPedido = str_pad((string) $pedido->id, 4, '0', STR_PAD_LEFT);
+        $tipoLugar    = $tipoPedido === 'gastrobar' ? 'Gastrobar' : 'Restaurante';
+
+        User::where('role', 'admin')->get()->each(function (User $admin) use ($incidente, $numeroPedido, $tipoLugar, $data) {
+            Notificacion::create([
+                'user_id' => $admin->id,
+                'titulo'  => 'Nuevo incidente reportado',
+                'mensaje' => "Se reportó un incidente ({$data['tipo']}) en el pedido #{$numeroPedido} de {$tipoLugar}.",
+                'tipo'    => 'incidente',
+                'leida'   => false,
+            ]);
+        });
+
+        // TODO: además de la notificación interna, si más adelante quieren
+        // push FCM al celular del admin, se agrega acá con el mismo patrón
+        // que ya usás en los otros controladores.
 
         return response()->json([
             'message'   => 'Incidente reportado. El equipo de soporte revisará el caso.',

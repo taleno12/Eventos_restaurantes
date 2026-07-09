@@ -505,11 +505,13 @@ Route::get('/gastrobares/buscar', function (Request $request) {
 });
 
 // -- DETALLE DE UN GASTROBAR --
+// -- DETALLE DE UN GASTROBAR --
 Route::get('/gastrobares/{id}', function ($id) {
     return Gastrobar::with([
         'departamento',
         'municipio',
         'reviews.user',
+        'fotos',
     ])->findOrFail($id);
 });
 

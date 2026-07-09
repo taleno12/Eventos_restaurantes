@@ -21,6 +21,7 @@ use App\Models\SolicitudMotorizado;
 use App\Models\Reporte;
 use App\Http\Controllers\NegociacionController;
 use App\Http\Controllers\IncidenteController;
+use App\Http\Controllers\MotorizadoController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\UsuarioController;
 use Illuminate\Support\Facades\DB;
@@ -1316,6 +1317,9 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
 
     // ✅ AGREGADO: el motorizado avisa manualmente que ya llegó al punto de entrega.
     Route::patch('/negociaciones/{negociacion}/avisar-llegada', [NegociacionController::class, 'avisarLlegada']);
+
+    // ✅ AGREGADO: resumen de ganancias del motorizado para el dia de hoy
+    Route::get('/motorizado/ganancias-hoy', [MotorizadoController::class, 'gananciasHoy']);
 
     // Prender/apagar disponibilidad del motorizado
     Route::patch('/motorizado/disponibilidad', function (Request $request) {

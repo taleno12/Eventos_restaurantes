@@ -100,8 +100,8 @@ class NegociacionController extends Controller
             'iniciadoPor:id,name',
             'pedido' => function ($morphTo) {
                 $morphTo->morphWith([
-                    Pedido::class         => ['restaurante:id,nombre'],
-                    PedidoGastrobar::class => ['gastrobar:id,nombre'],
+                    Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre'],
+                    PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre'],
                 ]);
             },
         ]);
@@ -232,8 +232,8 @@ class NegociacionController extends Controller
                 'motorizado:id,name,vehiculo,placa',
                 'pedido' => function ($morphTo) {
                     $morphTo->morphWith([
-                        Pedido::class          => ['restaurante:id,nombre'],
-                        PedidoGastrobar::class => ['gastrobar:id,nombre'],
+                        Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre'],
+                        PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre'],
                     ]);
                 },
             ]),

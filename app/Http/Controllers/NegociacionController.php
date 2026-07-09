@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NegociacionPedido;
 use App\Models\MensajeNegociacion;
+use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\PedidoGastrobar;
 use Illuminate\Http\Request;
@@ -237,6 +238,68 @@ class NegociacionController extends Controller
                     ]);
                 },
             ]),
+        ]);
+    }
+
+    /**
+     * ✅ AGREGADO (Paso 8): el motorizado avisa manualmente que ya llego al
+     * punto de entrega. Esto hace dos cosas:
+     *   1) Guarda una Notificacion en la tabla `notificaciones` para que le
+     *      aparezca al cliente en la campanita dentro de la app.
+     *   2) Manda un push individual (FCM) directo al celular del cliente,
+     *      usando el fcm_token que guardamos en el Paso 2, para que le
+     *      llegue aunque tenga la app cerrada.
+     */
+    public function avisarLlegada(Request $request, NegociacionPedido $negociacion): JsonResponse
+    {
+        $user = $request->user();
+
+        abort_unless(
+            $user->id === $negociacion->motorizado_id,
+            403,
+            'Solo el motorizado asignado puede avisar la llegada.'
+        );
+
+        if ($negociacion->estado !== 'aceptado') {
+            return response()->json([
+                'message' => 'Esta negociacion todavia no tiene una tarifa acordada.',
+            ], 422);
+        }
+
+        $pedido = $negociacion->pedido()->with('user')->first();
+
+        if (!$pedido) {
+            return response()->json([
+                'message' => 'No se encontro el pedido asociado a esta negociacion.',
+            ], 404);
+        }
+
+        $cliente = $pedido->user;
+
+        if (!$cliente) {
+            return response()->json([
+                'message' => 'No se encontro el cliente dueño de este pedido.',
+            ], 404);
+        }
+
+        $titulo  = 'Tu pedido ya esta aqui';
+        $mensaje = "El motorizado {$user->name} llego a tu punto de entrega.";
+
+        // 1) Registro para la campanita (aparece siempre, llegue o no el push)
+        Notificacion::create([
+            'tipo'         => 'motorizado_llego',
+            'titulo'       => $titulo,
+            'mensaje'      => $mensaje,
+            'user_id'      => $cliente->id,
+            'leida'        => false,
+            'fecha_evento' => now(),
+        ]);
+
+        // 2) Push individual, solo al celular de ese cliente
+        enviarNotificacionFCMAUsuario($cliente->fcm_token, $titulo, $mensaje);
+
+        return response()->json([
+            'message' => 'Se avisó al cliente que llegaste.',
         ]);
     }
 

@@ -100,8 +100,11 @@ class NegociacionController extends Controller
             'iniciadoPor:id,name',
             'pedido' => function ($morphTo) {
                 $morphTo->morphWith([
-                    Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre'],
-                    PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre'],
+                    // ✅ AGREGADO: 'user:id,name,telefono' — el cliente que hizo
+                    // el pedido, para que el motorizado sepa a quién le entrega
+                    // (y su teléfono, para el aviso por WhatsApp más adelante).
+                    Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
+                    PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
                 ]);
             },
         ]);
@@ -184,13 +187,7 @@ class NegociacionController extends Controller
     }
 
     /**
-     * ✅ AGREGADO: el motorizado asignado marca el pedido como entregado al
-     * cliente. Solo se permite si:
-     *  - el usuario autenticado es el motorizado de ESTA negociacion (no el
-     *    dueño ni otro motorizado), y
-     *  - la negociacion ya esta en estado 'aceptado' (hubo tarifa acordada).
-     * Actualiza directamente el estado del pedido (Pedido o PedidoGastrobar,
-     * segun corresponda via la relacion polimorfica).
+     * El motorizado asignado marca el pedido como entregado al cliente.
      */
     public function entregar(Request $request, NegociacionPedido $negociacion): JsonResponse
     {
@@ -232,8 +229,11 @@ class NegociacionController extends Controller
                 'motorizado:id,name,vehiculo,placa',
                 'pedido' => function ($morphTo) {
                     $morphTo->morphWith([
-                        Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre'],
-                        PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre'],
+                        // ✅ AGREGADO: mismo user:id,name,telefono que en show(),
+                        // para que la tarjeta de cliente no desaparezca al
+                        // recargar la negociacion luego de marcar entregado.
+                        Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
+                        PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
                     ]);
                 },
             ]),
@@ -243,10 +243,6 @@ class NegociacionController extends Controller
     /**
      * Lista las negociaciones del usuario autenticado, sea dueño (via el pedido)
      * o motorizado. Usado tanto en el panel web como en la app Flutter (modo motorizado).
-     *
-     * ✅ AGREGADO: eager load de 'pedido' con su restaurante/gastrobar (nombre)
-     * usando morphWith, para que el motorizado vea el nombre real del negocio
-     * en vez de solo la etiqueta genérica "Restaurante"/"Gastrobar".
      */
     public function misNegociaciones(Request $request): JsonResponse
     {

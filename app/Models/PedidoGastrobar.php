@@ -18,6 +18,7 @@ class PedidoGastrobar extends Model
         'notas',
         'tipo',
         'direccion_entrega',
+        'costo_envio',
     ];
 
     const ESTADOS = [
@@ -63,5 +64,12 @@ class PedidoGastrobar extends Model
     public function getEstadoInfoAttribute(): array
     {
         return self::ESTADOS[$this->estado] ?? ['label' => $this->estado, 'color' => '#6b7280'];
+    }
+
+    // ✅ AGREGADO: total final a cobrar al cliente (comida + envío), para
+    // que el motorizado vea el monto completo en la pantalla de entrega.
+    public function getTotalConEnvioAttribute(): float
+    {
+        return (float) $this->total + (float) ($this->costo_envio ?? 0);
     }
 }

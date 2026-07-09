@@ -21,6 +21,7 @@ use App\Models\SolicitudMotorizado;
 use App\Models\Reporte;
 use App\Http\Controllers\NegociacionController;
 use App\Http\Controllers\IncidenteController;
+use App\Http\Controllers\Api\NotificacionController;
 use Illuminate\Support\Facades\DB;
 
 // -- FUNCION PARA ENVIAR NOTIFICACIONES PUSH --
@@ -1025,7 +1026,6 @@ Route::post('/logout', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // -- USUARIO AUTENTICADO --
-// -- USUARIO AUTENTICADO --
 Route::get('/me', function (Request $request) {
     $user = $request->user();
 
@@ -1232,6 +1232,17 @@ Route::patch('/admin/incidentes/{incidente}', [IncidenteController::class, 'reso
     ->middleware('auth:sanctum');
 
 // ============================================================
+// -- NOTIFICACIONES DEL CLIENTE (Flutter) --------------------
+// ============================================================
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notificaciones', [NotificacionController::class, 'index']);
+    Route::get('/notificaciones/no-leidas-count', [NotificacionController::class, 'noLeidasCount']);
+    Route::patch('/notificaciones/{notificacion}/leida', [NotificacionController::class, 'marcarLeida']);
+    Route::patch('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas']);
+});
+
+// ============================================================
 // -- NEGOCIACIONES DE ENVIO (MODO MOTORIZADO EN FLUTTER) ----
 // ============================================================
 
@@ -1252,6 +1263,9 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
     // ✅ AGREGADO: el motorizado marca el pedido como entregado al cliente,
     // una vez que la tarifa ya fue acordada (negociacion.estado === 'aceptado').
     Route::patch('/negociaciones/{negociacion}/entregar', [NegociacionController::class, 'entregar']);
+
+    // ✅ AGREGADO: el motorizado avisa manualmente que ya llegó al punto de entrega.
+    Route::patch('/negociaciones/{negociacion}/avisar-llegada', [NegociacionController::class, 'avisarLlegada']);
 
     // Prender/apagar disponibilidad del motorizado
     Route::patch('/motorizado/disponibilidad', function (Request $request) {
@@ -1282,7 +1296,6 @@ Route::middleware(['auth:sanctum', 'motorizado.activo'])->group(function () {
         return response()->json(['ok' => true]);
     });
 
-    // -- SOLICITAR SER MOTORIZADO --
     // -- SOLICITAR SER MOTORIZADO --
     Route::post('/motorizado/solicitar', function (Request $request) {
         $user = $request->user();

@@ -124,6 +124,14 @@ class NegociacionController extends Controller
      * aceptación). Si aceptado_motorizado es true pero todavía no mandó
      * ningún mensaje (por ejemplo aceptó la primera propuesta sin
      * escribir nada), también cuenta como respuesta.
+     *
+     * ✅ FIX: la relación 'mensajes' se cargaba pidiendo la columna
+     * "negociacion_pedido_id", que no existe en la tabla
+     * mensajes_negociacion (la FK real se llama "negociacion_id").
+     * Eso rompía la consulta con un 500 (SQLSTATE 42703 - Undefined
+     * column) y el JS del panel nunca recibía datos, por eso ninguna
+     * card se pintaba en verde aunque el motorizado ya hubiera
+     * respondido.
      */
     public function porPedido(Request $request): JsonResponse
     {
@@ -142,7 +150,7 @@ class NegociacionController extends Controller
 
         $negociaciones = NegociacionPedido::where('pedido_type', $pedidoClass)
             ->where('pedido_id', $pedido->id)
-            ->with(['mensajes:id,negociacion_pedido_id,user_id'])
+            ->with(['mensajes:id,negociacion_id,user_id'])
             ->get();
 
         $resultado = $negociaciones->map(function (NegociacionPedido $n) {

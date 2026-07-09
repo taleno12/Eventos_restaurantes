@@ -454,6 +454,8 @@ Route::middleware(['auth', 'role:restaurante,admin', 'entidad.activa'])
 
         Route::post('/negociaciones', [NegociacionController::class, 'store'])
             ->name('negociaciones.store');
+        Route::get('/negociaciones/por-pedido', [NegociacionController::class, 'porPedido'])
+            ->name('negociaciones.porPedido');
         Route::get('/negociaciones/{negociacion}', [NegociacionController::class, 'show'])
             ->name('negociaciones.show');
         Route::post('/negociaciones/{negociacion}/mensajes', [NegociacionController::class, 'enviarMensaje'])
@@ -566,6 +568,8 @@ Route::middleware(['auth', 'role:gastrobar,admin', 'entidad.activa'])
 
         Route::post('/negociaciones', [NegociacionController::class, 'store'])
             ->name('negociaciones.store');
+        Route::get('/negociaciones/por-pedido', [NegociacionController::class, 'porPedido'])
+            ->name('negociaciones.porPedido');
         Route::get('/negociaciones/{negociacion}', [NegociacionController::class, 'show'])
             ->name('negociaciones.show');
         Route::post('/negociaciones/{negociacion}/mensajes', [NegociacionController::class, 'enviarMensaje'])

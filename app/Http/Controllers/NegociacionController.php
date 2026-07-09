@@ -101,9 +101,6 @@ class NegociacionController extends Controller
             'iniciadoPor:id,name',
             'pedido' => function ($morphTo) {
                 $morphTo->morphWith([
-                    // ✅ AGREGADO: 'user:id,name,telefono' — el cliente que hizo
-                    // el pedido, para que el motorizado sepa a quién le entrega
-                    // (y su teléfono, para el aviso por WhatsApp más adelante).
                     Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
                     PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
                 ]);
@@ -111,6 +108,61 @@ class NegociacionController extends Controller
         ]);
 
         return response()->json(['negociacion' => $negociacion]);
+    }
+
+    /**
+     * ✅ AGREGADO: para un pedido dado, devuelve el estado de TODAS las
+     * negociaciones abiertas con los distintos motorizados contactados
+     * (una por cada motorizado con quien se negoció ese pedido).
+     *
+     * El panel del restaurante/gastrobar usa esto para pintar en verde,
+     * de un vistazo, las tarjetas de los motorizados que ya respondieron
+     * o ya aceptaron — sin tener que abrir el chat de cada uno.
+     *
+     * "Respondió" se define como: hay al menos un mensaje enviado POR el
+     * motorizado en esa negociación (mensaje de texto, contraoferta, o
+     * aceptación). Si aceptado_motorizado es true pero todavía no mandó
+     * ningún mensaje (por ejemplo aceptó la primera propuesta sin
+     * escribir nada), también cuenta como respuesta.
+     */
+    public function porPedido(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'pedido_tipo' => ['required', Rule::in(array_keys(self::TIPOS_PEDIDO))],
+            'pedido_id'   => ['required', 'integer'],
+        ]);
+
+        $user = $request->user();
+        $pedidoClass = self::TIPOS_PEDIDO[$data['pedido_tipo']];
+        $pedido = $pedidoClass::findOrFail($data['pedido_id']);
+
+        // Mismo chequeo de propiedad que en store(): solo el dueño del
+        // negocio (o admin) puede ver el estado de estas negociaciones.
+        $this->verificarPropietarioDelPedido($user, $pedido);
+
+        $negociaciones = NegociacionPedido::where('pedido_type', $pedidoClass)
+            ->where('pedido_id', $pedido->id)
+            ->with(['mensajes:id,negociacion_pedido_id,user_id'])
+            ->get();
+
+        $resultado = $negociaciones->map(function (NegociacionPedido $n) {
+            $motorizadoRespondio = $n->mensajes->contains(
+                fn (MensajeNegociacion $m) => $m->user_id === $n->motorizado_id
+            );
+
+            return [
+                'negociacion_id'           => $n->id,
+                'motorizado_id'            => $n->motorizado_id,
+                'estado'                   => $n->estado,
+                'aceptado_dueno'           => (bool) $n->aceptado_dueno,
+                'aceptado_motorizado'      => (bool) $n->aceptado_motorizado,
+                'motorizado_respondio'     => $motorizadoRespondio,
+                'ultima_tarifa_motorizado' => $n->tarifa_propuesta_motorizado,
+                'tarifa_acordada'          => $n->tarifa_acordada,
+            ];
+        })->values();
+
+        return response()->json(['negociaciones' => $resultado]);
     }
 
     /**
@@ -230,9 +282,6 @@ class NegociacionController extends Controller
                 'motorizado:id,name,vehiculo,placa',
                 'pedido' => function ($morphTo) {
                     $morphTo->morphWith([
-                        // ✅ AGREGADO: mismo user:id,name,telefono que en show(),
-                        // para que la tarjeta de cliente no desaparezca al
-                        // recargar la negociacion luego de marcar entregado.
                         Pedido::class          => ['restaurante:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
                         PedidoGastrobar::class => ['gastrobar:id,nombre', 'items.plato:id,nombre', 'user:id,name,telefono'],
                     ]);
@@ -242,13 +291,7 @@ class NegociacionController extends Controller
     }
 
     /**
-     * ✅ AGREGADO (Paso 8): el motorizado avisa manualmente que ya llego al
-     * punto de entrega. Esto hace dos cosas:
-     *   1) Guarda una Notificacion en la tabla `notificaciones` para que le
-     *      aparezca al cliente en la campanita dentro de la app.
-     *   2) Manda un push individual (FCM) directo al celular del cliente,
-     *      usando el fcm_token que guardamos en el Paso 2, para que le
-     *      llegue aunque tenga la app cerrada.
+     * El motorizado avisa manualmente que ya llego al punto de entrega.
      */
     public function avisarLlegada(Request $request, NegociacionPedido $negociacion): JsonResponse
     {

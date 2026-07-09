@@ -159,6 +159,31 @@
     margin-top: 3px;
     opacity: 0.9;
 }
+
+/* ✅ AGREGADO: estado visual de "ya respondió" / "ya acordado" en las
+   cards de motorizados, para saber de un vistazo quién respondió sin
+   tener que abrir cada chat. */
+.motorizado-card.respondido {
+    border: 1.5px solid #22c55e;
+    background: rgba(34,197,94,0.05);
+}
+.motorizado-card.acordado {
+    border: 1.5px solid #22c55e;
+    background: rgba(34,197,94,0.09);
+}
+.badge-respuesta {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #22c55e;
+    color: #fff;
+    margin-top: 4px;
+    width: fit-content;
+}
 </style>
 
 @endsection
@@ -179,9 +204,20 @@ const avisoMotorizadoNombre = document.getElementById('aviso-motorizado-nombre')
 let negociacionActual = null;
 let pollingInterval    = null;
 
+// ✅ AGREGADO: polling separado del modal, para mantener las cards
+// actualizadas (en verde) incluso sin tener el chat abierto.
+let pedidoSeleccionadoId = null;
+let estadoRespuestasInterval = null;
+
 // ── 1. Al elegir un pedido, cargar motorizados disponibles cerca ──
 selectPedido.addEventListener('change', async () => {
     const pedidoId = selectPedido.value;
+    pedidoSeleccionadoId = pedidoId || null;
+
+    if (estadoRespuestasInterval) {
+        clearInterval(estadoRespuestasInterval);
+        estadoRespuestasInterval = null;
+    }
 
     if (!pedidoId) {
         wrapperLista.style.display = 'none';
@@ -227,12 +263,13 @@ selectPedido.addEventListener('change', async () => {
             const card = document.createElement('div');
             card.className = 'col-12 col-md-6 col-lg-4';
             card.innerHTML = `
-                <div class="motorizado-card d-flex align-items-center gap-3">
+                <div class="motorizado-card d-flex align-items-center gap-3" id="motorizado-card-${m.id}">
                     <div class="motorizado-avatar"><i class="bi bi-bicycle"></i></div>
                     <div style="flex:1;min-width:0;">
                         <div class="fw-bold" style="font-size:14px;color:var(--text);">${m.name}</div>
                         <div style="font-size:12px;color:var(--muted);">${m.vehiculo ?? ''} ${m.placa ? '· ' + m.placa : ''}</div>
                         <div style="font-size:11px;color:var(--primary);font-weight:700;">${distancia}</div>
+                        <div class="badge-respuesta"></div>
                     </div>
                     <button class="btn btn-sm rounded-pill px-3 btn-negociar"
                             data-motorizado-id="${m.id}" data-motorizado-nombre="${m.name}"
@@ -242,10 +279,65 @@ selectPedido.addEventListener('change', async () => {
                 </div>`;
             listaMotorizados.appendChild(card);
         });
+
+        // Primera consulta del estado de respuestas, y luego cada 5s
+        // mientras este pedido siga seleccionado.
+        actualizarEstadoRespuestas(pedidoId);
+        estadoRespuestasInterval = setInterval(() => actualizarEstadoRespuestas(pedidoId), 5000);
     } catch (err) {
         listaMotorizados.innerHTML = `<div class="text-center py-4 w-100" style="color:var(--muted);">Error al cargar motorizados.</div>`;
     }
 });
+
+// ✅ AGREGADO: consulta el estado de todas las negociaciones del pedido
+// seleccionado y pinta en verde (con badge) las cards de los motorizados
+// que ya respondieron o ya llegaron a un acuerdo.
+async function actualizarEstadoRespuestas(pedidoId) {
+    if (!pedidoId) return;
+
+    try {
+        const res = await fetch(`{{ route('restaurante.negociaciones.porPedido') }}?pedido_tipo=restaurante&pedido_id=${pedidoId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Reset: por si algún motorizado dejó de tener negociación activa
+        // (no debería pasar normalmente, pero evita estados fantasma).
+        document.querySelectorAll('.motorizado-card').forEach(el => {
+            el.classList.remove('respondido', 'acordado');
+            const badge = el.querySelector('.badge-respuesta');
+            if (badge) {
+                badge.style.display = 'none';
+                badge.textContent = '';
+            }
+        });
+
+        data.negociaciones.forEach(n => {
+            const card = document.getElementById(`motorizado-card-${n.motorizado_id}`);
+            if (!card) return;
+
+            const btn = card.querySelector('.btn-negociar');
+            const badge = card.querySelector('.badge-respuesta');
+
+            if (n.estado === 'aceptado') {
+                card.classList.add('acordado');
+                if (badge) {
+                    badge.style.display = 'inline-flex';
+                    badge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Acordado';
+                }
+                if (btn) btn.innerHTML = '<i class="bi bi-chat-dots-fill me-1"></i> Ver chat';
+            } else if (n.motorizado_respondio || n.aceptado_motorizado) {
+                card.classList.add('respondido');
+                if (badge) {
+                    badge.style.display = 'inline-flex';
+                    badge.innerHTML = '<i class="bi bi-chat-dots-fill"></i> Respondió';
+                }
+                if (btn) btn.innerHTML = '<i class="bi bi-chat-dots-fill me-1"></i> Ver chat';
+            }
+        });
+    } catch (err) {
+        // Silencioso: si falla el polling de estado, no interrumpimos el flujo.
+    }
+}
 
 // ── 2. Al hacer clic en "Negociar", crear/abrir la negociación ──
 listaMotorizados.addEventListener('click', async (e) => {
@@ -318,6 +410,9 @@ function detenerPolling() {
 document.getElementById('modalNegociacion').addEventListener('hidden.bs.modal', () => {
     detenerPolling();
     negociacionActual = null;
+    // Al cerrar el chat, refrescamos de una vez el estado de las cards
+    // (por si se mandó un mensaje o se aceptó algo mientras estaba abierto).
+    if (pedidoSeleccionadoId) actualizarEstadoRespuestas(pedidoSeleccionadoId);
 });
 
 // ── 4. Renderizar mensajes + estado de tarifa ──
@@ -449,6 +544,10 @@ document.getElementById('btn-aceptar-tarifa').addEventListener('click', async ()
 
         const data = await res.json();
         renderChat(data.negociacion);
+
+        // Refrescamos las cards de una vez al aceptar, sin esperar al
+        // siguiente ciclo del polling de 5s.
+        if (pedidoSeleccionadoId) actualizarEstadoRespuestas(pedidoSeleccionadoId);
 
         if (data.cerrada) {
             setTimeout(() => {
